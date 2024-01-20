@@ -29,7 +29,6 @@ API_CALLABLE(N(Update)) {
 
     partner_walking_update_player_tracking(goombaria);
     partner_walking_update_motion(goombaria);
-    playerData->partnerUsedTime[PARTNER_GOOMBARIA]++;
 
     return ApiStatus_BLOCK;
 }

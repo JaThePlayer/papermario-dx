@@ -73,6 +73,7 @@ vram_classes:
   - { name: dgb_01_smash_bridges, vram: 0x80200000, vram_symbol: D_80200000 }
 asset_stack:
   - star_rod_build
+  - armageddon
   - dx
   - us
 segments:
@@ -845,6 +846,18 @@ segments:
     - [auto, c, sprite_shading]
     - [auto, c, audio/sfx]
     - [auto, c, audio/e0b30_len_b80]
+    - [auto, .data, entity]
+    - [auto, .data, game_states]
+    - [auto, .data, model]
+    - [auto, .data, animator]
+    - [auto, .data, entity_model]
+    - [auto, .data, msg]
+    - [auto, .data, draw_img_util]
+    - [auto, .data, item_entity]
+    - [auto, c, misc_patches/misc_patches]
+    - [auto, .data, misc_patches/misc_patches]
+    - [auto, c, misc_patches/sp_pools]
+    - [auto, .data, misc_patches/sp_pools]
     - start: 0xE2DF0
       type: .data
       name: screen_overlays
@@ -1342,6 +1355,16 @@ segments:
     - [auto, c, battle/dmg_partner]
     - [auto, c, battle/standard_events]
     - [auto, c, battle/use_star_powers]
+    - [auto, .data, battle/16C8E0]
+    - [auto, .data, battle/camera]
+    - [auto, .data, battle/actors]
+    - [auto, .data, battle/popup_messages]
+    - [auto, .data, battle/entity_model_icons]
+    - [auto, .data, battle/partner_dma]
+    - [auto, c, enemy_items/api]
+    - [auto, .data, enemy_items/api]
+    - [auto, c, enemy_items/common_tables]
+    - [auto, .data, enemy_items/common_tables]
     - start: 0x1B2050
       type: .data
       name: battle/popup_messages

@@ -384,7 +384,6 @@ API_CALLABLE(N(UseAbility)) {
         N(ResurfaceVelY) = 0.0f;
         script->USE_STATE = SWIM_STATE_INIT;
     }
-    playerData->partnerUsedTime[PARTNER_SUSHIE]++;
     playerStatus->animFlags &= ~PA_FLAG_RIDING_PARTNER;
 
     switch (script->USE_STATE) {

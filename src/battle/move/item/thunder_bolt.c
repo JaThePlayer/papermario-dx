@@ -3,6 +3,7 @@
 #include "effects.h"
 #include "model.h"
 #include "sprite/player.h"
+#include "enemy_items/api.h"
 
 #define NAMESPACE battle_item_thunder_bolt
 
@@ -41,37 +42,81 @@ API_CALLABLE(N(SpawnLightningFX)) {
 
 #include "battle/common/move/UseItem.inc.c"
 
+EvtScript N(UsedByEnemy) = {
+    EVT_THREAD
+        EVT_WAIT(5)
+        EVT_CALL(UseBattleCamPreset, BTL_CAM_DEFAULT)
+        EVT_CALL(MoveBattleCamOver, 20)
+    EVT_END_THREAD
+
+    EVT_CALL(N(FadeBackgroundDarken))
+    EVT_CALL(PlaySound, SOUND_THUNDER_BOLT)
+    EVT_WAIT(10)
+    EVT_CALL(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
+
+    EVT_CALL(ItemCheckHit, LVar0, DAMAGE_TYPE_NO_CONTACT, 0, LVar0, 0)
+    EVT_IF_EQ(LVar0, HIT_RESULT_MISS)
+        EVT_GOTO(1)
+    EVT_END_IF
+
+    EVT_CALL(N(SpawnLightningFX))
+    EVT_WAIT(5)
+    EVT_CALL(StartRumble, BTL_RUMBLE_PLAYER_EXTREME)
+    EVT_CALL(ShakeCam, CAM_BATTLE, 0, 5, EVT_FLOAT(1.0))
+    EVT_CALL(GetItemPower, ITEM_THUNDER_RAGE, LVar0, LVar1)
+    EVT_CALL(SetGoalToTarget, ACTOR_SELF)
+    EVT_CALL(EnemyDamageTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_SHOCK | DAMAGE_TYPE_IGNORE_DEFENSE | DAMAGE_TYPE_NO_CONTACT | DAMAGE_TYPE_MULTIPLE_POPUPS, 0, 0, LVar0, BS_FLAGS1_TRIGGER_EVENTS)
+
+    // Wait for the damage stars to be visible for a while
+    EVT_WAIT(20)
+
+    EVT_LABEL(1)
+    EVT_WAIT(5)
+    EVT_CALL(UseBattleCamPreset, BTL_CAM_PRESET_03)
+    EVT_CALL(MoveBattleCamOver, 20)
+    EVT_WAIT(30)
+    EVT_CALL(N(FadeBackgroundLighten))
+
+    EVT_RETURN
+    EVT_END
+};
+
 EvtScript N(EVS_UseItem) = {
-    SetConst(LVarA, ITEM_THUNDER_BOLT)
-    ExecWait(N(UseItemWithEffect))
-    Thread
-        Wait(5)
-        Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
-        Call(MoveBattleCamOver, 20)
-    EndThread
-    Call(N(FadeBackgroundDarken))
-    Call(PlaySound, SOUND_THUNDER_BOLT)
-    Wait(10)
-    Call(InitTargetIterator)
-    Call(SetGoalToTarget, ACTOR_SELF)
-    Call(ItemCheckHit, LVar0, DAMAGE_TYPE_NO_CONTACT, 0, LVar0, 0)
-    IfEq(LVar0, HIT_RESULT_MISS)
-        Goto(1)
-    EndIf
-    Call(N(SpawnLightningFX))
-    Wait(5)
-    Call(StartRumble, BTL_RUMBLE_PLAYER_EXTREME)
-    Call(ShakeCam, CAM_BATTLE, 0, 5, Float(1.0))
-    Call(GetItemPower, ITEM_THUNDER_RAGE, LVar0, LVar1)
-    Call(ItemDamageEnemy, LVar0, DAMAGE_TYPE_SHOCK | DAMAGE_TYPE_IGNORE_DEFENSE | DAMAGE_TYPE_NO_CONTACT | DAMAGE_TYPE_MULTIPLE_POPUPS, 0, LVar0, BS_FLAGS1_TRIGGER_EVENTS)
-    Label(1)
-    Wait(5)
-    Call(UseBattleCamPreset, BTL_CAM_PRESET_03)
-    Call(MoveBattleCamOver, 20)
-    Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_Mario1_Idle)
-    Wait(30)
-    Call(N(FadeBackgroundLighten))
-    ExecWait(N(PlayerGoHome))
-    Return
-    End
+    EVT_CALL(EnemyItems_IsCalledByEnemy, LVarD) // the first arg specifies which LVar to store the output value of the function to.
+    EVT_IF_EQ(LVarD, 1)
+        EVT_EXEC_WAIT(N(UsedByEnemy))
+        EVT_RETURN
+    EVT_END_IF
+    EVT_SET_CONST(LVarA, ITEM_THUNDER_BOLT)
+    EVT_EXEC_WAIT(N(UseItemWithEffect))
+    EVT_THREAD
+        EVT_WAIT(5)
+        EVT_CALL(UseBattleCamPreset, BTL_CAM_DEFAULT)
+        EVT_CALL(MoveBattleCamOver, 20)
+    EVT_END_THREAD
+    EVT_CALL(N(FadeBackgroundDarken))
+    EVT_CALL(PlaySound, SOUND_THUNDER_BOLT)
+    EVT_WAIT(10)
+    EVT_CALL(InitTargetIterator)
+    EVT_CALL(SetGoalToTarget, ACTOR_SELF)
+    EVT_CALL(ItemCheckHit, LVar0, DAMAGE_TYPE_NO_CONTACT, 0, LVar0, 0)
+    EVT_IF_EQ(LVar0, HIT_RESULT_MISS)
+        EVT_GOTO(1)
+    EVT_END_IF
+    EVT_CALL(N(SpawnLightningFX))
+    EVT_WAIT(5)
+    EVT_CALL(StartRumble, BTL_RUMBLE_PLAYER_EXTREME)
+    EVT_CALL(ShakeCam, CAM_BATTLE, 0, 5, EVT_FLOAT(1.0))
+    EVT_CALL(GetItemPower, ITEM_THUNDER_RAGE, LVar0, LVar1)
+    EVT_CALL(ItemDamageEnemy, LVar0, DAMAGE_TYPE_SHOCK | DAMAGE_TYPE_IGNORE_DEFENSE | DAMAGE_TYPE_NO_CONTACT | DAMAGE_TYPE_MULTIPLE_POPUPS, 0, LVar0, BS_FLAGS1_TRIGGER_EVENTS)
+    EVT_LABEL(1)
+    EVT_WAIT(5)
+    EVT_CALL(UseBattleCamPreset, BTL_CAM_PRESET_03)
+    EVT_CALL(MoveBattleCamOver, 20)
+    EVT_CALL(SetAnimation, ACTOR_PLAYER, 0, ANIM_Mario1_Idle)
+    EVT_WAIT(30)
+    EVT_CALL(N(FadeBackgroundLighten))
+    EVT_EXEC_WAIT(N(PlayerGoHome))
+    EVT_RETURN
+    EVT_END
 };

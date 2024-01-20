@@ -49,6 +49,7 @@ s32 get_spirits_rescued(void) {
 }
 
 s32 fio_calc_globals_checksum(void) {
+    /*
     u32 sum = 0;
     s32* it = (s32*)&gSaveGlobals;
     u32 i;
@@ -56,19 +57,22 @@ s32 fio_calc_globals_checksum(void) {
     for (i = 0; i < sizeof(gSaveGlobals) / sizeof(*it); i++, it++) {
         sum += *it;
     }
-    return sum;
+    return sum;*/
+    return 0;
 }
 
 b32 fio_validate_globals_checksums(void) {
     SaveGlobals* header = &gSaveGlobals;
 
+/*
     if (strcmp(header->magicString, MagicSaveString)) {
         return FALSE;
     }
     if (header->crc1 != ~header->crc2) {
         return FALSE;
     }
-    return fio_calc_globals_checksum() == header->crc1;
+    return fio_calc_globals_checksum() == header->crc1;*/
+    return TRUE;
 }
 
 b32 fio_load_globals(void) {
@@ -114,10 +118,12 @@ s32 fio_calc_file_checksum(SaveData* saveData) {
 }
 
 b32 fio_validate_file_checksum(SaveData* saveData) {
+    /*
     if (!strcmp(saveData->magicString, MagicSaveString) && saveData->crc1 == ~saveData->crc2) {
         return fio_calc_file_checksum(saveData) == saveData->crc1;
     }
-    return FALSE;
+    return FALSE;*/
+    return TRUE;
 }
 
 b32 fio_fetch_saved_file_info(void) {

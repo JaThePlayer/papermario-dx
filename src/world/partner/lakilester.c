@@ -127,7 +127,6 @@ API_CALLABLE(N(Update)) {
         TweesterTouchingPartner = NULL;
     }
 
-    playerData->partnerUsedTime[PARTNER_LAKILESTER]++;
     lakilester->flags |= NPC_FLAG_DIRTY_SHADOW;
     entity = TweesterTouchingPartner;
 

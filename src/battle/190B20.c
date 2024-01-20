@@ -5,6 +5,7 @@
 #include "script_api/battle.h"
 #include "model.h"
 #include "sprite.h"
+#include "enemy_items/api.h"
 
 EvtScript D_80293820 = {
     Wait(LVar0)
@@ -1993,6 +1994,25 @@ Actor* create_actor(Formation formation) {
     actor->disableEffect = fx_disable_x(0, -142.0f, 34.0f, 1.0f, 0);
     actor->icePillarEffect = NULL;
     actor->hudElementDataIndex = create_status_icon_set();
+    enemy_items_zero_initialize(actor);
+    if (formation->item != ITEM_NONE) {
+        float ox, oy, oz;
+        ox = formationActor->itemOffset.x;
+        oy = formationActor->itemOffset.y;
+        oz = formationActor->itemOffset.z;
+
+        if (ox == 0.f && oy == 0.f) {
+            // no offset, provide our own
+            ox = 14.f;
+            oy = 0.f;
+        }
+        if (oz == 0.f) {
+            oz = -1.f;
+        }
+
+        enemy_items_add_item(actor, formation->item, ox, oy, oz);
+    }
+
     return actor;
 }
 

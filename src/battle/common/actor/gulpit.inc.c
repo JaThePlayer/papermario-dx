@@ -139,6 +139,7 @@ ActorBlueprint NAMESPACE = {
     .healthBarOffset = { 0, 0 },
     .statusIconOffset = { -3, 37 },
     .statusTextOffset = { 10, 45 },
+    .spPool = CURRENT_SP_POOL,
 };
 
 EvtScript N(EVS_Init) = {

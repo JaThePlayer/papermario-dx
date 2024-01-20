@@ -10,67 +10,74 @@ extern Stage A(kmr_04);
 extern Stage A(kmr_05);
 extern Stage A(kmr_06);
 
-Formation A(Formation_00) = {
-    { &A(goomba), .home = { .index = BTL_POS_GROUND_B }, .priority = 10 },
+Formation A(Formation_00) = { // kmr_05
+    ENEMY0(goomba),
+    ENEMY1_ITEM(goomba, ITEM_MUSHROOM)
 };
 
-Formation A(Formation_01) = {
-    { &A(goomba), .home = { .index = BTL_POS_GROUND_B }, .priority = 10 },
-    { &A(goomba), .home = { .index = BTL_POS_GROUND_C }, .priority = 9 },
+Formation A(Formation_01) = { // kmr_09
+    ENEMY0(goomba),
+    ENEMY1(goomba),
+    ENEMY_AIR2_ITEM(paragoomba, ITEM_MUSHROOM),
 };
 
-Formation A(Formation_02) = {
-    { &A(goomba), .home = { .index = BTL_POS_GROUND_A }, .priority = 10 },
-    { &A(goomba), .home = { .index = BTL_POS_GROUND_B }, .priority = 9 },
-    { &A(goomba), .home = { .index = BTL_POS_GROUND_C }, .priority = 8 },
+Formation A(Formation_02) = { // kmr_03
+    ENEMY0(goomba),
+    ENEMY1(spiked_goomba),
+    ENEMY2(goomba),
 };
 
-Formation A(Formation_03) = {
-    { &A(goomba), .home = { .index = BTL_POS_GROUND_B }, .priority = 10 },
-    { &A(paragoomba), .home = { .index = BTL_POS_AIR_C }, .priority = 9 },
+Formation A(Formation_03) = { // kmr_05
+    ENEMY0(goomba),
+    ENEMY_AIR1(paragoomba),
+    ENEMY2(goomba),
 };
 
-Formation A(Formation_04) = {
-    { &A(goomba), .home = { .index = BTL_POS_GROUND_A }, .priority = 10 },
-    { &A(goomba), .home = { .index = BTL_POS_GROUND_B }, .priority = 9 },
-    { &A(goomba), .home = { .index = BTL_POS_GROUND_C }, .priority = 8 },
-    { &A(goomba), .home = { .index = BTL_POS_GROUND_D }, .priority = 7 },
+Formation A(Formation_04) = { // kmr_09
+    ENEMY0(goomba),
+    ENEMY1(goomba),
+    ENEMY2(goomba),
+    ENEMY3(spiked_goomba),
 };
 
-Formation A(Formation_05) = {
-    { &A(goomba), .home = { .index = BTL_POS_GROUND_B }, .priority = 10 },
-    { &A(spiked_goomba), .home = { .index = BTL_POS_GROUND_C }, .priority = 9 },
+Formation A(Formation_05) = { // kmr_12
+    ENEMY0(goomba),
+    ENEMY1(spiked_goomba),
+    ENEMY_AIR2(paragoomba),
 };
 
-Formation A(Formation_06) = {
-    { &A(goomba), .home = { .index = BTL_POS_GROUND_A }, .priority = 10 },
-    { &A(paragoomba), .home = { .index = BTL_POS_AIR_B }, .priority = 9 },
-    { &A(goomba), .home = { .index = BTL_POS_GROUND_C }, .priority = 8 },
-    { &A(paragoomba), .home = { .index = BTL_POS_AIR_D }, .priority = 7 },
+Formation A(Formation_06) = { // placeholder?
+    ENEMY0(goomba),
+    ENEMY_AIR1(paragoomba),
+    ENEMY2(goomba),
+    ENEMY_AIR3(paragoomba),
 };
 
-Formation A(Formation_07) = {
-    { &A(paragoomba), .home = { .index = BTL_POS_AIR_B }, .priority = 10 },
+Formation A(Formation_07) = { // unused
+    ENEMY_AIR0(paragoomba),
+    ENEMY_AIR1(paragoomba),
 };
 
-Formation A(Formation_08) = {
-    { &A(paragoomba), .home = { .index = BTL_POS_AIR_B }, .priority = 10 },
-    { &A(paragoomba), .home = { .index = BTL_POS_AIR_C }, .priority = 9 },
+Formation A(Formation_08) = { // kmr_05
+    ENEMY_AIR0(paragoomba),
+    ENEMY_AIR1(paragoomba),
+    ENEMY_AIR2(paragoomba),
 };
 
-Formation A(Formation_09) = {
-    { &A(paragoomba), .home = { .index = BTL_POS_AIR_A }, .priority = 10 },
-    { &A(paragoomba), .home = { .index = BTL_POS_AIR_B }, .priority = 9 },
-    { &A(paragoomba), .home = { .index = BTL_POS_AIR_C }, .priority = 8 },
+Formation A(Formation_09) = { // kmr_06
+    ENEMY_AIR1(paragoomba),
+    ENEMY_AIR2(paragoomba),
+    ENEMY3_ITEM(spiked_goomba, ITEM_LIFE_SHROOM),
 };
 
-Formation A(Formation_0A) = {
-    { &A(spiked_goomba), .home = { .index = BTL_POS_GROUND_B }, .priority = 10 },
+Formation A(Formation_0A) = { // kmr_05
+    ENEMY0_ITEM(spiked_goomba, ITEM_LIFE_SHROOM),
 };
 
-Formation A(Formation_0B) = {
-    { &A(spiked_goomba), .home = { .index = BTL_POS_GROUND_B }, .priority = 10 },
-    { &A(goomba), .home = { .index = BTL_POS_GROUND_C }, .priority = 9 },
+Formation A(Formation_0B) = { // kmr_06
+    ENEMY0(spiked_goomba),
+    ENEMY1(spiked_goomba),
+    ENEMY_AIR2_ITEM(paragoomba, ITEM_THUNDER_BOLT),
 };
 
 BattleList A(Formations) = {

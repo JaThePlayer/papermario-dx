@@ -3,6 +3,10 @@
 
 #include "common.h"
 #include "message_ids.h"
+#include "misc_patches/sp_pools.h"
+#include "misc_patches/easy_formation.h"
+#include "enemy_items/common_tables.h"
+#include "enemy_items/api.h"
 
 // Terminates foreground model lists
 #define STAGE_MODEL_LIST_END 0
@@ -149,7 +153,9 @@ typedef struct ActorBlueprint {
     /* 0x22 */ Vec2b healthBarOffset;
     /* 0x24 */ Vec2b statusIconOffset;
     /* 0x26 */ Vec2b statusTextOffset;
-} ActorBlueprint; // size = 0x28
+    /* new  */ u8 spPool;
+    /* new  */ Vec3f itemOffset;
+} ActorBlueprint; // size = 0x28 + u8 + Vec3f
 
 typedef struct FormationRow {
     /* 0x00 */ ActorBlueprint* actor;
@@ -162,6 +168,7 @@ typedef struct FormationRow {
     /* 0x10 */ s32 var1;
     /* 0x14 */ s32 var2;
     /* 0x18 */ s32 var3;
+    /* new  */ s16 item; // first held item
 } FormationRow; // size = 0x1C * n
 
 typedef FormationRow Formation[];

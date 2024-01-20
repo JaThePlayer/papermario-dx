@@ -1,6 +1,7 @@
 #include "common.h"
 #include "effects.h"
 #include "battle/battle.h"
+#include "enemy_items/api.h"
 
 extern s32 IsGroupHeal;
 extern s8 ApplyingBuff;
@@ -346,6 +347,7 @@ API_CALLABLE(SetHomePos) {
     z = evt_get_variable(script, *args++);
 
     actor = get_actor(actorID);
+    enemy_items_set_base_pos(actor, x, y, z);
     actor->homePos.x = x;
     actor->homePos.y = y;
     actor->homePos.z = z;
@@ -2065,7 +2067,7 @@ API_CALLABLE(SummonEnemy) {
             if (does_script_exist(actor2->takeTurnScriptID)) {
                 break;
             }
-            
+
             enemyIDs = battleStatus->enemyIDs;
             if (battleStatus->nextEnemyIndex == 0) {
                 numEnemies = 0;
@@ -2168,7 +2170,7 @@ API_CALLABLE(GetPartAnimInstanceID) {
     s32 outVar = *args++;
     Actor* actor;
     ActorPart* part;
-    
+
     if (actorID == ACTOR_SELF) {
         actorID = script->owner1.actorID;
     }

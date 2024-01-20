@@ -6,6 +6,12 @@
 #include "types.h"
 #include "evt.h"
 #include "enums.h"
+#include "enemy_items/config.h"
+
+typedef struct ActorHeldItem {
+    s32 itemID;
+    s32 itemEntityID;
+} ActorHeldItem;
 
 struct Evt;
 
@@ -328,7 +334,7 @@ typedef struct PlayerData {
     /* 0x014 */ struct PartnerData partners[12];
     /* 0x074 */ s16 keyItems[32];
     /* 0x0B4 */ s16 badges[128];
-    /* 0x1B4 */ s16 invItems[10];
+    /* 0x1B4 */ s16 invItems[20]; // was 10
     /* 0x1C8 */ s16 storedItems[32];
     /* 0x208 */ s16 equippedBadges[64];
     /* 0x288 */ s8 unused_288;
@@ -361,8 +367,8 @@ typedef struct PlayerData {
     /* 0x2BC */ u32 frameCounter; /* increases by 2 per frame */
     /* 0x2C0 */ u16 quizzesAnswered;
     /* 0x2C2 */ u16 quizzesCorrect;
-    /* 0x2C4 */ s32 partnerUnlockedTime[12];
-    /* 0x2F4 */ s32 partnerUsedTime[12];
+    /* 0x2C4 */ u8 spAreaPools[12 * 4]; // NEW: Stores how much SP was used up from the SP pool in each area, replaces a s32[12]
+    /* 0x2F4 */ s32 partnerUsedTime[12]; // useless, all setters removed now, safe for reuse :)
     /* 0x324 */ s32 tradeEventStartTime;
     /* 0x328 */ s32 droTreeHintTime;
     /* 0x32C */ u16 starPiecesCollected;
@@ -373,7 +379,7 @@ typedef struct PlayerData {
     /* 0x338 */ u32 smashGameTotal; /* all-time winnings, max = 99999 */
     /* 0x33C */ u16 smashGameRecord;
     /* 0x33E */ char pad_33E[2];
-    /* 0x340 */ char reserved[0xE8]; // unused
+    /* 0x340 */ char reserved[0xE8 - 20]; // unused, 20 bytes used up for 10 additional item slots
 } PlayerData; // size = 0x428
 
 typedef struct Trigger {
@@ -1952,6 +1958,7 @@ typedef struct Actor {
     /* 0x436 */ s16 hudElementDataIndex;
     /* 0x438 */ s32 loopingSoundID[2];
     /* 0x440 */ struct EffectInstance* disableEffect;
+    /* new   */ ActorHeldItem heldItems[MAX_ENEMY_ITEMS];
 } Actor; // size = 0x444
 
 typedef struct BackgroundHeader {

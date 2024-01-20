@@ -4,3 +4,4 @@
 #include "script_api/battle.h"
 
 #define AREA b_area_trd_part_1
+#define CURRENT_SP_POOL SP_POOL_KOOPA_BROS_FORT

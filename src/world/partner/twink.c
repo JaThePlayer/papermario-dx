@@ -33,7 +33,6 @@ API_CALLABLE(N(Update)) {
 
     partner_flying_update_player_tracking(twink);
     partner_flying_update_motion(twink);
-    playerData->partnerUsedTime[PARTNER_TWINK]++;
 
     return ApiStatus_BLOCK;
 }

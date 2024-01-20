@@ -3,6 +3,7 @@
 #include "battle/battle.h"
 #include "script_api/battle.h"
 #include "sprite/player.h"
+#include "enemy_items/api.h"
 
 extern EvtScript EVS_Enemy_Hit_Impl;
 extern EvtScript EVS_Enemy_SpinAround_Impl;
@@ -1694,7 +1695,58 @@ EvtScript EVS_Enemy_NoDamageHit = {
     End
 };
 
+EvtScript EnemyUseLifeShroom = {
+    #define itemEntity LVarC
+    EVT_CALL(UseIdleAnimation, ACTOR_SELF, FALSE)
+
+    EVT_IF_NE(LVar1, -00001)
+        EVT_CALL(SetAnimation, ACTOR_SELF, LVar0, LVar1)
+        EVT_WAIT(10)
+    EVT_END_IF
+
+    // create life shroom
+    EVT_CALL(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
+    EVT_CALL(SetItemPos, itemEntity, LVar0, LVar1, LVar2)
+
+    // make the life shroom fly up
+    EVT_LOOP(30)
+        EVT_ADDF(LVar1, EVT_FLOAT(1.0))
+        EVT_CALL(SetItemPos, itemEntity, LVar0, LVar1, LVar2)
+        EVT_WAIT(1)
+    EVT_END_LOOP
+
+    // sfx and fx
+    EVT_CALL(PlaySoundAtActor, ACTOR_SELF, SOUND_LIFE_SHROOM_CHIME)
+    EVT_ADD(LVar4, 15)
+    EVT_CALL(PlayEffect, EFFECT_ENERGY_IN_OUT, 3, LVar0, LVar1, LVar2, EVT_FLOAT(1.0), 0, 0, 0, 0, 0, 0, 0, 0)
+    EVT_SET(LVar0, LVarF)
+    EVT_LOOP(4)
+        EVT_CALL(SetItemFlags, itemEntity, 64, 1)
+        EVT_WAIT(2)
+        EVT_CALL(SetItemFlags, itemEntity, 64, 0)
+        EVT_WAIT(8)
+    EVT_END_LOOP
+    EVT_CALL(RemoveEffect, LVar0)
+    EVT_CALL(EnemyItems_RemoveHeldItem, ACTOR_SELF, LVarB)
+
+    // heal
+    EVT_CALL(SetTargetActor, ACTOR_SELF, ACTOR_SELF)
+    EVT_SET(LVarA, ITEM_LIFE_SHROOM)
+    EVT_EXEC_WAIT(EnemyItems_UseHealingItem)
+
+    EVT_CALL(UseIdleAnimation, ACTOR_SELF, TRUE)
+    EVT_RETURN
+    EVT_END
+    #undef itemEntity
+};
+
 EvtScript EVS_Enemy_Death = {
+    EVT_CALL(EnemyItems_GetFirstHeldItemWithID, ACTOR_SELF, ITEM_LIFE_SHROOM, LVarB, LVarC)
+    EVT_IF_NE(LVarB, -1)
+        EVT_EXEC_WAIT(EnemyUseLifeShroom)
+        EVT_RETURN
+    EVT_END_IF
+
     ExecWait(EVS_Enemy_DeathWithoutRemove)
     Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
     ExecWait(EVS_ForceNextTarget)
