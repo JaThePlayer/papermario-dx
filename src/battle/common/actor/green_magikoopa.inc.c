@@ -168,6 +168,7 @@ ActorBlueprint NAMESPACE = {
     .healthBarOffset = { 0, 0 },
     .statusIconOffset = { -10, 20 },
     .statusTextOffset = { 10, 32 },
+    .spPool = CURRENT_SP_POOL,
 };
 
 ActorBlueprint N(flying) = {
@@ -191,6 +192,7 @@ ActorBlueprint N(flying) = {
     .healthBarOffset = { 0, 0 },
     .statusIconOffset = { -25, 20 },
     .statusTextOffset = { 1, 34 },
+    .spPool = CURRENT_SP_POOL,
 };
 
 s32 N(GroundAnims)[] = {

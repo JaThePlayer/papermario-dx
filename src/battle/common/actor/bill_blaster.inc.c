@@ -105,6 +105,7 @@ ActorBlueprint NAMESPACE = {
     .healthBarOffset = { 8, 0 },
     .statusIconOffset = { -24, 20 },
     .statusTextOffset = { 5, 25 },
+    .spPool = CURRENT_SP_POOL,
 };
 
 s32 N(DefaultAnims)[] = {

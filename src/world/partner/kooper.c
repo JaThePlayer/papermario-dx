@@ -111,7 +111,6 @@ API_CALLABLE(N(Update)) {
         TweesterTouchingPartner = NULL;
     }
 
-    playerData->partnerUsedTime[PARTNER_KOOPER]++;
     entity = TweesterTouchingPartner;
 
     if (entity == NULL) {

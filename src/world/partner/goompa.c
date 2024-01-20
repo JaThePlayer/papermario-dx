@@ -44,7 +44,6 @@ API_CALLABLE(N(Update)) {
         TweesterTouchingPartner = NULL;
     }
 
-    playerData->partnerUsedTime[PARTNER_GOOMPA]++;
     entity = TweesterTouchingPartner;
 
     if (entity == NULL) {

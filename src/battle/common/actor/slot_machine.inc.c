@@ -125,6 +125,7 @@ ActorBlueprint N(slot_machine_stop) = {
     .healthBarOffset = { 0, 0 },
     .statusIconOffset = { -10, 20 },
     .statusTextOffset = { 10, 20 },
+    .spPool = CURRENT_SP_POOL,
 };
 
 ActorBlueprint N(slot_machine_start) = {
@@ -148,6 +149,7 @@ ActorBlueprint N(slot_machine_start) = {
     .healthBarOffset = { 0, 0 },
     .statusIconOffset = { -10, 20 },
     .statusTextOffset = { 10, 20 },
+    .spPool = CURRENT_SP_POOL,
 };
 
 API_CALLABLE(N(IsDemoBattle)) {

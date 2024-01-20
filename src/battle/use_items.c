@@ -162,6 +162,39 @@ API_CALLABLE(LoadItemScript) {
     return ApiStatus_DONE2;
 }
 
+// a clone of LoadItemScript, but without the side-effects
+// LoadItemScriptForEnemy(itemID), outputs to LVar0 and LVar1.
+API_CALLABLE(LoadItemScriptForEnemy) {
+    Bytecode* args = script->ptrReadPos;
+    s32 itemID = evt_get_variable(script, *args++);
+
+    ItemData* item = &gItemTable[itemID];
+    s32 i = 0;
+    s32* itemPtr;
+
+    itemPtr = &ItemKeys[0];
+    for (i = 0; *itemPtr != ITEM_NONE; i++, itemPtr++) {
+        if (*itemPtr == itemID) {
+            break;
+        }
+    }
+
+    if (*itemPtr == ITEM_NONE) {
+        if (item->typeFlags & ITEM_TYPE_FLAG_FOOD_OR_DRINK) {
+            i = 0;
+        } else {
+            i = 1;
+        }
+    }
+
+    dma_copy(gBattleItemTable[i].romStart, gBattleItemTable[i].romEnd, gBattleItemTable[i].vramStart);
+
+    script->varTablePtr[0] = gBattleItemTable[i].mainScript;
+    script->varTable[1] = FALSE;
+
+    return ApiStatus_DONE2;
+}
+
 API_CALLABLE(LoadMysteryItemScript) {
     BattleStatus* battleStatus = &gBattleStatus;
     Actor* actor = battleStatus->playerActor;

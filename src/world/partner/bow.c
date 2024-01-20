@@ -59,7 +59,6 @@ API_CALLABLE(N(Update)) {
     }
 
     entity = TweesterTouchingPartner;
-    playerData->partnerUsedTime[PARTNER_BOW]++;
 
     if (entity == NULL) {
         partner_flying_update_player_tracking(bow);

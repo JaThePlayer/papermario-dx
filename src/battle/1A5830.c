@@ -4,8 +4,19 @@
 #include "hud_element.h"
 #include "sprite.h"
 #include "dx/debug_menu.h"
+#include "enemy_items/api.h"
+#include "misc_patches/misc_patches.h"
+#include "misc_patches/sp_pools.h"
 
-s32 D_802946E0[] = { 100, 100, 100, 110, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130 };
+// SP % for given enemy count in battle
+s32 D_802946E0[] = {
+    100, // 0
+    100, 100, // 1,2
+    110, // 3
+    130, // 4
+    150, // 5
+    175, 175, 175, 175, 175, 175, 175, 175, 175 // 6+
+};
 
 s32 has_enchanted_part(Actor* actor) {
     ActorPart* partIt = actor->partsTable;
@@ -2597,6 +2608,9 @@ API_CALLABLE(SetTargetActor) {
 
     targetActorID = evt_get_variable(script, *args++);
     actor = get_actor(actorID);
+    if (targetActorID == ACTOR_SELF) {
+        targetActorID = script->owner1.actorID;
+    }
     actor->targetActorID = targetActorID;
     actor->targetPartID = 1;
     return ApiStatus_DONE2;
@@ -2696,6 +2710,7 @@ API_CALLABLE(RemoveActor) {
 
     currentEncounter->coinsEarned += actor->extraCoinBonus;
     currentEncounter->coinsEarned += actor->actorBlueprint->coinReward;
+    enemy_items_clear_items(actor);
     btl_delete_actor(actor);
     battleStatus->enemyActors[actorID & 0xFF] = NULL;
 
@@ -2708,10 +2723,12 @@ API_CALLABLE(DropStarPoints) {
     Bytecode* args = script->ptrReadPos;
     Actor* dropper;
     f32 playerLevel;
-    f32 enemyLevel;
+    //f32 enemyLevel;
+    s32 enemyLevel;
     s32 actorID;
     f32 ntd;
     s32 numToDrop;
+    u8 poolId;
 
     actorID = evt_get_variable(script, *args++);
     if (actorID == ACTOR_SELF) {
@@ -2719,6 +2736,32 @@ API_CALLABLE(DropStarPoints) {
     }
     dropper = get_actor(actorID);
 
+    poolId = dropper->actorBlueprint->spPool;
+    enemyLevel = dropper->actorBlueprint->level;
+    if (enemyLevel == 0) {
+        enemyLevel = 1;
+    }
+
+    playerLevel = playerData->level;
+
+    if (playerData->level >= LEVEL_CAP) {
+        goto end;
+    }
+
+    if (sp_pool_is_pooled(poolId)) {
+        f32 amt = enemyLevel;
+        // pooled sp is used for enemies, factor in enemy count
+        amt *= D_802946E0[battleStatus->initialEnemyCount];
+        // round up
+        amt = (amt + 50.0f) / 100.0f;
+
+        numToDrop = sp_pool_use(poolId, amt);
+    } else {
+        // unpooled sp is used for bosses, so just give the direct number here
+        numToDrop = enemyLevel;
+    }
+
+/*
     enemyLevel = dropper->actorBlueprint->level;
     if (dropper->actorBlueprint->level == 0.0f) {
         enemyLevel = 1.0f;
@@ -2734,9 +2777,9 @@ API_CALLABLE(DropStarPoints) {
         ntd = ((enemyLevel - playerLevel) * 0.5f) * D_802946E0[battleStatus->initialEnemyCount];
         ntd = (ntd + 50.0f) / 100.0f;
     }
-    numToDrop = ntd;
+    numToDrop = ntd;*/
 
-    if (playerData->level < 27) {
+    if (playerData->level < LEVEL_CAP) {
         s32 spawnMode;
         s32 i;
 
@@ -2755,6 +2798,7 @@ API_CALLABLE(DropStarPoints) {
         battleStatus->pendingStarPoints += numToDrop;
     }
 
+    end:
     gBattleStatus.flags1 |= BS_FLAGS1_STAR_POINTS_DROPPED;
     return ApiStatus_DONE2;
 }

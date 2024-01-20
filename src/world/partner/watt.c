@@ -112,7 +112,6 @@ API_CALLABLE(N(Update)) {
         }
 
         entity = TweesterTouchingPartner;
-        playerData->partnerUsedTime[PARTNER_WATT]++;
 
         if (entity == NULL) {
             N(create_static_effect)(watt);

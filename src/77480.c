@@ -1319,17 +1319,7 @@ void clear_interact_prompt(void) {
 //END player/prompts.c
 
 void update_partner_timers(void) {
-    PlayerData* playerData = &gPlayerData;
-
-    if (!gGameStatusPtr->isBattle) {
-        s32 i;
-
-        for (i = 1; i < ARRAY_COUNT(playerData->partnerUnlockedTime); i++) {
-            if (playerData->partners[i].enabled) {
-                playerData->partnerUnlockedTime[i]++;
-            }
-        }
-    }
+    // now noop
 }
 
 //BEGIN player/render.c

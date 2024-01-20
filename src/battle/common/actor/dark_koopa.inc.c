@@ -108,6 +108,7 @@ ActorBlueprint NAMESPACE = {
     .healthBarOffset = { 0, 0 },
     .statusIconOffset = { -15, 32 },
     .statusTextOffset = { 5, 32 },
+    .spPool = CURRENT_SP_POOL,
 };
 
 s32 N(KoopaAnims)[] = {

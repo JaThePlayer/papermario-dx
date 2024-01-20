@@ -207,6 +207,7 @@ ActorBlueprint NAMESPACE = {
     .healthBarOffset = { 0, 0 },
     .statusIconOffset = { -10, 20 },
     .statusTextOffset = { 10, 32 },
+    .spPool = CURRENT_SP_POOL,
 };
 
 ActorBlueprint N(flying) = {
@@ -230,6 +231,7 @@ ActorBlueprint N(flying) = {
     .healthBarOffset = { 0, 0 },
     .statusIconOffset = { -25, 20 },
     .statusTextOffset = { 1, 34 },
+    .spPool = CURRENT_SP_POOL,
 };
 
 s32 N(GroundAnims)[] = {
@@ -1393,6 +1395,7 @@ ActorBlueprint N(clone) = {
     .healthBarOffset = { 0, 0 },
     .statusIconOffset = { -10, 20 },
     .statusTextOffset = { 10, 32 },
+    .spPool = CURRENT_SP_POOL,
 };
 
 ActorBlueprint N(clone_flying) = {
@@ -1416,6 +1419,7 @@ ActorBlueprint N(clone_flying) = {
     .healthBarOffset = { 0, 0 },
     .statusIconOffset = { -25, 20 },
     .statusTextOffset = { 1, 34 },
+    .spPool = CURRENT_SP_POOL,
 };
 
 Vec3i N(SummonPos) = { NPC_DISPOSE_LOCATION };

@@ -153,6 +153,7 @@ ActorBlueprint NAMESPACE = {
     .healthBarOffset = { 0, 0 },
     .statusIconOffset = { -10, 25 },
     .statusTextOffset = { 10, 25 },
+    .spPool = CURRENT_SP_POOL,
 };
 
 ActorBlueprint N(coin) = {
@@ -176,6 +177,7 @@ ActorBlueprint N(coin) = {
     .healthBarOffset = { 0, 0 },
     .statusIconOffset = { -10, 25 },
     .statusTextOffset = { 10, 25 },
+    .spPool = CURRENT_SP_POOL,
 };
 
 Vec3i N(CoinPos) = { NPC_DISPOSE_LOCATION };

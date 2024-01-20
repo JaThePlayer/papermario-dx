@@ -4,3 +4,4 @@
 #include "script_api/battle.h"
 
 #define AREA b_area_flo
+#define CURRENT_SP_POOL SP_POOL_FLOWER_FIELDS

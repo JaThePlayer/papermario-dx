@@ -129,8 +129,10 @@ void clear_player_data(void) {
     playerData->quizzesAnswered = 0;
     playerData->quizzesCorrect = 0;
 
-    for (i = 0; i < ARRAY_COUNT(playerData->partnerUnlockedTime); i++) {
-        playerData->partnerUnlockedTime[i] = 0;
+    for (i = 0; i < ARRAY_COUNT(playerData->spAreaPools); i++) {
+        playerData->spAreaPools[i] = 0;
+    }
+    for (i = 0; i < ARRAY_COUNT(playerData->partnerUsedTime); i++) {
         playerData->partnerUsedTime[i] = 0;
     }
 
