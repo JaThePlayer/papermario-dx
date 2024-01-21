@@ -7,6 +7,7 @@
 #include "misc_patches/easy_formation.h"
 #include "enemy_items/common_tables.h"
 #include "enemy_items/api.h"
+#include "misc_patches/qol.h"
 
 // Terminates foreground model lists
 #define STAGE_MODEL_LIST_END 0

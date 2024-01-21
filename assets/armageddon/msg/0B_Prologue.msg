@@ -439,15 +439,7 @@
 	But listen here, and listen well.[BR]
 	You'll only be able to do it if[BR]
 	you're wearing the Badge.[BR]
-	[Wait][Next]
-	You'd better try it first.[BR]
-	[Pause 10]Putting Badges on and taking[BR]
-	them off is a vital skill. [BR]
-	[Wait][Next]
-	Would you like a quick lesson in[BR]
-	how to use the Badges you[BR]
-	collect during your travels?[BR]
-	[Yield][End]
+	[Wait][End]
 }
 
 #message:0B:(CH0_002E) {

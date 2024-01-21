@@ -2,7 +2,7 @@
 #include "common.h"
 
 u8 sp_pool_caps[SP_POOL_COUNT] = {
-    10, // SP_POOL_PROLOGUE
+    60, // SP_POOL_PROLOGUE
     60, // SP_POOL_PLEASANT_PATH
 };
 

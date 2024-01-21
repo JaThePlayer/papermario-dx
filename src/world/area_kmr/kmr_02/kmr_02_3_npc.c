@@ -372,27 +372,29 @@ API_CALLABLE(N(CloseStatusBar)) {
 }
 
 EvtScript N(EVS_PromptForBadgeTutorial) = {
-    Call(SpeakToPlayer, NPC_PARTNER, ANIM_Goompa_Talk, ANIM_Goompa_Idle, 0, MSG_CH0_002D)
-    Call(ShowChoice, MSG_Choice_0013)
-    IfEq(LVar0, 1)
-        Call(ContinueSpeech, NPC_PARTNER, ANIM_Goompa_Talk, ANIM_Goompa_Idle, 0, MSG_CH0_002E)
-        Call(ShowChoice, MSG_Choice_0013)
-        IfEq(LVar0, 1)
-            Call(ContinueSpeech, NPC_PARTNER, ANIM_Goompa_Talk, ANIM_Goompa_Idle, 0, MSG_CH0_002F)
-            Return
-        EndIf
-    EndIf
-    Call(ContinueSpeech, NPC_PARTNER, ANIM_Goompa_Talk, ANIM_Goompa_Idle, 0, MSG_CH0_0030)
-    Wait(10)
-    Call(N(WaitForStartInput))
-    Call(EndSpeech, NPC_PARTNER, ANIM_Goompa_Talk, ANIM_Goompa_Idle, 0)
-    Wait(10)
-    Set(GF_Tutorial_Badges, TRUE)
-    Call(N(OpenPauseMenu))
-    Call(N(CloseStatusBar))
-    Set(GF_Tutorial_Badges, FALSE)
-    Return
-    End
+    EVT_CALL(SpeakToPlayer, NPC_PARTNER, ANIM_Goompa_Talk, ANIM_Goompa_Idle, 0, MSG_CH0_002D)
+    /*
+    EVT_CALL(ShowChoice, MSG_Choice_0013)
+    EVT_IF_EQ(LVar0, 1)
+        EVT_CALL(ContinueSpeech, NPC_PARTNER, ANIM_Goompa_Talk, ANIM_Goompa_Idle, 0, MSG_CH0_002E)
+        EVT_CALL(ShowChoice, MSG_Choice_0013)
+        EVT_IF_EQ(LVar0, 1)
+            EVT_CALL(ContinueSpeech, NPC_PARTNER, ANIM_Goompa_Talk, ANIM_Goompa_Idle, 0, MSG_CH0_002F)
+            EVT_RETURN
+        EVT_END_IF
+    EVT_END_IF
+    EVT_CALL(ContinueSpeech, NPC_PARTNER, ANIM_Goompa_Talk, ANIM_Goompa_Idle, 0, MSG_CH0_0030)
+    EVT_WAIT(10)
+    EVT_CALL(N(WaitForStartInput))
+    EVT_CALL(EndSpeech, NPC_PARTNER, ANIM_Goompa_Talk, ANIM_Goompa_Idle, 0)
+    EVT_WAIT(10)
+    EVT_SET(GF_Tutorial_Badges, TRUE)
+    EVT_CALL(N(OpenPauseMenu))
+    EVT_CALL(N(CloseStatusBar))
+    EVT_SET(GF_Tutorial_Badges, FALSE)
+    */
+    EVT_RETURN
+    EVT_END
 };
 
 EvtScript N(EVS_ReturnToVillage) = {
