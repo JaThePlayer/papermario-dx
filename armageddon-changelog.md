@@ -2,7 +2,8 @@
 
 - Star Point Pools
 - Enemy Items
-- Raised Level Cap (unimplemented outside of one place and misc_patches/mish_patches.h define)
+- Food Poisoning - can only use 1 of each healing item type per battle
+- Raised Level Cap (unimplemented outside of SP calculations and misc_patches/mish_patches.h define)
 
 ## Minor
 - Hammer first strikes deal full damage

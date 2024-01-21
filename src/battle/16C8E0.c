@@ -5,6 +5,7 @@
 #include "script_api/battle.h"
 #include "sprite.h"
 #include "effects.h"
+#include "misc_patches/food_poisoning.h"
 
 f32 D_802809F0 = 0.0f;
 s8 D_802809F4 = 0;
@@ -233,6 +234,8 @@ void initialize_battle(void) {
     if (gBattleStatus.flags2 & BS_FLAGS2_PEACH_BATTLE) {
         playerData->curPartner = PARTNER_TWINK;
     }
+
+    food_poison_clear();
 }
 
 void func_8023E3FC(void) {
