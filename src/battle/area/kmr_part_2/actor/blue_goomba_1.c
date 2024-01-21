@@ -22,10 +22,6 @@ enum N(ActorVars) {
     AVAR_Unused     = 1,
 };
 
-enum N(ActorParams) {
-    DMG_HEADBONK    = 1,
-};
-
 s32 N(DefenseTable)[] = {
     ELEMENT_NORMAL,   0,
     ELEMENT_END,
@@ -299,176 +295,12 @@ EvtScript N(EVS_HandleEvent) = {
 
 #include "common/CalculateArcsinDeg.inc.c"
 
+#include "blue_goomba_shared.inc.c"
+
 EvtScript N(EVS_TakeTurn_Inner) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
-    Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
-    Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
-    Call(UseBattleCamPreset, BTL_CAM_ENEMY_APPROACH)
-    Call(BattleCamTargetActor, ACTOR_SELF)
-    Call(func_8024ECF8, BTL_CAM_MODEY_MINUS_1, BTL_CAM_MODEX_1, FALSE)
-    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_GoombaBros_Blue_Run)
-    Call(SetGoalToTarget, ACTOR_SELF)
-    Call(AddGoalPos, ACTOR_SELF, 50, 0, 0)
-    Call(SetActorSpeed, ACTOR_SELF, Float(6.0))
-    Call(RunToGoal, ACTOR_SELF, 0, FALSE)
-    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_GoombaBros_Blue_Idle)
-    Call(SetActorDispOffset, ACTOR_SELF, 0, -1, 0)
-    Wait(1)
-    Call(SetActorDispOffset, ACTOR_SELF, 0, -2, 0)
-    Wait(5)
-    Call(SetActorDispOffset, ACTOR_SELF, 0, 0, 0)
-    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_GoombaBros_Blue_Midair)
-    Call(EnemyTestTarget, ACTOR_SELF, LVar0, 0, 0, 1, BS_FLAGS1_INCLUDE_POWER_UPS)
-    Switch(LVar0)
-        CaseOrEq(HIT_RESULT_MISS)
-        CaseOrEq(HIT_RESULT_LUCKY)
-            Set(LVarA, LVar0)
-            Call(SetGoalToTarget, ACTOR_SELF)
-            Call(GetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Sub(LVar0, 10)
-            Set(LVar1, 10)
-            Add(LVar2, 3)
-            Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Call(SetActorJumpGravity, ACTOR_SELF, Float(1.2))
-            Thread
-                Call(GetActorPos, ACTOR_SELF, LVar1, LVar2, LVar0)
-                Set(LVar0, 0)
-                Loop(16)
-                    Call(GetActorPos, ACTOR_SELF, LVar4, LVar5, LVar6)
-                    Call(N(CalculateArcsinDeg), LVar1, LVar2, LVar4, LVar5, LVar0)
-                    Call(SetActorRotation, ACTOR_SELF, 0, 0, LVar0)
-                    Set(LVar1, LVar4)
-                    Set(LVar2, LVar5)
-                    Set(LVar3, LVar6)
-                    Wait(1)
-                EndLoop
-            EndThread
-            Thread
-                Wait(6)
-                Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_GoombaBros_Blue_Midair)
-            EndThread
-            Call(JumpToGoal, ACTOR_SELF, 16, FALSE, TRUE, FALSE)
-            Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_GoombaBros_Blue_Sleep)
-            Call(SetActorScale, ACTOR_SELF, Float(1.1), Float(0.8), Float(1.0))
-            Call(SetActorDispOffset, ACTOR_SELF, 0, 5, 0)
-            Wait(1)
-            Call(SetActorScale, ACTOR_SELF, Float(1.3), Float(0.5), Float(1.0))
-            Call(SetActorDispOffset, ACTOR_SELF, 0, -2, 0)
-            Wait(1)
-            Call(SetActorScale, ACTOR_SELF, Float(1.0), Float(1.0), Float(1.0))
-            Call(SetActorDispOffset, ACTOR_SELF, 0, 7, 0)
-            Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_GoombaBros_Blue_Hurt)
-            Wait(5)
-            IfEq(LVarA, HIT_RESULT_LUCKY)
-                Call(EnemyTestTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_TRIGGER_LUCKY, 0, 0, 0)
-            EndIf
-            Wait(5)
-            Call(SetActorDispOffset, ACTOR_SELF, 0, 0, 0)
-            Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_GoombaBros_Blue_Midair)
-            Call(SetGoalToTarget, ACTOR_SELF)
-            Call(GetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Add(LVar0, 20)
-            Set(LVar1, 0)
-            Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Call(SetActorJumpGravity, ACTOR_SELF, Float(2.0))
-            Thread
-                Wait(4)
-                Set(LVar0, 180)
-                Loop(4)
-                    Sub(LVar0, 45)
-                    Call(SetActorRotation, ACTOR_SELF, 0, 0, LVar0)
-                    Wait(1)
-                EndLoop
-                Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_GoombaBros_Blue_Midair)
-            EndThread
-            Call(JumpToGoal, ACTOR_SELF, 15, FALSE, TRUE, FALSE)
-            Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_GoombaBros_Blue_Dizzy)
-            Wait(5)
-            Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
-            Call(YieldTurn)
-            Call(SetActorYaw, ACTOR_SELF, 180)
-            Call(AddActorDecoration, ACTOR_SELF, PRT_MAIN, 0, ACTOR_DECORATION_SWEAT)
-            Call(SetAnimationRate, ACTOR_SELF, PRT_MAIN, Float(2.0))
-            Call(SetGoalToHome, ACTOR_SELF)
-            Call(SetActorSpeed, ACTOR_SELF, Float(8.0))
-            Call(RunToGoal, ACTOR_SELF, 0, FALSE)
-            Call(SetAnimationRate, ACTOR_SELF, PRT_MAIN, Float(1.0))
-            Call(SetActorYaw, ACTOR_SELF, 0)
-            Wait(5)
-            Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_GoombaBros_Blue_Idle)
-            Call(SetActorJumpGravity, ACTOR_SELF, Float(1.6))
-            Call(JumpToGoal, ACTOR_SELF, 5, FALSE, TRUE, FALSE)
-            Call(RemoveActorDecoration, ACTOR_SELF, PRT_MAIN, 0)
-            Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-            Call(UseIdleAnimation, ACTOR_SELF, TRUE)
-            Return
-        EndCaseGroup
-        CaseDefault
-            Call(SetGoalToTarget, ACTOR_SELF)
-            Call(SetActorJumpGravity, ACTOR_SELF, Float(1.2))
-            Thread
-                Call(GetActorPos, ACTOR_SELF, LVar1, LVar2, LVar0)
-                Set(LVar0, 0)
-                Loop(16)
-                    Call(GetActorPos, ACTOR_SELF, LVar4, LVar5, LVar6)
-                    Call(N(CalculateArcsinDeg), LVar1, LVar2, LVar4, LVar5, LVar0)
-                    Call(SetActorRotation, ACTOR_SELF, 0, 0, LVar0)
-                    Set(LVar1, LVar4)
-                    Set(LVar2, LVar5)
-                    Set(LVar3, LVar6)
-                    Wait(1)
-                EndLoop
-            EndThread
-            Thread
-                Wait(6)
-                Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_GoombaBros_Blue_Midair)
-            EndThread
-            Call(JumpToGoal, ACTOR_SELF, 16, FALSE, TRUE, FALSE)
-            Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_GoombaBros_Blue_Midair)
-            Call(SetActorScale, ACTOR_SELF, Float(1.1), Float(0.8), Float(1.0))
-            Wait(1)
-            Call(SetActorScale, ACTOR_SELF, Float(1.3), Float(0.5), Float(1.0))
-            Wait(1)
-    EndSwitch
-    Call(EnemyDamageTarget, ACTOR_SELF, LVar0, 0, 0, 0, DMG_HEADBONK, BS_FLAGS1_TRIGGER_EVENTS)
-    Switch(LVar0)
-        CaseOrEq(HIT_RESULT_HIT)
-        CaseOrEq(HIT_RESULT_NO_DAMAGE)
-            Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
-            Call(SetActorScale, ACTOR_SELF, Float(1.1), Float(0.8), Float(1.0))
-            Wait(1)
-            Call(SetActorScale, ACTOR_SELF, Float(1.0), Float(1.0), Float(1.0))
-            Wait(1)
-            Call(SetActorRotation, ACTOR_SELF, 0, 0, 0)
-            Call(SetActorDispOffset, ACTOR_SELF, 0, 0, 0)
-            Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_GoombaBros_Blue_Idle)
-            Call(GetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Add(LVar0, 40)
-            Set(LVar1, 0)
-            Call(SetActorJumpGravity, ACTOR_SELF, Float(1.8))
-            Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Call(JumpToGoal, ACTOR_SELF, 10, FALSE, TRUE, FALSE)
-            Add(LVar0, 30)
-            Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Call(JumpToGoal, ACTOR_SELF, 8, FALSE, TRUE, FALSE)
-            Add(LVar0, 20)
-            Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Call(JumpToGoal, ACTOR_SELF, 6, FALSE, TRUE, FALSE)
-            Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_GoombaBros_Blue_Idle)
-            Wait(3)
-            Call(YieldTurn)
-            Call(SetAnimationRate, ACTOR_SELF, PRT_MAIN, Float(2.0))
-            Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_GoombaBros_Blue_Run)
-            Call(SetGoalToHome, ACTOR_SELF)
-            Call(SetActorSpeed, ACTOR_SELF, Float(8.0))
-            Call(RunToGoal, ACTOR_SELF, 0, FALSE)
-            Call(SetAnimationRate, ACTOR_SELF, PRT_MAIN, Float(1.0))
-        EndCaseGroup
-    EndSwitch
-    Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
-    Return
-    End
+    EVT_EXEC_WAIT(N(Headbonk))
+    EVT_RETURN
+    EVT_END
 };
 
 EvtScript N(EVS_Init) = {

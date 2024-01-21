@@ -359,28 +359,26 @@ EvtScript N(EVS_HandleEvent) = {
 };
 
 EvtScript N(EVS_TakeTurn) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
-    Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
-    Call(SetActorDispOffset, ACTOR_SELF, 0, 0, 0)
-    Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
-    Call(SetGoalToTarget, ACTOR_SELF)
-    Call(GetStatusFlags, ACTOR_SELF, LVar0)
-    IfNotFlag(LVar0, STATUS_FLAG_SHRINK)
-        Call(GetActorVar, ACTOR_TREE, AVAR_TREE_DELAY, LVar0)
-        IfNe(LVar0, 0)
-            Call(RandInt, 100, LVar1)
-            IfLt(LVar1, 60)
-                Sub(LVar0, 1)
-                Call(SetActorVar, ACTOR_TREE, AVAR_TREE_DELAY, LVar0)
-                ExecWait(N(EVS_Attack_GroundStomp))
-                Return
-            EndIf
-        EndIf
-    EndIf
-    ExecWait(N(EVS_Attack_SpinSwipe))
-    Return
-    Return
-    End
+    EVT_CALL(UseIdleAnimation, ACTOR_SELF, FALSE)
+    EVT_CALL(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
+    EVT_CALL(SetActorDispOffset, ACTOR_SELF, 0, 0, 0)
+    EVT_CALL(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
+    EVT_CALL(SetGoalToTarget, ACTOR_SELF)
+    EVT_CALL(GetStatusFlags, ACTOR_SELF, LVar0)
+    EVT_IF_NOT_FLAG(LVar0, STATUS_FLAG_SHRINK)
+        EVT_CALL(GetActorVar, ACTOR_TREE, AVAR_TREE_DELAY, LVar0)
+        EVT_IF_NE(LVar0, 0)
+            // always drop the goomnuts if possible
+            EVT_SUB(LVar0, 1)
+            EVT_CALL(SetActorVar, ACTOR_TREE, AVAR_TREE_DELAY, LVar0)
+            EVT_EXEC_WAIT(N(EVS_Attack_GroundStomp))
+            EVT_RETURN
+        EVT_END_IF
+    EVT_END_IF
+    EVT_EXEC_WAIT(N(EVS_Attack_SpinSwipe))
+    EVT_RETURN
+    EVT_RETURN
+    EVT_END
 };
 
 EvtScript N(EVS_Attack_SpinSwipe) = {
