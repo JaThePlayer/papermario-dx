@@ -237,7 +237,7 @@ EvtScript N(EVS_Init) = {
     Call(SetActorVar, ACTOR_SELF, AVAR_JrTroopa_PoweredUp, FALSE)
     Call(SetActorVar, ACTOR_SELF, AVAR_AttackDamage, DMG_INITIAL)
     Call(SetActorVar, ACTOR_SELF, AVAR_JustGettingStarted, FALSE)
-    EVT_CALL(EnemyItems_AddItem, ACTOR_SELF, ITEM_THUNDER_BOLT, EVT_FLOAT(14.0), EVT_FLOAT(0.0), EVT_FLOAT(-1.0))
+    Call(EnemyItems_AddItem, ACTOR_SELF, ITEM_THUNDER_BOLT, Float(14.0), Float(0.0), Float(-1.0))
     Return
     End
 };
@@ -471,38 +471,38 @@ EvtScript N(EVS_HandlePhase) = {
                 Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
             EndIf
             // trying showing the scene where Jr Troopa powers up
-            EVT_CALL(GetActorVar, ACTOR_SELF, AVAR_JrTroopa_PoweredUp, LVar0)
-            EVT_IF_FALSE(LVar0)
-                EVT_CALL(GetActorHP, ACTOR_SELF, LVar0)
-                EVT_IF_LE(LVar0, 2)
-                    EVT_CALL(SetActorVar, ACTOR_SELF, AVAR_JrTroopa_PoweredUp, TRUE)
-                    EVT_CALL(UseIdleAnimation, ACTOR_PARTNER, FALSE)
-                    EVT_CALL(ActorSpeak, MSG_CH0_00B2, ACTOR_PARTNER, 0, ANIM_Goompa_Talk, ANIM_Goompa_Idle)
-                    EVT_CALL(UseIdleAnimation, ACTOR_PARTNER, TRUE)
-                    EVT_EXEC_WAIT(N(EVS_Cam_FocusOnJrTroopa))
+            Call(GetActorVar, ACTOR_SELF, AVAR_JrTroopa_PoweredUp, LVar0)
+            IfFalse(LVar0)
+                Call(GetActorHP, ACTOR_SELF, LVar0)
+                IfLe(LVar0, 2)
+                    Call(SetActorVar, ACTOR_SELF, AVAR_JrTroopa_PoweredUp, TRUE)
+                    Call(UseIdleAnimation, ACTOR_PARTNER, FALSE)
+                    Call(ActorSpeak, MSG_CH0_00B2, ACTOR_PARTNER, 0, ANIM_Goompa_Talk, ANIM_Goompa_Idle)
+                    Call(UseIdleAnimation, ACTOR_PARTNER, TRUE)
+                    ExecWait(N(EVS_Cam_FocusOnJrTroopa))
                     // NEW: use thunder bolt
-                    EVT_CALL(ActorSpeak, MSG_JrTroopa1_UseThunderBolt, ACTOR_SELF, PRT_MAIN, ANIM_JrTroopa_Talk, ANIM_JrTroopa_Idle)
-                    EVT_EXEC_WAIT(EnemyItems_TryUseHeldItem)
-                    EVT_EXEC_WAIT(N(EVS_Cam_FocusOnJrTroopa))
+                    Call(ActorSpeak, MSG_JrTroopa1_UseThunderBolt, ACTOR_SELF, PRT_MAIN, ANIM_JrTroopa_Talk, ANIM_JrTroopa_Idle)
+                    ExecWait(EnemyItems_TryUseHeldItem)
+                    ExecWait(N(EVS_Cam_FocusOnJrTroopa))
                     // end new
 
-                    EVT_CALL(ActorSpeak, MSG_CH0_00B3, ACTOR_SELF, PRT_MAIN, ANIM_JrTroopa_Talk, ANIM_JrTroopa_Idle)
-                    EVT_CALL(PlaySoundAtActor, ACTOR_SELF, SOUND_JR_TROOPA_TRANSFORM)
-                    EVT_CALL(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_JrTroopa_ChargeArmsUp)
-                    EVT_CALL(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-                    EVT_ADD(LVar1, 16)
-                    EVT_PLAY_EFFECT(EFFECT_GATHER_ENERGY_PINK, 0, LVar0, LVar1, LVar2, 1, 30, 0)
-                    EVT_PLAY_EFFECT(EFFECT_GATHER_ENERGY_PINK, 1, LVar0, LVar1, LVar2, 1, 30, 0)
-                    EVT_WAIT(30)
-                    EVT_WAIT(20)
-                    EVT_CALL(SetActorVar, ACTOR_SELF, AVAR_AttackDamage, DMG_FULL_POWER)
-                    EVT_CALL(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_JrTroopa_Idle)
-                    EVT_WAIT(20)
-                EVT_END_IF
-            EVT_END_IF
-    EVT_END_SWITCH
-    EVT_CALL(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-    EVT_CALL(UseIdleAnimation, ACTOR_SELF, TRUE)
-    EVT_RETURN
-    EVT_END
+                    Call(ActorSpeak, MSG_CH0_00B3, ACTOR_SELF, PRT_MAIN, ANIM_JrTroopa_Talk, ANIM_JrTroopa_Idle)
+                    Call(PlaySoundAtActor, ACTOR_SELF, SOUND_JR_TROOPA_TRANSFORM)
+                    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_JrTroopa_ChargeArmsUp)
+                    Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
+                    Add(LVar1, 16)
+                    PlayEffect(EFFECT_GATHER_ENERGY_PINK, 0, LVar0, LVar1, LVar2, 1, 30, 0)
+                    PlayEffect(EFFECT_GATHER_ENERGY_PINK, 1, LVar0, LVar1, LVar2, 1, 30, 0)
+                    Wait(30)
+                    Wait(20)
+                    Call(SetActorVar, ACTOR_SELF, AVAR_AttackDamage, DMG_FULL_POWER)
+                    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_JrTroopa_Idle)
+                    Wait(20)
+                EndIf
+            EndIf
+    EndSwitch
+    Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
+    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Return
+    End
 };

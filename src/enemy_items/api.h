@@ -94,19 +94,19 @@ extern EvtScript EnemyItems_TryUseHeldItem_WithAI;
 
 // Handles calling the default item use AI, and returns from the Evt if an item was used
 #define STANDARD_ITEM_USE_AI() \
-    EVT_EXEC_WAIT(EnemyItems_TryUseHeldItem_WithAI) \
-    EVT_IF_NE(LVar0, 0) \
-        EVT_RETURN \
-    EVT_END_IF
+    ExecWait(EnemyItems_TryUseHeldItem_WithAI) \
+    IfNe(LVar0, 0) \
+        Return \
+    EndIf
 
-#define GIVE_ITEM(pool) EVT_CALL(EnemyItems_AddRandomItem, ACTOR_SELF, (s32)&pool, EVT_FLOAT(14.0), EVT_FLOAT(0.0), EVT_FLOAT(-1.0))
+#define GIVE_ITEM(pool) Call(EnemyItems_AddRandomItem, ACTOR_SELF, (s32)&pool, Float(14.0), Float(0.0), Float(-1.0))
 
 // Handles calling EnemyItems_UseHealingItem, should be the first thing called in a healing item script
 #define STANDARD_HEALING_ITEM_ENEMY_USE() \
-    EVT_CALL(EnemyItems_IsCalledByEnemy, LVarD) \
-    EVT_IF_EQ(LVarD, 1) \
-        EVT_EXEC_WAIT(EnemyItems_UseHealingItem) \
-        EVT_RETURN \
-    EVT_END_IF \
+    Call(EnemyItems_IsCalledByEnemy, LVarD) \
+    IfEq(LVarD, 1) \
+        ExecWait(EnemyItems_UseHealingItem) \
+        Return \
+    EndIf \
 
 #endif

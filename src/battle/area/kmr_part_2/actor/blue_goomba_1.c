@@ -298,9 +298,9 @@ EvtScript N(EVS_HandleEvent) = {
 #include "blue_goomba_shared.inc.c"
 
 EvtScript N(EVS_TakeTurn_Inner) = {
-    EVT_EXEC_WAIT(N(Headbonk))
-    EVT_RETURN
-    EVT_END
+    ExecWait(N(Headbonk))
+    Return
+    End
 };
 
 EvtScript N(EVS_Init) = {

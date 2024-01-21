@@ -113,12 +113,12 @@ s32 N(ShuffleAnims)[] = {
 };
 
 EvtScript N(EVS_Init_Inner) = {
-    EVT_CALL(BindTakeTurn, ACTOR_SELF, EVT_PTR(N(EVS_TakeTurn)))
-    EVT_CALL(BindIdle, ACTOR_SELF, EVT_PTR(N(EVS_Idle)))
-    EVT_CALL(BindHandleEvent, ACTOR_SELF, EVT_PTR(N(EVS_HandleEvent)))
+    Call(BindTakeTurn, ACTOR_SELF, Ref(N(EVS_TakeTurn)))
+    Call(BindIdle, ACTOR_SELF, Ref(N(EVS_Idle)))
+    Call(BindHandleEvent, ACTOR_SELF, Ref(N(EVS_HandleEvent)))
     SET_ACTOR_VAR(AVAR_TurnCount, 0)
-    EVT_RETURN
-    EVT_END
+    Return
+    End
 };
 
 EvtScript N(EVS_Idle) = {
@@ -296,18 +296,18 @@ EvtScript N(EVS_HandleEvent) = {
 EvtScript N(EVS_TakeTurn) = {
     INCREMENT_ACTOR_VAR(AVAR_TurnCount)
     GET_ACTOR_VAR(AVAR_TurnCount, LVar0)
-    EVT_MOD(LVar0, 2)
-    EVT_SWITCH(LVar0)
-        EVT_CASE_EQ(0)
-            EVT_SET(TargetPartnerVar, FALSE)
-            EVT_EXEC_WAIT(N(Headbonk))
-        EVT_CASE_EQ(1)
-            EVT_SET(TargetPartnerVar, TRUE)
-            EVT_EXEC_WAIT(N(Headbonk))
-    EVT_END_SWITCH
+    Mod(LVar0, 2)
+    Switch(LVar0)
+        CaseEq(0)
+            Set(TargetPartnerVar, FALSE)
+            ExecWait(N(Headbonk))
+        CaseEq(1)
+            Set(TargetPartnerVar, TRUE)
+            ExecWait(N(Headbonk))
+    EndSwitch
 
-    EVT_RETURN
-    EVT_END
+    Return
+    End
 };
 
 API_CALLABLE(N(ReduceLevel)) {
