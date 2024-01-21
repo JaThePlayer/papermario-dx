@@ -1,6 +1,7 @@
 #include "common.h"
 #include "ld_addrs.h"
 #include "battle.h"
+#include "misc_patches/food_poisoning.h"
 
 extern EvtScript battle_item_food_EVS_UseItem;
 extern EvtScript battle_item_mushroom_EVS_UseItem;
@@ -30,8 +31,10 @@ extern EvtScript battle_item_life_shroom_EVS_UseItem;
 extern EvtScript battle_item_coconut_EVS_UseItem;
 extern EvtScript battle_item_electro_pop_EVS_UseItem;
 extern EvtScript battle_item_strange_cake_EVS_UseItem;
+extern EvtScript battle_item_dried_shroom_EVS_UseItem;
 
 #define GENERIC_FOOD_ITEM -1
+#define FOOD_POISONING_ITEM -1
 
 // items in this list must correspond with BattleMoveEntry in gBattleItemTable
 s32 ItemKeys[] = {
@@ -44,7 +47,7 @@ s32 ItemKeys[] = {
     ITEM_VOLT_SHROOM,
     ITEM_THUNDER_RAGE,
     ITEM_SNOWMAN_DOLL,
-    ITEM_DRIED_SHROOM,
+    FOOD_POISONING_ITEM,
     ITEM_SHOOTING_STAR,
     ITEM_SLEEPY_SHEEP,
     ITEM_STONE_CAP,
@@ -80,7 +83,7 @@ BattleMoveEntry gBattleItemTable[] = {
     BTL_ITEM(volt_shroom),
     BTL_ITEM(thunder_rage),
     BTL_ITEM(snowman_doll),
-    BTL_ITEM(mushroom),
+    BTL_ITEM(dried_shroom),
     BTL_ITEM(shooting_star),
     BTL_ITEM(sleepy_sheep),
     BTL_ITEM(stone_cap),
@@ -154,6 +157,16 @@ API_CALLABLE(LoadItemScript) {
         }
     }
 
+    // new: handle food poisoning
+    if (item->typeFlags & ITEM_TYPE_FLAG_FOOD_OR_DRINK) {
+        if (food_poison_was_used(itemID)) {
+            // Swap out item script for dried shroom
+            i = 9;
+        } else {
+            food_poison_mark_used(itemID);
+        }
+    }
+
     dma_copy(gBattleItemTable[i].romStart, gBattleItemTable[i].romEnd, gBattleItemTable[i].vramStart);
 
     script->varTablePtr[0] = gBattleItemTable[i].mainScript;
@@ -162,7 +175,7 @@ API_CALLABLE(LoadItemScript) {
     return ApiStatus_DONE2;
 }
 
-// a clone of LoadItemScript, but without the side-effects
+// a clone of LoadItemScript, but without the side-effects and without food poisoning checks
 // LoadItemScriptForEnemy(itemID), outputs to LVar0 and LVar1.
 API_CALLABLE(LoadItemScriptForEnemy) {
     Bytecode* args = script->ptrReadPos;

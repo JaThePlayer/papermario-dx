@@ -1366,6 +1366,8 @@ segments:
     - [auto, .data, enemy_items/api]
     - [auto, c, enemy_items/common_tables]
     - [auto, .data, enemy_items/common_tables]
+    - [auto, c, misc_patches/food_poisoning]
+    - [auto, .data, misc_patches/food_poisoning]
     - start: 0x1B2050
       type: .data
       name: battle/popup_messages
