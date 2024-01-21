@@ -1697,55 +1697,55 @@ EvtScript EVS_Enemy_NoDamageHit = {
 
 EvtScript EnemyUseLifeShroom = {
     #define itemEntity LVarC
-    EVT_CALL(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
 
-    EVT_IF_NE(LVar1, -00001)
-        EVT_CALL(SetAnimation, ACTOR_SELF, LVar0, LVar1)
-        EVT_WAIT(10)
-    EVT_END_IF
+    IfNe(LVar1, -00001)
+        Call(SetAnimation, ACTOR_SELF, LVar0, LVar1)
+        Wait(10)
+    EndIf
 
     // create life shroom
-    EVT_CALL(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-    EVT_CALL(SetItemPos, itemEntity, LVar0, LVar1, LVar2)
+    Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
+    Call(SetItemPos, itemEntity, LVar0, LVar1, LVar2)
 
     // make the life shroom fly up
-    EVT_LOOP(30)
-        EVT_ADDF(LVar1, EVT_FLOAT(1.0))
-        EVT_CALL(SetItemPos, itemEntity, LVar0, LVar1, LVar2)
-        EVT_WAIT(1)
-    EVT_END_LOOP
+    Loop(30)
+        AddF(LVar1, Float(1.0))
+        Call(SetItemPos, itemEntity, LVar0, LVar1, LVar2)
+        Wait(1)
+    EndLoop
 
     // sfx and fx
-    EVT_CALL(PlaySoundAtActor, ACTOR_SELF, SOUND_LIFE_SHROOM_CHIME)
-    EVT_ADD(LVar4, 15)
-    EVT_CALL(PlayEffect, EFFECT_ENERGY_IN_OUT, 3, LVar0, LVar1, LVar2, EVT_FLOAT(1.0), 0, 0, 0, 0, 0, 0, 0, 0)
-    EVT_SET(LVar0, LVarF)
-    EVT_LOOP(4)
-        EVT_CALL(SetItemFlags, itemEntity, 64, 1)
-        EVT_WAIT(2)
-        EVT_CALL(SetItemFlags, itemEntity, 64, 0)
-        EVT_WAIT(8)
-    EVT_END_LOOP
-    EVT_CALL(RemoveEffect, LVar0)
-    EVT_CALL(EnemyItems_RemoveHeldItem, ACTOR_SELF, LVarB)
+    Call(PlaySoundAtActor, ACTOR_SELF, SOUND_LIFE_SHROOM_CHIME)
+    Add(LVar4, 15)
+    Call(PlayEffect_impl, EFFECT_ENERGY_IN_OUT, 3, LVar0, LVar1, LVar2, Float(1.0), 0, 0, 0, 0, 0, 0, 0, 0)
+    Set(LVar0, LVarF)
+    Loop(4)
+        Call(SetItemFlags, itemEntity, 64, 1)
+        Wait(2)
+        Call(SetItemFlags, itemEntity, 64, 0)
+        Wait(8)
+    EndLoop
+    Call(RemoveEffect, LVar0)
+    Call(EnemyItems_RemoveHeldItem, ACTOR_SELF, LVarB)
 
     // heal
-    EVT_CALL(SetTargetActor, ACTOR_SELF, ACTOR_SELF)
-    EVT_SET(LVarA, ITEM_LIFE_SHROOM)
-    EVT_EXEC_WAIT(EnemyItems_UseHealingItem)
+    Call(SetTargetActor, ACTOR_SELF, ACTOR_SELF)
+    Set(LVarA, ITEM_LIFE_SHROOM)
+    ExecWait(EnemyItems_UseHealingItem)
 
-    EVT_CALL(UseIdleAnimation, ACTOR_SELF, TRUE)
-    EVT_RETURN
-    EVT_END
+    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Return
+    End
     #undef itemEntity
 };
 
 EvtScript EVS_Enemy_Death = {
-    EVT_CALL(EnemyItems_GetFirstHeldItemWithID, ACTOR_SELF, ITEM_LIFE_SHROOM, LVarB, LVarC)
-    EVT_IF_NE(LVarB, -1)
-        EVT_EXEC_WAIT(EnemyUseLifeShroom)
-        EVT_RETURN
-    EVT_END_IF
+    Call(EnemyItems_GetFirstHeldItemWithID, ACTOR_SELF, ITEM_LIFE_SHROOM, LVarB, LVarC)
+    IfNe(LVarB, -1)
+        ExecWait(EnemyUseLifeShroom)
+        Return
+    EndIf
 
     ExecWait(EVS_Enemy_DeathWithoutRemove)
     Call(UseBattleCamPreset, BTL_CAM_DEFAULT)

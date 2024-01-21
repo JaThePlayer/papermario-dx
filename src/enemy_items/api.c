@@ -219,26 +219,26 @@ API_CALLABLE(_GetTargetActorId) {
 
 EvtScript EnemyItems_UseHealingItem = {
     // load up stats
-    EVT_CALL(_LoadItemStats, LVarA)
-    EVT_CALL(_GetTargetActorId, ACTOR_SELF, LVar9)
+    Call(_LoadItemStats, LVarA)
+    Call(_GetTargetActorId, ACTOR_SELF, LVar9)
 
-    EVT_IF_NE(LVarB, 0)
-        EVT_THREAD
-            EVT_WAIT(5)
-            EVT_CALL(PlaySoundAtActor, LVar9, SOUND_RECOVER_HEART)
-            EVT_CALL(PlaySoundAtActor, LVar9, SOUND_HEART_BOUNCE)
-            EVT_WAIT(30)
-            EVT_CALL(PlaySoundAtActor, LVar9, SOUND_STAR_BOUNCE_A)
-        EVT_END_THREAD
-        EVT_THREAD
-            EVT_CALL(FreezeBattleState, 1)
-            EVT_CALL(HealActor, LVar9, LVarB, FALSE)
-            EVT_CALL(FreezeBattleState, 0)
-        EVT_END_THREAD
-    EVT_END_IF
+    IfNe(LVarB, 0)
+        Thread
+            Wait(5)
+            Call(PlaySoundAtActor, LVar9, SOUND_RECOVER_HEART)
+            Call(PlaySoundAtActor, LVar9, SOUND_HEART_BOUNCE)
+            Wait(30)
+            Call(PlaySoundAtActor, LVar9, SOUND_STAR_BOUNCE_A)
+        EndThread
+        Thread
+            Call(FreezeBattleState, 1)
+            Call(HealActor, LVar9, LVarB, FALSE)
+            Call(FreezeBattleState, 0)
+        EndThread
+    EndIf
 
-    EVT_RETURN
-    EVT_END
+    Return
+    End
 };
 
 API_CALLABLE(EnemyItems_GetHeldItem) {
@@ -371,53 +371,53 @@ API_CALLABLE(EnemyItems_RemoveHeldItem) {
 extern API_CALLABLE(LoadItemScriptForEnemy);
 
 EvtScript EnemyItems_UseHeldItem = {
-    EVT_CALL(GetActorPos, ACTOR_SELF, LVar7, LVar1, LVar2)
-    EVT_CALL(PlaySoundAtActor, ACTOR_SELF, SOUND_USE_ITEM)
+    Call(GetActorPos, ACTOR_SELF, LVar7, LVar1, LVar2)
+    Call(PlaySoundAtActor, ACTOR_SELF, SOUND_USE_ITEM)
 
-    EVT_WAIT(4)
-    EVT_ADD(LVar1, 45)
-    EVT_SET(LVar3, LVar1)
-    EVT_ADD(LVar3, 10)
-    EVT_ADD(LVar3, 2)
+    Wait(4)
+    Add(LVar1, 45)
+    Set(LVar3, LVar1)
+    Add(LVar3, 10)
+    Add(LVar3, 2)
 
     // remove the existing item
-    EVT_CALL(EnemyItems_GetHeldItem, ACTOR_SELF, LVar8, LVarA, LVar9)
-    EVT_CALL(EnemyItems_RemoveHeldItem, ACTOR_SELF, LVar8)
+    Call(EnemyItems_GetHeldItem, ACTOR_SELF, LVar8, LVarA, LVar9)
+    Call(EnemyItems_RemoveHeldItem, ACTOR_SELF, LVar8)
 
     // create new item
-    EVT_PLAY_EFFECT(EFFECT_RADIAL_SHIMMER, 1, LVar7, LVar3, LVar2, EVT_FLOAT(1.0), 30, 0)
-    EVT_CALL(MakeItemEntity, LVarA, LVar7, LVar1, LVar2, ITEM_SPAWN_MODE_DECORATION, 0)
-    EVT_SET(LVarB, LVar0)
-    EVT_WAIT(15)
-    EVT_CALL(RemoveItemEntity, LVarB)
+    PlayEffect(EFFECT_RADIAL_SHIMMER, 1, LVar7, LVar3, LVar2, Float(1.0), 30, 0)
+    Call(MakeItemEntity, LVarA, LVar7, LVar1, LVar2, ITEM_SPAWN_MODE_DECORATION, 0)
+    Set(LVarB, LVar0)
+    Wait(15)
+    Call(RemoveItemEntity, LVarB)
 
     // load the right script for the item
-    EVT_CALL(LoadItemScriptForEnemy, LVarA)
+    Call(LoadItemScriptForEnemy, LVarA)
 
     // so that scripts know they're being used by the enemy
-    EVT_CALL(EnemyItems_SetCalledByEnemy, 1)
+    Call(EnemyItems_SetCalledByEnemy, 1)
 
     // call the right script for the item
-    EVT_EXEC_WAIT(LVar0)
+    ExecWait(LVar0)
 
-    EVT_CALL(EnemyItems_SetCalledByEnemy, 0)
+    Call(EnemyItems_SetCalledByEnemy, 0)
 
-    EVT_RETURN
-    EVT_END
+    Return
+    End
 };
 
 EvtScript EnemyItems_TryUseHeldItem = {
     // check if we have any item
     // also loads index onto LVar8, for EnemyItems_UseHeldItem
-    EVT_CALL(EnemyItems_GetFirstHeldItem, ACTOR_SELF, LVar8, LVar0, 0)
-    EVT_IF_EQ(LVar0, ITEM_NONE)
-        EVT_RETURN // no item, early return
-    EVT_END_IF
+    Call(EnemyItems_GetFirstHeldItem, ACTOR_SELF, LVar8, LVar0, 0)
+    IfEq(LVar0, ITEM_NONE)
+        Return // no item, early return
+    EndIf
 
-    EVT_EXEC_WAIT(EnemyItems_UseHeldItem)
-    EVT_SET(LVar0, 1)
-    EVT_RETURN
-    EVT_END
+    ExecWait(EnemyItems_UseHeldItem)
+    Set(LVar0, 1)
+    Return
+    End
 };
 
 // simple AI to choose whether to use an item or not
@@ -497,13 +497,13 @@ static API_CALLABLE(_HeldItemUseAI) {
 EvtScript EnemyItems_TryUseHeldItem_WithAI = {
     // ai
     // also loads up LVar8 with the index of the item, for EnemyItems_UseHeldItem
-    EVT_CALL(_HeldItemUseAI, ACTOR_SELF, LVar0, LVar8)
-    EVT_IF_EQ(LVar0, 0)
-        EVT_RETURN // no item, early return
-    EVT_END_IF
-    EVT_CALL(SetTargetActor, ACTOR_SELF, LVar0)
-    EVT_EXEC_WAIT(EnemyItems_UseHeldItem)
-    EVT_SET(LVar0, 1)
-    EVT_RETURN
-    EVT_END
+    Call(_HeldItemUseAI, ACTOR_SELF, LVar0, LVar8)
+    IfEq(LVar0, 0)
+        Return // no item, early return
+    EndIf
+    Call(SetTargetActor, ACTOR_SELF, LVar0)
+    ExecWait(EnemyItems_UseHeldItem)
+    Set(LVar0, 1)
+    Return
+    End
 };

@@ -298,27 +298,27 @@ EvtScript N(EVS_HandleEvent) = {
 EvtScript N(EVS_TakeTurn) = {
     INCREMENT_ACTOR_VAR(AVAR_TurnCount)
     GET_ACTOR_VAR(AVAR_TurnCount, LVar0)
-    EVT_MOD(LVar0, 2)
-    EVT_SWITCH(LVar0)
-        EVT_CASE_EQ(0)
-            EVT_SET(TargetPartnerVar, FALSE)
-            EVT_EXEC_WAIT(N(Headbonk))
-        EVT_CASE_EQ(1)
-            EVT_SET(TargetPartnerVar, TRUE)
-            EVT_EXEC_WAIT(N(Headbonk))
-    EVT_END_SWITCH
+    Mod(LVar0, 2)
+    Switch(LVar0)
+        CaseEq(0)
+            Set(TargetPartnerVar, FALSE)
+            ExecWait(N(Headbonk))
+        CaseEq(1)
+            Set(TargetPartnerVar, TRUE)
+            ExecWait(N(Headbonk))
+    EndSwitch
 
-    EVT_RETURN
-    EVT_END
+    Return
+    End
 };
 
 EvtScript N(EVS_Init) = {
-    EVT_EXEC_WAIT(N(EVS_Init_Inner))
-    EVT_CALL(SetActorVar, ACTOR_SELF, AVAR_Unused_0, 0)
-    EVT_CALL(SetActorVar, ACTOR_SELF, AVAR_Unused_1, 0)
+    ExecWait(N(EVS_Init_Inner))
+    Call(SetActorVar, ACTOR_SELF, AVAR_Unused_0, 0)
+    Call(SetActorVar, ACTOR_SELF, AVAR_Unused_1, 0)
     SET_ACTOR_VAR(AVAR_TurnCount, 0)
-    EVT_RETURN
-    EVT_END
+    Return
+    End
 };
 
 EvtScript N(EVS_GoombaBros_Death) = {
