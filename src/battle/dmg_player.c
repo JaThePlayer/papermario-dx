@@ -4,6 +4,7 @@
 #include "script_api/battle.h"
 #include "sprite/player.h"
 #include "dx/debug_menu.h"
+#include "misc_patches/custom_status.h"
 
 b32 dispatch_damage_event_player(s32 damageAmount, s32 event, b32 noHitSound);
 b32 dispatch_hazard_event_player(s32 damageAmount, s32 event);
@@ -881,6 +882,20 @@ HitResult calc_player_damage_enemy(void) {
 
             #undef INFLICT_STATUS
 
+            if (battleStatus->curAttackCustomStatusId != NONE_CUSTOM_STATUS) {
+                s32 inflicted = try_inflict_custom_status(target,
+                    state->goalPos,
+                    battleStatus->curAttackCustomStatusId,
+                    battleStatus->curAttackCustomStatusTurns,
+                    battleStatus->curAttackCustomStatusPotency,
+                    battleStatus->curAttackCustomStatusChance);
+                if (inflicted) {
+                    //ASSERT_MSG(FALSE, "YOOO %i", battleStatus->curAttackCustomStatusId);
+                    wasSpecialHit = TRUE;
+                    wasStatusInflicted = TRUE;
+                }
+            }
+
             if (wasStatusInflicted) {
                 if (dispatchEvent == EVENT_ZERO_DAMAGE) {
                     dispatchEvent = EVENT_HIT_COMBO;
@@ -892,6 +907,9 @@ HitResult calc_player_damage_enemy(void) {
             }
         }
     } while (0);
+
+    // reset custom status now
+    set_next_attack_custom_status(NONE_CUSTOM_STATUS, 0, 0, 0);
 
     battleStatus->wasStatusInflicted = wasStatusInflicted;
     dispatch_event_actor(target, dispatchEvent);

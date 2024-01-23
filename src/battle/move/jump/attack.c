@@ -2,6 +2,7 @@
 #include "script_api/battle.h"
 #include "battle/action_cmd/jump.h"
 #include "sprite/player.h"
+#include "misc_patches/custom_status.h"
 
 #define NAMESPACE battle_move_jump_attack
 
@@ -72,6 +73,9 @@ EvtScript N(EVS_UseMove_Normal) = {
     IfGt(LVar0, ACTION_COMMAND_MODE_NOT_LEARNED)
         Wait(1)
     EndIf
+
+    Call(SetNextAttackCustomStatus, DEF_DOWN_TEMP_STATUS, 1, 4, 100)
+
     Call(GetPlayerActionSuccess, LVar0)
     Switch(LVar0)
         CaseGt(FALSE)
@@ -110,6 +114,8 @@ EvtScript N(EVS_UseMove_Normal) = {
     Call(func_80274A18, 24, 3)
     Wait(1)
     Call(SetActorSounds, ACTOR_PLAYER, ACTOR_SOUND_HURT, SOUND_ACTOR_JUMPED_1, SOUND_NONE)
+
+    Call(SetNextAttackCustomStatus, DEF_DOWN_TEMP_STATUS, 1, 4, 100)
     Call(PlayerDamageEnemy, LVar0, DAMAGE_TYPE_JUMP, 0, 0, 1, BS_FLAGS1_TRIGGER_EVENTS | BS_FLAGS1_NICE_HIT | BS_FLAGS1_NO_RATING)
     Call(SetActionResult, LVarF)
     ExecWait(N(EVS_JumpSupport_E))

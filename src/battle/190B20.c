@@ -6,6 +6,7 @@
 #include "model.h"
 #include "sprite.h"
 #include "enemy_items/api.h"
+#include "misc_patches/custom_status.h"
 
 EvtScript D_80293820 = {
     Wait(LVar0)
@@ -1471,6 +1472,9 @@ void load_player_actor(void) {
         player->staticStatus = STATUS_KEY_STATIC;
         player->staticDuration = 127;
     }
+
+    enemy_items_zero_initialize(player);
+    custom_status_zero_initialize(player);
 }
 
 void load_partner_actor(void) {
@@ -1724,6 +1728,9 @@ void load_partner_actor(void) {
         takeTurnScript = start_script(partnerActor->takeTurnSource, EVT_PRIORITY_A, 0);
         partnerActor->takeTurnScriptID = takeTurnScript->id;
         takeTurnScript->owner1.actorID = ACTOR_PARTNER;
+
+        enemy_items_zero_initialize(partnerActor);
+        custom_status_zero_initialize(partnerActor);
     }
 }
 
@@ -1993,6 +2000,7 @@ Actor* create_actor(Formation formation) {
     actor->icePillarEffect = NULL;
     actor->hudElementDataIndex = create_status_icon_set();
     enemy_items_zero_initialize(actor);
+    custom_status_zero_initialize(actor);
     if (formation->item != ITEM_NONE) {
         float ox, oy, oz;
         ox = formationActor->itemOffset.x;
@@ -2292,6 +2300,7 @@ s32 inflict_partner_ko(Actor* target, s32 statusTypeKey, s32 duration) {
 s32 get_defense(Actor* actor, s32* defenseTable, s32 elementFlags) {
     s32 elemDefense;
     s32 minDefense = 255;
+    s32 defDownPotency = custom_status_get_potency(actor, DEF_DOWN_TEMP_STATUS);
 
     if (defenseTable != NULL) {
 
@@ -2325,6 +2334,9 @@ s32 get_defense(Actor* actor, s32* defenseTable, s32 elementFlags) {
             minDefense = elemDefense;
         }
     }
+
+    // factor in DEF-down status
+    minDefense -= defDownPotency;
 
     if (elementFlags & DAMAGE_TYPE_IGNORE_DEFENSE) {
         if (minDefense == 99) {

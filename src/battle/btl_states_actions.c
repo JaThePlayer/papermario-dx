@@ -7,6 +7,7 @@
 #include "model.h"
 #include "game_modes.h"
 #include "dx/debug_menu.h"
+#include "misc_patches/custom_status.h"
 
 extern StageListRow* gCurrentStagePtr;
 
@@ -948,6 +949,8 @@ void btl_state_update_begin_player_turn(void) {
                     }
                 }
 
+                custom_status_decrement(player);
+
                 debuffDuration = player->debuffDuration;
                 temp = player->koDuration;
                 player->koDuration = debuffDuration;
@@ -1338,6 +1341,8 @@ void btl_state_update_9(void) {
                             D_8029F258 = 20;
                         }
                     }
+
+                    custom_status_decrement(actor);
 
                     oldKoDuration = actor->koDuration;
                     actor->koDuration = actor->debuffDuration;

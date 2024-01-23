@@ -7,6 +7,7 @@
 #include "evt.h"
 #include "enums.h"
 #include "enemy_items/config.h"
+#include "misc_patches/custom_status_defs.h"
 
 typedef struct ActorHeldItem {
     s32 itemID;
@@ -992,7 +993,10 @@ typedef struct BattleStatus {
     /* 0x438 */ struct Stage* curStage;
     /* 0x43C */ struct EffectInstance* buffEffect;
     /* 0x440 */ u8 tattleFlags[28];
-    /* 0x45C */ char unk_45C[4];
+    /* 0x45C, new */ s8 curAttackCustomStatusId;
+    /* new */ u8 curAttackCustomStatusPotency;
+    /* new */ u8 curAttackCustomStatusTurns;
+    /* new */ u8 curAttackCustomStatusChance;
 } BattleStatus; // size = 0x460
 
 typedef struct TextureHeader {
@@ -1959,6 +1963,7 @@ typedef struct Actor {
     /* 0x438 */ s32 loopingSoundID[2];
     /* 0x440 */ struct EffectInstance* disableEffect;
     /* new   */ ActorHeldItem heldItems[MAX_ENEMY_ITEMS];
+    /* new   */ StatusInfo customStatuses[3];
 } Actor; // size = 0x444
 
 typedef struct BackgroundHeader {

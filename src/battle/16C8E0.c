@@ -855,6 +855,15 @@ void draw_health_bar_number(s32 number, s32 screenX, s32 screenY, s32 r, s32 g, 
     #define DIGIT_WIDTH 6
     s32 nextDigitXOffset = DIGIT_WIDTH;
     s32 id = D_8029EFBC;
+    s32 isNegative = number < 0;
+
+    if (isNegative) {
+        number = -number;
+        // TODO: draw negative numbers correctly instead
+        r = 255 - r;
+        g = 255 - g;
+        b = 255 - b;
+    }
     // draw all digits
     while (TRUE) {
         s32 digit = number % 10;
@@ -958,7 +967,10 @@ void btl_draw_enemy_health_bars(void) {
                         #undef DIGIT_WIDTH
 
                         // draw defense
-                        draw_health_bar_number(get_defense(enemy, get_actor_part(enemy, 0)->defenseTable, ELEMENT_NORMAL), screenX, screenY - 18, 128, 128, 255);
+                        draw_health_bar_number(
+                            get_defense(enemy, get_actor_part(enemy, 0)->defenseTable, ELEMENT_NORMAL),
+                            screenX, screenY - 18,
+                            135, 206, 250); // light sky blue
 
                         temp = enemy->healthFraction;
                         temp = 25 - temp;
