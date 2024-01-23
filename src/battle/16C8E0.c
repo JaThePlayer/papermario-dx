@@ -856,6 +856,34 @@ void tattle_cam_post_render(Camera* camera) {
     show_foreground_models_unchecked();
 }
 
+void draw_health_bar_number(s32 number, s32 screenX, s32 screenY, s32 r, s32 g, s32 b) {
+    #define DIGIT_WIDTH 6
+    s32 nextDigitXOffset = DIGIT_WIDTH;
+    s32 id = D_8029EFBC;
+    // draw all digits
+    while (TRUE) {
+        s32 digit = number % 10;
+
+        hud_element_set_render_depth(id, 10);
+        hud_element_set_script(id, bHPDigitHudScripts[digit]);
+        btl_draw_prim_quad(0, 0, 0, 0, screenX + nextDigitXOffset, screenY + 2, 8, 8);
+        hud_element_set_render_pos(id, screenX + nextDigitXOffset + 4, screenY + 6);
+        hud_element_set_tint(id, r, g, b);
+        hud_element_draw_next(id);
+
+        if (number < 10) {
+            break;
+        }
+
+        number /= 10;
+        nextDigitXOffset -= DIGIT_WIDTH;
+    }
+
+    // reset tint for the future
+    hud_element_set_tint(id, 255, 255, 255);
+    #undef DIGIT_WIDTH
+}
+
 void btl_draw_enemy_health_bars(void) {
     BattleStatus* battleStatus = &gBattleStatus;
 
@@ -933,6 +961,9 @@ void btl_draw_enemy_health_bars(void) {
                             nextDigitXOffset -= DIGIT_WIDTH;
                         }
                         #undef DIGIT_WIDTH
+
+                        // draw defense
+                        draw_health_bar_number(get_defense(enemy, get_actor_part(enemy, 0)->defenseTable, ELEMENT_NORMAL), screenX, screenY - 18, 128, 128, 255);
 
                         temp = enemy->healthFraction;
                         temp = 25 - temp;
