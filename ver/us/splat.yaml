@@ -1269,6 +1269,7 @@ segments:
     - [auto, c, pause_map]
     - [auto, c, pause_gfx]
     - [auto, c, pause_styles]
+    - [auto, c, pause_tattle_log]
     - start: 0x1439F0
       type: .data
       name: pause_gfx
@@ -1367,6 +1368,7 @@ segments:
     - [auto, .data, enemy_items/common_tables]
     - [auto, c, misc_patches/food_poisoning]
     - [auto, .data, misc_patches/food_poisoning]
+    - [auto, c, misc_patches/custom_status]
     - start: 0x1B2050
       type: .data
       name: battle/popup_messages
