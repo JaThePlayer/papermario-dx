@@ -12,9 +12,11 @@ typedef struct StatusIconType {
     }
 
 #include "status_icons/temp_def_down.c"
+#include "status_icons/temp_atk_down.c"
 
 StatusIconType gCustomStatusIconTypes[CUSTOM_ICON_AMT] = {
     [DEF_DOWN_ICON_ID] = STATUS_ICON_ENTRY(status_temp_def_down),
+    [ATK_DOWN_ICON_ID] = STATUS_ICON_ENTRY(status_temp_atk_down),
 };
 
 void custom_status_icons_init(CustomHudComplexStatusIcon customIcons[CUSTOM_ICON_AMT]) {

@@ -1,23 +1,18 @@
 #include "custom_status.h"
 
-extern void on_apply_atk_down(Actor* target, Vec3f position);
-extern void on_apply_def_down(Actor* target, Vec3f position);
-extern void draw_icon_def_down(Actor* target);
-extern void remove_icon_def_down(s32 id);
-
 #include "statuses/temp_def_down.c"
+#include "statuses/temp_atk_down.c"
 
 #define STATUS_ENTRY(namespace) { \
         .onApply = &namespace##_on_apply, \
         .drawIcon = &namespace##_create_icon, \
-        .onRemoveIcon = &namespace##_remove_icon \
+        .onRemoveIcon = &namespace##_remove_icon, \
+        .decrementLate = namespace##_DECREMENT_LATE, \
     }
 
 StatusType gCustomStatusTypes[CUSTOM_STATUS_AMT] = {
     [NONE_CUSTOM_STATUS] = {},
-    [ATK_DOWN_TEMP_STATUS] = {
-        .onApply = &on_apply_atk_down,
-    },
+    [ATK_DOWN_TEMP_STATUS] = STATUS_ENTRY(temp_atk_down),
     [DEF_DOWN_TEMP_STATUS] = STATUS_ENTRY(temp_def_down),
 };
 
@@ -30,16 +25,15 @@ u8 custom_status_get_potency(Actor* actor, s8 customStatusId) {
     return 0;
 }
 
-// Decrements all custom statuses for the given actor
-void custom_status_decrement(Actor* actor) {
+static void custom_status_decrement_impl(Actor* actor, s8 isLate) {
     for (s32 i = 0; i < ARRAY_COUNT(actor->customStatuses); i++)
     {
         StatusInfo* status = &actor->customStatuses[i];
+        StatusType* statusType = &gCustomStatusTypes[i];
 
-        if (status->turns > 0) {
+        if (statusType->decrementLate == isLate && status->turns > 0) {
             status->turns--;
             if (status->turns == 0) {
-                StatusType* statusType = &gCustomStatusTypes[i];
                 // status just got removed now
                 status->potency = 0;
                 if (statusType->onRemoveIcon) {
@@ -48,6 +42,15 @@ void custom_status_decrement(Actor* actor) {
             }
         }
     }
+}
+
+// Decrements all custom statuses for the given actor
+void custom_status_decrement(Actor* actor) {
+    custom_status_decrement_impl(actor, FALSE);
+}
+
+void custom_status_decrement_late(Actor* actor) {
+    custom_status_decrement_impl(actor, TRUE);
 }
 
 void custom_status_zero_initialize(Actor* actor) {
@@ -97,16 +100,6 @@ API_CALLABLE(SetNextAttackCustomStatus) {
     return ApiStatus_DONE2;
 }
 
-void on_apply_atk_down(Actor* target, Vec3f position) {
-    Evt* evt = start_script(&EVS_PlaySleepHitFX, EVT_PRIORITY_A, 0);
-    evt->varTable[0] = position.x;
-    evt->varTable[1] = position.y;
-    evt->varTable[2] = position.z;
-    sfx_play_sound_at_position(SOUND_INFLICT_SLEEP, SOUND_SPACE_DEFAULT, position.x, position.y, position.z);
-
-    create_status_debuff(target->hudElementDataIndex, STATUS_KEY_POISON);
-}
-
 void custom_status_render_all_icons(Actor* actor) {
     for (s32 i = 0; i < ARRAY_COUNT(actor->customStatuses); i++)
     {
@@ -131,7 +124,3 @@ void custom_status_remove_icons(s32 iconId) {
         }
     }
 }
-
-// from inflict_status:
-// set_actor_pal_adjustment(target, ACTOR_PAL_ADJUST_POISON);
-// create_status_debuff(target->hudElementDataIndex, STATUS_KEY_POISON);

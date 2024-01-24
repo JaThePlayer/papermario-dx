@@ -20,6 +20,7 @@ typedef struct StatusType {
     StatusFxApplyFunc onApply;
     StatusFxDrawIconFunc drawIcon;
     StatusFxRemoveIconFunc onRemoveIcon;
+    s8 decrementLate; // whether the status should be decremented after enemies attack, like Chill Out
 } StatusType;
 
 extern StatusType gCustomStatusTypes[CUSTOM_STATUS_AMT];
@@ -30,8 +31,11 @@ API_CALLABLE(SetNextAttackCustomStatus);
 // Gets the potency of the given status for the given actor. 0 if actor doesn't have this status
 u8 custom_status_get_potency(Actor* actor, s8 customStatusId);
 
-// Decrements all custom statuses for the given actor
+// Decrements all custom statuses for the given actor. For enemies, this is called before they attack.
 void custom_status_decrement(Actor* actor);
+
+// Decrements all custom statuses for the given actor. For enemies, this is called after they attack.
+void custom_status_decrement_late(Actor* actor);
 
 s32 try_inflict_custom_status(Actor* actor, Vec3f position, s8 customStatusId, u8 turns, u8 potency, u8 chance);
 
