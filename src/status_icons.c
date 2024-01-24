@@ -26,6 +26,8 @@ enum StatusIconTask {
     STATUS_ICON_TASK_DRAW = 2,
 };
 
+#include "misc_patches/custom_status_icons.c"
+
 typedef struct HudComplexStatusIcon {
     /* 0x0 */ s8 active;
     /* 0x1 */ s8 removing;
@@ -68,6 +70,7 @@ typedef struct HudStatusIcon {
     /* 0x98 */ HudSimpleStatusIcon surprise;
     /* 0xA0 */ HudSimpleStatusIcon peril;
     /* 0xA8 */ HudSimpleStatusIcon danger;
+    /* new  */ CustomHudComplexStatusIcon customIcons[CUSTOM_ICON_AMT];
 } HudStatusIcon; // size = 0xB0
 
 #if !VERSION_JP
@@ -85,6 +88,13 @@ SHIFT_BSS s32 D_800A0F40;
 SHIFT_BSS HudStatusIcon* D_800A0F44;
 
 extern HudScript HES_Item_KeyGift;
+CustomHudComplexStatusIcon* get_custom_status_icons(s32 iconID) {
+    HudStatusIcon* statusIcon = &D_800A0F44[iconID];
+
+    return &statusIcon->customIcons;
+}
+
+extern HudScript HES_Item_Present;
 extern HudScript HES_AsleepBegin;
 extern HudScript HES_AsleepEnd;
 extern HudScript HES_ElectrifiedBegin;
@@ -577,6 +587,8 @@ void update_all_status_icons(void* data) {
                 }
             }
         }
+
+        custom_icons_update(icon->customIcons);
     }
 }
 
@@ -606,6 +618,8 @@ void draw_all_status_icons(void* data) {
     gSPTexture(gMainGfxPos++, -1, -1, 0, G_TX_RENDERTILE, G_ON);
 
     for (i = 0, icon = D_800A0F44; i < MAX_ICONS; i++, icon++) {
+        s32 j;
+
         if (icon->flags == 0) {
             continue;
         }
@@ -812,6 +826,49 @@ void draw_all_status_icons(void* data) {
             hud_element_draw_next(elementId);
         }
 
+        for (j = 0; j < CUSTOM_ICON_AMT; j++) {
+            CustomHudComplexStatusIcon* customIcon = &icon->customIcons[j];
+            isActiveDrawn = 0;
+// if (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->isBattle != 1)
+            if (customIcon->activeTask == STATUS_ICON_TASK_DRAW && (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->isBattle != 1)) {
+                hud_element_clear_flags(customIcon->activeElementID, HUD_ELEMENT_FLAG_DISABLED);
+
+                offsetY = -51 + (iconCounter * 17);
+
+                x = icon->worldPos.x;
+                y = icon->worldPos.y + icon->status4OffsetY + offsetY;
+                z = icon->worldPos.z;
+
+                add_vec2D_polar(&x, &z, icon->status4Radius, clamp_angle(camera->curYaw + 90));
+                get_screen_coords(gCurrentCameraID, x, y, z, &screenX, &screenY, &screenZ);
+                elementId = customIcon->activeElementID;
+                hud_element_set_render_pos(elementId, screenX - 8, screenY - 8);
+                hud_element_draw_next(elementId);
+                iconCounter++;
+                isActiveDrawn = 1;
+            }
+
+            if (customIcon->removingTask == STATUS_ICON_TASK_DRAW && (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->isBattle != 1)) {
+                hud_element_clear_flags(customIcon->removingElementID, HUD_ELEMENT_FLAG_DISABLED);
+
+                offsetY = -51 + (iconCounter * 17);
+
+                if (isActiveDrawn == 0) {
+                    iconCounter++;
+                }
+
+                x = icon->worldPos.x;
+                y = icon->worldPos.y + icon->status4OffsetY + offsetY;
+                z = icon->worldPos.z;
+
+                add_vec2D_polar(&x, &z, icon->status4Radius, clamp_angle(camera->curYaw + 90));
+                get_screen_coords(gCurrentCameraID, x, y, z, &screenX, &screenY, &screenZ);
+                elementId = customIcon->removingElementID;
+                hud_element_set_render_pos(elementId, screenX - 8, screenY - 8);
+                hud_element_draw_next(elementId);
+            }
+        }
+
         do {
             if (icon->boostJump.active) {
                 if (icon->flags & STATUS_ICON_FLAG_BOOST_JUMP) {
@@ -1000,6 +1057,8 @@ s32 create_status_icon_set(void) {
     icon->peril.active = 0;
     icon->danger.active = 0;
 
+    custom_status_icons_init(icon->customIcons);
+
     return i;
 }
 
@@ -1016,6 +1075,8 @@ void remove_all_status_icons(s32 iconID) {
     remove_status_icon_surprise(iconID);
     remove_status_icon_peril(iconID);
     remove_status_icon_danger(iconID);
+    custom_status_remove_icons(iconID);
+
     statusIcon->flags = 0;
 }
 

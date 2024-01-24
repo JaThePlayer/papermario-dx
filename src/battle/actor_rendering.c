@@ -1168,6 +1168,8 @@ void appendGfx_npc_actor(b32 isPartner, s32 actorIndex) {
             if (actor->chillOutAmount != 0) {
                 create_status_chill_out(actor->hudElementDataIndex);
             }
+
+            custom_status_render_all_icons(actor);
         } else {
             enable_status_debuff(actor->hudElementDataIndex);
             enable_status_static(actor->hudElementDataIndex);

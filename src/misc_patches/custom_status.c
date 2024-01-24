@@ -2,15 +2,23 @@
 
 extern void on_apply_atk_down(Actor* target, Vec3f position);
 extern void on_apply_def_down(Actor* target, Vec3f position);
+extern void draw_icon_def_down(Actor* target);
+extern void remove_icon_def_down(s32 id);
+
+#include "statuses/temp_def_down.c"
+
+#define STATUS_ENTRY(namespace) { \
+        .onApply = &namespace##_on_apply, \
+        .drawIcon = &namespace##_create_icon, \
+        .onRemoveIcon = &namespace##_remove_icon \
+    }
 
 StatusType gCustomStatusTypes[CUSTOM_STATUS_AMT] = {
     [NONE_CUSTOM_STATUS] = {},
     [ATK_DOWN_TEMP_STATUS] = {
         .onApply = &on_apply_atk_down,
     },
-    [DEF_DOWN_TEMP_STATUS] = {
-        .onApply = &on_apply_def_down,
-    }
+    [DEF_DOWN_TEMP_STATUS] = STATUS_ENTRY(temp_def_down),
 };
 
 // Gets the potency of the given status for the given actor. 0 if actor doesn't have this status
@@ -31,8 +39,12 @@ void custom_status_decrement(Actor* actor) {
         if (status->turns > 0) {
             status->turns--;
             if (status->turns == 0) {
+                StatusType* statusType = &gCustomStatusTypes[i];
                 // status just got removed now
                 status->potency = 0;
+                if (statusType->onRemoveIcon) {
+                    statusType->onRemoveIcon(actor->hudElementDataIndex);
+                }
             }
         }
     }
@@ -86,8 +98,6 @@ API_CALLABLE(SetNextAttackCustomStatus) {
     return ApiStatus_DONE2;
 }
 
-extern EvtScript EVS_PlaySleepHitFX;
-
 void on_apply_atk_down(Actor* target, Vec3f position) {
     Evt* evt = start_script(&EVS_PlaySleepHitFX, EVT_PRIORITY_A, 0);
     evt->varTable[0] = position.x;
@@ -98,14 +108,29 @@ void on_apply_atk_down(Actor* target, Vec3f position) {
     create_status_debuff(target->hudElementDataIndex, STATUS_KEY_POISON);
 }
 
-void on_apply_def_down(Actor* target, Vec3f position) {
-    Evt* evt = start_script(&EVS_PlaySleepHitFX, EVT_PRIORITY_A, 0);
-    evt->varTable[0] = position.x;
-    evt->varTable[1] = position.y;
-    evt->varTable[2] = position.z;
-    sfx_play_sound_at_position(SOUND_INFLICT_SLEEP, SOUND_SPACE_DEFAULT, position.x, position.y, position.z);
+void custom_status_render_all_icons(Actor* actor) {
+    for (s32 i = 0; i < ARRAY_COUNT(actor->customStatuses); i++)
+    {
+        StatusInfo* status = &actor->customStatuses[i];
 
-    create_status_debuff(target->hudElementDataIndex, STATUS_KEY_POISON);
+        if (status->turns > 0) {
+            StatusType* statusType = &gCustomStatusTypes[i];
+            if (statusType->drawIcon) {
+                statusType->drawIcon(actor);
+            }
+        }
+    }
+}
+
+void custom_status_remove_icons(s32 iconId) {
+    for (s32 i = 0; i < ARRAY_COUNT(gCustomStatusTypes); i++)
+    {
+        StatusType* statusType = &gCustomStatusTypes[i];
+
+        if (statusType->onRemoveIcon) {
+            statusType->onRemoveIcon(iconId);
+        }
+    }
 }
 
 // from inflict_status:
