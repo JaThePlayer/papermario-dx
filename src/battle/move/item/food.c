@@ -4,6 +4,7 @@
 #include "entity.h"
 #include "sprite/player.h"
 #include "enemy_items/api.h"
+#include "misc_patches/custom_status.h"
 
 #define NAMESPACE battle_item_food
 
@@ -96,6 +97,27 @@ API_CALLABLE(N(GetFoodParameters)) {
     }
 
     script->varTable[15] = isHarmful;
+
+    return ApiStatus_DONE2;
+}
+
+API_CALLABLE(N(ApplyItemEffects)) {
+    Bytecode* args = script->ptrReadPos;
+    Actor* actor;
+    s32 actorID = evt_get_variable(script, *args++);
+    s32 itemIdx = evt_get_variable(script, *args++);
+    ItemData* item = &gItemTable[itemIdx];
+
+    if (actorID == ACTOR_SELF) {
+        actorID = script->owner1.actorID;
+    }
+    actor = get_actor(actorID);
+    try_inflict_custom_status(actor, actor->curPos, DEF_DOWN_TEMP_STATUS, 2, 2, 100);
+    switch (itemIdx) {
+        case ITEM_GOOMNUT:
+            try_inflict_custom_status(actor, actor->curPos, DEF_DOWN_TEMP_STATUS, 2, 2, 100);
+            break;
+    }
 
     return ApiStatus_DONE2;
 }
@@ -237,6 +259,7 @@ EvtScript N(EVS_UseItem) = {
     IfNe(LV_FPAmt, 0)
         Call(N(AddFP), LV_FPAmt)
     EndIf
+    Call(N(ApplyItemEffects), ACTOR_SELF, LV_ItemID)
     IfEq(LV_IsHarmful, FALSE)
         Wait(10)
         Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_Mario1_ThumbsUp)

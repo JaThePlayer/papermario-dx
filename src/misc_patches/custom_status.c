@@ -68,7 +68,6 @@ s32 try_inflict_custom_status(Actor* actor, Vec3f position, s8 customStatusId, u
     status->potency = potency;
 
     if (statusType->onApply) {
-
         statusType->onApply(actor, position);
     }
 

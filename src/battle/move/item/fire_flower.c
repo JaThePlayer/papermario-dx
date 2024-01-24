@@ -3,6 +3,7 @@
 #include "effects.h"
 #include "model.h"
 #include "sprite/player.h"
+#include "misc_patches/custom_status.h"
 
 #define NAMESPACE battle_item_fire_flower
 
