@@ -2302,7 +2302,6 @@ s32 inflict_partner_ko(Actor* target, s32 statusTypeKey, s32 duration) {
 s32 get_defense(Actor* actor, s32* defenseTable, s32 elementFlags) {
     s32 elemDefense;
     s32 minDefense = 255;
-    s32 defDownPotency = custom_status_get_potency(actor, DEF_DOWN_TEMP_STATUS);
 
     if (defenseTable != NULL) {
 
@@ -2337,8 +2336,6 @@ s32 get_defense(Actor* actor, s32* defenseTable, s32 elementFlags) {
         }
     }
 
-    // factor in DEF-down status
-    minDefense -= defDownPotency;
 
     if (elementFlags & DAMAGE_TYPE_IGNORE_DEFENSE) {
         if (minDefense == 99) {
@@ -2346,6 +2343,13 @@ s32 get_defense(Actor* actor, s32* defenseTable, s32 elementFlags) {
             minDefense = 999;
         } else if (minDefense > 0) {
             minDefense = 0;
+        }
+    } else {
+        // factor in DEF-down status,
+        // if there's any defense to pierce in the first place
+        if (minDefense > 0) {
+            minDefense -= custom_status_get_potency(actor, DEF_DOWN_TEMP_STATUS);
+            minDefense = minDefense < 0 ? 0 : minDefense;
         }
     }
 

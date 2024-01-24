@@ -12,8 +12,14 @@
 // A function which gets called when a custom status gets applied
 typedef void(*StatusFxApplyFunc)(Actor* target, Vec3f position);
 
+typedef void(*StatusFxDrawIconFunc)(Actor* target);
+
+typedef void(*StatusFxRemoveIconFunc)(s32 iconId);
+
 typedef struct StatusType {
     StatusFxApplyFunc onApply;
+    StatusFxDrawIconFunc drawIcon;
+    StatusFxRemoveIconFunc onRemoveIcon;
 } StatusType;
 
 extern StatusType gCustomStatusTypes[CUSTOM_STATUS_AMT];
@@ -33,5 +39,8 @@ void set_next_attack_custom_status(s8 customStatusId, u8 turns, u8 potency, u8 c
 
 void custom_status_zero_initialize(Actor* actor);
 
+void custom_status_render_all_icons(Actor* actor);
+
+void custom_status_remove_icons(s32 iconId);
 
 #endif
