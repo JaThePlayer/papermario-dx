@@ -7,6 +7,7 @@
 #include "enemy_items/api.h"
 #include "misc_patches/misc_patches.h"
 #include "misc_patches/sp_pools.h"
+#include "misc_patches/custom_status.h"
 
 // SP % for given enemy count in battle
 s32 D_802946E0[] = {
@@ -667,6 +668,19 @@ HitResult calc_enemy_damage_target(Actor* attacker) {
             statusInflicted2 = one;
         }
 
+        if (battleStatus->curAttackCustomStatusId != NONE_CUSTOM_STATUS) {
+            s32 inflicted = try_inflict_custom_status(target,
+                state->goalPos,
+                battleStatus->curAttackCustomStatusId,
+                battleStatus->curAttackCustomStatusTurns,
+                battleStatus->curAttackCustomStatusPotency,
+                battleStatus->curAttackCustomStatusChance);
+            if (inflicted) {
+                statusInflicted = one;
+                statusInflicted2 = one;
+            }
+        }
+
         if (statusInflicted) {
             if (event == EVENT_ZERO_DAMAGE) {
                 event = EVENT_HIT_COMBO;
@@ -676,6 +690,8 @@ HitResult calc_enemy_damage_target(Actor* attacker) {
             }
         }
     }
+    // reset custom status now
+    set_next_attack_custom_status(NONE_CUSTOM_STATUS, 0, 0, 0);
 
     // dispatch events and play damage effects
 
