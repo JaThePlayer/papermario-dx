@@ -1,6 +1,7 @@
 #include "battle/battle.h"
 #include "script_api/battle.h"
 #include "effects.h"
+#include "misc_patches/custom_status.h"
 
 HitResult calc_item_check_hit(void) {
     BattleStatus* battleStatus = &gBattleStatus;
@@ -360,6 +361,18 @@ HitResult calc_item_damage_enemy(void) {
         INFLICT_STATUS(PARALYZE);
         INFLICT_STATUS(DIZZY);
 
+        if (battleStatus->curAttackCustomStatusId != NONE_CUSTOM_STATUS) {
+            s32 inflicted = try_inflict_custom_status(target,
+                state->goalPos,
+                battleStatus->curAttackCustomStatusId,
+                battleStatus->curAttackCustomStatusTurns,
+                battleStatus->curAttackCustomStatusPotency,
+                battleStatus->curAttackCustomStatusChance);
+            if (inflicted) {
+                wasStatusInflicted = TRUE;
+            }
+        }
+
         #undef INFLICT_STATUS
 
         if (wasStatusInflicted) {
@@ -371,6 +384,9 @@ HitResult calc_item_damage_enemy(void) {
             }
         }
     }
+
+    // reset custom status now
+    set_next_attack_custom_status(NONE_CUSTOM_STATUS, 0, 0, 0);
 
     temp = target->actorBlueprint->spookChance;
     temp = (battleStatus->statusChance * temp) / 100;

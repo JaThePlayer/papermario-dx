@@ -1832,6 +1832,8 @@ void appendGfx_player_actor(void* arg0) {
                 } else if (player->debuff == STATUS_KEY_FROZEN) {
                     create_status_debuff(player->hudElementDataIndex, STATUS_KEY_FROZEN);
                 }
+
+                custom_status_render_all_icons(player);
             } while (0); // required to match
             if (!cond4 && (is_ability_active(ABILITY_ZAP_TAP) || (player->staticStatus == STATUS_KEY_STATIC))) {
                 create_status_static(player->hudElementDataIndex, STATUS_KEY_STATIC);

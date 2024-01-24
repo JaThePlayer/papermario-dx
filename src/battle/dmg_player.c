@@ -889,7 +889,6 @@ HitResult calc_player_damage_enemy(void) {
                     battleStatus->curAttackCustomStatusPotency,
                     battleStatus->curAttackCustomStatusChance);
                 if (inflicted) {
-                    //ASSERT_MSG(FALSE, "YOOO %i", battleStatus->curAttackCustomStatusId);
                     wasSpecialHit = TRUE;
                     wasStatusInflicted = TRUE;
                 }
