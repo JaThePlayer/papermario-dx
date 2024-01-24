@@ -4,6 +4,8 @@
 
 #define NAMESPACE temp_def_down
 
+#define temp_def_down_DECREMENT_LATE TRUE
+
 extern EvtScript EVS_PlaySleepHitFX;
 
 void N(on_apply)(Actor* target, Vec3f position) {

@@ -984,6 +984,8 @@ back:
                             D_8029F258 = 20;
                         }
                     }
+
+                    custom_status_decrement_late(enemy);
                 }
             }
             gBattleSubState = BTL_SUBSTATE_BEGIN_PLAYER_TURN_TRY_COMMAND_RECOVER;
