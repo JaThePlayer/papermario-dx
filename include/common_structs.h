@@ -1963,7 +1963,7 @@ typedef struct Actor {
     /* 0x438 */ s32 loopingSoundID[2];
     /* 0x440 */ struct EffectInstance* disableEffect;
     /* new   */ ActorHeldItem heldItems[MAX_ENEMY_ITEMS];
-    /* new   */ StatusInfo customStatuses[3];
+    /* new   */ StatusInfo customStatuses[CUSTOM_STATUS_AMT];
 } Actor; // size = 0x444
 
 typedef struct BackgroundHeader {

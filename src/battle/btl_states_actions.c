@@ -957,6 +957,7 @@ back:
                 }
 
                 custom_status_decrement(player);
+                custom_status_decrement_late(player);
 
                 debuffDuration = player->debuffDuration;
                 temp = player->koDuration;

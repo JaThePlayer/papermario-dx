@@ -74,7 +74,7 @@ EvtScript N(EVS_UseMove_Normal) = {
         Wait(1)
     EndIf
 
-    Call(SetNextAttackCustomStatus, DEF_DOWN_TEMP_STATUS, 1, 4, 100)
+    Call(SetNextAttackCustomStatus, ATK_UP_TEMP_STATUS, 1, 4, 100)
 
     Call(GetPlayerActionSuccess, LVar0)
     Switch(LVar0)
@@ -115,7 +115,7 @@ EvtScript N(EVS_UseMove_Normal) = {
     Wait(1)
     Call(SetActorSounds, ACTOR_PLAYER, ACTOR_SOUND_HURT, SOUND_ACTOR_JUMPED_1, SOUND_NONE)
 
-    Call(SetNextAttackCustomStatus, DEF_DOWN_TEMP_STATUS, 1, 4, 100)
+    //Call(SetNextAttackCustomStatus, ATK_DOWN_TEMP_STATUS, 1, 4, 100)
     Call(PlayerDamageEnemy, LVar0, DAMAGE_TYPE_JUMP, 0, 0, 1, BS_FLAGS1_TRIGGER_EVENTS | BS_FLAGS1_NICE_HIT | BS_FLAGS1_NO_RATING)
     Call(SetActionResult, LVarF)
     ExecWait(N(EVS_JumpSupport_E))

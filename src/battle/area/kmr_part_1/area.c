@@ -36,7 +36,7 @@ Formation A(Formation_03) = { // kmr_05
 Formation A(Formation_04) = { // kmr_09
     ENEMY0(goomba),
     ENEMY1(goomba),
-    ENEMY2(goomba),
+    ENEMY2_ITEM(goomba, ITEM_GOOMNUT),
     ENEMY3(spiked_goomba),
 };
 

@@ -787,11 +787,12 @@ segments:
       - [auto, palette, ui/battle/status/defdown_0]
       - [auto, ci4,     ui/battle/status/defdown_1, 16, 16]
       - [auto, palette, ui/battle/status/defdown_1]
-      - [auto]
+      - [auto, ci4,     ui/battle/status/defup_0, 16, 16]
+      - [auto, palette, ui/battle/status/defup_0]
+      - [auto, ci4,     ui/battle/status/defup_1, 16, 16]
+      - [auto, palette, ui/battle/status/defup_1]
       - [auto, rgba32,  ui/stat_heart, 16, 16]
-      - [auto]
       - [auto, rgba32,  ui/stat_flower, 16, 16]
-      - [auto]
     - start: 0xA2960
       type: .data
       name: 8a160_len_700

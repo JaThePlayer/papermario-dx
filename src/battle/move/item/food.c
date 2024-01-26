@@ -101,27 +101,6 @@ API_CALLABLE(N(GetFoodParameters)) {
     return ApiStatus_DONE2;
 }
 
-API_CALLABLE(N(ApplyItemEffects)) {
-    Bytecode* args = script->ptrReadPos;
-    Actor* actor;
-    s32 actorID = evt_get_variable(script, *args++);
-    s32 itemIdx = evt_get_variable(script, *args++);
-    ItemData* item = &gItemTable[itemIdx];
-
-    if (actorID == ACTOR_SELF) {
-        actorID = script->owner1.actorID;
-    }
-    actor = get_actor(actorID);
-    try_inflict_custom_status(actor, actor->curPos, DEF_DOWN_TEMP_STATUS, 2, 2, 100);
-    switch (itemIdx) {
-        case ITEM_GOOMNUT:
-            try_inflict_custom_status(actor, actor->curPos, DEF_DOWN_TEMP_STATUS, 2, 2, 100);
-            break;
-    }
-
-    return ApiStatus_DONE2;
-}
-
 #include "battle/common/move/UseItem.inc.c"
 
 EvtScript N(EVS_UseOnPartner) = {
@@ -259,7 +238,10 @@ EvtScript N(EVS_UseItem) = {
     IfNe(LV_FPAmt, 0)
         Call(N(AddFP), LV_FPAmt)
     EndIf
-    Call(N(ApplyItemEffects), ACTOR_SELF, LV_ItemID)
+
+    Call(GetMenuSelection, LVar0, LV_ItemID, LVar2)
+    Call(ApplyCustomItemEffects, ACTOR_SELF, LV_ItemID)
+
     IfEq(LV_IsHarmful, FALSE)
         Wait(10)
         Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_Mario1_ThumbsUp)
