@@ -784,6 +784,11 @@ segments:
       - [auto, ci4,     ui/move_partner_3, 32, 32]
       - [auto, palette, ui/move_partner_3]
       - [auto, palette, ui/move_partner_3.disabled]
+      - [0x9D650]
+      - [0x9D658, rgba32,  ui/stat_heart, 16, 16]
+      - [0x9DA58]
+      - [0x9DA60, rgba32,  ui/stat_flower, 16, 16]
+      - [0x9DE60]
       - [auto, ci4,     ui/battle/status/defdown_0, 16, 16]
       - [auto, palette, ui/battle/status/defdown_0]
       - [auto, ci4,     ui/battle/status/defdown_1, 16, 16]
@@ -792,8 +797,6 @@ segments:
       - [auto, palette, ui/battle/status/defup_0]
       - [auto, ci4,     ui/battle/status/defup_1, 16, 16]
       - [auto, palette, ui/battle/status/defup_1]
-      - [auto, rgba32,  ui/stat_heart, 16, 16]
-      - [auto, rgba32,  ui/stat_flower, 16, 16]
     - start: 0xA2960
       type: .data
       name: 8a160_len_700
