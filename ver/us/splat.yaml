@@ -797,6 +797,10 @@ segments:
       - [auto, palette, ui/battle/status/defup_0]
       - [auto, ci4,     ui/battle/status/defup_1, 16, 16]
       - [auto, palette, ui/battle/status/defup_1]
+      - [auto, ci4,     ui/desc_msg_next, 16, 16]
+      - [auto, palette, ui/desc_msg_next]
+      - [auto, ci4,     ui/desc_msg_prev, 16, 16]
+      - [auto, palette, ui/desc_msg_prev]
     - start: 0xA2960
       type: .data
       name: 8a160_len_700
