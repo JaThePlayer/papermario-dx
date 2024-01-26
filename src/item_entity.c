@@ -10,6 +10,7 @@
 #include "ld_addrs.h"
 #include "sprite.h"
 #include "sprite/player.h"
+#include "include_asset.h"
 
 #define MAX_ITEM_ENTITIES 256
 
@@ -66,14 +67,20 @@ void draw_content_pickup_item_header(ItemEntity* item, s32 posX, s32 posY);
 void draw_content_cant_carry_more(ItemEntity* item, s32 posX, s32 posY);
 void draw_content_pickup_item_desc(ItemEntity* item, s32 posX, s32 posY);
 
+//ui_pause_desc_msg_prev
+INCLUDE_IMG("ui/desc_msg_prev.png", prev_msg_png);
+INCLUDE_PAL("ui/desc_msg_prev.pal", prev_msg_pal);
+INCLUDE_IMG("ui/desc_msg_next.png", next_msg_png);
+INCLUDE_PAL("ui/desc_msg_next.pal", next_msg_pal);
+
 HudScript HES_DescMsgPrev2 = {
     hs_SetVisible
     hs_SetCustomSize(16, 16)
     hs_Loop
         hs_ClearFlags(HUD_ELEMENT_FLAG_200000)
-        hs_SetCI(9, ui_pause_desc_msg_prev)
+        hs_SetCI(9, prev_msg)
         hs_SetFlags(HUD_ELEMENT_FLAG_200000)
-        hs_SetCI(6, ui_pause_desc_msg_prev)
+        hs_SetCI(6, prev_msg)
     hs_Restart
     hs_End
 };
@@ -83,9 +90,9 @@ HudScript HES_DescMsgNext2 = {
     hs_SetCustomSize(16, 16)
     hs_Loop
         hs_ClearFlags(HUD_ELEMENT_FLAG_200000)
-        hs_SetCI(9, ui_pause_desc_msg_next)
+        hs_SetCI(9, next_msg)
         hs_SetFlags(HUD_ELEMENT_FLAG_200000)
-        hs_SetCI(6, ui_pause_desc_msg_next)
+        hs_SetCI(6, next_msg)
     hs_Restart
     hs_End
 };
@@ -2793,13 +2800,13 @@ void draw_content_pickup_item_desc(ItemEntity* item, s32 posX, s32 posY) {
     if (pickupItemDescTextPos != 0) {
         s32 id = pickupItemPrevMsgHudElementId;
         hud_element_set_flags(id, HUD_ELEMENT_FLAG_80);
-        hud_element_set_render_pos(id, posX + width - 4, posY + 4);
+        hud_element_set_render_pos(id, posX + width - 8, posY + 8);
         hud_element_draw_without_clipping(id);
     }
 
     if (pickupItemDescTextPos < textMaxPos) {
         hud_element_set_flags(pickupItemNextMsgHudElementId, HUD_ELEMENT_FLAG_80);
-        hud_element_set_render_pos(pickupItemNextMsgHudElementId, posX + width - 4, posY + height - 4);
+        hud_element_set_render_pos(pickupItemNextMsgHudElementId, posX + width - 8, posY + height - 8);
         hud_element_draw_without_clipping(pickupItemNextMsgHudElementId);
     }
 }
