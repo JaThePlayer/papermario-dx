@@ -8,6 +8,8 @@
 #define NONE_CUSTOM_STATUS 0
 #define ATK_DOWN_TEMP_STATUS 1
 #define DEF_DOWN_TEMP_STATUS 2
+#define ATK_UP_TEMP_STATUS 3
+#define DEF_UP_TEMP_STATUS 4
 
 // A function which gets called when a custom status gets applied
 typedef void(*StatusFxApplyFunc)(Actor* target, Vec3f position);
@@ -29,7 +31,7 @@ extern StatusType gCustomStatusTypes[CUSTOM_STATUS_AMT];
 API_CALLABLE(SetNextAttackCustomStatus);
 
 // Gets the potency of the given status for the given actor. 0 if actor doesn't have this status
-u8 custom_status_get_potency(Actor* actor, s8 customStatusId);
+s8 custom_status_get_potency(Actor* actor, s8 customStatusId);
 
 // Decrements all custom statuses for the given actor. For enemies, this is called before they attack.
 void custom_status_decrement(Actor* actor);

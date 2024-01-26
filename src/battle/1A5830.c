@@ -405,6 +405,7 @@ HitResult calc_enemy_damage_target(Actor* attacker) {
         damage -= attacker->chillOutAmount;
     }
 
+    damage += custom_status_get_potency(attacker, ATK_UP_TEMP_STATUS);
     damage -= custom_status_get_potency(attacker, ATK_DOWN_TEMP_STATUS);
 
     if (attacker->debuff == STATUS_KEY_SHRINK) {

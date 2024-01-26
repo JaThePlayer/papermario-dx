@@ -493,6 +493,7 @@ HitResult calc_player_damage_enemy(void) {
 
         currentAttackDamage += player->attackBoost;
 
+        currentAttackDamage += custom_status_get_potency(player, ATK_UP_TEMP_STATUS);
         currentAttackDamage -= custom_status_get_potency(player, ATK_DOWN_TEMP_STATUS);
 
         if (player_team_is_ability_active(player, ABILITY_HP_DRAIN)) {

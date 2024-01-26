@@ -3,11 +3,11 @@
 
 #include "types.h"
 
-#define CUSTOM_STATUS_AMT 3
+#define CUSTOM_STATUS_AMT 5
 
 typedef struct StatusInfo {
     u8 turns;
-    u8 potency;
+    s8 potency;
 } StatusInfo;
 
 #endif

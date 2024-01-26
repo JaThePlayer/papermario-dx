@@ -391,6 +391,7 @@ HitResult calc_partner_damage_enemy(void) {
 
         damageDealt = battleStatus->curAttackDamage + partner->attackBoost;
 
+        damageDealt += custom_status_get_potency(partner, ATK_UP_TEMP_STATUS);
         damageDealt -= custom_status_get_potency(partner, ATK_DOWN_TEMP_STATUS);
 
         if (gBattleStatus.flags1 & BS_FLAGS1_TRIGGER_EVENTS) {

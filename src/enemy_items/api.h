@@ -2,12 +2,13 @@
 #define _ENEMY_ITEM_API_H_
 
 #include "common.h"
-#include "enemy_items/config.h"
 
 typedef struct ItemChance {
     s32 itemID;
     s32 weight; // the weight of the item during randomisation. an item with a higher weight will have a higher chance of getting selected.
 } ItemChance;
+
+#include "enemy_items/config.h"
 
 // EnemyItems_AddItem(actorID, itemID, f32 xOffset, f32 yOffset, f32 zOffset)
 // adds a new item to the actor
@@ -91,6 +92,9 @@ extern EvtScript EnemyItems_TryUseHeldItem;
 // Returns 0 on LVar0 if the enemy didn't use an item, 1 if it did.
 // might clobber a *lot* of LVar's, so just assume all of them got messed up after calling this.
 extern EvtScript EnemyItems_TryUseHeldItem_WithAI;
+
+// applies effects for Armageddon items
+extern API_CALLABLE(ApplyCustomItemEffects);
 
 // Handles calling the default item use AI, and returns from the Evt if an item was used
 #define STANDARD_ITEM_USE_AI() \

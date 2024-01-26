@@ -1,6 +1,7 @@
 #include "common.h"
 #include "enemy_items/api.h"
 #include "script_api/battle.h"
+#include "misc_patches/custom_status.h"
 
 static s32 isCalledByEnemy = FALSE;
 
@@ -217,6 +218,37 @@ API_CALLABLE(_GetTargetActorId) {
     return ApiStatus_DONE2;
 }
 
+// Applies custom effects from items
+API_CALLABLE(ApplyCustomItemEffects) {
+    Bytecode* args = script->ptrReadPos;
+    Actor* actor;
+    s32 actorID = evt_get_variable(script, *args++);
+    s32 itemIdx = evt_get_variable(script, *args++);
+    ItemData* item = &gItemTable[itemIdx];
+    s32 isPlayer;
+
+    if (actorID == ACTOR_SELF) {
+        actorID = script->owner1.actorID;
+    }
+    actor = get_actor(actorID);
+    isPlayer = actor == gBattleStatus.playerActor;
+
+    #define INFLICT(status, turns, enemyTurns, potency) try_inflict_custom_status(actor, actor->curPos, status, isPlayer ? turns : enemyTurns, potency, 100);
+    // increase turn count for enemies, as the first turn is wasted
+    #define DEF_UP(turns, potency) INFLICT(DEF_UP_TEMP_STATUS, turns, turns + 1, potency)
+
+    switch (itemIdx) {
+        case ITEM_GOOMNUT:
+            DEF_UP(1, 2);
+            break;
+    }
+
+    #undef DEF_UP
+    #undef INFLICT
+
+    return ApiStatus_DONE2;
+}
+
 EvtScript EnemyItems_UseHealingItem = {
     // load up stats
     Call(_LoadItemStats, LVarA)
@@ -236,6 +268,8 @@ EvtScript EnemyItems_UseHealingItem = {
             Call(FreezeBattleState, 0)
         EndThread
     EndIf
+
+    Call(ApplyCustomItemEffects, ACTOR_SELF, LVarA)
 
     Return
     End

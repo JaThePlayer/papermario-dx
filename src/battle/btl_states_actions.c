@@ -950,6 +950,7 @@ void btl_state_update_begin_player_turn(void) {
                 }
 
                 custom_status_decrement(player);
+                custom_status_decrement_late(player);
 
                 debuffDuration = player->debuffDuration;
                 temp = player->koDuration;

@@ -68,6 +68,30 @@ void draw_content_pickup_item_header(ItemEntity* item, s32 posX, s32 posY);
 void draw_content_cant_carry_more(ItemEntity* item, s32 posX, s32 posY);
 void draw_content_pickup_item_desc(ItemEntity* item, s32 posX, s32 posY);
 
+HudScript HES_DescMsgPrev2 = {
+    hs_SetVisible
+    hs_SetCustomSize(16, 16)
+    hs_Loop
+        hs_ClearFlags(HUD_ELEMENT_FLAG_200000)
+        hs_SetCI(9, ui_pause_desc_msg_prev)
+        hs_SetFlags(HUD_ELEMENT_FLAG_200000)
+        hs_SetCI(6, ui_pause_desc_msg_prev)
+    hs_Restart
+    hs_End
+};
+
+HudScript HES_DescMsgNext2 = {
+    hs_SetVisible
+    hs_SetCustomSize(16, 16)
+    hs_Loop
+        hs_ClearFlags(HUD_ELEMENT_FLAG_200000)
+        hs_SetCI(9, ui_pause_desc_msg_next)
+        hs_SetFlags(HUD_ELEMENT_FLAG_200000)
+        hs_SetCI(6, ui_pause_desc_msg_next)
+    hs_Restart
+    hs_End
+};
+
 Vtx D_8014C5A0[4] = {
     {{{ -12,  0, 0 }, 0, { 0x2300, 0x2300 }, { 0, 0, 0, 255 }}},
     {{{  11,  0, 0 }, 0, { 0x2000, 0x2300 }, { 0, 0, 0, 255 }}},
@@ -118,6 +142,13 @@ Lights1 ItemEntityLights = gdSPDefLights1(255, 255, 255, 0, 0, 0, 0, 0, 0);
 s16 PickupHeaderWindowHeight[] = { 32, 40 };
 s16 PickupMessageWindowYOffsets[] = { 8, 4 };
 #endif
+
+s32 pickupItemDescTextPos;
+s32 pickupItemDescTextOffset;
+s32 pickupItemPrevMsgHudElementId = -1;
+s32 pickupItemNextMsgHudElementId = -1;
+//extern HesScript HES_DescMsgPrev;
+//extern HesScript HES_DescMsgNext;
 
 void sparkle_script_init(ItemEntity* item, SparkleScript* script) {
     item->sparkleReadPos = (s32*)script;
@@ -2583,6 +2614,9 @@ void func_801363A0(ItemEntity* item) {
             }
             if (item->itemID != ITEM_STAR_PIECE && item->itemID != ITEM_COIN) {
                 posX = X_VAR1;
+                pickupItemPrevMsgHudElementId = hud_element_create(&HES_DescMsgPrev2);
+                pickupItemNextMsgHudElementId = hud_element_create(&HES_DescMsgNext2);
+                pickupItemDescTextPos = 0;
                 set_window_properties(WINDOW_ID_19, posX, 186, WD_VAR4, 32, WINDOW_PRIORITY_0, draw_content_pickup_item_desc, item, -1);
             }
             if (item->state != ITEM_PICKUP_STATE_SHOW_GOT_ITEM) {
@@ -2602,6 +2636,16 @@ void func_801363A0(ItemEntity* item) {
             set_window_properties(WINDOW_ID_12, 160 - width / 2, 76, width, 40, WINDOW_PRIORITY_0, draw_content_pickup_item_header, item, -1);
             break;
     }
+
+    if (item->state != ITEM_PICKUP_STATE_SHOW_GOT_ITEM &&
+        item->state != ITEM_PICKUP_STATE_SHOW_TOO_MANY &&
+        pickupItemPrevMsgHudElementId != -1) {
+            hud_element_free(pickupItemPrevMsgHudElementId);
+            hud_element_free(pickupItemNextMsgHudElementId);
+
+            pickupItemPrevMsgHudElementId = -1;
+            pickupItemNextMsgHudElementId = -1;
+        }
 }
 
 #if VERSION_JP
@@ -2703,14 +2747,58 @@ void draw_content_cant_carry_more(ItemEntity* item, s32 x, s32 y) {
 void draw_content_pickup_item_desc(ItemEntity* item, s32 posX, s32 posY) {
     ItemData* itemData = &gItemTable[item->itemID];
     s32 itemMsg;
+    Window* window = &gWindows[WINDOW_ID_19];
+    s32 width = window->width;
+    s32 height = window->height;
+    s32 heldButtons = gGameStatusPtr->heldButtons[0];
+    s32 numLines;
+
+    itemMsg = itemData->fullDescMsg;
+
+    get_msg_properties(itemMsg, NULL, NULL, NULL, &numLines, NULL, NULL, 0);
+    if (numLines % 2) {
+        numLines++;
+    }
+    s32 textMaxPos = numLines - 2;
+    if (textMaxPos < 0) {
+        textMaxPos = 0;
+    }
+
+    if (heldButtons & BUTTON_C_UP) {
+        pickupItemDescTextPos -= 2;
+        if (pickupItemDescTextPos < 0) {
+            pickupItemDescTextPos = 0;
+        }
+    }
+    if (heldButtons & BUTTON_C_DOWN) {
+        pickupItemDescTextPos += 2;
+        if (pickupItemDescTextPos > textMaxPos) {
+            pickupItemDescTextPos = textMaxPos;
+        }
+    }
+
+    pickupItemDescTextOffset = pickupItemDescTextPos * 16;
 
     switch (item->state) {
         case ITEM_PICKUP_STATE_SHOW_GOT_ITEM:
         case ITEM_PICKUP_STATE_HIDE_GOT_ITEM:
         case ITEM_PICKUP_STATE_SHOW_TOO_MANY:
         case ITEM_PICKUP_STATE_HIDE_TOO_MANY:
-            itemMsg = itemData->shortDescMsg;
-            draw_msg(itemMsg, posX + 8, posY, 255, MSG_PAL_STANDARD, 0);
+            gDPSetScissor(gMainGfxPos++, G_SC_NON_INTERLACE, posX + 1, posY + 1, posX + width - 1, posY + height - 1);
+            draw_msg(itemMsg, posX + 8, posY - pickupItemDescTextOffset, 255, MSG_PAL_STANDARD, 0);
             break;
+    }
+
+    if (pickupItemDescTextPos != 0) {
+        s32 id = pickupItemPrevMsgHudElementId;
+        hud_element_set_flags(id, HUD_ELEMENT_FLAG_80);
+        hud_element_set_render_pos(id, posX + width - 4, posY + 4);
+        hud_element_draw_without_clipping(id);
+    }
+
+    if (pickupItemDescTextPos < textMaxPos) {
+        hud_element_set_flags(pickupItemNextMsgHudElementId, HUD_ELEMENT_FLAG_80);
+        hud_element_set_render_pos(pickupItemNextMsgHudElementId, posX + width - 4, posY + height - 4);
+        hud_element_draw_without_clipping(pickupItemNextMsgHudElementId);
     }
 }

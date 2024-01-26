@@ -2,6 +2,8 @@
 
 #include "statuses/temp_def_down.c"
 #include "statuses/temp_atk_down.c"
+#include "statuses/temp_def_up.c"
+#include "statuses/temp_atk_up.c"
 
 #define STATUS_ENTRY(namespace) { \
         .onApply = &namespace##_on_apply, \
@@ -14,10 +16,12 @@ StatusType gCustomStatusTypes[CUSTOM_STATUS_AMT] = {
     [NONE_CUSTOM_STATUS] = {},
     [ATK_DOWN_TEMP_STATUS] = STATUS_ENTRY(temp_atk_down),
     [DEF_DOWN_TEMP_STATUS] = STATUS_ENTRY(temp_def_down),
+    [ATK_UP_TEMP_STATUS] = STATUS_ENTRY(temp_atk_up),
+    [DEF_UP_TEMP_STATUS] = STATUS_ENTRY(temp_def_up),
 };
 
 // Gets the potency of the given status for the given actor. 0 if actor doesn't have this status
-u8 custom_status_get_potency(Actor* actor, s8 customStatusId) {
+s8 custom_status_get_potency(Actor* actor, s8 customStatusId) {
     StatusInfo* status = &actor->customStatuses[customStatusId];
 
     if (status->turns > 0)

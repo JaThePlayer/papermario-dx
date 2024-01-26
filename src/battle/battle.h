@@ -5,8 +5,8 @@
 #include "message_ids.h"
 #include "misc_patches/sp_pools.h"
 #include "misc_patches/easy_formation.h"
-#include "enemy_items/common_tables.h"
 #include "enemy_items/api.h"
+#include "enemy_items/common_tables.h"
 #include "misc_patches/qol.h"
 
 // Terminates foreground model lists
