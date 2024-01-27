@@ -1258,7 +1258,7 @@ void btl_state_update_9(void) {
     s32 oldKoDuration;
 
     if (gBattleSubState == BTL_SUBSTATE_9_INIT) {
-        if (!(gBattleStatus.flags2 & BS_FLAGS2_PLAYER_TURN_USED)) {
+        if (!(gBattleStatus.flags2 & BS_FLAGS2_PLAYER_TURN_USED) && battleStatus->selectedMoveID != MOVE_TATTLE) {
             btl_set_state(BATTLE_STATE_SWITCH_TO_PLAYER);
             return;
         }
@@ -2077,6 +2077,8 @@ void btl_state_update_end_battle(void) {
 
     switch (gBattleSubState) {
         case BTL_SUBSTATE_END_BATTLE_INIT:
+            sp_pool_end_of_battle();
+
             BattleScreenFadeAmt = 0;
             if (gGameStatusPtr->debugEnemyContact == DEBUG_CONTACT_DIE_ON_TOUCH) {
                 BattleScreenFadeAmt = 255;
@@ -2291,6 +2293,7 @@ void btl_state_update_run_away(void) {
             } else {
                 currentEncounter->battleOutcome = OUTCOME_PLAYER_FLED;
                 if (!is_ability_active(ABILITY_RUNAWAY_PAY)) {
+                    sp_pool_return_this_battle();
                     gBattleSubState = BTL_SUBSTATE_RUN_AWAY_DONE;
                 } else {
                     status_bar_start_blinking_starpoints();
@@ -3432,12 +3435,18 @@ void btl_state_update_end_partner_turn(void) {
     BattleStatus* battleStatus = &gBattleStatus;
 
     if (gBattleSubState == BTL_SUBSTATE_INIT) {
-        battleStatus->flags2 |= BS_FLAGS2_PARTNER_TURN_USED;
+        if (battleStatus->selectedMoveID != MOVE_TATTLE) {
+            battleStatus->flags2 |= BS_FLAGS2_PARTNER_TURN_USED;
+        }
+
         if (btl_check_enemies_defeated()) {
             return;
         }
-        battleStatus->flags1 &= ~BS_FLAGS1_PARTNER_ACTING;
-        battleStatus->flags2 &= ~BS_FLAGS2_OVERRIDE_INACTIVE_PARTNER;
+
+        if (battleStatus->selectedMoveID != MOVE_TATTLE) {
+            battleStatus->flags1 &= ~BS_FLAGS1_PARTNER_ACTING;
+            battleStatus->flags2 &= ~BS_FLAGS2_OVERRIDE_INACTIVE_PARTNER;
+        }
 
         if (battleStatus->unk_94 < 0) {
             battleStatus->unk_94 = 0;
