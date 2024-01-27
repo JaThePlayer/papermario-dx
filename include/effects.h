@@ -4,6 +4,13 @@
 #include "types.h"
 #include "common_structs.h"
 
+// Used for fx_stat_change
+enum ArrowType {
+    ARROW_TYPE_ATK_UP = 0,
+    ARROW_TYPE_ATK_DOWN = 1,
+    ARROW_TYPE_DEF_UP = 2,
+};
+
 typedef struct BigSmokePuffFXData {
     /* 0x00 */ s16 unk_00;
     /* 0x02 */ s16 unk_02;

@@ -3293,7 +3293,7 @@ API_CALLABLE(BoostAttack) {
                 if (actor->attackBoost > 20) {
                     actor->attackBoost = 20;
                 }
-                fx_stat_change(attackBoost - 1, x2, y2, z2, 1.0f, 60);
+                fx_stat_change(ARROW_TYPE_ATK_UP, attackBoost, x2, y2, z2, 1.0f, 60);
                 script->functionTemp[3] = 15;
                 script->functionTemp[0] = 3;
             } else {
@@ -3417,7 +3417,7 @@ API_CALLABLE(BoostDefense) {
                 if (actor->defenseBoost > 20) {
                     actor->defenseBoost = 20;
                 }
-                fx_stat_change(defenseBoost + 5, x2, y2, z2, 1.0f, 60);
+                fx_stat_change(ARROW_TYPE_DEF_UP, defenseBoost, x2, y2, z2, 1.0f, 60);
                 script->functionTemp[3] = 15;
                 script->functionTemp[0] = 3;
             } else {
@@ -3776,6 +3776,128 @@ API_CALLABLE(HealActor) {
                 script->functionTemp[3] = 10;
                 script->functionTemp[0] = 5;
             }
+            break;
+        case 5:
+            if (script->functionTemp[3] != 0) {
+                script->functionTemp[3]--;
+                break;
+            }
+            if ((actor->handleEventScript != NULL) && does_script_exist(actor->handleEventScriptID)) {
+                break;
+            }
+            ApplyingBuff = FALSE;
+            return ApiStatus_DONE2;
+    }
+    return ApiStatus_BLOCK;
+}
+
+// Same as HealActor, but doesn't trigger any events, and doesn't end the actor's turn
+API_CALLABLE(HealActorNoPopupsOrEvents) {
+    Bytecode* args = script->ptrReadPos;
+    s32 actorID;
+    Actor* actor;
+    f32 x1, y1, z1;
+    f32 x2, y2, z2;
+    s32 hpBoost;
+    s32 flags;
+    s32 flags2;
+    s32 message;
+
+    if (isInitialCall) {
+        script->functionTemp[0] = 0;
+    }
+
+    if (script->functionTemp[0] == 0) {
+        actorID = evt_get_variable(script, *args++);
+        if (actorID == ACTOR_SELF) {
+            actorID = script->owner1.enemyID;
+        }
+        hpBoost = evt_get_variable(script, *args++);
+        IsGroupHeal = evt_get_variable(script, *args++);
+        actor = get_actor(actorID);
+        script->functionTempPtr[1] = actor;
+        script->functionTemp[2] = hpBoost;
+
+        btl_cam_use_preset(BTL_CAM_PRESET_08);
+        btl_cam_set_zoffset(12);
+        btl_cam_target_actor(actor->actorID);
+        btl_cam_move(10);
+        func_8024E60C();
+
+        ApplyingBuff = TRUE;
+        script->functionTemp[3] = 5;
+        script->functionTemp[0] = 1;
+    }
+    get_actor(script->owner1.enemyID);
+    actor = script->functionTempPtr[1];
+    hpBoost = script->functionTemp[2];
+
+    flags = actor->flags;
+    x1 = actor->curPos.x + actor->headOffset.x;
+    if (flags & ACTOR_FLAG_UPSIDE_DOWN) {
+        y1 = actor->curPos.y + actor->headOffset.y - actor->size.y / 2;
+    } else if (!(flags & ACTOR_FLAG_HALF_HEIGHT)) {
+        y1 = actor->curPos.y + actor->headOffset.y + actor->size.y / 2;
+    } else {
+        y1 = actor->curPos.y + actor->headOffset.y + actor->size.y;
+    }
+    z1 = actor->curPos.z + actor->headOffset.z + 10.0f;
+
+    flags2 = actor->flags;
+    x2 = actor->curPos.x + actor->headOffset.x + actor->size.x / 2;
+    if (flags2 & ACTOR_FLAG_UPSIDE_DOWN) {
+        y2 = actor->curPos.y + actor->headOffset.y - actor->size.y;
+    } else if (!(flags2 & ACTOR_FLAG_HALF_HEIGHT)) {
+        y2 = actor->curPos.y + actor->headOffset.y + actor->size.y;
+    } else {
+        y2 = actor->curPos.y + actor->headOffset.y + actor->size.y * 2;
+    }
+    z2 = actor->curPos.z + actor->headOffset.z + 10.0f;
+
+    switch (script->functionTemp[0]) {
+        case 1:
+            if (script->functionTemp[3] == 0) {
+                //dispatch_event_actor(actor, EVENT_RECEIVE_BUFF);
+                fx_recover(0, x2, y2, z2, hpBoost);
+                show_start_recovery_shimmer(x1, y1, z1, hpBoost);
+                script->functionTemp[3] = 30;
+                script->functionTemp[0] = 2;
+            } else {
+                script->functionTemp[3]--;
+                break;
+            }
+            break;
+        case 2:
+            if (script->functionTemp[3] == 0) {
+                btl_cam_use_preset(BTL_CAM_DEFAULT);
+                btl_cam_move(15);
+                actor->curHP += hpBoost;
+                if (actor->maxHP < actor->curHP) {
+                    actor->curHP = actor->maxHP;
+                }
+                show_recovery_shimmer(x1, y1, z1, hpBoost);
+                script->functionTemp[3] = 15;
+                script->functionTemp[0] = 3;
+            } else {
+                script->functionTemp[3]--;
+                break;
+            }
+            break;
+        case 3:
+            if (script->functionTemp[3] == 0) {
+                //message = BTL_MSG_HEAL_ALL;
+                //if (!IsGroupHeal) {
+                //    message = BTL_MSG_HEAL_ONE;
+                //}
+                //btl_show_variable_battle_message(message, 60, hpBoost);
+                script->functionTemp[0] = 4;
+            } else {
+                script->functionTemp[3]--;
+                break;
+            }
+            break;
+        case 4:
+            script->functionTemp[0] = 5;
             break;
         case 5:
             if (script->functionTemp[3] != 0) {

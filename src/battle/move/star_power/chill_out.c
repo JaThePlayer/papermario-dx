@@ -31,7 +31,7 @@ API_CALLABLE(N(SpawnChillOutFX)) {
     z = rand_int(50) - 25;
 
     fx_sparkles(FX_SPARKLES_4, x, y, z, 40.0f);
-    
+
     return ApiStatus_DONE2;
 }
 
@@ -107,7 +107,7 @@ API_CALLABLE(N(InflictChillOutHit)) {
     }
     z = target->curPos.z + target->headOffset.z + 5.0f;
 
-    fx_stat_change(5, x, y, z, 1.0f, 60);
+    fx_stat_change(ARROW_TYPE_ATK_DOWN, 3, x, y, z, 1.0f, 60);
     sfx_play_sound(SOUND_INFLICT_CHILL_OUT);
     DidChillOutHit = TRUE;
 

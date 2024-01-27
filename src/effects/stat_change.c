@@ -1,12 +1,6 @@
 #include "common.h"
 #include "effects_internal.h"
 
-enum ArrowType {
-    ARROW_TYPE_ATK_UP = 0,
-    ARROW_TYPE_ATK_DOWN = 1,
-    ARROW_TYPE_DEF_UP = 2,
-};
-
 typedef struct ExtraArrowDataEntry {
     u8 unk_00;
     u8 unk_01;
@@ -138,7 +132,7 @@ void stat_change_init(EffectInstance* effect);
 void stat_change_update(EffectInstance* effect);
 void stat_change_render(EffectInstance* effect);
 
-EffectInstance* stat_change_main(s32 arg0, f32 x, f32 y, f32 z, f32 scale, s32 time) {
+EffectInstance* stat_change_main(s32 arrowType, s32 amt, f32 x, f32 y, f32 z, f32 scale, s32 time) {
     EffectBlueprint bp;
     EffectBlueprint* bpPtr = &bp;
     EffectInstance* effect;
@@ -158,7 +152,7 @@ EffectInstance* stat_change_main(s32 arg0, f32 x, f32 y, f32 z, f32 scale, s32 t
 
     ASSERT(effect->data.statChange != NULL);
 
-    part->unk_00 = arg0;
+    part->unk_00 = amt;
     part->pos.x = x;
     part->pos.y = y;
     part->pos.z = z;
@@ -173,8 +167,8 @@ EffectInstance* stat_change_main(s32 arg0, f32 x, f32 y, f32 z, f32 scale, s32 t
     part->unk_38 = 0;
     part->unk_34 = 0;
 
-    part->arrowType = D_E00AC880[arg0].type;
-    part->arrowValue = D_E00AC880[arg0].value;
+    part->arrowType = arrowType; //D_E00AC880[arg0].type;
+    part->arrowValue = arrowType == ARROW_TYPE_ATK_DOWN ? -amt : amt; //D_E00AC880[arg0].value;
 
     return effect;
 }
