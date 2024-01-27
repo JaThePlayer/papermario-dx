@@ -203,12 +203,14 @@ HitResult calc_enemy_test_target(Actor* actor) {
                         break;
                     }
                 }
+                /*
                 if (player_team_is_ability_active(target2, ABILITY_CLOSE_CALL) && (target2->curHP < 6)) {
                     if (rand_int(100) < 30) {
                         hitResult = HIT_RESULT_LUCKY;
                         break;
                     }
                 }
+                */
                 if (player_team_is_ability_active(target2, ABILITY_LUCKY_DAY)) {
                     if (rand_int(100) < 20) {
                         hitResult = HIT_RESULT_LUCKY;
@@ -517,6 +519,13 @@ HitResult calc_enemy_damage_target(Actor* attacker) {
             && !(gBattleStatus.flags1 & BS_FLAGS1_TUTORIAL_BATTLE)
         ) {
             if (!(target->flags & ACTOR_FLAG_NO_DMG_APPLY)) {
+                s32 nextHp = target->curHP - damage;
+                if (target->curHP >= 6 && nextHp > 0 && nextHp < 6) {
+                    // just entering danger after this move
+                    s32 closeCalls = player_team_is_ability_active(target, ABILITY_CLOSE_CALL);
+                    if (closeCalls > 0)
+                        try_inflict_custom_status(target, target->curPos, CLOSE_CALL_STATUS, 1, closeCalls, 100);
+                }
                 target->curHP -= damage;
             }
 

@@ -10,6 +10,7 @@
 #define DEF_DOWN_TEMP_STATUS 2
 #define ATK_UP_TEMP_STATUS 3
 #define DEF_UP_TEMP_STATUS 4
+#define CLOSE_CALL_STATUS 5
 
 // A function which gets called when a custom status gets applied
 typedef void(*StatusFxApplyFunc)(Actor* target, Vec3f position);
