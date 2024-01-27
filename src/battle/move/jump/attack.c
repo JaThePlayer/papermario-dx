@@ -74,7 +74,7 @@ EvtScript N(EVS_UseMove_Normal) = {
         Wait(1)
     EndIf
 
-    Call(SetNextAttackCustomStatus, ATK_UP_TEMP_STATUS, 1, 4, 100)
+    //Call(SetNextAttackCustomStatus, ATK_UP_TEMP_STATUS, 1, 4, 100)
 
     Call(GetPlayerActionSuccess, LVar0)
     Switch(LVar0)

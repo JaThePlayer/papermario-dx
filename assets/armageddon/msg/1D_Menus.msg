@@ -31,7 +31,7 @@
 	[Wait][Next]
 	Press [C-LEFT] to see what items[BR]
 	Mario has now.[BR]
-	[Wait][Next][InputOff]
+	[Wait][Next][InputOff][Color 0x10]
 	Each type of healing item can[BR]
 	only be used once per battle,[BR]
 	or else they won't heal you![BR]

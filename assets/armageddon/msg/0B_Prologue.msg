@@ -2093,6 +2093,36 @@
 	back there.[Wait][End]
 }
 
+#message:0B:(CH0_GoombaKingRage_Start) {
+	[Style right][Shake][PrintRising]
+	Now you made me real mad, Mario![BR][Pause 10]
+	Beating up my Bros. like that?![BR]
+	[/Shake][/PrintRising][Wait][Next]
+	I've been holding onto this [Color red]Soup[Color 0xA][BR]
+	for this moment,[Shake][PrintRising] feel my wrath![BR]
+	[Wait][End]
+}
+
+#message:0B:(CH0_GoombaKingRage_PostItem) {
+	[Style right]
+	[Shake]Ooh,[/Shake] you must be shaking now![BR][Pause 10]
+	It's time for my unstoppable...[BR]
+	[Wait][Next][PrintRising][Size 32,32]
+	Triple Spin![BR]
+	[SizeReset][/PrintRising][Wait][End]
+}
+
+#message:0B:(CH0_GoombaKingRage_PostItem_2) {
+	[Style right]
+	Actually, [Pause 5]I'd better rest a bit.[BR]
+	Never fight on a full stomach![BR]
+	[Wait][Next]
+	Next turn though, it's over![BR]
+	Three damage, three times, how[BR]
+	would one survive that?[BR]
+	[Wait][End]
+}
+
 #message:0B:(CH0_00CF) {
 	[Style right]
 	Oh no! It can't be! King[BR]
