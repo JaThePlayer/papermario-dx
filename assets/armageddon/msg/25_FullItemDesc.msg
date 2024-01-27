@@ -731,8 +731,10 @@
 }
 
 #message:25:(ItemFullDesc_CloseCall) {
-	When Mario's in Danger, enemies[BR]
-	sometimes fail to attack.[End]
+	When an attack puts Mario into[BR]
+	Danger, he gains +1 DEF until[BR]
+	his next turn. Does not impact[BR]
+	the attack putting him in Danger.[End]
 }
 
 #message:25:(ItemFullDesc_PowerRush) {

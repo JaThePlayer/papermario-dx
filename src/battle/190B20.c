@@ -2345,6 +2345,7 @@ s32 get_defense(Actor* actor, s32* defenseTable, s32 elementFlags) {
     } else {
         // factor in DEF-down and DEF-up statuses
         minDefense += custom_status_get_potency(actor, DEF_UP_TEMP_STATUS);
+        minDefense += custom_status_get_potency(actor, CLOSE_CALL_STATUS);
 
         // if there's any defense to pierce in the first place
         if (minDefense > 0) {

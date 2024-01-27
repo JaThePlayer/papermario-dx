@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-#define CUSTOM_STATUS_AMT 5
+#define CUSTOM_STATUS_AMT 8
 
 typedef struct StatusInfo {
     u8 turns;
