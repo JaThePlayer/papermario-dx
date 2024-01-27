@@ -1606,7 +1606,7 @@
     tattleCamOffset: [ 0, 4, 0 ]
     shadowOffset: 0
 - GoombaKing:
-    level: 25
+    level: 20
     nameMsg: MSG_EnemyName_GoombaKing
     tattleMsg: MSG_EnemyTattle_GoombaKing
     walkSound: [ SOUND_HEAVY_NPC_STEP_A, SOUND_HEAVY_NPC_STEP_A ]

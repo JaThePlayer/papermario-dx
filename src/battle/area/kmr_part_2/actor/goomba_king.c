@@ -28,11 +28,14 @@ enum N(ActorVars) {
     AVAR_Scene_BeginBattle      = 3,
     AVAR_ScreenShakingScriptID  = 4,
     AVAR_Unused_5               = 5,
+    AVAR_RageBegun              = 6,
 };
 
 enum N(ActorParams) {
     DMG_SPIN        = 1,
-    DMG_STOMP       = 2,
+    DMG_SPIN_COUNT  = 3, // how many spins in total
+
+    DMG_STOMP       = 3,
 };
 
 s32 N(DefaultAnims)[] = {
@@ -145,7 +148,7 @@ ActorBlueprint NAMESPACE = {
     .flags = 0,
     .type = ACTOR_TYPE_GOOMBA_KING,
     .level = ACTOR_LEVEL_GOOMBA_KING,
-    .maxHP = 10,
+    .maxHP = 15,
     .partCount = ARRAY_COUNT(N(ActorParts)),
     .partsData = N(ActorParts),
     .initScript = &N(EVS_Init),
@@ -188,6 +191,9 @@ EvtScript N(EVS_Init) = {
     Call(SetActorVar, ACTOR_SELF, AVAR_Scene_BeginBattle, FALSE)
     Call(SetActorVar, ACTOR_SELF, AVAR_Unused_5, 0)
     Call(SetActorVar, ACTOR_SELF, AVAR_TREE_DELAY, 0)
+    Call(SetActorVar, ACTOR_SELF, AVAR_RageBegun, 0)
+
+    Call(EnemyItems_AddItem, ACTOR_SELF, ITEM_SPICY_SOUP, Float(20.0), Float(0.0), Float(-5.0))
     Return
     End
 };
@@ -358,12 +364,63 @@ EvtScript N(EVS_HandleEvent) = {
     End
 };
 
+EvtScript N(EVS_RageActivate) = {
+    Call(UseBattleCamPreset, BTL_CAM_PRESET_14)
+    Call(BattleCamTargetActor, ACTOR_SELF)
+    Call(MoveBattleCamOver, 20)
+    Wait(20)
+    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_GoombaKing_Idle)
+
+    Call(ActorSpeak, MSG_CH0_GoombaKingRage_Start, ACTOR_SELF, PRT_MAIN, ANIM_GoombaKing_Idle, ANIM_GoombaKing_Idle)
+    Call(SetTargetActor, ACTOR_SELF, ACTOR_SELF)
+
+    ExecWait(EnemyItems_TryUseHeldItem)
+    Wait(45)
+
+    Call(ActorSpeak, MSG_CH0_GoombaKingRage_PostItem, ACTOR_SELF, PRT_MAIN, ANIM_GoombaKing_Idle, ANIM_GoombaKing_Idle)
+    Wait(20)
+    Call(ActorSpeak, MSG_CH0_GoombaKingRage_PostItem_2, ACTOR_SELF, PRT_MAIN, ANIM_GoombaKing_Idle, ANIM_GoombaKing_Idle)
+
+    Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
+    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
+    Call(MoveBattleCamOver, 30)
+    Wait(30)
+
+    Return
+    End
+};
+
 EvtScript N(EVS_TakeTurn) = {
     Call(UseIdleAnimation, ACTOR_SELF, FALSE)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(SetActorDispOffset, ACTOR_SELF, 0, 0, 0)
     Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
     Call(SetGoalToTarget, ACTOR_SELF)
+
+    GET_ACTOR_VAR(AVAR_RageBegun, LVar0)
+    IfEq(LVar0, 0)
+        Call(ActorExists, ACTOR_BLUE_GOOMBA, LVar0)
+        IfEq(LVar0, 0)
+            Call(ActorExists, ACTOR_RED_GOOMBA, LVar0)
+            IfEq(LVar0, 0)
+                // Both red and blue are dead, activate rage mode
+                SET_ACTOR_VAR(AVAR_RageBegun, 1)
+                ExecWait(N(EVS_RageActivate))
+                Return
+            EndIf
+        EndIf
+    Else
+        IfEq(LVar0, 1)
+            // Activated Rage mode last turn, guaranteed spin
+            ExecWait(N(EVS_Attack_SpinSwipe))
+            SET_ACTOR_VAR(AVAR_RageBegun, 2)
+            Return
+        EndIf
+    EndIf
+
     Call(GetStatusFlags, ACTOR_SELF, LVar0)
     IfNotFlag(LVar0, STATUS_FLAG_SHRINK)
         Call(GetActorVar, ACTOR_TREE, AVAR_TREE_DELAY, LVar0)
@@ -375,8 +432,8 @@ EvtScript N(EVS_TakeTurn) = {
             Return
         EndIf
     EndIf
+
     ExecWait(N(EVS_Attack_SpinSwipe))
-    Return
     Return
     End
 };
@@ -452,11 +509,26 @@ EvtScript N(EVS_Attack_SpinSwipe) = {
             Return
         EndCaseGroup
     EndSwitch
-    Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
-    Call(MoveBattleCamOver, 20)
     Wait(2)
     Call(SetGoalToTarget, ACTOR_SELF)
     Call(EnemyDamageTarget, ACTOR_SELF, LVarA, 0, 0, 0, DMG_SPIN, BS_FLAGS1_TRIGGER_EVENTS)
+
+    Loop(DMG_SPIN_COUNT - 1)
+        Set(LVar0, 0)
+        Loop(20)
+            Add(LVar0, 18)
+            Call(SetActorYaw, ACTOR_SELF, LVar0)
+            Wait(1)
+        EndLoop
+        Call(SetActorYaw, ACTOR_SELF, 0)
+        Wait(2)
+        Call(EnemyDamageTarget, ACTOR_SELF, LVarA, 0, 0, 0, DMG_SPIN, BS_FLAGS1_TRIGGER_EVENTS)
+    EndLoop
+
+    Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
+    Call(MoveBattleCamOver, 20)
+    Wait(2)
+
     Call(SetActorRotation, ACTOR_SELF, 0, 0, 0)
     Call(SetActorYaw, ACTOR_SELF, 0)
     Call(SetActorDispOffset, ACTOR_SELF, 0, 0, 0)

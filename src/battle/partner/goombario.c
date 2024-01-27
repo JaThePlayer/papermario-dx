@@ -402,21 +402,21 @@ API_CALLABLE(N(ChargeAtPos)) {
     switch (battleStatus->selectedMoveID) {
         case MOVE_TATTLE:
             partner->isGlowing += 2;
-            boostAmount = 1;
+            boostAmount = 2;
             if (partner->isGlowing >= 99) {
                 partner->isGlowing = 99;
             }
             break;
         case MOVE_CHARGE:
             partner->isGlowing += 2;
-            boostAmount = 1;
+            boostAmount = 2;
             if (partner->isGlowing >= 99) {
                 partner->isGlowing = 99;
             }
             break;
         case MOVE_MULTIBONK:
             partner->isGlowing += 2;
-            boostAmount = 1;
+            boostAmount = 2;
             if (partner->isGlowing >= 99) {
                 partner->isGlowing = 99;
             }
@@ -426,7 +426,7 @@ API_CALLABLE(N(ChargeAtPos)) {
     x = evt_get_variable(script, *args++);
     y = evt_get_variable(script, *args++);
     z = evt_get_variable(script, *args++);
-    fx_stat_change(boostAmount, x, y, z, 1.0f, 60);
+    fx_stat_change(ARROW_TYPE_ATK_UP, boostAmount, x, y, z, 1.0f, 60);
 
     gBattleStatus.flags1 |= BS_FLAGS1_GOOMBARIO_CHARGED;
     return ApiStatus_DONE2;

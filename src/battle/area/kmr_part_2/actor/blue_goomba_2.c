@@ -1,5 +1,6 @@
 #include "../area.h"
 #include "sprite/npc/GoombaBros.h"
+#include "goomba_king_common.h"
 
 #define NAMESPACE A(blue_goomba_2)
 
@@ -11,6 +12,7 @@ extern EvtScript N(EVS_HandleEvent);
 
 enum N(ActorPartIDs) {
     PRT_MAIN        = 1,
+    PRT_ZER0        = 0,
 };
 
 s32 N(DefenseTable)[] = {
@@ -62,7 +64,7 @@ ActorBlueprint NAMESPACE = {
     .flags = 0,
     .type = ACTOR_TYPE_BLUE_GOOMBA_BOSS,
     .level = ACTOR_LEVEL_BLUE_GOOMBA_BOSS,
-    .maxHP = 6,
+    .maxHP = 7,
     .partCount = ARRAY_COUNT(N(ActorParts)),
     .partsData = N(ActorParts),
     .initScript = &N(EVS_Init),
@@ -107,6 +109,8 @@ s32 N(ShuffleAnims)[] = {
     STATUS_KEY_FEAR,      ANIM_GoombaBros_Blue_Dizzy,
     STATUS_END,
 };
+
+#include "blue_goomba_shared.inc.c"
 
 EvtScript N(EVS_Init_Inner) = {
     Call(BindTakeTurn, ACTOR_SELF, Ref(N(EVS_TakeTurn)))
@@ -166,6 +170,7 @@ EvtScript N(EVS_Idle) = {
     End
 };
 
+/*
 EvtScript N(EVS_HandleEvent) = {
     Call(UseIdleAnimation, ACTOR_SELF, FALSE)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
@@ -282,11 +287,7 @@ EvtScript N(EVS_HandleEvent) = {
     Call(UseIdleAnimation, ACTOR_SELF, TRUE)
     Return
     End
-};
-
-#include "common/CalculateArcsinDeg.inc.c"
-
-#include "blue_goomba_shared.inc.c"
+};*/
 
 EvtScript N(EVS_TakeTurn) = {
     ExecWait(N(Headbonk))
@@ -297,13 +298,13 @@ EvtScript N(EVS_TakeTurn) = {
 API_CALLABLE(N(ReduceLevel)) {
     ActorBlueprint* actorData = get_actor(script->owner1.actorID)->actorBlueprint;
 
-    actorData->level /= 4;
+    actorData->level = 5;
     return ApiStatus_DONE2;
 }
 
 EvtScript N(EVS_Init) = {
     ExecWait(N(EVS_Init_Inner))
-    Call(SetEnemyHP, ACTOR_SELF, 2)
+    Call(SetEnemyHP, ACTOR_SELF, 5)
     Call(N(ReduceLevel))
     Return
     End

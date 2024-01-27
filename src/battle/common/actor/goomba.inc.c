@@ -26,7 +26,7 @@ enum N(ActorPartIDs) {
 };
 
 s32 N(DefenseTable)[] = {
-    ELEMENT_NORMAL,   1,
+    ELEMENT_NORMAL,   0,
     ELEMENT_END,
 };
 

@@ -659,8 +659,7 @@
 }
 
 #message:23:(ItemShortDesc_CloseCall) {
-	When Mario's in Danger, enemies[BR]
-	sometimes fail to attack.[End]
+	Nah[End]
 }
 
 #message:23:(ItemShortDesc_PowerRush) {

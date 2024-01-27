@@ -10,6 +10,8 @@ enum N(BattleCommon) {
     PRT_TREE_NUT_2      = 4,
     PRT_TREE_NUT_3      = 5,
     AVAR_TREE_DELAY     = 6,
+    PRT_BLUE_MAIN       = 1,
+    PRT_RED_MAIN        = 1,
 };
 
 #endif // _GOOMBA_BROS_COMMON_H_

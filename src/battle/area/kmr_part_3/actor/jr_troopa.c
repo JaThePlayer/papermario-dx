@@ -482,6 +482,7 @@ EvtScript N(EVS_HandlePhase) = {
                     ExecWait(N(EVS_Cam_FocusOnJrTroopa))
                     // NEW: use thunder bolt
                     Call(ActorSpeak, MSG_JrTroopa1_UseThunderBolt, ACTOR_SELF, PRT_MAIN, ANIM_JrTroopa_Talk, ANIM_JrTroopa_Idle)
+                    Call(SetTargetActor, ACTOR_SELF, ACTOR_SELF)
                     ExecWait(EnemyItems_TryUseHeldItem)
                     ExecWait(N(EVS_Cam_FocusOnJrTroopa))
                     // end new
