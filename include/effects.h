@@ -9,6 +9,7 @@ enum ArrowType {
     ARROW_TYPE_ATK_UP = 0,
     ARROW_TYPE_ATK_DOWN = 1,
     ARROW_TYPE_DEF_UP = 2,
+    ARROW_TYPE_DEF_DOWN = 3,
 };
 
 typedef struct BigSmokePuffFXData {

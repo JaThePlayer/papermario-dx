@@ -13,7 +13,7 @@
 #define CLOSE_CALL_STATUS 5
 
 // A function which gets called when a custom status gets applied
-typedef void(*StatusFxApplyFunc)(Actor* target, Vec3f position);
+typedef void(*StatusFxApplyFunc)(Actor* target, Vec3f position, u8 potency);
 
 typedef void(*StatusFxDrawIconFunc)(Actor* target);
 
@@ -49,5 +49,7 @@ void custom_status_zero_initialize(Actor* actor);
 void custom_status_render_all_icons(Actor* actor);
 
 void custom_status_remove_icons(s32 iconId);
+
+Vec3f get_expected_arrow_pos(Actor* actor);
 
 #endif
