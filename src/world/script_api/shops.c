@@ -416,7 +416,7 @@ void shop_open_item_select_popup(s32 mode) {
         menu->userIndex[numEntries] = i;
         menu->enabled[numEntries] = TRUE;
         menu->nameMsg[numEntries] = itemData->nameMsg;
-        menu->descMsg[numEntries] = itemData->shortDescMsg;
+        menu->descMsg[numEntries] = itemData->fullDescMsg;
         menu->value[numEntries] = shop_get_sell_price(itemID);
         numEntries++;
     }

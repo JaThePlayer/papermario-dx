@@ -1,6 +1,7 @@
 #include "common.h"
 #include "hud_element.h"
 #include "message_ids.h"
+#include "misc_patches/scrollable_desc_draw.h"
 
 #define LINE_HEIGHT 13
 
@@ -1955,7 +1956,8 @@ void popup_menu_draw_title_contents(
 #endif
 
 void func_800F48F4(s32* userData, s32 baseX, s32 baseY, s32 width, s32 height, s32 opacity, s32 darkening) {
-    draw_msg(gPopupMenu->descMsg[PopupMenu_SelectedIndex], baseX + 8, baseY, PopupMenu_Alpha, D_8010D690, 0);
+    //draw_msg(gPopupMenu->descMsg[PopupMenu_SelectedIndex], baseX + 8, baseY, PopupMenu_Alpha, D_8010D690, 0);
+    draw_scrollable_desc(gPopupMenu->descMsg[PopupMenu_SelectedIndex], baseX + 8, baseY, width, height, PopupMenu_Alpha, D_8010D690, 0);
 }
 
 #if VERSION_PAL

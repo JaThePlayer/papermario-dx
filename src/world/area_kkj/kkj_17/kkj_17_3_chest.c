@@ -78,7 +78,7 @@ API_CALLABLE(N(ChestItemPrompt)) {
                 menu->userIndex[menuIdx] = i;
                 menu->enabled[menuIdx] = TRUE;
                 menu->nameMsg[menuIdx] = item->nameMsg;
-                menu->descMsg[menuIdx] = item->shortDescMsg;
+                menu->descMsg[menuIdx] = item->fullDescMsg;
                 menuIdx++;
             }
         }

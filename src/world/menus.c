@@ -182,7 +182,7 @@ s32 setup_item_popup(PopupMenu* menu) {
                 menu->enabled[optionCount] = FALSE;
             }
             menu->nameMsg[optionCount] = item->nameMsg;
-            menu->descMsg[optionCount] = item->shortDescMsg;
+            menu->descMsg[optionCount] = item->fullDescMsg;
             optionCount++;
         }
     }

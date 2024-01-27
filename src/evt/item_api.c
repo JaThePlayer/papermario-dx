@@ -50,7 +50,7 @@ API_CALLABLE(ShowKeyChoicePopup) {
                         menu->userIndex[numEntries] = i;
                         menu->enabled[numEntries] = TRUE;
                         menu->nameMsg[numEntries] = item->nameMsg;
-                        menu->descMsg[numEntries] = item->shortDescMsg;
+                        menu->descMsg[numEntries] = item->fullDescMsg;
                         numEntries++;
                     }
                 }
@@ -141,7 +141,7 @@ API_CALLABLE(ShowConsumableChoicePopup) {
                         menu->userIndex[numEntries] = i;
                         menu->enabled[numEntries] = TRUE;
                         menu->nameMsg[numEntries] = item->nameMsg;
-                        menu->descMsg[numEntries] = item->shortDescMsg;
+                        menu->descMsg[numEntries] = item->fullDescMsg;
                         numEntries++;
                     }
                 }

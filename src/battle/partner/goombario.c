@@ -969,6 +969,7 @@ EvtScript N(EVS_Attack_Headbonk1) = {
         Call(SetActorScale, ACTOR_PARTNER, Float(1.0), Float(1.0), Float(1.0))
     EndChildThread
     Wait(1)
+    // Call(SetNextAttackCustomStatus, DEF_DOWN_TEMP_STATUS, 1, 4, 100)
     Call(GetPartnerActionSuccess, LVar0)
     Switch(LVar0)
         CaseGt(0)
@@ -1027,6 +1028,7 @@ EvtScript N(EVS_Attack_Headbonk1) = {
     Wait(1)
     Call(N(StopChargeAndGet))
     Add(LVar0, 1)
+    // Call(SetNextAttackCustomStatus, DEF_DOWN_TEMP_STATUS, 1, 4, 100)
     Call(PartnerDamageEnemy, LVar0, DAMAGE_TYPE_JUMP, 0, 0, LVar0, BS_FLAGS1_TRIGGER_EVENTS)
     Call(PlaySoundAtActor, ACTOR_PARTNER, SOUND_NONE)
     Call(SetActionResult, LVarF)
