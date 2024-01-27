@@ -6,7 +6,7 @@
 
 #define close_call_DECREMENT_LATE TRUE
 
-void N(on_apply)(Actor* target, Vec3f position) {
+void N(on_apply)(Actor* target, Vec3f position, u8 potency) {
     EffectInstance* debuffEffect = fx_debuff(2, position.x, position.y, position.z);
 
     debuffEffect->data.debuff->primCol.r = 135;

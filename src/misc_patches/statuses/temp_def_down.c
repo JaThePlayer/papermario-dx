@@ -8,8 +8,10 @@
 
 extern EvtScript EVS_PlaySleepHitFX;
 
-void N(on_apply)(Actor* target, Vec3f position) {
+void N(on_apply)(Actor* actor, Vec3f position, u8 potency) {
     EffectInstance* debuffEffect = fx_debuff(2, position.x, position.y, position.z);
+    Vec3f arrowPos = get_expected_arrow_pos(actor);
+    fx_stat_change(ARROW_TYPE_DEF_DOWN, potency, arrowPos.x, arrowPos.y, arrowPos.z, 1.0f, 60);
 
     debuffEffect->data.debuff->primCol.r = 135;
     debuffEffect->data.debuff->primCol.g = 206;

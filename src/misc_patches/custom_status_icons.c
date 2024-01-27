@@ -18,7 +18,7 @@ StatusIconType gCustomStatusIconTypes[CUSTOM_ICON_AMT] = {
     [DEF_DOWN_ICON_ID] = STATUS_ICON_ENTRY(status_temp_def_down),
     [ATK_DOWN_ICON_ID] = STATUS_ICON_ENTRY(status_temp_atk_down),
     [DEF_UP_ICON_ID] = STATUS_ICON_ENTRY(status_temp_def_up),
-    [ATK_UP_ICON_ID] = STATUS_ICON_ENTRY(status_temp_atk_down),
+    [ATK_UP_ICON_ID] = STATUS_ICON_ENTRY(status_temp_atk_up),
 };
 
 void custom_status_icons_init(CustomHudComplexStatusIcon customIcons[CUSTOM_ICON_AMT]) {

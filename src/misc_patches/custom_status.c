@@ -77,7 +77,7 @@ s32 try_inflict_custom_status(Actor* actor, Vec3f position, s8 customStatusId, u
     status->potency = potency;
 
     if (statusType->onApply) {
-        statusType->onApply(actor, position);
+        statusType->onApply(actor, position, potency);
     }
 
     return TRUE;
@@ -129,4 +129,26 @@ void custom_status_remove_icons(s32 iconId) {
             statusType->onRemoveIcon(iconId);
         }
     }
+}
+
+Vec3f get_expected_arrow_pos(Actor* actor) {
+    Vec3f res = {};
+    s32 x, y, z;
+
+    s32 flags = actor->flags;
+    x = actor->curPos.x + actor->headOffset.x + actor->size.x / 2;
+    if (flags & ACTOR_FLAG_UPSIDE_DOWN) {
+        y = actor->curPos.y + actor->headOffset.y - actor->size.y;
+    } else if (!(flags & ACTOR_FLAG_HALF_HEIGHT)) {
+        y = actor->curPos.y + actor->headOffset.y + actor->size.y;
+    } else {
+        y = actor->curPos.y + actor->headOffset.y + actor->size.y * 2;
+    }
+    z = actor->curPos.z + actor->headOffset.z + 10.0f;
+
+    res.x = x;
+    res.y = y;
+    res.z = z;
+
+    return res;
 }
