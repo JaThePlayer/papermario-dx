@@ -2013,7 +2013,7 @@ Actor* create_actor(Formation formation) {
             oy = 0.f;
         }
         if (oz == 0.f) {
-            oz = -1.f;
+            oz = -4.f;
         }
 
         enemy_items_add_item(actor, formation->item, ox, oy, oz);

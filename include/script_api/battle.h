@@ -190,6 +190,7 @@ API_CALLABLE(BoostDefense);
 API_CALLABLE(VanishActor);
 API_CALLABLE(ElectrifyActor);
 API_CALLABLE(HealActor);
+API_CALLABLE(HealActorNoPopupsOrEvents);//new
 API_CALLABLE(WaitForBuffDone);
 API_CALLABLE(CopyBuffs);
 API_CALLABLE(GetMenuSelection);

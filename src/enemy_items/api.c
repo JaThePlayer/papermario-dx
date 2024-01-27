@@ -236,10 +236,14 @@ API_CALLABLE(ApplyCustomItemEffects) {
     #define INFLICT(status, turns, enemyTurns, potency) try_inflict_custom_status(actor, actor->curPos, status, isPlayer ? turns : enemyTurns, potency, 100);
     // increase turn count for enemies, as the first turn is wasted
     #define DEF_UP(turns, potency) INFLICT(DEF_UP_TEMP_STATUS, turns, turns + 1, potency)
+    #define ATK_UP(turns, potency) INFLICT(ATK_UP_TEMP_STATUS, turns, turns + 1, potency)
 
     switch (itemIdx) {
         case ITEM_GOOMNUT:
             DEF_UP(1, 2);
+            break;
+        case ITEM_SPICY_SOUP:
+            ATK_UP(1, 2);
             break;
     }
 
@@ -264,11 +268,12 @@ EvtScript EnemyItems_UseHealingItem = {
         EndThread
         Thread
             Call(FreezeBattleState, 1)
-            Call(HealActor, LVar9, LVarB, FALSE)
+            Call(HealActorNoPopupsOrEvents, LVar9, LVarB, FALSE)
             Call(FreezeBattleState, 0)
         EndThread
     EndIf
 
+    Call(WaitForBuffDone)
     Call(ApplyCustomItemEffects, ACTOR_SELF, LVarA)
 
     Return
@@ -404,12 +409,31 @@ API_CALLABLE(EnemyItems_RemoveHeldItem) {
 
 extern API_CALLABLE(LoadItemScriptForEnemy);
 
+// (actor, out var heady)
+static API_CALLABLE(GetActorHeadYPos) {
+    Bytecode* args = script->ptrReadPos;
+    Actor* actor = get_actor_from_evt_var(script, *args++);
+    s32 headY;
+
+    if (!(actor->flags & ACTOR_FLAG_HALF_HEIGHT)) {
+        headY = actor->curPos.y + actor->headOffset.y + actor->size.y;
+    } else {
+        headY = actor->curPos.y + actor->headOffset.y + actor->size.y / 2;
+    }
+
+    evt_set_variable(script, *args++, headY);
+
+    return ApiStatus_DONE2;
+}
+
 EvtScript EnemyItems_UseHeldItem = {
     Call(GetActorPos, ACTOR_SELF, LVar7, LVar1, LVar2)
+    Call(GetActorHeadYPos, ACTOR_SELF, LVar6)
     Call(PlaySoundAtActor, ACTOR_SELF, SOUND_USE_ITEM)
 
     Wait(4)
-    Add(LVar1, 45)
+    Add(LVar1, 10) // was 45
+    Add(LVar1, LVar6)
     Set(LVar3, LVar1)
     Add(LVar3, 10)
     Add(LVar3, 2)
