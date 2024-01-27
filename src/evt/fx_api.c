@@ -619,7 +619,8 @@ API_CALLABLE(PlayEffect_impl) {
             effectRet = fx_motion_blur_flame(iVar1, fVar2, fVar3, fVar4, fVar5, iVar6);
             break;
         case EFFECT_STAT_CHANGE:
-            effectRet = fx_stat_change(iVar1, fVar2, fVar3, fVar4, fVar5, iVar6);
+            //effectRet = fx_stat_change(iVar1, fVar2, fVar3, fVar4, fVar5, iVar6);
+            effectRet = fx_stat_change(iVar1, iVar2, fVar3, fVar4, fVar5, fVar6, iVar7);
             break;
         case EFFECT_SNAKING_STATIC:
             effectRet = fx_snaking_static(iVar1, fVar2, fVar3, fVar4, fVar5, iVar6);

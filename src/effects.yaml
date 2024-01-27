@@ -225,7 +225,7 @@
 - name: butterflies
   args: s32, f32, f32, f32
 - name: stat_change
-  args: s32, f32, f32, f32, f32, s32
+  args: s32, s32, f32, f32, f32, f32, s32
 - name: snaking_static
   args: s32, f32, f32, f32, f32, s32
 - name: thunderbolt_ring

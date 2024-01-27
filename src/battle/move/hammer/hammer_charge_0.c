@@ -15,7 +15,7 @@ API_CALLABLE(func_802A10C8_74F1F8) {
     s32 var2 = evt_get_variable(script, *args++);
     s32 var3 = evt_get_variable(script, *args++);
 
-    fx_stat_change(0, var1, var2, var3, 1.0f, 60);
+    fx_stat_change(ARROW_TYPE_ATK_UP, 1, var1, var2, var3, 1.0f, 60);
 
     battleStatus->hammerCharge++;
     if (battleStatus->hammerCharge > 99) {

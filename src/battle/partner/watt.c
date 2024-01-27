@@ -1158,8 +1158,8 @@ EvtScript N(EVS_TurboCharge_HealthyPlayer) = {
         Call(GetActorPos, ACTOR_PLAYER, LVar0, LVar1, LVar2)
         Add(LVar0, 15)
         Add(LVar1, 35)
-        Add(LVarF, 0)
-        PlayEffect(EFFECT_STAT_CHANGE, LVarF, LVar0, LVar1, LVar2, Float(1.5), 60, 0)
+        //Add(LVarF, 0)
+        PlayEffect(EFFECT_STAT_CHANGE, ARROW_TYPE_ATK_UP, LVarF, LVar0, LVar1, LVar2, Float(1.5), 60, 0)
         Wait(4)
     EndIf
     IfEq(LVar0, 0)
@@ -1229,8 +1229,8 @@ EvtScript N(EVS_TurboCharge_ImmobilePlayer) = {
         Call(GetActorPos, ACTOR_PLAYER, LVar0, LVar1, LVar2)
         Add(LVar0, 15)
         Add(LVar1, 35)
-        Add(LVarF, 0)
-        PlayEffect(EFFECT_STAT_CHANGE, LVarF, LVar0, LVar1, LVar2, Float(1.5), 60, 0)
+        //Add(LVarF, 0)
+        PlayEffect(EFFECT_STAT_CHANGE, ARROW_TYPE_ATK_UP, LVarF, LVar0, LVar1, LVar2, Float(1.5), 60, 0)
         Wait(4)
     EndIf
     IfEq(LVar0, 0)
