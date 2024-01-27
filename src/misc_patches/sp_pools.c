@@ -6,6 +6,9 @@ u8 sp_pool_caps[SP_POOL_COUNT] = {
     60, // SP_POOL_PLEASANT_PATH
 };
 
+// stores how much sp was taken from each pool in the current battle
+u8 sp_pool_used_up_this_battle[SP_POOL_COUNT] = { };
+
 // converts a pool id into an index into sp_pool_caps (since 0 is used for SP_POOL_NONE, and we don't want to waste that byte)
 #define INDEX_POOL(id) (id - 1)
 
@@ -50,5 +53,22 @@ u8 sp_pool_use(u8 id, u8 amt) {
     }
 
     gPlayerData.spAreaPools[INDEX_POOL(id)] += amt;
+    sp_pool_used_up_this_battle[INDEX_POOL(id)] += amt;
+
     return amt;
+}
+
+void sp_pool_return_this_battle() {
+    for (s32 i = 0; i < SP_POOL_COUNT; i++) {
+        u8 used = sp_pool_used_up_this_battle[i];
+
+        gPlayerData.spAreaPools[i] -= used;
+        sp_pool_used_up_this_battle[i] = 0;
+    }
+}
+
+void sp_pool_end_of_battle() {
+    for (s32 i = 0; i < SP_POOL_COUNT; i++) {
+        sp_pool_used_up_this_battle[i] = 0;
+    }
 }

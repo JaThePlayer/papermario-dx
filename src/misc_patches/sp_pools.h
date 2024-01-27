@@ -66,4 +66,10 @@ u8 sp_pool_remaining(u8 id);
 // Uses up at most 'amt' sp from the given pool. Returns how much sp was actually be spent.
 u8 sp_pool_use(u8 id, u8 amt);
 
+// Returns the SP consumed during this battle. Used when running away.
+void sp_pool_return_this_battle(void);
+
+// Needs to be called at the end of each battle
+void sp_pool_end_of_battle(void);
+
 #endif
