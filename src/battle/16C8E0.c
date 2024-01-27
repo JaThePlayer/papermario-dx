@@ -893,6 +893,24 @@ void draw_health_bar_number(s32 number, s32 screenX, s32 screenY, s32 r, s32 g, 
     #undef DIGIT_WIDTH
 }
 
+ActorPart* get_actor_part_for_def(Actor* actor) {
+    ActorPart* part = &actor->partsTable[0];
+
+    if (part->nextPart == NULL) {
+        return part;
+    }
+
+    while (part != NULL) {
+        if (part->staticData->flags & ACTOR_PART_FLAG_PRIMARY_TARGET) {
+            return part;
+        }
+        part = part->nextPart;
+    }
+
+    // oh well
+    return &actor->partsTable[0];
+}
+
 void btl_draw_enemy_health_bars(void) {
     BattleStatus* battleStatus = &gBattleStatus;
 
@@ -973,7 +991,7 @@ void btl_draw_enemy_health_bars(void) {
 
                         // draw defense
                         draw_health_bar_number(
-                            get_defense(enemy, get_actor_part(enemy, 0)->defenseTable, ELEMENT_NORMAL),
+                            get_defense(enemy, get_actor_part_for_def(enemy)->defenseTable, ELEMENT_NORMAL),
                             screenX, screenY - 18,
                             135, 206, 250); // light sky blue
 
