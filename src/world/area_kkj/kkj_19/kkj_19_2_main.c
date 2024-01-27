@@ -79,9 +79,9 @@ void N(draw_content_ingredient_desc)(
     ItemData* item = &gItemTable[ingredient->itemID];
 
     if (ingredient->overrideDescMsg != MSG_NONE) {
-        draw_msg(ingredient->overrideDescMsg, baseX + 8, baseY, 255, 10, 0);
+        draw_scrollable_item_desc(ingredient->overrideDescMsg, baseX + 8, baseY, width, height);
     } else {
-        draw_msg(item->shortDescMsg, baseX + 8, baseY, 255, 10, 0);
+        draw_scrollable_item_desc(item, baseX + 8, baseY, width, height);
     }
 }
 

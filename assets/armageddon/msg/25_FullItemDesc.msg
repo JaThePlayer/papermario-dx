@@ -882,27 +882,27 @@
 }
 
 #message:25:(ItemFullDesc_Boots) {
-	no data[End]
+	Jump and stomp on an enemy.[End]
 }
 
 #message:25:(ItemFullDesc_SuperBoots) {
-	no data[End]
+	Jump and stomp on an enemy.[End]
 }
 
 #message:25:(ItemFullDesc_UltraBoots) {
-	no data[End]
+	Jump and stomp on an enemy.[End]
 }
 
 #message:25:(ItemFullDesc_Hammer) {
-	no data[End]
+	Smack enemies with the Hammer.[End]
 }
 
 #message:25:(ItemFullDesc_SuperHammer) {
-	no data[End]
+	Smack enemies with the Hammer.[End]
 }
 
 #message:25:(ItemFullDesc_UltraHammer) {
-	no data[End]
+	Smack enemies with the Hammer.[End]
 }
 
 #message:25:(ItemFullDesc_LuckyStar) {

@@ -7,6 +7,7 @@
 #include "game_modes.h"
 #include "dx/profiling.h"
 #include "dx/debug_menu.h"
+#include "misc_patches/scrollable_desc_draw.c"
 
 SHIFT_BSS s32 gOverrideFlags;
 SHIFT_BSS s32 timeFreezeMode;
@@ -279,6 +280,8 @@ void gfx_draw_frame(void) {
                    NU_SC_TASK_LODABLE | NU_SC_SWAPBUFFER);
     gCurrentDisplayContextIndex = gCurrentDisplayContextIndex ^ 1;
     crash_screen_set_draw_info(nuGfxCfb_ptr, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+    draw_item_gc();
 }
 
 void load_engine_data(void) {

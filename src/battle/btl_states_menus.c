@@ -1692,6 +1692,10 @@ void func_802A4448(void* data, s32 x, s32 y) {
 }
 
 void func_802A4494(void* data, s32 x, s32 y) {
+    Window* window = &gWindows[8];
+    s32 width = window->width;
+    s32 height = window->height;
+
     switch (battle_menu_moveState) {
         case BTL_SUBMENU_MOVES_STATE_UNK_NEGATIVE_ONE:
         case BTL_SUBMENU_MOVES_STATE_UNK_1:
@@ -1699,8 +1703,10 @@ void func_802A4494(void* data, s32 x, s32 y) {
         case BTL_SUBMENU_MOVES_STATE_UNK_14:
         case BTL_SUBMENU_MOVES_STATE_UNK_1E:
             if (D_802AD10F != 0) {
-                draw_msg(BattleMenu_Moves_OptionDescMessages[BattleMenu_Moves_OptionIndexMap[battle_menu_moveCursorPos]],
-                            x + 8, y, BattleMenu_Moves_TextAlpha, BattleMenu_Moves_TextColor, 0);
+                //draw_msg(BattleMenu_Moves_OptionDescMessages[BattleMenu_Moves_OptionIndexMap[battle_menu_moveCursorPos]],
+                //            x + 8, y, BattleMenu_Moves_TextAlpha, BattleMenu_Moves_TextColor, 0);
+                draw_scrollable_desc(BattleMenu_Moves_OptionDescMessages[BattleMenu_Moves_OptionIndexMap[battle_menu_moveCursorPos]],
+                          x+8, y, width, height, BattleMenu_Moves_TextAlpha, BattleMenu_Moves_TextColor, 0);
             }
             break;
     }
@@ -2751,7 +2757,7 @@ void btl_state_update_player_menu(void) {
                     BattleMenu_Moves_OptionIndices[i] = i;
                     BattleMenu_Moves_OptionEnabled[i] = battleStatus->submenuStatus[i];
                     battle_menu_moveOptionNames[i] = moveData->nameMsg;
-                    BattleMenu_Moves_OptionDescMessages[i] = moveData->shortDescMsg;
+                    BattleMenu_Moves_OptionDescMessages[i] = moveData->fullDescMsg;
 
                 }
                 BattleMenu_UsingSpiritsSubmenu = FALSE;
@@ -2945,7 +2951,7 @@ void btl_state_update_player_menu(void) {
                 popup->userIndex[entryIdx] = playerData->invItems[i];
                 popup->enabled[entryIdx] = TRUE;
                 popup->nameMsg[entryIdx] = itemData->nameMsg;
-                popup->descMsg[entryIdx] = itemData->shortDescMsg;
+                popup->descMsg[entryIdx] = itemData->fullDescMsg;
                 if (playerActor->targetListLength == 0) {
                     popup->ptrIcon[entryIdx] = hudScriptPair->disabled;
                     popup->enabled[entryIdx] = 0;
@@ -3050,7 +3056,7 @@ void btl_state_update_player_menu(void) {
                 popup->userIndex[entryIdx] = playerData->invItems[i];
                 popup->enabled[entryIdx] = 1;
                 popup->nameMsg[entryIdx] = itemData->nameMsg;
-                popup->descMsg[entryIdx] = itemData->shortDescMsg;
+                popup->descMsg[entryIdx] = itemData->fullDescMsg;
                 if (playerActor->targetListLength == 0) {
                     popup->ptrIcon[entryIdx] = hudScriptPair->disabled;
                     popup->enabled[entryIdx] = 0;
@@ -3152,7 +3158,7 @@ void btl_state_update_player_menu(void) {
                 BattleMenu_Moves_OptionIndices[i] = i;
                 BattleMenu_Moves_OptionEnabled[i] = battleStatus->submenuStatus[i];
                 battle_menu_moveOptionNames[i] = moveData->nameMsg;
-                BattleMenu_Moves_OptionDescMessages[i] = moveData->shortDescMsg;
+                BattleMenu_Moves_OptionDescMessages[i] = moveData->fullDescMsg;
                 battle_menu_moveOptionDisplayCostReductions[i] = 0;
                 battle_menu_moveOptionDisplayCostReductionColors[i] = 0;
             }
@@ -3249,7 +3255,7 @@ void btl_state_update_player_menu(void) {
                     popup->userIndex[entryIdx] = playerData->invItems[i];
                     popup->enabled[entryIdx] = TRUE;
                     popup->nameMsg[entryIdx] = itemData->nameMsg;
-                    popup->descMsg[entryIdx] = itemData->shortDescMsg;
+                    popup->descMsg[entryIdx] = itemData->fullDescMsg;
                     if (playerActor->targetListLength == 0) {
                         popup->ptrIcon[entryIdx] = hudScriptPair->disabled;
                         popup->enabled[entryIdx] = FALSE;
@@ -3933,7 +3939,7 @@ void btl_state_update_partner_menu(void) {
             BattleMenu_Moves_OptionIndices[i] = battleStatus->submenuMoves[i];
             BattleMenu_Moves_OptionEnabled[i] = battleStatus->submenuStatus[i];
             battle_menu_moveOptionNames[i] = moveData->nameMsg;
-            BattleMenu_Moves_OptionDescMessages[i] = moveData->shortDescMsg;
+            BattleMenu_Moves_OptionDescMessages[i] = moveData->fullDescMsg;
             battle_menu_moveOptionDisplayCosts[i] = moveData->costFP;
             battle_menu_moveOptionBPCosts[i] = moveData->costBP;
             BattleMenu_Moves_OptionSortPriority[i] = i;
@@ -4033,7 +4039,7 @@ void btl_state_update_partner_menu(void) {
             popupMenu->userIndex[popupIndex] = playerData->invItems[i];
             popupMenu->enabled[popupIndex] = TRUE;
             popupMenu->nameMsg[popupIndex] = item->nameMsg;
-            popupMenu->descMsg[popupIndex] = item->shortDescMsg;
+            popupMenu->descMsg[popupIndex] = item->fullDescMsg;
             popupIndex++;
         }
         if (battleStatus->lastPartnerMenuSelection[BTL_MENU_IDX_PARTNER_ITEM] < 0) {
@@ -4201,7 +4207,7 @@ void btl_state_update_partner_menu(void) {
             BattleMenu_Moves_OptionSortPriority[i] = i;
             BattleMenu_Moves_OptionEnabled[i] = battleStatus->submenuStatus[i];
             battle_menu_moveOptionNames[i] = moveData->nameMsg;
-            BattleMenu_Moves_OptionDescMessages[i] = moveData->shortDescMsg;
+            BattleMenu_Moves_OptionDescMessages[i] = moveData->fullDescMsg;
             battle_menu_moveOptionDisplayCostReductions[i] = 0;
             battle_menu_moveOptionDisplayCostReductionColors[i] = 0;
         }
