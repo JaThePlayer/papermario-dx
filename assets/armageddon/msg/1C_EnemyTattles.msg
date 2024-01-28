@@ -40,6 +40,25 @@
 	ordinary Goombas.[Wait][End]
 }
 
+#message:1C:(EnemyTattle_SpikedParagoomba) {
+	[Style right]
+	This is a Spiked Paragoomba.[BR]
+	[Pause 10]Obviously, they are Paragoombas[BR]
+	with a spiky helmet.[BR]
+	[Wait][Next]
+	You can't hit 'em with the[BR]
+	Hammer, nor jump on them.[BR]
+	[Wait][Next]
+	Moreover, they will NOT fall[BR]
+	down when hit![BR]
+	[Wait][Next]
+	Well, this is a predicament...[BR]
+	You can still use an item,[BR]
+	or throw your hammer at 'em,[BR]
+	but that's about it.[BR]
+	[Wait][End]
+}
+
 #message:1C:(EnemyTattle_RedGoombaBoss) {
 	[Style right]
 	This is Red Goomba.[BR]
