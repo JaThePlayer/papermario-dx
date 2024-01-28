@@ -3,7 +3,7 @@
 
 u8 sp_pool_caps[SP_POOL_COUNT] = {
     60, // SP_POOL_PROLOGUE
-    60, // SP_POOL_PLEASANT_PATH
+    75, // SP_POOL_PLEASANT_PATH
 };
 
 // stores how much sp was taken from each pool in the current battle

@@ -10,6 +10,10 @@
 	Paragoomba[End]
 }
 
+#message:29:(EnemyName_SpikedParagoomba) {
+	Spiked Paragoomba[End]
+}
+
 #message:29:(EnemyName_RedGoombaBoss) {
 	Red Goomba[End]
 }

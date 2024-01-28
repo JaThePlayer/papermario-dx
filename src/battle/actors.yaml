@@ -2334,3 +2334,14 @@
     stepDelay: [ 30, 30 ]
     tattleCamOffset: [ 0, 0, 0 ]
     shadowOffset: 0
+- SpikedParagoomba:
+    level: 3
+    nameMsg: MSG_EnemyName_SpikedParagoomba
+    tattleMsg: MSG_EnemyTattle_SpikedParagoomba
+    walkSound: [ SOUND_PARAGOOMBA_FLY, SOUND_PARAGOOMBA_FLY ]
+    flySound: [ SOUND_PARAGOOMBA_FLY, SOUND_PARAGOOMBA_FLY ]
+    jumpSound: SOUND_ACTOR_JUMP
+    hurtSound: SOUND_ACTOR_HURT
+    stepDelay: [ 30, 30 ]
+    tattleCamOffset: [ 0, 4, 0 ]
+    shadowOffset: 0
