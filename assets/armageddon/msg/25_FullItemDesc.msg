@@ -562,10 +562,10 @@
 }
 
 #message:25:(ItemFullDesc_HammerThrow) {
-	Lets you do a Hammer Throw.[BR]
-	Uses 2 FP.[BR]
 	Hits one enemy with the Hammer,[BR]
-	no matter where the enemy is. [End]
+	no matter where the enemy is.[BR]
+	+1 ATK to grounded enemies,[BR]
+	and +2 to airborne targets.[End]
 }
 
 #message:25:(ItemFullDesc_ShrinkSmash) {
