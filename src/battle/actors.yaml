@@ -1653,7 +1653,7 @@
 - FlyingMagikoopaBoss:
     level: 15
     nameMsg: MSG_EnemyName_Magikoopa
-    tattleMsg: MSG_EnemyTattle_MagikoopaBossDup
+    tattleMsg: MSG_EnemyTattle_MagikoopaBoss
     walkSound: [ SOUND_NONE, SOUND_NONE ]
     flySound: [ SOUND_NONE, SOUND_NONE ]
     jumpSound: SOUND_ACTOR_JUMP
@@ -1675,7 +1675,7 @@
 - MagikoopaDup2:
     level: 0
     nameMsg: MSG_EnemyName_Magikoopa
-    tattleMsg: MSG_EnemyTattle_MagikoopaBossDup
+    tattleMsg: MSG_EnemyTattle_MagikoopaBoss
     walkSound: [ SOUND_NONE, SOUND_NONE ]
     flySound: [ SOUND_NONE, SOUND_NONE ]
     jumpSound: SOUND_ACTOR_JUMP

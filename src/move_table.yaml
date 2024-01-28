@@ -123,7 +123,7 @@
     category: MOVE_TYPE_HAMMER
     actionTip: BTL_MSG_ACTION_TIP_HOLD_LEFT_TIMED
     costFP: 2
-    costBP: 2
+    costBP: 1
 - MegaQuake:
     nameMsg: MSG_PlayerMoveName_MegaQuake
     fullDescMsg: MSG_ItemFullDesc_MegaQuake
@@ -978,7 +978,7 @@
     category: MOVE_TYPE_NONE
     actionTip: NONE
     costFP: 0
-    costBP: 1
+    costBP: 0
 - SpeedySpin:
     nameMsg: MSG_MoveName_SpeedySpin
     fullDescMsg: MSG_ItemFullDesc_SpeedySpin
@@ -987,7 +987,7 @@
     category: MOVE_TYPE_NONE
     actionTip: NONE
     costFP: 0
-    costBP: 1
+    costBP: 0
 - Refund:
     nameMsg: MSG_ItemName_Refund
     fullDescMsg: MSG_ItemFullDesc_Refund

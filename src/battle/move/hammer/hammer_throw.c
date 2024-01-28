@@ -153,6 +153,24 @@ EvtScript N(EVS_802A4164) = {
     End
 };
 
+API_CALLABLE(N(ApplyDamageBuff)) {
+    Actor* player = get_actor(script->owner1.actorID);
+    Actor* target = get_actor(player->targetActorID);
+
+    s32 buff;
+
+    if (target->flags & ACTOR_FLAG_FLYING) {
+        buff = 2;
+    } else {
+        buff = 1;
+    }
+
+    script->varTable[0xE] += buff;
+    script->varTable[0xF] += buff;
+
+    return ApiStatus_DONE2;
+}
+
 EvtScript N(EVS_UseMove_Impl) = {
     Call(LoadActionCommand, ACTION_COMMAND_SMASH)
     Call(action_command_hammer_init)
@@ -389,9 +407,10 @@ EvtScript N(EVS_UseMove_Impl) = {
         CaseEq(2)
             Call(PlaySoundAtActor, ACTOR_PLAYER, SOUND_D_DOWN_HIT_3)
     EndSwitch
+    Call(N(ApplyDamageBuff))
     Call(GetPlayerActionSuccess, LVar0)
     Switch(LVar0)
-        CaseGt(FALSE)
+        CaseGt(FALSE) // greater than false -> true
             Call(GetMenuSelection, LVar0, LVar1, LVar2)
             Switch(LVar1)
                 CaseEq(0)
