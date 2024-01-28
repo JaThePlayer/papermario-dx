@@ -367,7 +367,7 @@ EvtScript N(EVS_Scene_Chapter0) = {
     Sub(LVar2, 10)
     Add(LVar3, 20)
     Add(LVar4, 2)
-    Call(MakeItemEntity, ITEM_LUCKY_STAR, LVar2, LVar3, LVar4, ITEM_SPAWN_MODE_DECORATION, 0)
+    Call(MakeItemEntity, ITEM_SPEEDY_SPIN, LVar2, LVar3, LVar4, ITEM_SPAWN_MODE_DECORATION, 0)
     Set(LVar9, LVar0)
     Wait(10 * DT)
     Call(SetCamSpeed, CAM_DEFAULT, Float(5.0 / DT))

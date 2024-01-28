@@ -89,7 +89,7 @@ BadgeHint N(BadgeHintData)[] = {
     { MSG_MerluvleeHint_HeartFinder,      ITEM_HEART_FINDER,   BADGE_REQ_MERLOW_SHOP },
     { MSG_MerluvleeHint_FlowerFinder,     ITEM_FLOWER_FINDER,  BADGE_REQ_MERLOW_SHOP },
     { MSG_MerluvleeHint_MoneyMoney,       ITEM_MONEY_MONEY,    BADGE_REQ_MERLOW_SHOP },
-    { MSG_MerluvleeHint_SpeedySpin,       ITEM_SPEEDY_SPIN,    STORY_CH1_DEFEATED_JR_TROOPA },
+    //{ MSG_MerluvleeHint_SpeedySpin,       ITEM_SPEEDY_SPIN,    STORY_CH1_DEFEATED_JR_TROOPA },
     { MSG_MerluvleeHint_ISpy,             ITEM_I_SPY,          STORY_CH4_FOUND_HIDDEN_DOOR },
     { MSG_MerluvleeHint_DizzyAttack,      ITEM_DIZZY_ATTACK,   STORY_REQ_ANY_TIME },
     { MSG_MerluvleeHint_ChillOut,         ITEM_CHILL_OUT,      BADGE_REQ_MERLOW_SHOP },
