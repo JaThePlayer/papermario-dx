@@ -1565,6 +1565,8 @@ typedef struct ActorPartBlueprint {
     /* 0x1C */ Vec2b projectileTargetOffset;
     /* 0x1E */ char unk_1E[2];
     /* 0x20 */ s32 overrideNameMsg; // name when this part is targeted; overrides name from actor type
+    /* new  */ s8 contactDamage;
+    /* new  */ s8 partnerContactDamage;
 } ActorPartBlueprint; // size = 0x24
 
 typedef struct ActorPart {

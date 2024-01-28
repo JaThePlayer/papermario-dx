@@ -228,12 +228,14 @@ HitResult calc_partner_damage_enemy(void) {
             partImmuneToElement = TRUE;
         }
 
+        #define GET_CONTACT_DMG(default) (targetPart->staticData->partnerContactDamage == 0 ? default : targetPart->staticData->partnerContactDamage)
+
         // check jumping on spiky enemy
         if (battleStatus->curAttackElement & DAMAGE_TYPE_JUMP
             && targetPart->eventFlags & ACTOR_EVENT_FLAG_SPIKY_TOP
         ) {
             sfx_play_sound_at_position(SOUND_HIT_SPIKE, SOUND_SPACE_DEFAULT, state->goalPos.x, state->goalPos.y, state->goalPos.z);
-            dispatch_damage_event_partner_1(1, EVENT_SPIKE_CONTACT);
+            dispatch_damage_event_partner_1(GET_CONTACT_DMG(1), EVENT_SPIKE_CONTACT);
             dispatch_event_actor(target, EVENT_SPIKE_TAUNT);
             return HIT_RESULT_BACKFIRE;
         }
@@ -246,7 +248,7 @@ HitResult calc_partner_damage_enemy(void) {
 
             if (!(battleStatus->curAttackEventSuppression & SUPPRESS_EVENT_EXPLODE_CONTACT)) {
                 sfx_play_sound_at_position(SOUND_HIT_FIRE, SOUND_SPACE_DEFAULT, state->goalPos.x, state->goalPos.y, state->goalPos.z);
-                dispatch_damage_event_partner_1(1, EVENT_BURN_CONTACT);
+                dispatch_damage_event_partner_1(GET_CONTACT_DMG(1), EVENT_BURN_CONTACT);
                 return HIT_RESULT_BACKFIRE;
             }
 
@@ -265,7 +267,7 @@ HitResult calc_partner_damage_enemy(void) {
             && !(battleStatus->curAttackEventSuppression & SUPPRESS_EVENT_BURN_CONTACT)
         ) {
             sfx_play_sound_at_position(SOUND_HIT_FIRE, SOUND_SPACE_DEFAULT, state->goalPos.x, state->goalPos.y, state->goalPos.z);
-            dispatch_damage_event_partner_1(1, EVENT_BURN_CONTACT);
+            dispatch_damage_event_partner_1(GET_CONTACT_DMG(1), EVENT_BURN_CONTACT);
             dispatch_event_actor(target, EVENT_BURN_TAUNT);
             return HIT_RESULT_BACKFIRE;
         }
@@ -276,7 +278,7 @@ HitResult calc_partner_damage_enemy(void) {
             && !(battleStatus->curAttackEventSuppression & SUPPRESS_EVENT_SPIKY_FRONT)
         ) {
             sfx_play_sound_at_position(SOUND_HIT_SPIKE, SOUND_SPACE_DEFAULT, state->goalPos.x, state->goalPos.y, state->goalPos.z);
-            dispatch_damage_event_partner_1(1, EVENT_SPIKE_CONTACT);
+            dispatch_damage_event_partner_1(GET_CONTACT_DMG(1), EVENT_SPIKE_CONTACT);
             dispatch_event_actor(target, EVENT_SPIKE_TAUNT);
             return HIT_RESULT_BACKFIRE;
         }
@@ -303,7 +305,7 @@ HitResult calc_partner_damage_enemy(void) {
             && !(battleStatus->curAttackEventSuppression & SUPPRESS_EVENT_ALT_SPIKY)
         ) {
             sfx_play_sound_at_position(SOUND_HIT_SPIKE, SOUND_SPACE_DEFAULT, state->goalPos.x, state->goalPos.y, state->goalPos.z);
-            dispatch_damage_event_partner_1(1, EVENT_SPIKE_CONTACT);
+            dispatch_damage_event_partner_1(GET_CONTACT_DMG(1), EVENT_SPIKE_CONTACT);
             dispatch_event_actor(target, EVENT_SPIKE_TAUNT);
             return HIT_RESULT_BACKFIRE;
         }
@@ -315,7 +317,7 @@ HitResult calc_partner_damage_enemy(void) {
             && !(battleStatus->curAttackEventSuppression & SUPPRESS_EVENT_SPIKY_TOP)
         ) {
             sfx_play_sound_at_position(SOUND_HIT_SPIKE, SOUND_SPACE_DEFAULT, state->goalPos.x, state->goalPos.y, state->goalPos.z);
-            dispatch_damage_event_partner_1(1, EVENT_SPIKE_CONTACT);
+            dispatch_damage_event_partner_1(GET_CONTACT_DMG(1), EVENT_SPIKE_CONTACT);
             dispatch_event_actor(target, EVENT_SPIKE_TAUNT);
             return HIT_RESULT_BACKFIRE;
         }
@@ -344,12 +346,14 @@ HitResult calc_partner_damage_enemy(void) {
             ) {
                 sfx_play_sound_at_position(SOUND_HIT_SHOCK, SOUND_SPACE_DEFAULT, state->goalPos.x, state->goalPos.y, state->goalPos.z);
                 apply_shock_effect(partner);
-                dispatch_damage_event_partner_1(1, EVENT_SHOCK_HIT);
+                dispatch_damage_event_partner_1(GET_CONTACT_DMG(1), EVENT_SHOCK_HIT);
                 return HIT_RESULT_BACKFIRE;
             } else {
                 return HIT_RESULT_HIT;
             }
         }
+
+        #undef GET_CONTACT_DMG
 
         if (battleStatus->curAttackElement & DAMAGE_TYPE_FIRE) {
             fx_ring_blast(0, state->goalPos.x, state->goalPos.y, state->goalPos.z + 5.0f, 1.0f, 24);

@@ -323,13 +323,15 @@ HitResult calc_player_damage_enemy(void) {
             partImmuneToElement = TRUE;
         }
 
+        #define GET_CONTACT_DMG(default) (targetPart->staticData->contactDamage == 0 ? default : targetPart->staticData->contactDamage)
+
         // check jumping on spiky enemy
         if ((battleStatus->curAttackElement & DAMAGE_TYPE_JUMP)
             && (targetPart->eventFlags & ACTOR_EVENT_FLAG_SPIKY_TOP)
             && !player_team_is_ability_active(player, ABILITY_SPIKE_SHIELD))
         {
             sfx_play_sound_at_position(SOUND_HIT_SPIKE, SOUND_SPACE_DEFAULT, state->goalPos.x, state->goalPos.y, state->goalPos.z);
-            dispatch_hazard_event_player(1, EVENT_SPIKE_CONTACT);
+            dispatch_hazard_event_player(GET_CONTACT_DMG(2), EVENT_SPIKE_CONTACT);
             dispatch_event_actor(target, EVENT_SPIKE_TAUNT);
             return HIT_RESULT_BACKFIRE;
         }
@@ -338,7 +340,7 @@ HitResult calc_player_damage_enemy(void) {
         if (!(battleStatus->curAttackElement & (DAMAGE_TYPE_NO_CONTACT | DAMAGE_TYPE_SMASH))) {
             if (targetPart->eventFlags & ACTOR_EVENT_FLAG_EXPLODE_ON_CONTACT) {
                 sfx_play_sound_at_position(SOUND_HIT_PLAYER_FIRE, SOUND_SPACE_DEFAULT, state->goalPos.x, state->goalPos.y, state->goalPos.z);
-                dispatch_hazard_event_player(1, EVENT_BURN_CONTACT);
+                dispatch_hazard_event_player(GET_CONTACT_DMG(4), EVENT_BURN_CONTACT);
                 dispatch_event_actor(target, EVENT_EXPLODE_TRIGGER);
                 return HIT_RESULT_BACKFIRE;
             }
@@ -349,7 +351,7 @@ HitResult calc_player_damage_enemy(void) {
                 && !(player_team_is_ability_active(player, ABILITY_ICE_POWER))
             ) {
                 sfx_play_sound_at_position(SOUND_HIT_PLAYER_FIRE, SOUND_SPACE_DEFAULT, state->goalPos.x, state->goalPos.y, state->goalPos.z);
-                dispatch_hazard_event_player(1, EVENT_BURN_CONTACT);
+                dispatch_hazard_event_player(GET_CONTACT_DMG(3), EVENT_BURN_CONTACT);
                 dispatch_event_actor(target, EVENT_BURN_TAUNT);
                 return HIT_RESULT_BACKFIRE;
             }
@@ -376,10 +378,11 @@ HitResult calc_player_damage_enemy(void) {
             && !player_team_is_ability_active(player, ABILITY_SPIKE_SHIELD)
         ) {
             sfx_play_sound_at_position(SOUND_HIT_SPIKE, SOUND_SPACE_DEFAULT, state->goalPos.x, state->goalPos.y, state->goalPos.z);
-            dispatch_hazard_event_player(1, EVENT_SPIKE_CONTACT);
+            dispatch_hazard_event_player(GET_CONTACT_DMG(2), EVENT_SPIKE_CONTACT);
             dispatch_event_actor(target, EVENT_SPIKE_TAUNT);
             return HIT_RESULT_BACKFIRE;
         }
+        #undef GET_CONTACT_DMG
 
         if (battleStatus->curAttackElement & DAMAGE_TYPE_FIRE) {
             fx_ring_blast(0, state->goalPos.x, state->goalPos.y, state->goalPos.z * 5.0f, 1.0f, 24);
