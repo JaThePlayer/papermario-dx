@@ -1,5 +1,7 @@
 #include "custom_status.h"
 
+#include "status_rework_helpers.c"
+
 #include "statuses/temp_def_down.c"
 #include "statuses/temp_atk_down.c"
 #include "statuses/temp_def_up.c"

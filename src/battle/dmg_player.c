@@ -4,6 +4,7 @@
 #include "script_api/battle.h"
 #include "sprite/player.h"
 #include "misc_patches/custom_status.h"
+#include "misc_patches/status_rework_helpers.h"
 
 b32 dispatch_damage_event_player(s32 damageAmount, s32 event, b32 noHitSound);
 b32 dispatch_hazard_event_player(s32 damageAmount, s32 event);
@@ -153,6 +154,8 @@ void dispatch_event_player(s32 eventType) {
     if (oldOnHitScript != NULL) {
         kill_script_by_ID(oldOnHitID);
     }
+
+    status_rework_on_dispatch_event_actor(player, eventType);
 }
 
 void dispatch_event_player_continue_turn(s32 eventType) {

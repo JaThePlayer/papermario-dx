@@ -7,6 +7,7 @@
 #include "misc_patches/misc_patches.h"
 #include "misc_patches/sp_pools.h"
 #include "misc_patches/custom_status.h"
+#include "misc_patches/status_rework_helpers.h"
 
 // SP % for given enemy count in battle
 s32 D_802946E0[] = {
@@ -136,6 +137,8 @@ void dispatch_event_actor(Actor* actor, s32 event) {
     if (handleEventScript != NULL) {
         kill_script_by_ID(onHitID);
     }
+
+    status_rework_on_dispatch_event_actor(actor, event);
 }
 
 HitResult calc_enemy_test_target(Actor* actor) {

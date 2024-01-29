@@ -2,6 +2,7 @@
 #include "script_api/battle.h"
 #include "effects.h"
 #include "misc_patches/custom_status.h"
+#include "misc_patches/status_rework_helpers.h"
 
 s32 dispatch_damage_event_partner_1(s32, s32);
 
@@ -26,6 +27,8 @@ void dispatch_event_partner(s32 lastEventType) {
     if (handleEventScript != NULL) {
         kill_script_by_ID(onHitID);
     }
+
+    status_rework_on_dispatch_event_actor(partnerActor, lastEventType);
 }
 
 void dispatch_event_partner_continue_turn(s8 lastEventType) {
