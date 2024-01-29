@@ -8,61 +8,22 @@
 #define NAMESPACE A(paragoomba)
 
 extern s32 N(DefaultAnims)[];
-extern s32 N(LeftWingAnims)[];
-extern s32 N(RightWingAnims)[];
 extern EvtScript N(EVS_Init);
 extern EvtScript N(EVS_Idle);
 extern EvtScript N(EVS_TakeTurn);
 extern EvtScript N(EVS_HandleEvent);
-extern EvtScript N(EVS_KnockDown);
-
-extern s32 A(downed_goomba_DefaultAnims)[];
-extern EvtScript A(downed_goomba_EVS_Init_FromParagoomba);
 
 enum N(ActorPartIDs) {
-    PRT_MAIN            = 1, // body after being downed (must use same name as Goomba part #1)
-    PRT_FLYING          = 2, // body while flying
-    PRT_DUMMY_WING_L    = 3, // temporary wing while being downed
-    PRT_DUMMY_WING_R    = 4, // temporary wing while being downed
+    PRT_FLYING          = 1, // body while flying
 };
 
 enum N(ActorParams) {
     DMG_AIR_KICK        = 1,
 };
 
-s32 N(DownedDefense)[] = {
-    ELEMENT_NORMAL,   0,
-    ELEMENT_END,
-};
-
 s32 N(FlyingDefense)[] = {
     ELEMENT_NORMAL,   0,
     ELEMENT_END,
-};
-
-s32 N(DownedStatusTable)[] = {
-    STATUS_KEY_NORMAL,              0,
-    STATUS_KEY_DEFAULT,             0,
-    STATUS_KEY_SLEEP,             100,
-    STATUS_KEY_POISON,            100,
-    STATUS_KEY_FROZEN,            100,
-    STATUS_KEY_DIZZY,             100,
-    STATUS_KEY_FEAR,              100,
-    STATUS_KEY_STATIC,            100,
-    STATUS_KEY_PARALYZE,          100,
-    STATUS_KEY_SHRINK,            100,
-    STATUS_KEY_STOP,              100,
-    STATUS_TURN_MOD_DEFAULT,        0,
-    STATUS_TURN_MOD_SLEEP,          0,
-    STATUS_TURN_MOD_POISON,         0,
-    STATUS_TURN_MOD_FROZEN,         0,
-    STATUS_TURN_MOD_DIZZY,          0,
-    STATUS_TURN_MOD_FEAR,           0,
-    STATUS_TURN_MOD_STATIC,         0,
-    STATUS_TURN_MOD_PARALYZE,       0,
-    STATUS_TURN_MOD_SHRINK,         0,
-    STATUS_TURN_MOD_STOP,           0,
-    STATUS_END,
 };
 
 s32 N(FlyingStatusTable)[] = {
@@ -92,18 +53,6 @@ s32 N(FlyingStatusTable)[] = {
 
 ActorPartBlueprint N(ActorParts)[] = {
     {
-        .flags = ACTOR_PART_FLAG_INVISIBLE | ACTOR_PART_FLAG_NO_TARGET,
-        .index = PRT_MAIN,
-        .posOffset = { 0, 0, 0 },
-        .targetOffset = { 0, 20 },
-        .opacity = 255,
-        .idleAnimations = A(downed_goomba_DefaultAnims),
-        .defenseTable = N(DownedDefense),
-        .eventFlags = ACTOR_EVENT_FLAGS_NONE,
-        .elementImmunityFlags = 0,
-        .projectileTargetOffset = { 0, -10 },
-    },
-    {
         .flags = ACTOR_PART_FLAG_PRIMARY_TARGET,
         .index = PRT_FLYING,
         .posOffset = { 0, 0, 0 },
@@ -111,34 +60,10 @@ ActorPartBlueprint N(ActorParts)[] = {
         .opacity = 255,
         .idleAnimations = N(DefaultAnims),
         .defenseTable = N(FlyingDefense),
-        .eventFlags = ACTOR_EVENT_FLAG_GROUNDABLE,
-        .elementImmunityFlags = 0,
-        .projectileTargetOffset = { 0, -10 },
-    },
-    {
-        .flags = ACTOR_PART_FLAG_INVISIBLE | ACTOR_PART_FLAG_NO_TARGET,
-        .index = PRT_DUMMY_WING_L,
-        .posOffset = { 0, 0, 0 },
-        .targetOffset = { -16, 24 },
-        .opacity = 255,
-        .idleAnimations = N(LeftWingAnims),
-        .defenseTable = N(DownedDefense),
         .eventFlags = ACTOR_EVENT_FLAGS_NONE,
         .elementImmunityFlags = 0,
         .projectileTargetOffset = { 0, -10 },
-    },
-    {
-        .flags = ACTOR_PART_FLAG_INVISIBLE | ACTOR_PART_FLAG_NO_TARGET,
-        .index = PRT_DUMMY_WING_R,
-        .posOffset = { 0, 0, 0 },
-        .targetOffset = { -16, 24 },
-        .opacity = 255,
-        .idleAnimations = N(RightWingAnims),
-        .defenseTable = N(DownedDefense),
-        .eventFlags = ACTOR_EVENT_FLAGS_NONE,
-        .elementImmunityFlags = 0,
-        .projectileTargetOffset = { 0, -10 },
-    },
+    }
 };
 
 ActorBlueprint NAMESPACE = {
@@ -191,22 +116,10 @@ s32 N(ShuffleAnims)[] = {
     STATUS_END,
 };
 
-s32 N(LeftWingAnims)[] = {
-    STATUS_KEY_NORMAL,    ANIM_Paragoomba_LWingStill,
-    STATUS_END,
-};
-
-s32 N(RightWingAnims)[] = {
-    STATUS_KEY_NORMAL,    ANIM_Paragoomba_RWingStill,
-    STATUS_END,
-};
-
 EvtScript N(EVS_Init) = {
     Call(BindTakeTurn, ACTOR_SELF, Ref(N(EVS_TakeTurn)))
     Call(BindIdle, ACTOR_SELF, Ref(N(EVS_Idle)))
     Call(BindHandleEvent, ACTOR_SELF, Ref(N(EVS_HandleEvent)))
-
-    //GIVE_ITEM(prologue_ch1_items)
     Return
     End
 };
@@ -279,13 +192,6 @@ EvtScript N(EVS_HandleEvent) = {
             SetConst(LVar0, PRT_FLYING)
             SetConst(LVar1, ANIM_Paragoomba_Hurt)
             ExecWait(EVS_Enemy_Hit)
-            Call(GetBattlePhase, LVar0)
-            IfEq(LVar0, PHASE_FIRST_STRIKE)
-                Call(GetEncounterTrigger, LVar0)
-                IfEq(LVar0, ENCOUNTER_TRIGGER_HAMMER)
-                    ExecWait(N(EVS_KnockDown))
-                EndIf
-            EndIf
         EndCaseGroup
         CaseEq(EVENT_BURN_HIT)
             SetConst(LVar0, PRT_FLYING)
@@ -305,13 +211,11 @@ EvtScript N(EVS_HandleEvent) = {
             SetConst(LVar0, PRT_FLYING)
             SetConst(LVar1, ANIM_Paragoomba_Hurt)
             ExecWait(EVS_Enemy_Hit)
-            ExecWait(N(EVS_KnockDown))
         CaseEq(EVENT_15)
             SetConst(LVar0, PRT_FLYING)
             SetConst(LVar1, ANIM_Paragoomba_BurnHurt)
             SetConst(LVar2, ANIM_Paragoomba_BurnStill)
             ExecWait(EVS_Enemy_BurnHit)
-            ExecWait(N(EVS_KnockDown))
         CaseEq(EVENT_SHOCK_HIT)
             SetConst(LVar0, PRT_FLYING)
             SetConst(LVar1, ANIM_Paragoomba_Electrocute)
@@ -494,77 +398,3 @@ EvtScript N(EVS_TakeTurn) = {
     Return
     End
 };
-
-#include "common/StartRumbleWithParams.inc.c"
-
-EvtScript N(EVS_KnockDown) = {
-    Call(HideHealthBar, ACTOR_SELF)
-    Call(SetPartFlags, ACTOR_SELF, PRT_FLYING, ACTOR_PART_FLAG_INVISIBLE | ACTOR_PART_FLAG_NO_SHADOW | ACTOR_PART_FLAG_NO_TARGET)
-    Call(SetPartFlags, ACTOR_SELF, PRT_DUMMY_WING_L, ACTOR_PART_FLAG_NO_SHADOW | ACTOR_PART_FLAG_NO_TARGET | ACTOR_PART_FLAG_USE_ABSOLUTE_POSITION)
-    Call(SetPartFlags, ACTOR_SELF, PRT_DUMMY_WING_R, ACTOR_PART_FLAG_NO_SHADOW | ACTOR_PART_FLAG_NO_TARGET | ACTOR_PART_FLAG_USE_ABSOLUTE_POSITION)
-    Call(SetPartFlags, ACTOR_SELF, PRT_MAIN, ACTOR_PART_FLAG_NO_SHADOW | ACTOR_PART_FLAG_PRIMARY_TARGET)
-    Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-    Call(SetPartPos, ACTOR_SELF, PRT_DUMMY_WING_L, LVar0, LVar1, LVar2)
-    Call(SetPartDispOffset, ACTOR_SELF, PRT_DUMMY_WING_L, -9, 7, -2)
-    Call(SetPartPos, ACTOR_SELF, PRT_DUMMY_WING_R, LVar0, LVar1, LVar2)
-    Call(SetPartDispOffset, ACTOR_SELF, PRT_DUMMY_WING_R, 11, 7, -2)
-    Call(GetLastEvent, ACTOR_SELF, LVar0)
-    IfEq(LVar0, EVENT_15)
-        Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Goomba_BurnStill)
-    Else
-        Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Goomba_Hurt)
-    EndIf
-    Call(SetActorSounds, ACTOR_SELF, ACTOR_SOUND_JUMP, SOUND_FALL_QUICK, 0)
-    Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-    Set(LVar1, 0)
-    Call(SetActorJumpGravity, ACTOR_SELF, Float(0.8))
-    Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-    Call(JumpToGoal, ACTOR_SELF, 15, FALSE, TRUE, FALSE)
-    Call(N(StartRumbleWithParams), 100, 10)
-    Thread
-        Call(ShakeCam, CAM_BATTLE, 0, 5, Float(0.3))
-    EndThread
-    Call(ResetActorSounds, ACTOR_SELF, ACTOR_SOUND_JUMP)
-    Call(GetLastEvent, ACTOR_SELF, LVar3)
-    IfEq(LVar3, EVENT_15)
-        Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Goomba_Hurt)
-        Call(GetActorPos, ACTOR_SELF, LVar3, LVar4, LVar5)
-        Add(LVar4, 10)
-        Add(LVar5, 5)
-        PlayEffect(EFFECT_SMOKE_BURST, 0, LVar3, LVar4, LVar5, Float(1.0), 10, 0)
-    EndIf
-    Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-    Call(JumpToGoal, ACTOR_SELF, 10, FALSE, TRUE, FALSE)
-    Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-    Call(JumpToGoal, ACTOR_SELF, 5, FALSE, TRUE, FALSE)
-    Loop(10)
-        Call(SetPartFlagBits, ACTOR_SELF, PRT_DUMMY_WING_L, ACTOR_PART_FLAG_INVISIBLE, TRUE)
-        Call(SetPartFlagBits, ACTOR_SELF, PRT_DUMMY_WING_R, ACTOR_PART_FLAG_INVISIBLE, TRUE)
-        Wait(1)
-        Call(SetPartFlagBits, ACTOR_SELF, PRT_DUMMY_WING_L, ACTOR_PART_FLAG_INVISIBLE, FALSE)
-        Call(SetPartFlagBits, ACTOR_SELF, PRT_DUMMY_WING_R, ACTOR_PART_FLAG_INVISIBLE, FALSE)
-        Wait(1)
-    EndLoop
-    Call(SetPartFlagBits, ACTOR_SELF, PRT_DUMMY_WING_L, ACTOR_PART_FLAG_INVISIBLE, TRUE)
-    Call(SetPartFlagBits, ACTOR_SELF, PRT_DUMMY_WING_R, ACTOR_PART_FLAG_INVISIBLE, TRUE)
-    Call(GetIndexFromHome, ACTOR_SELF, LVar0)
-    Mod(LVar0, 4)
-    Call(SetGoalToIndex, ACTOR_SELF, LVar0)
-    Call(GetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-    Call(SetHomePos, ACTOR_SELF, LVar0, LVar1, LVar2)
-    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Goomba_Idle)
-    Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_FLYING, FALSE)
-    Call(SetStatusTable, ACTOR_SELF, Ref(N(DownedStatusTable)))
-    Call(SetActorType, ACTOR_SELF, ACTOR_TYPE_GOOMBA)
-    ExecWait(A(downed_goomba_EVS_Init_FromParagoomba))
-    Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_TYPE_CHANGED, TRUE)
-    Call(HPBarToHome, ACTOR_SELF)
-    Call(ResetAllActorSounds, ACTOR_SELF)
-    Return
-    End
-};
-
-// downed paragoombas are handled via a special nested goomba import
-#define NESTED_GOOMBA_INCLUDE
-#define NAMESPACE A(downed_goomba)
-#include "goomba.inc.c"

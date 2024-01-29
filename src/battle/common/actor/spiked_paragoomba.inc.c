@@ -7,8 +7,6 @@
 #define NAMESPACE A(spiked_paragoomba)
 
 extern s32 N(DefaultAnims)[];
-extern s32 N(LeftWingAnims)[];
-extern s32 N(RightWingAnims)[];
 extern EvtScript N(EVS_Init);
 extern EvtScript N(EVS_Idle);
 extern EvtScript N(EVS_TakeTurn);
@@ -115,16 +113,6 @@ s32 N(ShuffleAnims)[] = {
     STATUS_KEY_PARALYZE,  ANIM_SpikedParagoomba_Still,
     STATUS_KEY_DIZZY,     ANIM_SpikedParagoomba_Dizzy,
     STATUS_KEY_FEAR,      ANIM_SpikedParagoomba_Dizzy,
-    STATUS_END,
-};
-
-s32 N(LeftWingAnims)[] = {
-    STATUS_KEY_NORMAL,    ANIM_SpikedParagoomba_LWingStill,
-    STATUS_END,
-};
-
-s32 N(RightWingAnims)[] = {
-    STATUS_KEY_NORMAL,    ANIM_SpikedParagoomba_RWingStill,
     STATUS_END,
 };
 
