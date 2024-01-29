@@ -33,11 +33,8 @@
 	Goombas with wings.[BR]
 	[Wait][Next]
 	You can't hit 'em with the[BR]
-	Hammer while they're airborne.[BR]
-	[Wait][Next]
-	If you damage 'em, they'll fall[BR]
-	to the ground and become [BR]
-	ordinary Goombas.[Wait][End]
+	Hammer.[BR]
+	[Wait][End]
 }
 
 #message:1C:(EnemyTattle_SpikedParagoomba) {
@@ -145,7 +142,21 @@
 	easier for you to defeat 'em.[BR]
 	[Wait][Next]
 	You can flip 'em with a POW[BR]
-	Block or a Jump attack. [Wait][End]
+	Block or a Jump attack.[BR]
+	[Wait][Next]
+	Unfortunately, they get up[BR]
+	and attack in the same turn.[BR]
+	[Wait][Next]
+	However, if we don't flip 'em[BR]
+	over, they'll hide in their shell,[BR]
+	charging up to perform[BR]
+	a devastating attack![BR]
+	[Wait][Next]
+	Their defense increases when[BR]
+	they're in their shell, so it'll be[BR]
+	very difficult to do anything to[BR]
+	them at that point.[BR]
+	[Wait][End]
 }
 
 #message:1C:(EnemyTattle_Paratroopa) {
