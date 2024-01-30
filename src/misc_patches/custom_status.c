@@ -7,12 +7,14 @@
 #include "statuses/temp_def_up.c"
 #include "statuses/temp_atk_up.c"
 #include "statuses/close_call_status.c"
+#include "statuses/burn.c"
 
 #define STATUS_ENTRY(namespace) { \
         .onApply = &namespace##_on_apply, \
         .drawIcon = &namespace##_create_icon, \
         .onRemoveIcon = &namespace##_remove_icon, \
         .decrementLate = namespace##_DECREMENT_LATE, \
+        .onDecrement = &namespace##_on_decrement, \
     }
 
 StatusType gCustomStatusTypes[CUSTOM_STATUS_AMT] = {
@@ -22,6 +24,7 @@ StatusType gCustomStatusTypes[CUSTOM_STATUS_AMT] = {
     [ATK_UP_TEMP_STATUS] = STATUS_ENTRY(temp_atk_up),
     [DEF_UP_TEMP_STATUS] = STATUS_ENTRY(temp_def_up),
     [CLOSE_CALL_STATUS] = STATUS_ENTRY(close_call),
+    [BURN_STATUS] = STATUS_ENTRY(burn_status),
 };
 
 // Gets the potency of the given status for the given actor. 0 if actor doesn't have this status
@@ -41,6 +44,10 @@ static void custom_status_decrement_impl(Actor* actor, s8 isLate) {
 
         if (statusType->decrementLate == isLate && status->turns > 0) {
             status->turns--;
+            if (statusType->onDecrement) {
+                statusType->onDecrement(actor);
+            }
+
             if (status->turns == 0) {
                 // status just got removed now
                 status->potency = 0;
