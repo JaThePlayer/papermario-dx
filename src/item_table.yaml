@@ -1931,7 +1931,7 @@
     targetFlags: [ TARGET_FLAG_2, TARGET_FLAG_PRIMARY_ONLY ]
     typeFlags: [ ITEM_TYPE_FLAG_BATTLE_USABLE, ITEM_TYPE_FLAG_CONSUMABLE, ITEM_TYPE_FLAG_ENTITY_FULLSIZE ]
     moveID: MOVE_NONE
-    potencyA: 3
+    potencyA: 1
     potencyB: 0
 - SnowmanDoll:
     category: CONSUMABLE

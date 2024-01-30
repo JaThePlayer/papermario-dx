@@ -1,6 +1,6 @@
 #message:25:(ItemFullDesc_FireFlower) {
-	A flower that burns all enemies [BR]
-	with fireballs. Attack Power: 3[End]
+	A flower that burns all enemies[BR]
+	for 4 turns, and deals 1 damage.[End]
 }
 
 #message:25:(ItemFullDesc_SnowmanDoll) {
