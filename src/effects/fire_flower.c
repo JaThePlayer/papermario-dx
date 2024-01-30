@@ -39,7 +39,8 @@ EffectInstance* fire_flower_main(s32 arg0, f32 arg1, f32 arg2, f32 arg3, s32 arg
     ASSERT(effect->data.fireFlower != NULL);
 
     part->unk_04 = 0;
-    part->unk_00 = arg0;
+    part->unk_00 = 0;
+    part->isFlippedHorizontal = arg0;
     part->pos.x = arg1;
     part->pos.y = arg2;
     part->pos.z = arg3;
@@ -84,6 +85,7 @@ void fire_flower_update(EffectInstance* effect) {
     s32 unk_04;
     s32 unk_40X;
     s32 i;
+    s32 xFlip = part->isFlippedHorizontal;
 
     part->unk_40.y++;
     part->unk_40.x++;
@@ -99,7 +101,7 @@ void fire_flower_update(EffectInstance* effect) {
     switch (unk_04) {
         case 0:
             load_effect(EFFECT_STARS_SPREAD);
-            stars_spread_main(0, part->pos.x - 10.0f, part->pos.y, part->pos.z, 7, 20);
+            stars_spread_main(0, part->pos.x + (xFlip ? 10.0f : -10.0f), part->pos.y, part->pos.z, 7, 20);
             part->unk_34 = 0;
             part->unk_38 = 0;
             part->unk_40.x = 0;
@@ -207,6 +209,7 @@ void fire_flower_appendGfx(void* effect) {
     s32 unk_04 = part->unk_04;
     f32 unk_28 = part->unk_28;
     f32 unk_2C = part->unk_2C;
+    s32 xFlip = part->isFlippedHorizontal;
     Matrix4f sp18;
     Matrix4f sp58;
     s32 i;
@@ -233,8 +236,8 @@ void fire_flower_appendGfx(void* effect) {
         part++;
         for (i = 1; i < ((EffectInstance*)effect)->numParts; i++, part++) {
             if (part->unk_40.z == 0) {
-                guRotateF(sp18, part->unk_24, 0.0f, 0.0f, 1.0f);
-                guTranslateF(sp58, part->pos.x, part->pos.y, part->pos.z);
+                guRotateF(sp18, part->unk_24, 0.0f, 0.0f, xFlip ? -1.0f : 1.0f);
+                guTranslateF(sp58, xFlip ? -part->pos.x : part->pos.x, part->pos.y, part->pos.z);
                 guMtxCatF(sp58, sp18, sp18);
                 guMtxF2L(sp18, &gDisplayContext->matrixStack[gMatrixListPos]);
 
@@ -259,8 +262,8 @@ void fire_flower_appendGfx(void* effect) {
         G_TX_MIRROR | G_TX_WRAP, G_TX_MIRROR | G_TX_WRAP,
         5, 5, G_TX_NOLOD, G_TX_NOLOD);
 
-    guTranslateF(sp18, unk_2C, 0.0f, 0.0f);
-    guScaleF(sp58, unk_30, unk_30, unk_30);
+    guTranslateF(sp18, xFlip ? -unk_2C : unk_2C, 0.0f, 0.0f);
+    guScaleF(sp58, xFlip ? -unk_30 : unk_30, unk_30, unk_30);
     guMtxCatF(sp58, sp18, sp18);
     guRotateF(sp58, unk_28, 0.0f, 1.0f, 0.0f);
     guMtxCatF(sp58, sp18, sp18);
