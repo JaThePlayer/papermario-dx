@@ -30,4 +30,7 @@ void N(remove_icon)(s32 id) {
     //remove_custom_status_icon(id, DEF_UP_ICON_ID);
 }
 
+void N(on_decrement)(Actor* target) {
+}
+
 #undef NAMESPACE

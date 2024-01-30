@@ -11,6 +11,7 @@
 #define ATK_UP_TEMP_STATUS 3
 #define DEF_UP_TEMP_STATUS 4
 #define CLOSE_CALL_STATUS 5
+#define BURN_STATUS 6
 
 // A function which gets called when a custom status gets applied
 typedef void(*StatusFxApplyFunc)(Actor* target, Vec3f position, u8 potency);
@@ -19,10 +20,13 @@ typedef void(*StatusFxDrawIconFunc)(Actor* target);
 
 typedef void(*StatusFxRemoveIconFunc)(s32 iconId);
 
+typedef void(*StatusFxOnDecrementFunc)(Actor* target);
+
 typedef struct StatusType {
     StatusFxApplyFunc onApply;
     StatusFxDrawIconFunc drawIcon;
     StatusFxRemoveIconFunc onRemoveIcon;
+    StatusFxOnDecrementFunc onDecrement;
     s8 decrementLate; // whether the status should be decremented after enemies attack, like Chill Out
 } StatusType;
 
