@@ -2502,7 +2502,7 @@
     typeFlags: [ ITEM_TYPE_FLAG_WORLD_USABLE, ITEM_TYPE_FLAG_BATTLE_USABLE, ITEM_TYPE_FLAG_CONSUMABLE, ITEM_TYPE_FLAG_FOOD_OR_DRINK, ITEM_TYPE_FLAG_ENTITY_FULLSIZE ]
     moveID: MOVE_NONE
     potencyA: 0
-    potencyB: 3
+    potencyB: 1
 - DriedPasta:
     category: CONSUMABLE
     nameMsg: MSG_ItemName_DriedPasta

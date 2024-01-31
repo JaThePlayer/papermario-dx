@@ -138,15 +138,16 @@
 }
 
 #message:25:(ItemFullDesc_Goomnut) {
-	A special nut found only in[BR]
-	Goomba Village. Restores 3 FP.[BR]
+	Restores 3 FP.[BR]
 	+2 DEF for 1 turn.[BR]
-	[End]
+	A special nut found only in[BR]
+	Goomba Village.[End]
 }
 
 #message:25:(ItemFullDesc_KoopaLeaf) {
-	A leaf found in Koopa Village.[BR]
-	Restores 3 FP.[End]
+	Restores 1 FP, reduces FP costs[BR]
+	by 2 for 2 turns.[BR]
+	A leaf found in Koopa Village.[End]
 }
 
 #message:25:(ItemFullDesc_DriedPasta) {
