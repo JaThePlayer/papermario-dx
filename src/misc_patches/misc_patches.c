@@ -1,13 +1,13 @@
 #include "common.h"
+#include "custom_status.h"
 
-f32 __deltaTime = 1.0f;
+// returns how much fp costs are changed by
+s32 getFpCostChange(Actor* player) {
+    s32 fpCost = 0;
 
-void _updateDeltaTime() {
-    if (
-        (gGameStatusPtr->curButtons[0] & BUTTON_L) &&
-        (gGameStatusPtr->curButtons[0] & BUTTON_R) &&
-        (gGameStatusPtr->pressedButtons[0] & BUTTON_B)
-        ) {
-        __deltaTime = __deltaTime > 1.0f ? 1.0f : 4.0f;
-    }
+    fpCost -= player_team_is_ability_active(player, ABILITY_FLOWER_SAVER);
+    fpCost -= player_team_is_ability_active(player, ABILITY_FLOWER_FANATIC) * 2;
+    fpCost += custom_status_get_potency(player, FP_COST_STATUS);
+
+    return fpCost;
 }

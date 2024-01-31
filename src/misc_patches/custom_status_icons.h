@@ -8,6 +8,7 @@
 #define DEF_UP_ICON_ID 2
 #define ATK_UP_ICON_ID 3
 #define BURN_ICON_ID 4
+#define FP_COST_DOWN_ICON_ID 5
 
 typedef struct CustomHudComplexStatusIcon {
     /* 0x0 */ s8 active;

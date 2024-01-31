@@ -5,9 +5,7 @@
 
 #define LEVEL_CAP 27
 
-
-extern f32 __deltaTime;
-
-void _updateDeltaTime();
+// returns how much fp costs are changed by
+s32 getFpCostChange(Actor* player);
 
 #endif

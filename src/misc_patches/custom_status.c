@@ -8,6 +8,7 @@
 #include "statuses/temp_atk_up.c"
 #include "statuses/close_call_status.c"
 #include "statuses/burn.c"
+#include "statuses/fp_cost.c"
 
 #define STATUS_ENTRY(namespace) { \
         .onApply = &namespace##_on_apply, \
@@ -25,6 +26,7 @@ StatusType gCustomStatusTypes[CUSTOM_STATUS_AMT] = {
     [DEF_UP_TEMP_STATUS] = STATUS_ENTRY(temp_def_up),
     [CLOSE_CALL_STATUS] = STATUS_ENTRY(close_call),
     [BURN_STATUS] = STATUS_ENTRY(burn_status),
+    [FP_COST_STATUS] = STATUS_ENTRY(fp_cost_status),
 };
 
 // Gets the potency of the given status for the given actor. 0 if actor doesn't have this status
