@@ -801,7 +801,7 @@ EvtScript N(EVS_ChargedShellShot) = {
                     SetConst(LVar1, ANIM_KoopaTroopa_Run)
                     ExecWait(EVS_Enemy_ReturnHome)
                     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_KoopaTroopa_Idle)
-                    EndSwitch
+            EndSwitch
         EndCaseGroup
     EndSwitch
 
@@ -837,7 +837,9 @@ EvtScript N(EVS_TakeTurn) = {
         Return
     EndIf
 
-    // Not flipped at the start of turn, go into shell now
+    // Not flipped at the start of turn, go into shell now, or use an item
+    STANDARD_ITEM_USE_AI()
+
     ExecWait(N(EVS_ShellShot))
     ExecWait(N(EVS_GoIntoShell))
 
