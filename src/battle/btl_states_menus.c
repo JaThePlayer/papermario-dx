@@ -441,6 +441,28 @@ BSS s32 D_802AD6A8[TABMAX];
 BSS s32 D_802AD6C0[5];
 BSS s32 D_802AD6D4;
 
+// New function to setup cost reductions for the menu, which does not duplicate logic
+void setup_move_cost_reductions(Actor* playerActor, s32 i)
+{
+    s32 change = getFpCostChange(playerActor);
+    s32 color;
+
+    switch (change) {
+        case 0:
+            color = 0;
+            break;
+        case -1:
+            color = 1;
+            break;
+        default:
+            color = change <= -2 ? 2 : 0;
+        break;
+    }
+
+    battle_menu_moveOptionDisplayCostReductions[i] = -change;
+    battle_menu_moveOptionDisplayCostReductionColors[i] = color;
+}
+
 void create_battle_popup_menu(PopupMenu* popup);
 
 s32 get_player_anim_for_status(s32 animID);
@@ -2747,14 +2769,7 @@ void btl_state_update_player_menu(void) {
                     battle_menu_moveOptionDisplayCostReductions[i] = 0;
                     battle_menu_moveOptionDisplayCostReductionColors[i] = 0;
 
-                    if (player_team_is_ability_active(playerActor, ABILITY_FLOWER_SAVER)) {
-                        battle_menu_moveOptionDisplayCostReductions[i] += player_team_is_ability_active(playerActor, ABILITY_FLOWER_SAVER);
-                        battle_menu_moveOptionDisplayCostReductionColors[i] = 1;
-                    }
-                    if (player_team_is_ability_active(playerActor, ABILITY_FLOWER_FANATIC)) {
-                        battle_menu_moveOptionDisplayCostReductions[i] += 2 * player_team_is_ability_active(playerActor, ABILITY_FLOWER_FANATIC);
-                        battle_menu_moveOptionDisplayCostReductionColors[i] = 2;
-                    }
+                    setup_move_cost_reductions(playerActor, i);
 
                     BattleMenu_Moves_OptionIndices[i] = i;
                     BattleMenu_Moves_OptionEnabled[i] = battleStatus->submenuStatus[i];
@@ -3948,14 +3963,7 @@ void btl_state_update_partner_menu(void) {
 
             battle_menu_moveOptionDisplayCostReductions[i] = 0;
             battle_menu_moveOptionDisplayCostReductionColors[i] = 0;
-            if (player_team_is_ability_active(playerActor, ABILITY_FLOWER_SAVER)) {
-                battle_menu_moveOptionDisplayCostReductions[i] += player_team_is_ability_active(playerActor, ABILITY_FLOWER_SAVER);
-                battle_menu_moveOptionDisplayCostReductionColors[i] = 1;
-            }
-            if (player_team_is_ability_active(playerActor, ABILITY_FLOWER_FANATIC)) {
-                battle_menu_moveOptionDisplayCostReductions[i] += player_team_is_ability_active(playerActor, ABILITY_FLOWER_FANATIC) * 2;
-                battle_menu_moveOptionDisplayCostReductionColors[i] = 2;
-            }
+            setup_move_cost_reductions(playerActor, i);
         }
         if (battleStatus->lastPartnerMenuSelection[BTL_MENU_IDX_ABILITY] < 0) {
             battleStatus->lastPartnerMenuSelection[BTL_MENU_IDX_ABILITY] = 0;

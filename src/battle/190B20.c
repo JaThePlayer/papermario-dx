@@ -8,6 +8,14 @@
 #include "enemy_items/api.h"
 #include "misc_patches/custom_status.h"
 
+#define DEDUCT_FP_COST(fpCost, player) \
+    if (fpCost != 0) { \
+        fpCost += getFpCostChange(player); \
+        if (fpCost < 1) { \
+            fpCost = 1; \
+        } \
+    }
+
 EvtScript D_80293820 = {
     Wait(LVar0)
     Loop(4)
@@ -769,13 +777,7 @@ void btl_init_menu_boots(void) {
 
         // Calculate FP cost
         fpCost = move->costFP;
-        if (fpCost != 0) {
-            fpCost -= player_team_is_ability_active(player, ABILITY_FLOWER_SAVER);
-            fpCost -= player_team_is_ability_active(player, ABILITY_FLOWER_FANATIC) * 2;
-            if (fpCost < 1) {
-                fpCost = 1;
-            }
-        }
+        DEDUCT_FP_COST(fpCost, player);
 
         // See if there are any targets for this move
         battleStatus->moveCategory = BTL_MENU_TYPE_JUMP;
@@ -863,13 +865,7 @@ void btl_init_menu_hammer(void) {
 
         // Calculate FP cost
         fpCost = move->costFP;
-        if (fpCost != 0) {
-            fpCost -= player_team_is_ability_active(player, ABILITY_FLOWER_SAVER);
-            fpCost -= player_team_is_ability_active(player, ABILITY_FLOWER_FANATIC) * 2;
-            if (fpCost < 1) {
-                fpCost = 1;
-            }
-        }
+        DEDUCT_FP_COST(fpCost, player);
 
         // See if there are any targets for this move
         battleStatus->moveCategory = BTL_MENU_TYPE_SMASH;
@@ -952,13 +948,7 @@ void btl_init_menu_partner(void) {
         MoveData* move = &gMoveTable[battleStatus->submenuMoves[i]];
 
         fpCost = move->costFP;
-        if (fpCost != 0) {
-            fpCost -= player_team_is_ability_active(player, ABILITY_FLOWER_SAVER);
-            fpCost -= player_team_is_ability_active(player, ABILITY_FLOWER_FANATIC) * 2;
-            if (fpCost < 1) {
-                fpCost = 1;
-            }
-        }
+        DEDUCT_FP_COST(fpCost, player);
 
         battleStatus->moveCategory = BTL_MENU_TYPE_CHANGE_PARTNER;
         battleStatus->moveArgument = partner->actorBlueprint->level;
@@ -1017,13 +1007,7 @@ void deduct_current_move_fp(void) {
     Actor* actor = battleStatus->playerActor;
     s32 fpCost = gMoveTable[battleStatus->selectedMoveID].costFP;
 
-    if (fpCost != 0) {
-        fpCost -= player_team_is_ability_active(actor, ABILITY_FLOWER_SAVER);
-        fpCost -= player_team_is_ability_active(actor, ABILITY_FLOWER_FANATIC) * 2;
-        if (fpCost < 1) {
-            fpCost = 1;
-        }
-    }
+    DEDUCT_FP_COST(fpCost, actor);
 
     playerData->curFP -= fpCost;
 }
