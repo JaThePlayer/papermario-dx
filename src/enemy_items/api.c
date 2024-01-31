@@ -246,12 +246,17 @@ API_CALLABLE(ApplyCustomItemEffects) {
     #define DEF_UP(turns, potency) INFLICT(DEF_UP_TEMP_STATUS, turns, turns + 1, potency)
     #define ATK_UP(turns, potency) INFLICT(ATK_UP_TEMP_STATUS, turns, turns + 1, potency)
 
+    #define FP_COST(turns, potency) INFLICT(FP_COST_STATUS, turns, turns + 1, potency)
+
     switch (itemIdx) {
         case ITEM_GOOMNUT:
             DEF_UP(1, 2);
             break;
         case ITEM_SPICY_SOUP:
             ATK_UP(1, 2);
+            break;
+        case ITEM_KOOPA_LEAF:
+            FP_COST(2, -2);
             break;
     }
 
