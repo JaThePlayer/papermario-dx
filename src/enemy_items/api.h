@@ -98,9 +98,12 @@ extern API_CALLABLE(ApplyCustomItemEffects);
 
 // Handles calling the default item use AI, and returns from the Evt if an item was used
 #define STANDARD_ITEM_USE_AI() \
-    ExecWait(EnemyItems_TryUseHeldItem_WithAI) \
-    IfNe(LVar0, 0) \
-        Return \
+    Call(GetBattlePhase, LVar0) \
+    IfNe(LVar0, PHASE_FIRST_STRIKE) \
+        ExecWait(EnemyItems_TryUseHeldItem_WithAI) \
+        IfNe(LVar0, 0) \
+            Return \
+        EndIf \
     EndIf
 
 #define GIVE_ITEM(pool) Call(EnemyItems_AddRandomItem, ACTOR_SELF, (s32)&pool, Float(14.0), Float(0.0), Float(-1.0))

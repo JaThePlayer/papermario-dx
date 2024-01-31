@@ -89,6 +89,7 @@ s32 enemy_items_count_items_with_move_id(Actor* actor, s32 moveID) {
 
 void enemy_items_add_item(Actor* actor, s32 itemID, f32 xOffset, f32 yOffset, f32 zOffset) {
     s32 slot = enemy_items_find_empty_slot(actor);
+    ItemData* itemData = &gItemTable[itemID];
     ActorHeldItem* held;
 
     if (slot == -1)
@@ -102,6 +103,13 @@ void enemy_items_add_item(Actor* actor, s32 itemID, f32 xOffset, f32 yOffset, f3
         actor->homePos.x + xOffset + (slot / 5) * 24.f, actor->homePos.y + yOffset + ((slot % 5) * 24.f), actor->homePos.z + zOffset,
         ITEM_SPAWN_MODE_DECORATION, 0
     );
+
+    switch (itemData->moveID) {
+        case MOVE_HP_PLUS:
+            actor->maxHP += 5;
+            actor->curHP += 5;
+            break;
+    }
 }
 
 API_CALLABLE(EnemyItems_AddItem) {
