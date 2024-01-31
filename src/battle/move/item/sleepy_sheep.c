@@ -5,6 +5,7 @@
 #include "effects.h"
 #include "sprite/player.h"
 #include "include_asset.h"
+#include "enemy_items/api.h"
 
 #define NAMESPACE battle_item_sleepy_sheep
 
@@ -89,6 +90,83 @@ API_CALLABLE(N(func_802A123C_71E88C)) {
                 fx_landing_dust(2, x, y, z, 0.0f);
             }
             if (posPtr->x >= 320.0f) {
+                script->functionTemp[0] = 2;
+            }
+            break;
+        case 2:
+            for (i = 0; i < ARRAY_COUNT(D_802A3F58); i++) {
+                virtual_entity_delete_by_index(D_802A3F58[i]);
+            }
+            return ApiStatus_DONE2;
+    }
+    return ApiStatus_BLOCK;
+}
+
+API_CALLABLE(N(handle_sheep_enemy)) {
+    Vec3f* posPtr = &D_802A3F88;
+    s32 entityID;
+    f32 x, y, z;
+    s32 cond;
+    s32 i;
+
+    if (isInitialCall) {
+        script->functionTemp[0] = 0;
+    }
+    #define startX 520.0f
+    switch (script->functionTemp[0]) {
+        case 0:
+            posPtr->x = startX; //-200.0f;
+            posPtr->z = 10.0f;
+            for (i = 0; i < ARRAY_COUNT(D_802A3F58); i++) {
+                entityID = D_802A3F58[i] = virtual_entity_create(D_802A3F28_721578[i]);
+                x = D_802A3E88_7214D8[i * 3] + posPtr->x;
+                y = D_802A3E88_7214D8[i * 3 + 1];
+                z = D_802A3E88_7214D8[i * 3 + 2] + posPtr->z;
+                virtual_entity_set_pos(entityID, x, y, z);
+                virtual_entity_set_scale(entityID, -D_802A3F00_721550[i], D_802A3F00_721550[i], 1.0f); // inverted D_802A3F00_721550[i]
+            }
+            script->functionTemp[1] = (gGameStatusPtr->frameCounter % 10) & 0xFFFF;
+            script->functionTemp[0] = 1;
+            break;
+        case 1:
+            posPtr->x -= 6.0f; // +=
+            cond = FALSE;
+            if (!((gGameStatusPtr->frameCounter % 3) & 0xFFFF)) {
+                script->functionTemp[1] = (script->functionTemp[1] + 1) % 10;
+            }
+
+            for (i = 0; i < ARRAY_COUNT(D_802A3F58); i++) {
+                entityID = D_802A3F58[i];
+                x = D_802A3E88_7214D8[i * 3] + posPtr->x;
+                y = D_802A3E88_7214D8[i * 3 + 1];
+                z = D_802A3E88_7214D8[i * 3 + 2] + posPtr->z;
+                virtual_entity_set_pos(entityID, x, y, z);
+                if (!cond && script->functionTemp[1] == i && !((gGameStatusPtr->frameCounter % 5) & 0xFFFF)) {
+                    if (x <= startX - 200.0f) { // > 0.0f
+                        y = x;
+                        if (x <= startX - 100.0f) { // > 100.0f
+                            y = x - 50.0f;
+                        }
+                        y = rand_int(y);
+                    }
+
+                    if (x > 40.0f) { // > 40.0f
+                        x = -(x - 40.0f);
+                    }
+                    fx_landing_dust(3, x, y, z, 0.0f);
+                    cond = TRUE;
+                }
+            }
+            if (gGameStatusPtr->frameCounter & 1) {
+                s32 randIdx = rand_int(9);
+
+                x = D_802A3E88_7214D8[randIdx * 3] + posPtr->x;
+                y = D_802A3E88_7214D8[randIdx * 3 + 1];
+                z = D_802A3E88_7214D8[randIdx * 3 + 2] + posPtr->z;
+
+                fx_landing_dust(2, x, y, z, 0.0f);
+            }
+            if (posPtr->x < -200.0f) { // > 320
                 script->functionTemp[0] = 2;
             }
             break;
@@ -287,7 +365,117 @@ EntityModelScript N(modelCommandList3) = {
     ems_End
 };
 
+EvtScript N(EVS_UseItem_Enemy) = {
+    Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
+    Call(MoveBattleCamOver, 20)
+
+    Thread
+        Call(PlaySoundAtActor, ACTOR_SELF, SOUND_SHEEP_STAMPEDE)
+        Loop(7)
+            Call(StartRumble, BTL_RUMBLE_HIT_MIN)
+            Call(ShakeCam, CAM_BATTLE, 0, 2, Float(0.5))
+            Call(ShakeCam, CAM_BATTLE, 0, 2, Float(1.5))
+            Call(ShakeCam, CAM_BATTLE, 0, 2, Float(0.5))
+            Call(ShakeCam, CAM_BATTLE, 0, 2, Float(0.2))
+            Call(ShakeCam, CAM_BATTLE, 0, 2, Float(0.5))
+            Call(ShakeCam, CAM_BATTLE, 0, 2, Float(2.0))
+            Call(ShakeCam, CAM_BATTLE, 0, 2, Float(1.5))
+            Call(ShakeCam, CAM_BATTLE, 0, 2, Float(1.0))
+            Call(ShakeCam, CAM_BATTLE, 0, 2, Float(0.5))
+            Call(ShakeCam, CAM_BATTLE, 0, 2, Float(0.25))
+            Wait(2)
+            Call(ShakeCam, CAM_BATTLE, 0, 2, Float(0.5))
+            Call(ShakeCam, CAM_BATTLE, 0, 2, Float(1.5))
+            Call(ShakeCam, CAM_BATTLE, 0, 2, Float(0.5))
+            Call(ShakeCam, CAM_BATTLE, 0, 2, Float(0.2))
+        EndLoop
+    EndThread
+    Wait(20)
+
+    Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
+    Add(LVar1, 32)
+    Call(ShowEmote, 0, EMOTE_QUESTION, -45, 20, EMOTER_POS, LVar0, LVar1, LVar2, 10)
+    Wait(30)
+    Call(SetActorYaw, ACTOR_SELF, 30)
+    Wait(1)
+    Call(SetActorYaw, ACTOR_SELF, 60)
+    Wait(1)
+    Call(SetActorYaw, ACTOR_SELF, 90)
+    Wait(1)
+    Call(SetActorYaw, ACTOR_SELF, 120)
+    Wait(1)
+    Call(SetActorYaw, ACTOR_SELF, 150)
+    Wait(1)
+    Call(SetActorYaw, ACTOR_SELF, 180)
+    Thread
+        Call(N(handle_sheep_enemy))
+    EndThread
+    Wait(30)
+    ChildThread
+        Wait(40)
+        Call(UseIdleAnimation, ACTOR_PLAYER, FALSE)
+        Call(EnableIdleScript, ACTOR_PLAYER, IDLE_SCRIPT_DISABLE)
+
+        Loop(2)
+            Set(LVarE, 0)
+            Loop(10)
+                Add(LVarE, 36)
+                Call(SetActorYaw, ACTOR_PLAYER, LVarE)
+                Wait(1)
+            EndLoop
+            Call(SetActorYaw, ACTOR_PLAYER, 0)
+        EndLoop
+
+        Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+        Call(EnableIdleScript, ACTOR_PLAYER, IDLE_SCRIPT_ENABLE)
+    EndChildThread
+
+    Thread
+        Wait(5)
+        Call(SetActorYaw, ACTOR_SELF, 150)
+        Wait(1)
+        Call(SetActorYaw, ACTOR_SELF, 120)
+        Wait(1)
+        Call(SetActorYaw, ACTOR_SELF, 90)
+        Wait(1)
+        Call(SetActorYaw, ACTOR_SELF, 60)
+        Wait(1)
+        Call(SetActorYaw, ACTOR_SELF, 30)
+        Wait(1)
+        Call(SetActorYaw, ACTOR_SELF, 0)
+    EndThread
+    Wait(60)
+    // hit player
+    Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
+    Call(SetGoalToTarget, ACTOR_SELF)
+    Call(EnemyTestTarget, ACTOR_SELF, LVarA, DAMAGE_TYPE_NO_CONTACT | DAMAGE_TYPE_STATUS_ALWAYS_HITS, 0, 1, BS_FLAGS1_INCLUDE_POWER_UPS)
+    Switch(LVarA)
+        CaseOrEq(HIT_RESULT_MISS)
+        CaseOrEq(HIT_RESULT_LUCKY)
+            IfEq(LVarA, HIT_RESULT_LUCKY)
+                Call(EnemyTestTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_TRIGGER_LUCKY, 0, 0, 0)
+            EndIf
+            Goto(1)
+        EndCaseGroup
+        CaseDefault
+    EndSwitch
+    Call(GetItemPower, ITEM_SLEEPY_SHEEP, LVar0, LVar1)
+    Call(MakeStatusField, LVar0, STATUS_FLAG_SLEEP, 100, LVar0)
+    Call(EnemyDamageTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_NO_CONTACT | DAMAGE_TYPE_STATUS_ALWAYS_HITS, SUPPRESS_EVENT_ALL, DMG_STATUS_KEY(STATUS_FLAG_SLEEP, 2, 100), 0, BS_FLAGS1_TRIGGER_EVENTS)
+    Label(1)
+    Call(SetActorYaw, ACTOR_PLAYER, 0)
+    Wait(20)
+    Return
+    End
+};
+
 EvtScript N(EVS_UseItem) = {
+    Call(EnemyItems_IsCalledByEnemy, LVarD) // the first arg specifies which LVar to store the output value of the function to.
+    IfEq(LVarD, 1)
+        ExecWait(N(EVS_UseItem_Enemy))
+        Return
+    EndIf
+
     SetConst(LVarA, ITEM_SLEEPY_SHEEP)
     ExecWait(N(UseItemWithEffect))
     Call(UseBattleCamPreset, BTL_CAM_PRESET_19)
