@@ -23,3 +23,6 @@
 #define ENEMY_AIR1_ITEM(name, itemId) ENEMY_ITEM(name, BTL_POS_AIR_B, 9, itemId)
 #define ENEMY_AIR2_ITEM(name, itemId) ENEMY_ITEM(name, BTL_POS_AIR_C, 8, itemId)
 #define ENEMY_AIR3_ITEM(name, itemId) ENEMY_ITEM(name, BTL_POS_AIR_D, 7, itemId)
+
+//A(paragoomba), BTL_POS_AIR_C, 8, ITEM_MUSHROOM
+#define ACTOR_BY_IDX_ITEM(enemy, pos, _priority, itemId, args...) { .actor = &enemy, .home = { .index = pos }, .priority = _priority, .item = itemId, args }

@@ -7,6 +7,7 @@
 - Enemies now have s16 maxHp
 - Custom status effect support
 - You get the full item description everywhere and can use C-Up/Down to scroll through it
+- Status Effect Rework - Sleep
 
 ## Minor
 - Hammer first strikes deal full damage
