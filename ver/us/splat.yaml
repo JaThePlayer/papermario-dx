@@ -3305,6 +3305,8 @@ segments:
       - [0x381278, gfx, D_09000ED8_381278]
       - [0x381298, gfx, D_09000EF8_381298]
       - [0x3812B8]
+      - [auto, ci4, iceball, 32, 32, iceball]
+      - [auto, palette, iceball]
   - name: effect_recover
     dir: effects
     type: code

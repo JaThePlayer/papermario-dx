@@ -1089,7 +1089,8 @@ typedef struct BlastFXData {
 
 typedef struct FireFlowerFXData {
     /* 0x00 */ s16 unk_00;
-    /* new  */ s16 isFlippedHorizontal;
+    /* new  */ s8 isFlippedHorizontal;
+    /* new  */ s8 isIce;
     /* 0x04 */ s32 unk_04;
     /* 0x08 */ Vec3f pos;
     /* 0x14 */ f32 unk_14;
