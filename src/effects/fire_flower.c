@@ -7,6 +7,7 @@ extern Gfx D_09000DE0_381180[];
 extern Gfx D_09000EB8_381258[];
 extern Gfx D_09000ED8_381278[];
 extern Gfx D_09000EF8_381298[];
+extern Gfx D_iceball_gfx[];
 
 s8 D_E007EC30[] = { 50, 60, 70, 80, 90, 100, 105, 100 };
 
@@ -41,6 +42,7 @@ EffectInstance* fire_flower_main(s32 arg0, f32 arg1, f32 arg2, f32 arg3, s32 arg
     part->unk_04 = 0;
     part->unk_00 = 0;
     part->isFlippedHorizontal = arg0;
+    part->isIce = FALSE;
     part->pos.x = arg1;
     part->pos.y = arg2;
     part->pos.z = arg3;
@@ -210,6 +212,7 @@ void fire_flower_appendGfx(void* effect) {
     f32 unk_28 = part->unk_28;
     f32 unk_2C = part->unk_2C;
     s32 xFlip = part->isFlippedHorizontal;
+    s32 isIce = part->isIce;
     Matrix4f sp18;
     Matrix4f sp58;
     s32 i;
@@ -231,7 +234,7 @@ void fire_flower_appendGfx(void* effect) {
         guMtxF2L(sp18, &gDisplayContext->matrixStack[gMatrixListPos]);
 
         gSPMatrix(gMainGfxPos++, &gDisplayContext->matrixStack[gMatrixListPos++], G_MTX_PUSH | G_MTX_MUL | G_MTX_MODELVIEW);
-        gSPDisplayList(gMainGfxPos++, D_09000DE0_381180);
+        gSPDisplayList(gMainGfxPos++, isIce ? D_iceball_gfx : D_09000DE0_381180);
 
         part++;
         for (i = 1; i < ((EffectInstance*)effect)->numParts; i++, part++) {

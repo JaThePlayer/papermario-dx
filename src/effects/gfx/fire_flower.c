@@ -28,3 +28,8 @@ u8 D_09000AA0_380E40[] = {
 #include "effects/gfx/D_09000EB8_381258.gfx.inc.c"
 #include "effects/gfx/D_09000ED8_381278.gfx.inc.c"
 #include "effects/gfx/D_09000EF8_381298.gfx.inc.c"
+
+// armageddon: iceball textures
+INCLUDE_IMG("effects/gfx/iceball.png", D_iceball);
+INCLUDE_PAL("effects/gfx/iceball.pal", D_iceball_pal);
+#include "../assets/armageddon/effects/gfx/iceball.gfx.inc.c"
