@@ -146,22 +146,22 @@ EvtScript N(EVS_OnBuy) = {
 };
 
 ShopItemData N(RowfBadgeInventory)[] = {
-    { .itemID = ITEM_SPEEDY_SPIN,    .price =  50, .descMsg = MSG_ItemShopDesc_SpeedySpin },
-    { .itemID = ITEM_FIRST_ATTACK,   .price = 100, .descMsg = MSG_ItemShopDesc_FirstAttack },
-    { .itemID = ITEM_MULTIBOUNCE,    .price =  75, .descMsg = MSG_ItemShopDesc_Multibounce },
-    { .itemID = ITEM_D_DOWN_POUND,   .price =  75, .descMsg = MSG_ItemShopDesc_DDownPound },
-    { .itemID = ITEM_DODGE_MASTER,   .price = 100, .descMsg = MSG_ItemShopDesc_DodgeMaster },
-    { .itemID = ITEM_SLEEP_STOMP,    .price =  75, .descMsg = MSG_ItemShopDesc_SleepStomp },
-    { .itemID = ITEM_DOUBLE_DIP,     .price = 100, .descMsg = MSG_ItemShopDesc_DoubleDip },
-    { .itemID = ITEM_JUMP_CHARGE,   .price =  50, .descMsg = MSG_ItemShopDesc_JumpCharge },
-    { .itemID = ITEM_SPIN_SMASH,     .price =  75, .descMsg = MSG_ItemShopDesc_SpinSmash },
-    { .itemID = ITEM_GROUP_FOCUS,    .price = 100, .descMsg = MSG_ItemShopDesc_GroupFocus },
-    { .itemID = ITEM_ALLOR_NOTHING,  .price = 100, .descMsg = MSG_ItemShopDesc_AllorNothing },
-    { .itemID = ITEM_HP_PLUS_C,      .price = 150, .descMsg = MSG_ItemShopDesc_HPPlus },
-    { .itemID = ITEM_FP_PLUS_C,      .price = 150, .descMsg = MSG_ItemShopDesc_FPPlus },
-    { .itemID = ITEM_S_SMASH_CHG,    .price = 100, .descMsg = MSG_ItemShopDesc_SSmashChg },
-    { .itemID = ITEM_DAMAGE_DODGE_A, .price = 150, .descMsg = MSG_ItemShopDesc_DamageDodge },
-    { .itemID = ITEM_MEGA_QUAKE,     .price = 200, .descMsg = MSG_ItemShopDesc_MegaQuake },
+    { .itemID = ITEM_SPEEDY_SPIN,    .price =  50, .descMsg = MSG_ItemFullDesc_SpeedySpin },
+    { .itemID = ITEM_FIRST_ATTACK,   .price = 100, .descMsg = MSG_ItemFullDesc_FirstAttack },
+    { .itemID = ITEM_MULTIBOUNCE,    .price =  75, .descMsg = MSG_ItemFullDesc_Multibounce },
+    { .itemID = ITEM_D_DOWN_POUND,   .price =  75, .descMsg = MSG_ItemFullDesc_DDownPound },
+    { .itemID = ITEM_DODGE_MASTER,   .price = 100, .descMsg = MSG_ItemFullDesc_DodgeMaster },
+    { .itemID = ITEM_SLEEP_STOMP,    .price =  75, .descMsg = MSG_ItemFullDesc_SleepStomp },
+    { .itemID = ITEM_DOUBLE_DIP,     .price = 100, .descMsg = MSG_ItemFullDesc_DoubleDip },
+    { .itemID = ITEM_JUMP_CHARGE,   .price =  50, .descMsg = MSG_ItemFullDesc_JumpCharge },
+    { .itemID = ITEM_SPIN_SMASH,     .price =  75, .descMsg = MSG_ItemFullDesc_SpinSmash },
+    { .itemID = ITEM_GROUP_FOCUS,    .price = 100, .descMsg = MSG_ItemFullDesc_GroupFocus },
+    { .itemID = ITEM_ALLOR_NOTHING,  .price = 100, .descMsg = MSG_ItemFullDesc_AllorNothing },
+    { .itemID = ITEM_HP_PLUS_C,      .price = 150, .descMsg = MSG_ItemFullDesc_HPPlus },
+    { .itemID = ITEM_FP_PLUS_C,      .price = 150, .descMsg = MSG_ItemFullDesc_FPPlus },
+    { .itemID = ITEM_S_SMASH_CHG,    .price = 100, .descMsg = MSG_ItemFullDesc_SSmashChg },
+    { .itemID = ITEM_DAMAGE_DODGE_A, .price = 150, .descMsg = MSG_ItemFullDesc_DamageDodge },
+    { .itemID = ITEM_MEGA_QUAKE,     .price = 200, .descMsg = MSG_ItemFullDesc_MegaQuake },
 };
 
 ShopItemLocation N(RowfItemPositions)[] = {

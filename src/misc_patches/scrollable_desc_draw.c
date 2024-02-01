@@ -138,3 +138,7 @@ void draw_item_gc(void) {
         }
     }
 }
+
+b8 was_description_drawn_this_frame(void) {
+    return prevMsgHudElementId != -1 && framesSinceLastDraw < 2;
+}

@@ -28,12 +28,12 @@ s32 N(ShopMessages)[] = {
 };
 
 ShopItemData N(Inventory)[] = {
-    { .itemID = ITEM_SNOWMAN_DOLL,  .price = 15, MSG_ItemShopDesc_SnowmanDoll },
-    { .itemID = ITEM_THUNDER_RAGE,  .price = 15, MSG_ItemShopDesc_ThunderRage },
-    { .itemID = ITEM_FIRE_FLOWER,   .price =  5, MSG_ItemShopDesc_FireFlower },
-    { .itemID = ITEM_TASTY_TONIC,   .price =  2, MSG_ItemShopDesc_TastyTonic },
-    { .itemID = ITEM_HONEY_SYRUP,   .price =  6, MSG_ItemShopDesc_HoneySyrup },
-    { .itemID = ITEM_SUPER_SHROOM,  .price = 15, MSG_ItemShopDesc_SuperShroom },
+    { .itemID = ITEM_SNOWMAN_DOLL,  .price = 15, MSG_ItemFullDesc_SnowmanDoll },
+    { .itemID = ITEM_THUNDER_RAGE,  .price = 15, MSG_ItemFullDesc_ThunderRage },
+    { .itemID = ITEM_FIRE_FLOWER,   .price =  5, MSG_ItemFullDesc_FireFlower },
+    { .itemID = ITEM_TASTY_TONIC,   .price =  2, MSG_ItemFullDesc_TastyTonic },
+    { .itemID = ITEM_HONEY_SYRUP,   .price =  6, MSG_ItemFullDesc_HoneySyrup },
+    { .itemID = ITEM_SUPER_SHROOM,  .price = 15, MSG_ItemFullDesc_SuperShroom },
     {}
 };
 

@@ -28,12 +28,12 @@ s32 N(ShopMessages)[] = {
 };
 
 ShopItemData N(Inventory)[] = {
-    { .itemID = ITEM_DIZZY_DIAL,   .price = 10, MSG_ItemShopDesc_DizzyDial },
-    { .itemID = ITEM_POW_BLOCK,    .price =  4, MSG_ItemShopDesc_POWBlock },
-    { .itemID = ITEM_FIRE_FLOWER,  .price =  8, MSG_ItemShopDesc_FireFlower },
-    { .itemID = ITEM_HONEY_SYRUP,  .price =  8, MSG_ItemShopDesc_HoneySyrup },
-    { .itemID = ITEM_VOLT_SHROOM,  .price = 15, MSG_ItemShopDesc_VoltShroom },
-    { .itemID = ITEM_MUSHROOM,     .price =  4, MSG_ItemShopDesc_Mushroom },
+    { .itemID = ITEM_FRIGHT_JAR,   .price =  8, MSG_ItemFullDesc_FrightJar },
+    { .itemID = ITEM_GOOMNUT,      .price =  4, MSG_ItemFullDesc_Goomnut },
+    { .itemID = ITEM_FIRE_FLOWER,  .price = 15, MSG_ItemFullDesc_FireFlower },
+    { .itemID = ITEM_HONEY_SYRUP,  .price =  8, MSG_ItemFullDesc_HoneySyrup },
+    { .itemID = ITEM_VOLT_SHROOM,  .price = 15, MSG_ItemFullDesc_VoltShroom },
+    { .itemID = ITEM_MUSHROOM,     .price =  4, MSG_ItemFullDesc_Mushroom },
     {}
 };
 

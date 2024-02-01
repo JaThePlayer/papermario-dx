@@ -27,12 +27,12 @@ s32 N(ShopMessages)[] = {
 };
 
 ShopItemData N(Inventory)[] = {
-    { .itemID = ITEM_FRIGHT_JAR,    .price =  5, .descMsg = MSG_ItemShopDesc_FrightJar },
-    { .itemID = ITEM_SLEEPY_SHEEP,  .price = 10, .descMsg = MSG_ItemShopDesc_SleepySheep },
-    { .itemID = ITEM_POW_BLOCK,     .price =  5, .descMsg = MSG_ItemShopDesc_POWBlock },
-    { .itemID = ITEM_FIRE_FLOWER,   .price = 10, .descMsg = MSG_ItemShopDesc_FireFlower },
-    { .itemID = ITEM_HONEY_SYRUP,   .price = 10, .descMsg = MSG_ItemShopDesc_HoneySyrup },
-    { .itemID = ITEM_MUSHROOM,      .price =  5, .descMsg = MSG_ItemShopDesc_Mushroom },
+    { .itemID = ITEM_FRIGHT_JAR,    .price =  5, .descMsg = MSG_ItemFullDesc_FrightJar },
+    { .itemID = ITEM_SLEEPY_SHEEP,  .price = 10, .descMsg = MSG_ItemFullDesc_SleepySheep },
+    { .itemID = ITEM_POW_BLOCK,     .price =  5, .descMsg = MSG_ItemFullDesc_POWBlock },
+    { .itemID = ITEM_FIRE_FLOWER,   .price = 10, .descMsg = MSG_ItemFullDesc_FireFlower },
+    { .itemID = ITEM_HONEY_SYRUP,   .price = 10, .descMsg = MSG_ItemFullDesc_HoneySyrup },
+    { .itemID = ITEM_MUSHROOM,      .price =  5, .descMsg = MSG_ItemFullDesc_Mushroom },
     {}
 };
 

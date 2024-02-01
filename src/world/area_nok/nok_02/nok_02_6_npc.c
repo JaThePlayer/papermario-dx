@@ -191,9 +191,9 @@ EvtScript N(EVS_FuzzyBoss_PlayerEntersKoopersHouse) = {
     EndIf
     Set(MF_FuzzyBossTaunt, TRUE)
     Call(DisablePlayerInput, TRUE)
-    Call(SpeakToPlayer, NPC_FuzzyBoss, ANIM_Fuzzy_Anim0C, ANIM_Fuzzy_Idle, 0, MSG_CH1_00B9)
+    Call(SpeakToPlayer, NPC_FuzzyBoss, ANIM_Fuzzy_Flower_Anim0C, ANIM_Fuzzy_Flower_Idle, 0, MSG_CH1_00B9)
     Call(DisablePlayerInput, FALSE)
-    Call(SetNpcAnimation, NPC_FuzzyBoss, ANIM_Fuzzy_Walk)
+    Call(SetNpcAnimation, NPC_FuzzyBoss, ANIM_Fuzzy_Flower_Walk)
     Call(GetNpcPos, NPC_FuzzyBoss, LVarA, LVarB, LVarC)
     Set(LVarD, LVarA)
     Add(LVarD, -5)
@@ -733,7 +733,7 @@ NpcData N(NpcData_Crisis)[] = {
         .settings = &N(NpcSettings_Fuzzy),
         .flags = ENEMY_FLAG_PASSIVE | ENEMY_FLAG_ENABLE_HIT_SCRIPT | ENEMY_FLAG_IGNORE_WORLD_COLLISION | ENEMY_FLAG_IGNORE_PLAYER_COLLISION | ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING | ENEMY_FLAG_400000,
         .drops = NO_DROPS,
-        .animations = FUZZY_ANIMS,
+        .animations = FLOWER_FUZZY_ANIMS,
     },
     {
         .id = NPC_KoopersShell,

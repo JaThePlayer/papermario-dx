@@ -27,12 +27,12 @@ s32 N(ShopMessages)[] = {
 };
 
 ShopItemData N(Inventory)[] = {
-    { .itemID = ITEM_MYSTERY,       .price = 1,  .descMsg = MSG_ItemShopDesc_Mystery },
-    { .itemID = ITEM_STOP_WATCH,    .price = 25, .descMsg = MSG_ItemShopDesc_StopWatch },
-    { .itemID = ITEM_SNOWMAN_DOLL,  .price = 15, .descMsg = MSG_ItemShopDesc_SnowmanDoll },
-    { .itemID = ITEM_MAPLE_SYRUP,   .price = 25, .descMsg = MSG_ItemShopDesc_MapleSyrup },
-    { .itemID = ITEM_LIFE_SHROOM,   .price = 50, .descMsg = MSG_ItemShopDesc_LifeShroom },
-    { .itemID = ITEM_SUPER_SHROOM,  .price = 13, .descMsg = MSG_ItemShopDesc_SuperShroom },
+    { .itemID = ITEM_MYSTERY,       .price = 1,  .descMsg = MSG_ItemFullDesc_Mystery },
+    { .itemID = ITEM_STOP_WATCH,    .price = 25, .descMsg = MSG_ItemFullDesc_StopWatch },
+    { .itemID = ITEM_SNOWMAN_DOLL,  .price = 15, .descMsg = MSG_ItemFullDesc_SnowmanDoll },
+    { .itemID = ITEM_MAPLE_SYRUP,   .price = 25, .descMsg = MSG_ItemFullDesc_MapleSyrup },
+    { .itemID = ITEM_LIFE_SHROOM,   .price = 50, .descMsg = MSG_ItemFullDesc_LifeShroom },
+    { .itemID = ITEM_SUPER_SHROOM,  .price = 13, .descMsg = MSG_ItemFullDesc_SuperShroom },
     {}
 };
 

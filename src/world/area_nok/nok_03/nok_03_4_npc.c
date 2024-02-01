@@ -194,7 +194,7 @@ NpcData N(NpcData_FuzzyBoss)[] = {
         .settings = &N(NpcSettings_Fuzzy),
         .flags = ENEMY_FLAG_PASSIVE | ENEMY_FLAG_ENABLE_HIT_SCRIPT | ENEMY_FLAG_IGNORE_WORLD_COLLISION | ENEMY_FLAG_IGNORE_PLAYER_COLLISION | ENEMY_FLAG_FLYING | ENEMY_FLAG_400000,
         .drops = FUZZY_DROPS,
-        .animations = FUZZY_ANIMS,
+        .animations = FLOWER_FUZZY_ANIMS,
     },
     {
         .id = NPC_KoopersShell,

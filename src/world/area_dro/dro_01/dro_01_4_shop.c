@@ -29,12 +29,12 @@ s32 N(ShopMessages)[] = {
 };
 
 ShopItemData N(Inventory)[] = {
-    { .itemID = ITEM_THUNDER_BOLT, .price = 5, .descMsg = MSG_ItemShopDesc_ThunderBolt },
-    { .itemID = ITEM_DUSTY_HAMMER, .price = 2, .descMsg = MSG_ItemShopDesc_DustyHammer },
-    { .itemID = ITEM_HONEY_SYRUP,  .price = 5, .descMsg = MSG_ItemShopDesc_HoneySyrup },
-    { .itemID = ITEM_DRIED_SHROOM, .price = 2, .descMsg = MSG_ItemShopDesc_DriedShroom },
-    { .itemID = ITEM_DRIED_PASTA,  .price = 3, .descMsg = MSG_ItemShopDesc_DriedPasta },
-    { .itemID = ITEM_MUSHROOM,     .price = 3, .descMsg = MSG_ItemShopDesc_Mushroom },
+    { .itemID = ITEM_THUNDER_BOLT, .price = 5, .descMsg = MSG_ItemFullDesc_ThunderBolt },
+    { .itemID = ITEM_DUSTY_HAMMER, .price = 2, .descMsg = MSG_ItemFullDesc_DustyHammer },
+    { .itemID = ITEM_HONEY_SYRUP,  .price = 5, .descMsg = MSG_ItemFullDesc_HoneySyrup },
+    { .itemID = ITEM_DRIED_SHROOM, .price = 2, .descMsg = MSG_ItemFullDesc_DriedShroom },
+    { .itemID = ITEM_DRIED_PASTA,  .price = 3, .descMsg = MSG_ItemFullDesc_DriedPasta },
+    { .itemID = ITEM_MUSHROOM,     .price = 3, .descMsg = MSG_ItemFullDesc_Mushroom },
     {},
 };
 
