@@ -3,6 +3,7 @@
 #include "hud_element.h"
 #include "model.h"
 #include "pause/pause_common.h"
+#include "misc_patches/scrollable_desc_draw.h"
 
 extern u8 MessagePlural[];
 extern u8 MessageSingular[];
@@ -787,8 +788,11 @@ void shop_draw_item_name(s32 arg0, s32 posX, s32 posY) {
 void shop_draw_item_desc(s32 arg0, s32 posX, s32 posY) {
     Shop* shop = gGameStatusPtr->mapShop;
     ShopItemData* shopItem = &shop->staticInventory[shop->curItemSlot];
+    Window* window = &gWindows[WINDOW_ID_ITEM_INFO_DESC];
+    s32 width = window->width;
+    s32 height = window->height;
 
-    draw_msg(shopItem->descMsg, posX + 8, posY, 255, MSG_PAL_STANDARD, 0);
+    draw_scrollable_desc(shopItem->descMsg, posX, posY, width, height, 255, MSG_PAL_STANDARD, 0);
 }
 
 void draw_shop_items(void) {
@@ -815,6 +819,7 @@ void draw_shop_items(void) {
         camera = &gCameras[gCurrentCameraID];
         itemData = shop->staticInventory;
         shopItemEntities = gGameStatusPtr->shopItemEntities;
+        gDPSetScissor(gMainGfxPos++, G_SC_NON_INTERLACE, 12, 20, SCREEN_WIDTH - 12, SCREEN_HEIGHT - 20);
 
         for (i = 0; i < shop->numItems; i++, itemData++, shopItemEntities++) {
             inX = shopItemEntities->pos.x;

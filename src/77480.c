@@ -4,6 +4,7 @@
 #include "sprite.h"
 #include "world/partner/watt.h"
 #include "sprite/player.h"
+#include "misc_patches/scrollable_desc_draw.h"
 
 #ifdef SHIFT
 #define inspect_icon_VRAM inspect_icon_VRAM
@@ -711,6 +712,7 @@ void check_input_use_partner(void) {
         && !(playerStatus->pressedButtons & BUTTON_B)
         && !(playerStatus->animFlags & PA_FLAG_USING_PEACH_PHYSICS)
         && actionState <= ACTION_STATE_RUN
+        && !was_description_drawn_this_frame()
     ) {
         if (playerData->curPartner == PARTNER_GOOMBARIO) {
             WorldTattleInteractionID = playerStatus->interactingWithID;

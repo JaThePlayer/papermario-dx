@@ -50,23 +50,23 @@ EvtScript N(EVS_NpcInteract_Merluvlee_Passthrough) = {
 };
 
 ShopItemData N(MerlowBadgeInventory)[MERLOW_BADGE_COUNT] = {
-    { .itemID = ITEM_ATTACK_FX_A,    .price =  1, .descMsg = MSG_ItemShopDesc_AttackFXA },
-    { .itemID = ITEM_PAY_OFF,        .price =  1, .descMsg = MSG_ItemShopDesc_PayOff },
-    { .itemID = ITEM_CHILL_OUT,      .price =  3, .descMsg = MSG_ItemShopDesc_ChillOut },
-    { .itemID = ITEM_PRETTY_LUCKY,   .price =  5, .descMsg = MSG_ItemShopDesc_PrettyLucky },
-    { .itemID = ITEM_FEELING_FINE,   .price =  5, .descMsg = MSG_ItemShopDesc_FeelingFine },
+    { .itemID = ITEM_ATTACK_FX_A,    .price =  1, .descMsg = MSG_ItemFullDesc_AttackFXA },
+    { .itemID = ITEM_PAY_OFF,        .price =  1, .descMsg = MSG_ItemFullDesc_PayOff },
+    { .itemID = ITEM_CHILL_OUT,      .price =  3, .descMsg = MSG_ItemFullDesc_ChillOut },
+    { .itemID = ITEM_PRETTY_LUCKY,   .price =  5, .descMsg = MSG_ItemFullDesc_PrettyLucky },
+    { .itemID = ITEM_FEELING_FINE,   .price =  5, .descMsg = MSG_ItemFullDesc_FeelingFine },
 
-    { .itemID = ITEM_HAPPY_HEART_A,  .price =  8, .descMsg = MSG_ItemShopDesc_HappyHeart },
-    { .itemID = ITEM_HAPPY_FLOWER_A, .price =  8, .descMsg = MSG_ItemShopDesc_HappyFlower },
-    { .itemID = ITEM_PEEKABOO,       .price = 10, .descMsg = MSG_ItemShopDesc_Peekaboo },
-    { .itemID = ITEM_ZAP_TAP,        .price = 10, .descMsg = MSG_ItemShopDesc_ZapTap },
-    { .itemID = ITEM_HEART_FINDER,   .price = 12, .descMsg = MSG_ItemShopDesc_HeartFinder },
+    { .itemID = ITEM_HAPPY_HEART_A,  .price =  8, .descMsg = MSG_ItemFullDesc_HappyHeart },
+    { .itemID = ITEM_HAPPY_FLOWER_A, .price =  8, .descMsg = MSG_ItemFullDesc_HappyFlower },
+    { .itemID = ITEM_PEEKABOO,       .price = 10, .descMsg = MSG_ItemFullDesc_Peekaboo },
+    { .itemID = ITEM_ZAP_TAP,        .price = 10, .descMsg = MSG_ItemFullDesc_ZapTap },
+    { .itemID = ITEM_HEART_FINDER,   .price = 12, .descMsg = MSG_ItemFullDesc_HeartFinder },
 
-    { .itemID = ITEM_FLOWER_FINDER,  .price = 12, .descMsg = MSG_ItemShopDesc_FlowerFinder },
-    { .itemID = ITEM_HP_DRAIN,       .price = 15, .descMsg = MSG_ItemShopDesc_HPDrain },
-    { .itemID = ITEM_MONEY_MONEY,    .price = 20, .descMsg = MSG_ItemShopDesc_MoneyMoney },
-    { .itemID = ITEM_FLOWER_SAVER_A, .price = 25, .descMsg = MSG_ItemShopDesc_FlowerSaver },
-    { .itemID = ITEM_POWER_PLUS_A,   .price = 25, .descMsg = MSG_ItemShopDesc_PowerPlus },
+    { .itemID = ITEM_FLOWER_FINDER,  .price = 12, .descMsg = MSG_ItemFullDesc_FlowerFinder },
+    { .itemID = ITEM_HP_DRAIN,       .price = 15, .descMsg = MSG_ItemFullDesc_HPDrain },
+    { .itemID = ITEM_MONEY_MONEY,    .price = 20, .descMsg = MSG_ItemFullDesc_MoneyMoney },
+    { .itemID = ITEM_FLOWER_SAVER_A, .price = 25, .descMsg = MSG_ItemFullDesc_FlowerSaver },
+    { .itemID = ITEM_POWER_PLUS_A,   .price = 25, .descMsg = MSG_ItemFullDesc_PowerPlus },
 };
 
 API_CALLABLE(N(Merlow_GetPlayerStarPieces)) {
