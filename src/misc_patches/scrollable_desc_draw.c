@@ -1,5 +1,6 @@
 #include "scrollable_desc_draw.h"
 #include "include_asset.h"
+#include "hud_element.h"
 
 static s32 descTextPos;
 static s32 descTextOffset;
@@ -7,6 +8,22 @@ static s32 prevMsgHudElementId = -1;
 static s32 nextMsgHudElementId = -1;
 static s32 lastDrawnMsgId = ITEM_NONE;
 static s8 framesSinceLastDraw = 0;
+
+static u8 scrollInterpEasingLUT[] = { 0, 1, 2, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8};
+
+static s32 interp_text_scroll(s32 deltaBefore) {
+    s32 val;
+    s32 db = abs(deltaBefore);
+    s32 s = sign(deltaBefore);
+
+    if (db >= 16) {
+        val = 8;
+    } else {
+        val = scrollInterpEasingLUT[db];
+    }
+
+    return val * s;
+}
 
 // copy of ui_pause_desc_msg_prev
 INCLUDE_IMG("ui/desc_msg_prev.png", prev_msg_png);
@@ -42,6 +59,7 @@ static void draw_item_setup(void) {
     prevMsgHudElementId = hud_element_create(&HES_DescMsgPrev2);
     nextMsgHudElementId = hud_element_create(&HES_DescMsgNext2);
     descTextPos = 0;
+    descTextOffset = 0;
 }
 
 static void draw_item_cleanup(void) {
@@ -61,6 +79,7 @@ void draw_scrollable_desc(s32 itemMsg, s32 posX, s32 posY, s32 width, s32 height
     if (lastDrawnMsgId != itemMsg) {
         lastDrawnMsgId = itemMsg;
         descTextPos = 0;
+        descTextOffset = 0;
     }
 
     if (prevMsgHudElementId == -1) {
@@ -89,7 +108,7 @@ void draw_scrollable_desc(s32 itemMsg, s32 posX, s32 posY, s32 width, s32 height
         }
     }
 
-    descTextOffset = descTextPos * 16; // todo: interpolate
+    descTextOffset += interp_text_scroll(descTextPos * 16 - descTextOffset); //= descTextPos * 16; // todo: interpolate
 
     gDPSetScissor(gMainGfxPos++, G_SC_NON_INTERLACE, posX + 1, posY + 1, posX + width - 1, posY + height - 1);
     draw_msg(itemMsg, posX + 8, posY - descTextOffset, opacity, palette, style);
