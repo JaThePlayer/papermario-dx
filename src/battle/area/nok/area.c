@@ -14,6 +14,7 @@ extern Stage A(nok_03);
 extern Stage A(nok_04);
 
 #include "actor/spiked_paragoomba.c"
+#include "actor/flower_fuzzy.c"
 
 /*
 Roles
@@ -167,7 +168,7 @@ Formation A(Formation_17) = { // nok_04 (miniboss)
     ACTOR_BY_IDX(A(fuzzy), BTL_POS_GROUND_A, 10),
     ACTOR_BY_IDX(A(fuzzy), BTL_POS_GROUND_B, 9),
     ACTOR_BY_IDX(A(fuzzy), BTL_POS_GROUND_C, 8),
-    ACTOR_BY_IDX(A(fuzzy), BTL_POS_GROUND_D, 7),
+    ACTOR_BY_IDX(A(flower_fuzzy), BTL_POS_GROUND_D, 7),
 };
 
 Formation A(Formation_18) = {

@@ -3,6 +3,7 @@
 #include "model.h"
 #include "effects.h"
 #include "sprite/player.h"
+#include "misc_patches/custom_status.h"
 
 #define NAMESPACE battle_item_fright_jar
 
@@ -53,8 +54,11 @@ EvtScript N(EVS_UseItem) = {
         IfEq(LVar0, HIT_RESULT_MISS)
             Goto(1)
         EndIf
-        Call(SetDamageSource, DMG_SRC_FRIGHT_JAR)
-        Call(ItemSpookEnemy, LVar0, DAMAGE_TYPE_FEAR | DAMAGE_TYPE_STATUS_ALWAYS_HITS | DAMAGE_TYPE_MULTIPLE_POPUPS | DAMAGE_TYPE_NO_CONTACT, 0, 100, 0, BS_FLAGS1_TRIGGER_EVENTS)
+        //Call(SetDamageSource, DMG_SRC_FRIGHT_JAR)
+        //Call(ItemSpookEnemy, LVar0, DAMAGE_TYPE_FEAR | DAMAGE_TYPE_STATUS_ALWAYS_HITS | DAMAGE_TYPE_MULTIPLE_POPUPS | DAMAGE_TYPE_NO_CONTACT, 0, 100, 0, BS_FLAGS1_TRIGGER_EVENTS)
+        Call(SetNextAttackCustomStatus, DEF_DOWN_TEMP_STATUS, 2, 2, 100) // 2 turn -2 DEF
+        Call(ItemDamageEnemy, LVar0, DAMAGE_TYPE_FEAR | DAMAGE_TYPE_STATUS_ALWAYS_HITS | DAMAGE_TYPE_NO_CONTACT | DAMAGE_TYPE_MULTIPLE_POPUPS, 0, 0, BS_FLAGS1_TRIGGER_EVENTS)
+
         Label(1)
         Call(ChooseNextTarget, ITER_NEXT, LVar0)
         IfNe(LVar0, ITER_NO_MORE)
