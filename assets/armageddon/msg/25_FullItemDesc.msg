@@ -217,8 +217,8 @@
 }
 
 #message:25:(ItemFullDesc_FrightJar) {
-	Makes a scary spirit appear and[BR]
-	chase some enemies away.[End]
+	Scares all enemies, reducing[BR]
+	their DEF by 2 for 2 turns.[End]
 }
 
 #message:25:(ItemFullDesc_Mystery) {

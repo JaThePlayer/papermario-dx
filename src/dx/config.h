@@ -3,7 +3,7 @@
 
 /// Version string that appears on the file select menu.
 /// Comment out this definition to prevent it from being shown.
-#define DX_MOD_VERSION_STRING "New Mod 1.0.0"
+#define DX_MOD_VERSION_STRING "Armageddon 0.0.0-dev"
 
 /// Enables the debug menu.
 #define DX_DEBUG_MENU 1

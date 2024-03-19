@@ -525,3 +525,7 @@
 #message:29:(EnemyName_RedParagoomba) {
 	R Paragoomba[End]
 }
+
+#message:29:(EnemyName_FlowerFuzzy) {
+	Flower Fuzzy[End]
+}

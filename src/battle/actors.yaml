@@ -2345,3 +2345,14 @@
     stepDelay: [ 30, 30 ]
     tattleCamOffset: [ 0, 4, 0 ]
     shadowOffset: 0
+- FlowerFuzzy:
+    level: 15
+    nameMsg: MSG_EnemyName_FlowerFuzzy
+    tattleMsg: MSG_EnemyTattle_FlowerFuzzy
+    walkSound: [ SOUND_FUZZY_HOP_A, SOUND_FUZZY_HOP_A ]
+    flySound: [ SOUND_FUZZY_HOP_A, SOUND_FUZZY_HOP_A ]
+    jumpSound: SOUND_FUZZY_HOP_A
+    hurtSound: SOUND_ACTOR_HURT
+    stepDelay: [ 30, 30 ]
+    tattleCamOffset: [ 0, 5, 0 ]
+    shadowOffset: 0
