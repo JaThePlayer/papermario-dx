@@ -2208,7 +2208,7 @@ s32 can_switch_to_player(void) {
             playerCantMove = TRUE;
         }
         if (debuff == STATUS_KEY_DIZZY) {
-            playerCantMove = TRUE;
+            //playerCantMove = TRUE;
         }
         if (debuff == STATUS_KEY_PARALYZE) {
             playerCantMove = TRUE;
@@ -4747,7 +4747,7 @@ void btl_state_update_twink_menu(void) {
                 shouldSkipTurn = TRUE;
             }
             if (player->debuff == STATUS_KEY_DIZZY) {
-                shouldSkipTurn = TRUE;
+                //shouldSkipTurn = TRUE;
             }
             if (player->debuff == STATUS_KEY_PARALYZE) {
                 shouldSkipTurn = TRUE;

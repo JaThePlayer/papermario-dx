@@ -1238,6 +1238,18 @@ void btl_state_update_switch_to_partner(void) {
 void btl_state_draw_switch_to_partner(void) {
 }
 
+static void update_actor_ko(Actor* actor) {
+    s32 oldKoDuration = actor->koDuration;
+    actor->koDuration = actor->debuffDuration;
+    if (actor->koDuration > 0) {
+        actor->koStatus = STATUS_KEY_DAZE;
+        actor->disableEffect->data.disableX->koDuration = actor->koDuration;
+        } else if (oldKoDuration != actor->koDuration) {
+            actor->koStatus = 0;
+            actor->disableEffect->data.disableX->koDuration = 0;
+    }
+}
+
 void btl_state_update_9(void) {
     BattleStatus* battleStatus = &gBattleStatus;
     Actor* player = battleStatus->playerActor;
@@ -1302,7 +1314,7 @@ void btl_state_update_9(void) {
 
                     if (actor->debuff != 0) {
                         if (actor->debuff == STATUS_KEY_FEAR
-                            || actor->debuff == STATUS_KEY_DIZZY
+                            //|| actor->debuff == STATUS_KEY_DIZZY
                             || actor->debuff == STATUS_KEY_PARALYZE
                             || actor->debuff == STATUS_KEY_SLEEP
                             || actor->debuff == STATUS_KEY_FROZEN
@@ -1310,12 +1322,15 @@ void btl_state_update_9(void) {
                         ) {
                             actor->flags |= ACTOR_FLAG_SKIP_TURN;
                         }
-                        actor->debuffDuration--;
-                        if (actor->debuffDuration <= 0) {
-                            actor->debuff = 0;
-                            remove_status_debuff(actor->hudElementDataIndex);
-                            dispatch_event_actor(actor, EVENT_RECOVER_STATUS);
-                            D_8029F258 = 20;
+
+                        if (actor->debuff != STATUS_KEY_DIZZY && actor->debuff != STATUS_KEY_SHRINK) {
+                            actor->debuffDuration--;
+                            if (actor->debuffDuration <= 0) {
+                                actor->debuff = 0;
+                                remove_status_debuff(actor->hudElementDataIndex);
+                                dispatch_event_actor(actor, EVENT_RECOVER_STATUS);
+                                D_8029F258 = 20;
+                            }
                         }
                     }
 
@@ -1347,6 +1362,7 @@ void btl_state_update_9(void) {
 
                     custom_status_decrement(actor);
 
+                    /*
                     oldKoDuration = actor->koDuration;
                     actor->koDuration = actor->debuffDuration;
                     if (actor->koDuration > 0) {
@@ -1356,6 +1372,8 @@ void btl_state_update_9(void) {
                         actor->koStatus = 0;
                         actor->disableEffect->data.disableX->koDuration = 0;
                     }
+                    */
+                    update_actor_ko(actor);
                     if (actor->debuff == STATUS_KEY_POISON) {
                         gBattleStatus.flags1 |= BS_FLAGS1_TRIGGER_EVENTS;
                         dispatch_damage_event_actor_0(actor, 1, EVENT_HIT);
@@ -1681,6 +1699,19 @@ void btl_state_update_end_turn(void) {
 
         for (i = 0; i < ARRAY_COUNT(battleStatus->enemyActors); i++) {
             actor = battleStatus->enemyActors[i];
+            // New: handle dizzy and shrink later
+            if (actor != NULL && actor->debuffDuration >= 0 && (actor->debuff == STATUS_KEY_DIZZY || actor->debuff == STATUS_KEY_SHRINK)) {
+                actor->debuffDuration--;
+                if (actor->debuffDuration <= 0) {
+                    actor->debuff = 0;
+                    remove_status_debuff(actor->hudElementDataIndex);
+                    dispatch_event_actor(actor, EVENT_RECOVER_STATUS);
+                    D_8029F258 = 20;
+
+                    update_actor_ko(actor);
+                }
+            }
+
             if (actor != NULL && actor->handlePhaseSource != NULL) {
                 battleStatus->battlePhase = PHASE_ENEMY_END;
                 script = start_script(actor->handlePhaseSource, EVT_PRIORITY_A, 0);
@@ -3508,7 +3539,7 @@ void btl_state_update_next_enemy(void) {
                 skipEnemy = TRUE;
             }
             if (enemy->debuff == STATUS_KEY_DIZZY) {
-                skipEnemy = TRUE;
+                //skipEnemy = TRUE;
             }
             if (enemy->debuff == STATUS_KEY_PARALYZE) {
                 skipEnemy = TRUE;

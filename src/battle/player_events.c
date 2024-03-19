@@ -47,7 +47,7 @@ API_CALLABLE(IsPartnerImmobile) {
     BattleStatus* battleStatus = &gBattleStatus;
     Actor* playerActor = battleStatus->playerActor;
     s32 isImmobile = playerActor->debuff == STATUS_KEY_FEAR
-                     || playerActor->debuff == STATUS_KEY_DIZZY
+                     //|| playerActor->debuff == STATUS_KEY_DIZZY
                      || playerActor->debuff == STATUS_KEY_PARALYZE
                      || playerActor->debuff == STATUS_KEY_SLEEP
                      || playerActor->debuff == STATUS_KEY_FROZEN
@@ -80,7 +80,7 @@ API_CALLABLE(TryPlayerLucky) {
 
     script->varTable[0] = FALSE;
     if (player->debuff == STATUS_KEY_FEAR
-        || player->debuff == STATUS_KEY_DIZZY
+        //|| player->debuff == STATUS_KEY_DIZZY
         || player->debuff == STATUS_KEY_PARALYZE
         || player->debuff == STATUS_KEY_SLEEP
         || player->debuff == STATUS_KEY_FROZEN
