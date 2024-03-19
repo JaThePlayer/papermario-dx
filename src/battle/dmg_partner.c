@@ -78,6 +78,11 @@ HitResult calc_partner_test_enemy(void) {
         return HIT_RESULT_MISS;
     }
 
+    // New
+    if (partner->debuff == STATUS_KEY_DIZZY) {
+        return HIT_RESULT_MISS;
+    }
+
     // check partner jumping on top-spiky enemy (cannot be suppressed)
     if ((battleStatus->curAttackElement & DAMAGE_TYPE_JUMP)
         && (part->eventFlags & ACTOR_EVENT_FLAG_SPIKY_TOP)

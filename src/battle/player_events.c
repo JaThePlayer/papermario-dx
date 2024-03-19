@@ -47,7 +47,7 @@ API_CALLABLE(IsPartnerImmobile) {
     BattleStatus* battleStatus = &gBattleStatus;
     Actor* playerActor = battleStatus->playerActor;
     s32 isImmobile = playerActor->debuff == STATUS_KEY_FEAR
-                     || playerActor->debuff == STATUS_KEY_DIZZY
+                     //|| playerActor->debuff == STATUS_KEY_DIZZY
                      || playerActor->debuff == STATUS_KEY_PARALYZE
                      || playerActor->debuff == STATUS_KEY_SLEEP
                      || playerActor->debuff == STATUS_KEY_FROZEN
@@ -77,10 +77,10 @@ API_CALLABLE(TryPlayerLucky) {
 
     show_action_rating(ACTION_RATING_LUCKY, player, player->curPos.x, player->curPos.y + 20.0f, player->curPos.z);
     sfx_play_sound(SOUND_LUCKY);
-    
+
     script->varTable[0] = FALSE;
     if (player->debuff == STATUS_KEY_FEAR
-        || player->debuff == STATUS_KEY_DIZZY
+        //|| player->debuff == STATUS_KEY_DIZZY
         || player->debuff == STATUS_KEY_PARALYZE
         || player->debuff == STATUS_KEY_SLEEP
         || player->debuff == STATUS_KEY_FROZEN
@@ -241,7 +241,7 @@ API_CALLABLE(LifeShroomShroudWorld) {
     if (script->functionTemp[0] == 0) {
         return ApiStatus_DONE2;
     }
-    
+
     return ApiStatus_BLOCK;
 }
 
@@ -258,7 +258,7 @@ API_CALLABLE(LifeShroomRevealWorld) {
         mdl_set_shroud_tint_params(0, 0, 0, 0);
         return ApiStatus_DONE2;
     }
-    
+
     return ApiStatus_BLOCK;
 }
 

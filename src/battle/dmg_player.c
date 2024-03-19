@@ -210,6 +210,11 @@ HitResult calc_player_test_enemy(void) {
         return HIT_RESULT_MISS;
     }
 
+    // New
+    if (player->debuff == STATUS_KEY_DIZZY) {
+        return HIT_RESULT_MISS;
+    }
+
     if (target->stoneStatus == STATUS_KEY_STONE) {
         sfx_play_sound_at_position(SOUND_IMMUNE, SOUND_SPACE_DEFAULT, state->goalPos.x, state->goalPos.y, state->goalPos.z);
         return HIT_RESULT_IMMUNE;

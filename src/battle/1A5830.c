@@ -188,6 +188,11 @@ HitResult calc_enemy_test_target(Actor* actor) {
         }
     }
 
+    // New
+    if (actor->debuff == STATUS_KEY_DIZZY) {
+        return HIT_RESULT_MISS;
+    }
+
     if (hitResult == HIT_RESULT_MISS) {
         return HIT_RESULT_MISS;
     }

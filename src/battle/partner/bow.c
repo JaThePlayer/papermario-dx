@@ -86,7 +86,7 @@ API_CALLABLE(N(IsPartnerImmobile)) {
     BattleStatus* battleStatus = &gBattleStatus;
     Actor* playerActor = battleStatus->playerActor;
     s32 isImmobile = playerActor->debuff == STATUS_KEY_FEAR
-                     || playerActor->debuff == STATUS_KEY_DIZZY
+                     //|| playerActor->debuff == STATUS_KEY_DIZZY
                      || playerActor->debuff == STATUS_KEY_PARALYZE
                      || playerActor->debuff == STATUS_KEY_SLEEP
                      || playerActor->debuff == STATUS_KEY_FROZEN
