@@ -145,7 +145,7 @@
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim04">
+        <Animation name="Leech">
             <Component name="Comp_0" xyz="0,-13,0">
                 <Label name="Start"/>
                 <SetRaster index="0"/>

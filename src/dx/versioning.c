@@ -602,7 +602,7 @@ void ver_deserialize_vanilla_save(SaveData* newSave) {
     newPlayer->quizzesAnswered = oldPlayer->quizzesAnswered;
     newPlayer->quizzesCorrect = oldPlayer->quizzesCorrect;
 
-    COPY_S32_ARRAY(newPlayer->partnerUnlockedTime, oldPlayer->partnerUnlockedTime);
+    COPY_S32_ARRAY(newPlayer->spAreaPools, oldPlayer->partnerUnlockedTime);
     COPY_S32_ARRAY(newPlayer->partnerUsedTime, oldPlayer->partnerUsedTime);
 
     newPlayer->tradeEventStartTime = oldPlayer->tradeEventStartTime;

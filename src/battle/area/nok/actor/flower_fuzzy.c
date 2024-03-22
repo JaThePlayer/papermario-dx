@@ -289,7 +289,7 @@ EvtScript N(EVS_NormalAttack) = {
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Fuzzy_Flower_Idle)
     Label(100)
     Call(SetActorDispOffset, ACTOR_SELF, 0, 10, 0)
-    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Fuzzy_Flower_Anim04)
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Fuzzy_Flower_Leech)
     Call(SetActorDispOffset, ACTOR_SELF, 0, 9, 0)
     Wait(1)
     Call(SetActorDispOffset, ACTOR_SELF, 0, 8, 0)
