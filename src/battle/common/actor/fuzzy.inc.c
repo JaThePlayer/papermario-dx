@@ -237,6 +237,8 @@ EvtScript N(EVS_HandleEvent) = {
 #include "common/SpawnEnemyDrainFX.inc.c"
 
 EvtScript N(EVS_TakeTurn) = {
+    STANDARD_ITEM_USE_AI()
+
     Call(UseIdleAnimation, ACTOR_SELF, FALSE)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)

@@ -7,7 +7,6 @@
 
 #define NAMESPACE A(paratroopa)
 
-extern s32 N(DownedAnims)[];
 extern s32 N(FlyingAnims)[];
 extern s32 N(WingAnims)[];
 extern EvtScript N(EVS_Flying_Init);
@@ -16,10 +15,15 @@ extern EvtScript N(EVS_Flying_TakeTurn);
 extern EvtScript N(EVS_Flying_HandleEvent);
 extern EvtScript N(EVS_KnockDown);
 
-extern EvtScript N(EVS_Downed_Init);
-extern EvtScript N(EVS_Downed_Idle);
-extern EvtScript N(EVS_Downed_TakeTurn);
-extern EvtScript N(EVS_Downed_HandleEvent);
+extern EvtScript A(koopa_troopa_EVS_Init);
+extern EvtScript A(koopa_troopa_EVS_Idle);
+extern EvtScript A(koopa_troopa_EVS_TakeTurn);
+extern EvtScript A(koopa_troopa_EVS_HandleEvent);
+extern EvtScript A(koopa_troopa_EVS_TakeTurn);
+extern EvtScript A(koopa_troopa_EVS_HandleEvent);
+extern s32 A(koopa_troopa_NormalDefense)[];
+extern s32 A(koopa_troopa_StatusTable);
+extern s32 A(koopa_troopa_DefaultAnims)[];
 
 #include "common/StartRumbleWithParams.inc.c"
 #include "common/battle/SetAbsoluteStatusOffsets.inc.c"
@@ -37,17 +41,8 @@ enum N(ActorVars) {
 };
 
 enum N(ActorParams) {
-    DMG_AIR_TACKLE      = 1,
+    DMG_AIR_TACKLE      = 2,
     DMG_SHELL_TOSS      = 1,
-};
-
-s32 N(DownedDefense)[] = {
-    ELEMENT_NORMAL,   1,
-    ELEMENT_SMASH,    1,
-    ELEMENT_JUMP,     1,
-    ELEMENT_WATER,    1,
-    ELEMENT_BLAST,    1,
-    ELEMENT_END,
 };
 
 s32 N(FlyingDefense)[] = {
@@ -58,31 +53,6 @@ s32 N(FlyingDefense)[] = {
 s32 N(FlippedDefense)[] = {
     ELEMENT_NORMAL,   0,
     ELEMENT_END,
-};
-
-s32 N(DownedStatusTable)[] = {
-    STATUS_KEY_NORMAL,              0,
-    STATUS_KEY_DEFAULT,             0,
-    STATUS_KEY_SLEEP,              90,
-    STATUS_KEY_POISON,             60,
-    STATUS_KEY_FROZEN,            100,
-    STATUS_KEY_DIZZY,              90,
-    STATUS_KEY_FEAR,                0,
-    STATUS_KEY_STATIC,             80,
-    STATUS_KEY_PARALYZE,           90,
-    STATUS_KEY_SHRINK,             90,
-    STATUS_KEY_STOP,              100,
-    STATUS_TURN_MOD_DEFAULT,        0,
-    STATUS_TURN_MOD_SLEEP,          0,
-    STATUS_TURN_MOD_POISON,         0,
-    STATUS_TURN_MOD_FROZEN,         0,
-    STATUS_TURN_MOD_DIZZY,          0,
-    STATUS_TURN_MOD_FEAR,           0,
-    STATUS_TURN_MOD_STATIC,         0,
-    STATUS_TURN_MOD_PARALYZE,       1,
-    STATUS_TURN_MOD_SHRINK,         0,
-    STATUS_TURN_MOD_STOP,           0,
-    STATUS_END,
 };
 
 s32 N(FlyingStatusTable)[] = {
@@ -117,8 +87,8 @@ ActorPartBlueprint N(ActorParts)[] = {
         .posOffset = { 0, 0, 0 },
         .targetOffset = { -2, 36 },
         .opacity = 255,
-        .idleAnimations = N(DownedAnims),
-        .defenseTable = N(DownedDefense),
+        .idleAnimations = A(koopa_troopa_DefaultAnims),
+        .defenseTable = A(koopa_troopa_NormalDefense),
         .eventFlags = ACTOR_EVENT_FLAG_FLIPABLE,
         .elementImmunityFlags = 0,
         .projectileTargetOffset = { 0, -7 },
@@ -142,7 +112,7 @@ ActorPartBlueprint N(ActorParts)[] = {
         .targetOffset = { 0, 32 },
         .opacity = 255,
         .idleAnimations = N(WingAnims),
-        .defenseTable = N(DownedDefense),
+        .defenseTable = A(koopa_troopa_NormalDefense),
         .eventFlags = ACTOR_EVENT_FLAGS_NONE,
         .elementImmunityFlags = 0,
         .projectileTargetOffset = { 0, -10 },
@@ -441,6 +411,8 @@ EvtScript N(EVS_Flying_HandleEvent) = {
 };
 
 EvtScript N(EVS_Flying_TakeTurn) = {
+    STANDARD_ITEM_USE_AI()
+
     Call(UseIdleAnimation, ACTOR_SELF, FALSE)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
@@ -645,9 +617,9 @@ EvtScript N(EVS_KnockDown) = {
     Call(SetHomePos, ACTOR_SELF, LVar0, LVar1, LVar2)
     Call(SetAnimation, ACTOR_SELF, PRT_DOWNED, ANIM_KoopaTroopa_Idle)
     Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_FLYING, FALSE)
-    Call(SetStatusTable, ACTOR_SELF, Ref(N(DownedStatusTable)))
+    Call(SetStatusTable, ACTOR_SELF, Ref(A(koopa_troopa_StatusTable)))
     Call(BindHandlePhase, ACTOR_SELF, 0)
-    ExecWait(N(EVS_Downed_Init))
+    ExecWait(A(koopa_troopa_EVS_Init))
     Call(SetActorType, ACTOR_SELF, ACTOR_TYPE_KOOPA_TROOPA)
     Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_TYPE_CHANGED, TRUE)
     Call(HPBarToHome, ACTOR_SELF)
@@ -655,524 +627,6 @@ EvtScript N(EVS_KnockDown) = {
     IfTrue(LVarA)
         Call(DispatchEvent, ACTOR_SELF, EVENT_FLIP_TRIGGER)
     EndIf
-    Return
-    End
-};
-
-// everything below this point is shared with Koopa Troopa, but not in a manner
-// that can be cleanly separated
-
-s32 N(DownedAnims)[] = {
-    STATUS_KEY_NORMAL,    ANIM_KoopaTroopa_Idle,
-    STATUS_KEY_STONE,     ANIM_KoopaTroopa_Still,
-    STATUS_KEY_SLEEP,     ANIM_KoopaTroopa_Sleep,
-    STATUS_KEY_POISON,    ANIM_KoopaTroopa_Idle,
-    STATUS_KEY_STOP,      ANIM_KoopaTroopa_Still,
-    STATUS_KEY_STATIC,    ANIM_KoopaTroopa_Idle,
-    STATUS_KEY_PARALYZE,  ANIM_KoopaTroopa_Still,
-    STATUS_KEY_DIZZY,     ANIM_KoopaTroopa_Stunned,
-    STATUS_KEY_FEAR,      ANIM_KoopaTroopa_Stunned,
-    STATUS_END,
-};
-
-s32 N(DownedShuffleAnims)[] = {
-    STATUS_KEY_NORMAL,    ANIM_KoopaTroopa_Walk,
-    STATUS_KEY_STONE,     ANIM_KoopaTroopa_Still,
-    STATUS_KEY_SLEEP,     ANIM_KoopaTroopa_Sleep,
-    STATUS_KEY_POISON,    ANIM_KoopaTroopa_Walk,
-    STATUS_KEY_STOP,      ANIM_KoopaTroopa_Still,
-    STATUS_KEY_STATIC,    ANIM_KoopaTroopa_Walk,
-    STATUS_KEY_PARALYZE,  ANIM_KoopaTroopa_Still,
-    STATUS_KEY_DIZZY,     ANIM_KoopaTroopa_Stunned,
-    STATUS_KEY_FEAR,      ANIM_KoopaTroopa_Stunned,
-    STATUS_END,
-};
-
-s32 N(DownedFlippedAnims)[] = {
-    STATUS_KEY_NORMAL,    ANIM_KoopaTroopa_ToppleStruggle,
-    STATUS_KEY_STONE,     ANIM_KoopaTroopa_ToppleStill,
-    STATUS_KEY_SLEEP,     ANIM_KoopaTroopa_ToppleSleep,
-    STATUS_KEY_POISON,    ANIM_KoopaTroopa_ToppleStruggle,
-    STATUS_KEY_STOP,      ANIM_KoopaTroopa_ToppleStill,
-    STATUS_KEY_STATIC,    ANIM_KoopaTroopa_ToppleStruggle,
-    STATUS_KEY_PARALYZE,  ANIM_KoopaTroopa_ToppleStill,
-    STATUS_KEY_DIZZY,     ANIM_KoopaTroopa_ToppleStunned,
-    STATUS_KEY_FEAR,      ANIM_KoopaTroopa_ToppleStunned,
-    STATUS_END,
-};
-
-EvtScript N(EVS_Downed_Init) = {
-    Call(BindTakeTurn, ACTOR_SELF, Ref(N(EVS_Downed_TakeTurn)))
-    Call(BindIdle, ACTOR_SELF, Ref(N(EVS_Downed_Idle)))
-    Call(BindHandleEvent, ACTOR_SELF, Ref(N(EVS_Downed_HandleEvent)))
-    Call(SetActorVar, ACTOR_SELF, AVAR_IsFlipped, FALSE)
-    Return
-    End
-};
-
-EvtScript N(EVS_Downed_UpdateTargetOffsets) = {
-    Switch(LVar0)
-        CaseEq(0)
-            IfFlag(LVar1, STATUS_FLAG_SLEEP | STATUS_FLAG_DIZZY)
-                Call(SetTargetOffset, ACTOR_SELF, PRT_DOWNED, -5, 15)
-                Call(SetProjectileTargetOffset, ACTOR_SELF, PRT_DOWNED, 0, 0)
-                Call(N(SetAbsoluteStatusOffsets), -10, 20, 10, 20)
-            Else
-                Call(SetTargetOffset, ACTOR_SELF, PRT_DOWNED, -4, 32)
-                Call(SetProjectileTargetOffset, ACTOR_SELF, PRT_DOWNED, -1, -4)
-                Call(N(SetAbsoluteStatusOffsets), -15, 32, 5, 32)
-            EndIf
-        CaseEq(1)
-            Call(SetTargetOffset, ACTOR_SELF, PRT_DOWNED, -5, 15)
-            Call(SetProjectileTargetOffset, ACTOR_SELF, PRT_DOWNED, 0, 0)
-            Call(N(SetAbsoluteStatusOffsets), -10, 20, 10, 20)
-    EndSwitch
-    Return
-    End
-};
-
-EvtScript N(EVS_Downed_Idle) = {
-    Label(0)
-        Call(RandInt, 80, LVarA)
-        Add(LVarA, 80)
-        Loop(LVarA)
-            Label(1)
-                Call(GetActorVar, ACTOR_SELF, AVAR_IsFlipped, LVar0)
-                Call(GetStatusFlags, ACTOR_SELF, LVar1)
-                ExecWait(N(EVS_Downed_UpdateTargetOffsets))
-                IfEq(LVar0, 1)
-                    Wait(1)
-                    Goto(1)
-                EndIf
-                IfFlag(LVar1, STATUS_FLAGS_IMMOBILIZED)
-                    Wait(1)
-                    Goto(1)
-                EndIf
-            Wait(1)
-        EndLoop
-        Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-        Add(LVar0, 5)
-        Call(SetActorIdleSpeed, ACTOR_SELF, Float(1.0))
-        Call(SetIdleAnimations, ACTOR_SELF, PRT_DOWNED, Ref(N(DownedShuffleAnims)))
-        Call(SetIdleGoal, ACTOR_SELF, LVar0, LVar1, LVar2)
-        Call(IdleRunToGoal, ACTOR_SELF, 0)
-        Call(GetActorVar, ACTOR_SELF, AVAR_IsFlipped, LVar0)
-        Switch(LVar0)
-            CaseEq(0)
-                Call(SetIdleAnimations, ACTOR_SELF, PRT_DOWNED, Ref(N(DownedAnims)))
-            CaseEq(1)
-                Call(SetIdleAnimations, ACTOR_SELF, PRT_DOWNED, Ref(N(DownedFlippedAnims)))
-        EndSwitch
-        Loop(20)
-            Label(2)
-                Call(GetActorVar, ACTOR_SELF, AVAR_IsFlipped, LVar0)
-                Call(GetStatusFlags, ACTOR_SELF, LVar1)
-                ExecWait(N(EVS_Downed_UpdateTargetOffsets))
-                IfEq(LVar0, 1)
-                    Wait(1)
-                    Goto(2)
-                EndIf
-                IfFlag(LVar1, STATUS_FLAGS_IMMOBILIZED)
-                    Wait(1)
-                    Goto(2)
-                EndIf
-            Wait(1)
-        EndLoop
-        Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-        Sub(LVar0, 5)
-        Call(SetActorIdleSpeed, ACTOR_SELF, Float(1.0))
-        Call(SetIdleAnimations, ACTOR_SELF, PRT_DOWNED, Ref(N(DownedShuffleAnims)))
-        Call(SetIdleGoal, ACTOR_SELF, LVar0, LVar1, LVar2)
-        Call(IdleRunToGoal, ACTOR_SELF, 0)
-        Call(GetActorVar, ACTOR_SELF, AVAR_IsFlipped, LVar0)
-        Switch(LVar0)
-            CaseEq(0)
-                Call(SetIdleAnimations, ACTOR_SELF, PRT_DOWNED, Ref(N(DownedAnims)))
-            CaseEq(1)
-                Call(SetIdleAnimations, ACTOR_SELF, PRT_DOWNED, Ref(N(DownedFlippedAnims)))
-        EndSwitch
-        Loop(80)
-            Label(3)
-                Call(GetActorVar, ACTOR_SELF, AVAR_IsFlipped, LVar0)
-                Call(GetStatusFlags, ACTOR_SELF, LVar1)
-                ExecWait(N(EVS_Downed_UpdateTargetOffsets))
-                IfEq(LVar0, 1)
-                    Wait(1)
-                    Goto(3)
-                EndIf
-                IfFlag(LVar1, STATUS_FLAGS_IMMOBILIZED)
-                    Wait(1)
-                    Goto(3)
-                EndIf
-            Wait(1)
-        EndLoop
-        Goto(0)
-    Return
-    End
-};
-
-s32 N(FlipPosOffsets)[] = { 9, 16, 22, 26, 30, 32, 33, 32, 30, 26, 22, 16, 9, 0, 4, 6, 7, 6, 4, 0, 2, 0 };
-
-EvtScript N(EVS_Downed_HandleEvent) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
-    Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
-    Call(SetActorYaw, ACTOR_SELF, 0)
-    Call(GetLastEvent, ACTOR_SELF, LVar0)
-    Switch(LVar0)
-        CaseOrEq(EVENT_HIT_COMBO)
-        CaseOrEq(EVENT_HIT)
-            SetConst(LVar0, PRT_DOWNED)
-            SetConst(LVar1, ANIM_KoopaTroopa_Hurt)
-            ExecWait(EVS_Enemy_Hit)
-        EndCaseGroup
-        CaseEq(EVENT_BURN_HIT)
-            SetConst(LVar0, PRT_DOWNED)
-            SetConst(LVar1, ANIM_KoopaTroopa_BurnHurt)
-            SetConst(LVar2, ANIM_KoopaTroopa_BurnStill)
-            ExecWait(EVS_Enemy_BurnHit)
-        CaseEq(EVENT_BURN_DEATH)
-            SetConst(LVar0, PRT_DOWNED)
-            SetConst(LVar1, ANIM_KoopaTroopa_BurnHurt)
-            SetConst(LVar2, ANIM_KoopaTroopa_BurnStill)
-            ExecWait(EVS_Enemy_BurnHit)
-            SetConst(LVar0, PRT_DOWNED)
-            SetConst(LVar1, ANIM_KoopaTroopa_BurnStill)
-            ExecWait(EVS_Enemy_Death)
-            Return
-        CaseEq(EVENT_SPIN_SMASH_HIT)
-            SetConst(LVar0, PRT_DOWNED)
-            SetConst(LVar1, ANIM_KoopaTroopa_Hurt)
-            ExecWait(EVS_Enemy_SpinSmashHit)
-        CaseEq(EVENT_SPIN_SMASH_DEATH)
-            SetConst(LVar0, PRT_DOWNED)
-            SetConst(LVar1, ANIM_KoopaTroopa_Hurt)
-            ExecWait(EVS_Enemy_SpinSmashHit)
-            SetConst(LVar0, PRT_DOWNED)
-            SetConst(LVar1, ANIM_KoopaTroopa_Hurt)
-            ExecWait(EVS_Enemy_Death)
-            Return
-        CaseEq(EVENT_FLIP_TRIGGER)
-            Call(SetActorVar, ACTOR_SELF, AVAR_IsFlipped, TRUE)
-            Call(SetActorVar, ACTOR_SELF, AVAR_FlippedTurns, 2)
-            Call(SetDefenseTable, ACTOR_SELF, PRT_DOWNED, Ref(N(FlippedDefense)))
-            Call(SetIdleAnimations, ACTOR_SELF, PRT_DOWNED, Ref(N(DownedFlippedAnims)))
-            Call(SetTargetOffset, ACTOR_SELF, PRT_DOWNED, -5, 15)
-            Call(SetProjectileTargetOffset, ACTOR_SELF, PRT_DOWNED, 0, 0)
-            Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_FLIPPED, TRUE)
-            Call(SetAnimation, ACTOR_SELF, PRT_DOWNED, ANIM_KoopaTroopa_Hurt)
-            Call(GetStatusFlags, ACTOR_SELF, LVarA)
-            Call(SetActorRotationOffset, ACTOR_SELF, 0, 12, 0)
-            ChildThread
-                Wait(4)
-                Call(SetActorRotation, ACTOR_SELF, 0, 0, 30)
-                Wait(1)
-                Call(SetActorRotation, ACTOR_SELF, 0, 0, 0)
-                Wait(1)
-                Call(SetActorRotation, ACTOR_SELF, 0, 0, -30)
-                Wait(1)
-                Call(SetActorRotation, ACTOR_SELF, 0, 0, -60)
-                Wait(1)
-                Call(SetActorRotation, ACTOR_SELF, 0, 0, -75)
-                Wait(1)
-            EndChildThread
-            UseBuf(Ref(N(FlipPosOffsets)))
-            Loop(ARRAY_COUNT(N(FlipPosOffsets)))
-                BufRead1(LVar0)
-                Call(SetActorDispOffset, ACTOR_SELF, 0, LVar0, 0)
-                Wait(1)
-            EndLoop
-            Call(SetActorRotationOffset, ACTOR_SELF, 0, 0, 0)
-            Call(SetActorRotation, ACTOR_SELF, 0, 0, 0)
-            Call(SetActorDispOffset, ACTOR_SELF, 0, 0, 0)
-            Call(SetAnimation, ACTOR_SELF, PRT_DOWNED, ANIM_KoopaTroopa_ToppleStruggle)
-        CaseEq(EVENT_SHOCK_HIT)
-            SetConst(LVar0, PRT_DOWNED)
-            SetConst(LVar1, ANIM_KoopaTroopa_Hurt)
-            ExecWait(EVS_Enemy_ShockHit)
-            SetConst(LVar0, PRT_DOWNED)
-            SetConst(LVar1, ANIM_KoopaTroopa_Hurt)
-            ExecWait(EVS_Enemy_Knockback)
-            Call(JumpToGoal, ACTOR_SELF, 5, FALSE, TRUE, FALSE)
-            SetConst(LVar0, PRT_DOWNED)
-            SetConst(LVar1, ANIM_KoopaTroopa_Run)
-            ExecWait(EVS_Enemy_ReturnHome)
-            Call(SetActorJumpGravity, ACTOR_SELF, Float(1.6))
-            Call(JumpToGoal, ACTOR_SELF, 5, FALSE, TRUE, FALSE)
-        CaseEq(EVENT_SHOCK_DEATH)
-            SetConst(LVar0, PRT_DOWNED)
-            SetConst(LVar1, ANIM_KoopaTroopa_Hurt)
-            ExecWait(EVS_Enemy_ShockHit)
-            SetConst(LVar0, PRT_DOWNED)
-            SetConst(LVar1, ANIM_KoopaTroopa_Hurt)
-            ExecWait(EVS_Enemy_Death)
-            Return
-        CaseOrEq(EVENT_ZERO_DAMAGE)
-        CaseOrEq(EVENT_IMMUNE)
-            Call(GetActorVar, ACTOR_SELF, AVAR_IsFlipped, LVar0)
-            IfEq(LVar0, 0)
-                SetConst(LVar0, PRT_DOWNED)
-                SetConst(LVar1, ANIM_KoopaTroopa_ShellEnter)
-                ExecWait(EVS_Enemy_NoDamageHit)
-                Call(GetStatusFlags, ACTOR_SELF, LVar0)
-                IfNotFlag(LVar0, STATUS_FLAGS_IMMOBILIZED)
-                    Call(SetAnimation, ACTOR_SELF, PRT_DOWNED, ANIM_KoopaTroopa_ShellExit)
-                    Wait(10)
-                EndIf
-            Else
-                SetConst(LVar0, PRT_DOWNED)
-                SetConst(LVar1, ANIM_KoopaTroopa_ToppleStruggle)
-                ExecWait(EVS_Enemy_NoDamageHit)
-            EndIf
-        EndCaseGroup
-        CaseEq(EVENT_DEATH)
-            SetConst(LVar0, PRT_DOWNED)
-            SetConst(LVar1, ANIM_KoopaTroopa_Hurt)
-            ExecWait(EVS_Enemy_Hit)
-            Wait(10)
-            SetConst(LVar0, PRT_DOWNED)
-            SetConst(LVar1, ANIM_KoopaTroopa_Hurt)
-            ExecWait(EVS_Enemy_Death)
-            Return
-        CaseEq(EVENT_END_FIRST_STRIKE)
-            Call(GetActorVar, ACTOR_SELF, AVAR_IsFlipped, LVar0)
-            IfEq(LVar0, 0)
-                SetConst(LVar0, PRT_DOWNED)
-                SetConst(LVar1, ANIM_KoopaTroopa_Run)
-                ExecWait(EVS_Enemy_ReturnHome)
-            EndIf
-            Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Call(SetHomePos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Call(HPBarToHome, ACTOR_SELF)
-        CaseEq(EVENT_RECOVER_STATUS)
-            Call(GetActorVar, ACTOR_SELF, AVAR_IsFlipped, LVar0)
-            IfEq(LVar0, 0)
-                SetConst(LVar0, PRT_DOWNED)
-                SetConst(LVar1, ANIM_KoopaTroopa_Idle)
-                ExecWait(EVS_Enemy_Recover)
-            Else
-                SetConst(LVar0, PRT_DOWNED)
-                SetConst(LVar1, ANIM_KoopaTroopa_ToppleStruggle)
-                ExecWait(EVS_Enemy_NoDamageHit)
-            EndIf
-        CaseEq(EVENT_SCARE_AWAY)
-            Call(GetActorVar, ACTOR_SELF, AVAR_IsFlipped, LVar0)
-            IfEq(LVar0, 0)
-                SetConst(LVar0, PRT_DOWNED)
-                SetConst(LVar1, ANIM_KoopaTroopa_Run)
-                SetConst(LVar2, ANIM_KoopaTroopa_Hurt)
-                ExecWait(EVS_Enemy_ScareAway)
-                Return
-            Else
-                SetConst(LVar0, PRT_DOWNED)
-                SetConst(LVar1, ANIM_KoopaTroopa_ToppleStruggle)
-                ExecWait(EVS_Enemy_NoDamageHit)
-            EndIf
-        CaseEq(EVENT_BEGIN_AIR_LIFT)
-            Call(GetActorVar, ACTOR_SELF, AVAR_IsFlipped, LVar0)
-            IfEq(LVar0, 0)
-                SetConst(LVar0, PRT_DOWNED)
-                SetConst(LVar1, ANIM_KoopaTroopa_Panic)
-            Else
-                SetConst(LVar0, PRT_DOWNED)
-                SetConst(LVar1, ANIM_KoopaTroopa_ToppleStruggle)
-            EndIf
-            ExecWait(EVS_Enemy_AirLift)
-        CaseEq(EVENT_BLOW_AWAY)
-            Call(GetActorVar, ACTOR_SELF, AVAR_IsFlipped, LVar0)
-            IfEq(LVar0, 0)
-                SetConst(LVar0, PRT_DOWNED)
-                SetConst(LVar1, ANIM_KoopaTroopa_Panic)
-            Else
-                SetConst(LVar0, PRT_DOWNED)
-                SetConst(LVar1, ANIM_KoopaTroopa_ToppleStruggle)
-            EndIf
-            ExecWait(EVS_Enemy_BlowAway)
-            Return
-        CaseEq(EVENT_AIR_LIFT_FAILED)
-            Call(GetActorVar, ACTOR_SELF, AVAR_IsFlipped, LVar0)
-            IfEq(LVar0, 0)
-                SetConst(LVar0, PRT_DOWNED)
-                SetConst(LVar1, ANIM_KoopaTroopa_Idle)
-                ExecWait(EVS_Enemy_NoDamageHit)
-            Else
-                SetConst(LVar0, PRT_DOWNED)
-                SetConst(LVar1, ANIM_KoopaTroopa_ToppleStruggle)
-                ExecWait(EVS_Enemy_NoDamageHit)
-            EndIf
-    EndSwitch
-    Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_RESTART)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
-    Return
-    End
-};
-
-EvtScript N(EVS_Downed_TakeTurn) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
-    Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
-    Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
-    Call(GetBattlePhase, LVar0)
-    IfEq(LVar0, PHASE_FIRST_STRIKE)
-        Call(SetAnimation, ACTOR_SELF, PRT_DOWNED, ANIM_KoopaTroopa_ShellSpin)
-    Else
-        Call(GetActorVar, ACTOR_SELF, AVAR_IsFlipped, LVar0)
-        IfEq(LVar0, 1)
-            Call(GetActorVar, ACTOR_SELF, AVAR_FlippedTurns, LVar0)
-            Sub(LVar0, 1)
-            IfGt(LVar0, 0)
-                Call(SetActorVar, ACTOR_SELF, AVAR_FlippedTurns, LVar0)
-                Call(AddActorDecoration, ACTOR_SELF, PRT_DOWNED, 0, ACTOR_DECORATION_SWEAT)
-                Call(SetAnimationRate, ACTOR_SELF, PRT_DOWNED, Float(3.0))
-                Wait(30)
-                Call(SetAnimationRate, ACTOR_SELF, PRT_DOWNED, Float(1.0))
-                Call(RemoveActorDecoration, ACTOR_SELF, PRT_DOWNED, 0)
-            Else
-                Call(AddActorDecoration, ACTOR_SELF, PRT_DOWNED, 0, ACTOR_DECORATION_SWEAT)
-                Call(SetAnimationRate, ACTOR_SELF, PRT_DOWNED, Float(3.0))
-                Wait(20)
-                Call(SetAnimationRate, ACTOR_SELF, PRT_DOWNED, Float(1.0))
-                Call(RemoveActorDecoration, ACTOR_SELF, PRT_DOWNED, 0)
-                Call(SetActorSounds, ACTOR_SELF, ACTOR_SOUND_JUMP, SOUND_NONE, 0)
-                Call(PlaySoundAtActor, ACTOR_SELF, SOUND_ACTOR_JUMP)
-                Call(SetAnimation, ACTOR_SELF, PRT_DOWNED, ANIM_KoopaTroopa_ToppleStruggle)
-                Set(LVar0, 0)
-                Call(SetActorRotationOffset, ACTOR_SELF, 0, 12, 0)
-                ChildThread
-                    Loop(5)
-                        Add(LVar0, 15)
-                        Call(SetActorRotation, ACTOR_SELF, 0, 0, LVar0)
-                        Wait(1)
-                    EndLoop
-                EndChildThread
-                Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-                Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-                Call(SetActorJumpGravity, ACTOR_SELF, Float(3.0))
-                Call(JumpToGoal, ACTOR_SELF, 8, FALSE, TRUE, FALSE)
-                Call(PlaySoundAtActor, ACTOR_SELF, SOUND_ACTOR_STEP_A)
-                Call(SetActorRotationOffset, ACTOR_SELF, 0, 0, 0)
-                Call(SetActorRotation, ACTOR_SELF, 0, 0, 0)
-                Call(SetActorDispOffset, ACTOR_SELF, 0, 0, 0)
-                Call(SetAnimation, ACTOR_SELF, PRT_DOWNED, ANIM_KoopaTroopa_Idle)
-                Call(SetActorVar, ACTOR_SELF, AVAR_IsFlipped, FALSE)
-                Call(SetIdleAnimations, ACTOR_SELF, PRT_DOWNED, Ref(N(DownedAnims)))
-                Call(SetDefenseTable, ACTOR_SELF, PRT_DOWNED, Ref(N(DownedDefense)))
-                Call(SetTargetOffset, ACTOR_SELF, PRT_DOWNED, -4, 32)
-                Call(SetProjectileTargetOffset, ACTOR_SELF, PRT_DOWNED, -1, -4)
-                Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_FLIPPED, FALSE)
-                Call(ResetActorSounds, ACTOR_SELF, ACTOR_SOUND_JUMP)
-            EndIf
-            Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-            Call(UseIdleAnimation, ACTOR_SELF, TRUE)
-            Return
-        EndIf
-        Call(UseBattleCamPreset, BTL_CAM_ENEMY_APPROACH)
-        Call(BattleCamTargetActor, ACTOR_SELF)
-        Wait(10)
-        Call(SetAnimation, ACTOR_SELF, PRT_DOWNED, ANIM_KoopaTroopa_ShellEnter)
-        Wait(10)
-        ChildThread
-            Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Add(LVar1, 4)
-            PlayEffect(EFFECT_SMOKE_IMPACT, 1, LVar0, LVar1, LVar2, 32, 4, 0, 10, 0)
-            Wait(3)
-            PlayEffect(EFFECT_SMOKE_IMPACT, 1, LVar0, LVar1, LVar2, 32, 4, 0, 10, 0)
-            Wait(2)
-            PlayEffect(EFFECT_SMOKE_IMPACT, 1, LVar0, LVar1, LVar2, 32, 4, 0, 10, 0)
-        EndChildThread
-        Call(PlaySoundAtActor, ACTOR_SELF, SOUND_SHELL_SPIN)
-        Call(SetAnimation, ACTOR_SELF, PRT_DOWNED, ANIM_KoopaTroopa_ShellSpin)
-        Wait(10)
-        Call(func_8024ECF8, BTL_CAM_MODEY_MINUS_1, BTL_CAM_MODEX_1, FALSE)
-    EndIf
-    Call(PlaySoundAtActor, ACTOR_SELF, SOUND_SHELL_TOSS)
-    Call(SetActorSounds, ACTOR_SELF, ACTOR_SOUND_WALK, SOUND_NONE, SOUND_NONE)
-    Call(EnemyTestTarget, ACTOR_SELF, LVar0, 0, 0, 1, BS_FLAGS1_INCLUDE_POWER_UPS)
-    Switch(LVar0)
-        CaseOrEq(HIT_RESULT_MISS)
-        CaseOrEq(HIT_RESULT_LUCKY)
-            Set(LVarA, LVar0)
-            Call(SetGoalToTarget, ACTOR_SELF)
-            Call(AddGoalPos, ACTOR_SELF, -40, 0, 0)
-            Call(SetActorSpeed, ACTOR_SELF, Float(16.0))
-            Call(RunToGoal, ACTOR_SELF, 0, FALSE)
-            Call(GetBattlePhase, LVar0)
-            IfEq(LVar0, PHASE_FIRST_STRIKE)
-                Call(UseBattleCamPreset, BTL_CAM_PRESET_05)
-                Call(SetBattleCamZoom, 300)
-                Call(SetBattleCamOffsetZ, 20)
-                Call(MoveBattleCamOver, 10)
-                Call(func_8024ECF8, BTL_CAM_MODEY_MINUS_1, BTL_CAM_MODEX_1, FALSE)
-            EndIf
-            Call(SetAnimation, ACTOR_SELF, PRT_DOWNED, ANIM_KoopaTroopa_ShellExit)
-            Wait(8)
-            Call(ResetAllActorSounds, ACTOR_SELF)
-            Call(SetActorYaw, ACTOR_SELF, 180)
-            Wait(4)
-            IfEq(LVarA, HIT_RESULT_LUCKY)
-                Call(EnemyTestTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_TRIGGER_LUCKY, 0, 0, 0)
-            EndIf
-            Call(SetAnimation, ACTOR_SELF, PRT_DOWNED, ANIM_KoopaTroopa_BeginPanic1)
-            Wait(1)
-            Call(SetAnimation, ACTOR_SELF, PRT_DOWNED, ANIM_KoopaTroopa_BeginPanic2)
-            Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Add(LVar1, 20)
-            Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Call(SetActorJumpGravity, ACTOR_SELF, Float(2.0))
-            Call(JumpToGoal, ACTOR_SELF, 5, FALSE, TRUE, FALSE)
-            Call(SetAnimation, ACTOR_SELF, PRT_DOWNED, ANIM_KoopaTroopa_Panic)
-            Wait(6)
-            Sub(LVar1, 20)
-            Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Call(JumpToGoal, ACTOR_SELF, 5, FALSE, TRUE, FALSE)
-            Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
-            Call(YieldTurn)
-            Call(SetActorYaw, ACTOR_SELF, 180)
-            Call(AddActorDecoration, ACTOR_SELF, PRT_DOWNED, 0, ACTOR_DECORATION_SWEAT)
-            Call(SetAnimation, ACTOR_SELF, PRT_DOWNED, ANIM_KoopaTroopa_Panic)
-            Call(SetGoalToHome, ACTOR_SELF)
-            Call(SetActorSpeed, ACTOR_SELF, Float(8.0))
-            Call(RunToGoal, ACTOR_SELF, 0, FALSE)
-            Call(SetAnimation, ACTOR_SELF, PRT_DOWNED, ANIM_KoopaTroopa_Idle)
-            Call(RemoveActorDecoration, ACTOR_SELF, PRT_DOWNED, 0)
-            Call(SetPartYaw, ACTOR_SELF, PRT_DOWNED, 0)
-            Call(SetActorYaw, ACTOR_SELF, 0)
-            Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-            Call(UseIdleAnimation, ACTOR_SELF, TRUE)
-            Return
-        EndCaseGroup
-    EndSwitch
-    Call(SetGoalToTarget, ACTOR_SELF)
-    Call(SetActorSpeed, ACTOR_SELF, Float(16.0))
-    Call(RunToGoal, ACTOR_SELF, 0, FALSE)
-    Call(ResetAllActorSounds, ACTOR_SELF)
-    Wait(2)
-    Call(EnemyDamageTarget, ACTOR_SELF, LVar0, 0, SUPPRESS_EVENT_ALL, 0, DMG_SHELL_TOSS, BS_FLAGS1_TRIGGER_EVENTS)
-    Switch(LVar0)
-        CaseOrEq(HIT_RESULT_HIT)
-        CaseOrEq(HIT_RESULT_NO_DAMAGE)
-            Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
-            Call(GetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Add(LVar0, 40)
-            Set(LVar1, 0)
-            Call(SetActorJumpGravity, ACTOR_SELF, Float(1.8))
-            Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Call(JumpToGoal, ACTOR_SELF, 10, FALSE, TRUE, FALSE)
-            Add(LVar0, 30)
-            Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Call(JumpToGoal, ACTOR_SELF, 8, FALSE, TRUE, FALSE)
-            Add(LVar0, 20)
-            Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Call(JumpToGoal, ACTOR_SELF, 6, FALSE, TRUE, FALSE)
-            Call(SetAnimation, ACTOR_SELF, PRT_DOWNED, ANIM_KoopaTroopa_ShellExit)
-            Wait(8)
-            Call(YieldTurn)
-            SetConst(LVar0, PRT_DOWNED)
-            SetConst(LVar1, ANIM_KoopaTroopa_Run)
-            ExecWait(EVS_Enemy_ReturnHome)
-            Call(SetAnimation, ACTOR_SELF, PRT_DOWNED, ANIM_KoopaTroopa_Idle)
-        EndCaseGroup
-    EndSwitch
-    Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
     Return
     End
 };

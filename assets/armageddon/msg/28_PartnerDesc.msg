@@ -76,7 +76,8 @@
 }
 
 #message:28:(PartnerDesc_Kooper_Battle_ShellToss) {
-	Throw a shell at an enemy.[End]
+	Throw a shell at an enemy.[BR]
+	+1 FP if it dealt any damage.[End]
 }
 
 #message:28:(PartnerDesc_Kooper_Battle_PowerShell) {
@@ -106,15 +107,18 @@
 }
 
 #message:28:(PartnerDesc_Kooper_Pause_ShellToss1) {
-	Throw a shell at an enemy.[End]
+	Throw a shell at an enemy.[BR]
+	+1 FP if it dealt any damage.[End]
 }
 
 #message:28:(PartnerDesc_Kooper_Pause_ShellToss2) {
-	Throw a shell at an enemy.[End]
+	Throw a shell at an enemy.[BR]
+	+1 FP if it dealt any damage.[End]
 }
 
 #message:28:(PartnerDesc_Kooper_Pause_ShellToss3) {
-	Throw a shell at an enemy.[End]
+	Throw a shell at an enemy.[BR]
+	+1 FP if it dealt any damage.[End]
 }
 
 #message:28:(PartnerDesc_Kooper_Pause_PowerShell) {

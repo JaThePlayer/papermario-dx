@@ -191,6 +191,51 @@ API_CALLABLE(N(GetFireShellSpeedAndDamage)) {
     return ApiStatus_DONE2;
 }
 
+static API_CALLABLE(N(SpawnFlowerRecoveryFX)) {
+    Bytecode* args = script->ptrReadPos;
+    s32 a = evt_get_variable(script, *args++);
+    s32 b = evt_get_variable(script, *args++);
+    s32 c = evt_get_variable(script, *args++);
+    s32 d = evt_get_variable(script, *args++);
+
+    fx_recover(1, a, b, c, d);
+
+    return ApiStatus_DONE2;
+}
+
+#include "common/AddFP.inc.c"
+
+static EvtScript N(heal_fp) = {
+    #define LV_FPAmt LVarA
+
+    Call(GetOwnerTarget, LV_FPAmt, 0)
+    Call(GetLastDamage, LV_FPAmt, LV_FPAmt)
+    IfLt(LV_FPAmt, 1)
+        Return
+    EndIf
+
+    Set(LV_FPAmt, 1)
+
+    Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
+    Add(LVar0, 20)
+    Add(LVar1, 25)
+    Call(N(SpawnFlowerRecoveryFX), LVar0, LVar1, LVar2, LV_FPAmt)
+
+    Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
+    Add(LVar1, 25)
+    Call(ShowStartRecoveryShimmer, LVar0, LVar1, LVar2, LV_FPAmt)
+    Call(N(AddFP), LV_FPAmt)
+
+    Wait(30)
+
+    Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
+    Call(ShowRecoveryShimmer, LVar0, LVar1, LVar2, LV_FPAmt)
+
+    Return
+    End
+    #undef LV_FPAmt
+};
+
 s32 N(DefaultAnims)[] = {
     STATUS_KEY_NORMAL,    ANIM_BattleKooper_Walk,
     STATUS_KEY_STONE,     ANIM_BattleKooper_Still,
@@ -687,6 +732,7 @@ EvtScript N(shellToss) = {
         CaseDefault
             Call(PartnerDamageEnemy, LVar0, 0, SUPPRESS_EVENTS_KOOPER_DAMAGE, 0, LVarE, BS_FLAGS1_TRIGGER_EVENTS | BS_FLAGS1_INCLUDE_POWER_UPS)
     EndSwitch
+    Exec(N(heal_fp))
     Call(PlaySoundAtActor, ACTOR_PARTNER, SOUND_NONE)
     Switch(LVar0)
         CaseOrEq(HIT_RESULT_HIT)
@@ -1347,6 +1393,7 @@ EvtScript N(shellTossOnFirstStrike) = {
             Set(LVarF, 3)
     EndSwitch
     Call(PartnerDamageEnemy, LVar0, 0, SUPPRESS_EVENTS_KOOPER_DAMAGE, 0, LVarF, BS_FLAGS1_TRIGGER_EVENTS | BS_FLAGS1_INCLUDE_POWER_UPS)
+    Exec(N(heal_fp))
     Call(GetMenuSelection, LVar0, LVar1, LVar2)
     Switch(LVar2)
         CaseEq(MOVE_SHELL_TOSS1)
