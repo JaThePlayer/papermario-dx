@@ -901,7 +901,7 @@ ActorPart* get_actor_part_for_def(Actor* actor) {
     }
 
     while (part != NULL) {
-        if (part->staticData->flags & ACTOR_PART_FLAG_PRIMARY_TARGET) {
+        if (part->flags & ACTOR_PART_FLAG_PRIMARY_TARGET) {
             return part;
         }
         part = part->nextPart;
