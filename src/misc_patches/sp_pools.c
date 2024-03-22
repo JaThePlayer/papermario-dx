@@ -3,7 +3,7 @@
 
 u8 sp_pool_caps[SP_POOL_COUNT] = {
     60, // SP_POOL_PROLOGUE
-    75, // SP_POOL_PLEASANT_PATH
+    125, // SP_POOL_PLEASANT_PATH
 };
 
 // stores how much sp was taken from each pool in the current battle
@@ -40,7 +40,7 @@ u8 sp_pool_remaining(u8 id) {
     return remaining;
 }
 
-// Uses up at most 'amt' sp from the given pool. Returns how much sp was actually be spent.
+// Uses up at most 'amt' sp from the given pool. Returns how much sp was actually spent.
 u8 sp_pool_use(u8 id, u8 amt) {
     if (id == SP_POOL_NONE) {
         return amt;

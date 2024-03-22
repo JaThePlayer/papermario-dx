@@ -210,10 +210,10 @@
 }
 
 #message:25:(ItemFullDesc_DizzyDial) {
-	If it works, dazes and paralyzes[BR]
-	all enemies briefly.[BR]
+	If it works, dazes all enemies,
+	making them miss attacks.[BR]
 	It's especially effective against[BR]
-	flying enemies. [End]
+	flying enemies.[End]
 }
 
 #message:25:(ItemFullDesc_FrightJar) {
@@ -770,7 +770,7 @@
 
 #message:25:(ItemFullDesc_DizzyAttack) {
 	Delivers a blow that makes an[BR]
-	enemy dizzy and unable to move.[End]
+	enemy dizzy and miss attacks.[End]
 }
 
 #message:25:(ItemFullDesc_SpeedySpin) {

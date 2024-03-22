@@ -65,8 +65,9 @@ Formation A(Formation_05) = { // unused
 
 Formation A(Formation_06) = { // nok_14 (first after kooper)
     ACTOR_BY_IDX(A(spiked_goomba), BTL_POS_GROUND_A, 10),
-    ACTOR_BY_IDX(A(spiked_goomba), BTL_POS_GROUND_B, 9),
-    ACTOR_BY_IDX(A(spiked_goomba), BTL_POS_GROUND_C, 8),
+    ACTOR_BY_IDX_ITEM(A(paragoomba), BTL_POS_AIR_B, 9, ITEM_MUSHROOM),
+    ACTOR_BY_IDX(A(spiked_goomba), BTL_POS_GROUND_B, 8),
+    ACTOR_BY_IDX(A(paratroopa), BTL_POS_AIR_C, 7),
 };
 
 Formation A(Formation_07) = { // unused
@@ -96,20 +97,23 @@ Formation A(Formation_0A) = { // unused
 };
 
 Formation A(Formation_0B) = { // nok_14 (first after kooper)
-    ACTOR_BY_IDX(A(koopa_troopa), BTL_POS_GROUND_B, 10),
-    ACTOR_BY_IDX(A(spiked_goomba), BTL_POS_GROUND_C, 9),
+    ACTOR_BY_IDX(A(koopa_troopa), BTL_POS_GROUND_A, 10),
+    ACTOR_BY_IDX(A(spiked_goomba), BTL_POS_GROUND_B, 9),
+    ACTOR_BY_IDX(A(spiked_goomba), BTL_POS_GROUND_C, 8),
 };
 
 Formation A(Formation_0C) = { // nok_14 (first after kooper)
     ACTOR_BY_IDX(A(koopa_troopa), BTL_POS_GROUND_A, 10),
     ACTOR_BY_IDX(A(koopa_troopa), BTL_POS_GROUND_B, 9),
     ACTOR_BY_IDX(A(spiked_goomba), BTL_POS_GROUND_C, 8),
+    ACTOR_BY_IDX(A(koopa_troopa), BTL_POS_GROUND_D, 7),
 };
 
 Formation A(Formation_0D) = { // nok_15 (final)
     ACTOR_BY_IDX(A(koopa_troopa), BTL_POS_GROUND_A, 10),
     ACTOR_BY_IDX(A(spiked_goomba), BTL_POS_GROUND_B, 9),
-    ACTOR_BY_IDX(A(spiked_goomba), BTL_POS_GROUND_C, 8),
+    ACTOR_BY_IDX(A(spiked_paragoomba), BTL_POS_AIR_C, 8),
+    ACTOR_BY_IDX_ITEM(A(paratroopa), BTL_POS_AIR_D, 7, ITEM_DRIED_SHROOM),
 };
 
 Formation A(Formation_0E) = { // unused
@@ -133,8 +137,10 @@ Formation A(Formation_10) = { // unused
 };
 
 Formation A(Formation_11) = { // nok_14 (first after kooper)
-    ACTOR_BY_IDX(A(paratroopa), BTL_POS_AIR_B, 10),
-    ACTOR_BY_IDX(A(paratroopa), BTL_POS_AIR_C, 9),
+    ACTOR_BY_IDX(A(paratroopa), BTL_POS_AIR_A, 10),
+    ACTOR_BY_IDX(A(paratroopa), BTL_POS_AIR_B, 9),
+    ACTOR_BY_IDX_ITEM(A(paratroopa), BTL_POS_AIR_C, 8, ITEM_FIRE_FLOWER),
+    ACTOR_BY_IDX(A(spiked_paragoomba), BTL_POS_AIR_D, 7),
 };
 
 Formation A(Formation_12) = { // unused
@@ -152,7 +158,7 @@ Formation A(Formation_14) = { // nok_15 (final)
     ACTOR_BY_IDX(A(paratroopa), BTL_POS_AIR_A, 10),
     ACTOR_BY_IDX(A(koopa_troopa), BTL_POS_GROUND_B, 9),
     ACTOR_BY_IDX(A(spiked_goomba), BTL_POS_GROUND_C, 8),
-    ACTOR_BY_IDX(A(spiked_goomba), BTL_POS_GROUND_D, 7),
+    ACTOR_BY_IDX_ITEM(A(paragoomba), BTL_POS_AIR_D, 7, ITEM_SPICY_SOUP),
 };
 
 Formation A(Formation_15) = { // unused
