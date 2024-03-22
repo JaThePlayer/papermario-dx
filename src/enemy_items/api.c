@@ -287,7 +287,7 @@ EvtScript EnemyItems_UseHealingItem = {
     EndIf
 
     Call(WaitForBuffDone)
-    Call(ApplyCustomItemEffects, ACTOR_SELF, LVarA)
+    Call(ApplyCustomItemEffects, LVar9, LVarA)
 
     Return
     End
