@@ -45,11 +45,10 @@ static void custom_status_decrement_impl(Actor* actor, s8 isLate) {
         StatusType* statusType = &gCustomStatusTypes[i];
 
         if (statusType->decrementLate == isLate && status->turns > 0) {
-            status->turns--;
             if (statusType->onDecrement) {
                 statusType->onDecrement(actor);
             }
-
+            status->turns--;
             if (status->turns == 0) {
                 // status just got removed now
                 status->potency = 0;
@@ -90,6 +89,12 @@ s32 try_inflict_custom_status(Actor* actor, Vec3f position, s8 customStatusId, u
     if (statusType->onApply) {
         statusType->onApply(actor, position, potency);
     }
+
+    if (statusType->drawIcon) {
+        statusType->drawIcon(actor);
+    }
+
+    actor->flags |= ACTOR_FLAG_SHOW_STATUS_ICONS;
 
     return TRUE;
 }
