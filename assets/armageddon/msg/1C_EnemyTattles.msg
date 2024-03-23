@@ -23,7 +23,7 @@
 	[Wait][Next]
 	Whatever you do, don't jump on[BR]
 	their spikes or you'll get [BR]
-	hurt or even paralyzed![Wait][End]
+	hurt![Wait][End]
 }
 
 #message:1C:(EnemyTattle_Paragoomba) {
@@ -202,6 +202,14 @@
 	temperamental, [BR]
 	[Pause 10]and they get steaming mad[BR]
 	when you attack 'em.[BR]
+	[Wait][Next]
+	Furthermore, they spontaneously[BR]
+	ignite after a few turns, though[BR]
+	the exact turn count varies.[BR]
+	[Wait][Next]
+	One turn before that happens,[BR]
+	they get quite angry, so we[BR]
+	can use that as a clue![BR]
 	[Wait][Next]
 	You'd better not jump on 'em[BR]
 	when they're angry or they'll[BR]

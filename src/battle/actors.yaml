@@ -142,7 +142,7 @@
     tattleCamOffset: [ 0, 3, 0 ]
     shadowOffset: 0
 - BobOmb:
-    level: 3
+    level: 2
     nameMsg: MSG_EnemyName_BobOmb
     tattleMsg: MSG_EnemyTattle_BobOmb
     walkSound: [ SOUND_ACTOR_STEP_A, SOUND_ACTOR_STEP_B ]

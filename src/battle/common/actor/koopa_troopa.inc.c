@@ -3,6 +3,7 @@
 #include "battle/battle.h"
 #include "script_api/battle.h"
 #include "sprite/npc/KoopaTroopa.h"
+#include "sprite/npc/Bobomb.h"
 
 #define NAMESPACE A(koopa_troopa)
 
@@ -817,7 +818,243 @@ EvtScript N(EVS_ChargedShellShot) = {
     Call(UseIdleAnimation, ACTOR_SELF, TRUE)
     Return
     End
+
+    #undef Lbl_End
 };
+
+#define BobombId LVarE
+
+EvtScript N(BobombCleanup) = {
+    Call(StopLoopingSoundAtActor, ACTOR_SELF, 0)
+    Call(EnableActorPaletteEffects, ACTOR_SELF, PRT_MAIN, FALSE)
+    Return
+    End
+};
+
+EvtScript N(BobombExplode) = {
+    ExecWait(N(BobombCleanup))
+    Call(StartRumble, BTL_RUMBLE_PLAYER_MAX)
+    Thread
+        Call(ShakeCam, CAM_BATTLE, 0, 2, Float(0.75))
+        Call(ShakeCam, CAM_BATTLE, 0, 5, Float(3.0))
+        Call(ShakeCam, CAM_BATTLE, 0, 10, Float(4.5))
+        Call(ShakeCam, CAM_BATTLE, 0, 5, Float(3.0))
+    EndThread
+    Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
+    Add(LVar2, 2)
+    PlayEffect(EFFECT_SMOKE_RING, 0, LVar0, LVar1, LVar2, 0)
+    Add(LVar1, 20)
+    Add(LVar2, 2)
+    PlayEffect(EFFECT_EXPLOSION, 0, LVar0, LVar1, LVar2, 0)
+    Call(PlaySoundAtActor, ACTOR_SELF, SOUND_BOMB_BLAST)
+    Return
+    End
+};
+
+EvtScript N(BobombThrow) = {
+    Call(SetOwnerID, BobombId)
+
+    Call(SetActorFlags, BobombId, ACTOR_FLAG_NO_ATTACK)
+    Call(UseBattleCamPreset, BTL_CAM_ENEMY_APPROACH)
+    Call(BattleCamTargetActor, BobombId)
+    Call(func_8024ECF8, BTL_CAM_MODEY_MINUS_1, BTL_CAM_MODEX_1, FALSE)
+
+    Call(PlayLoopingSoundAtActor, BobombId, 0, SOUND_LOOP_BOBOMB_FUSE)
+    Call(SetAnimation, BobombId, PRT_MAIN, ANIM_Bobomb_RunLit)
+    Call(EnableActorPaletteEffects, BobombId, PRT_MAIN, TRUE)
+    Call(SetActorPaletteSwapParams, BobombId, PRT_MAIN, SPR_PAL_Bobomb, SPR_PAL_Bobomb_Burst, 0, 10, 0, 10, 0, 0)
+    Call(SetActorPaletteEffect, BobombId, PRT_MAIN, ACTOR_PAL_ADJUST_BLEND_PALETTES_VARYING_INTERVALS)
+
+    Call(SetTargetActor, BobombId, ACTOR_PLAYER)
+    Call(SetGoalToTarget, BobombId)
+    Call(SetActorSpeed, BobombId, Float(12.0))
+    Call(SetActorJumpGravity, BobombId, Float(1.2))
+
+    Call(EnemyTestTarget, BobombId, LVar0, 0, 0, 1, BS_FLAGS1_INCLUDE_POWER_UPS)
+    Switch(LVar0)
+        CaseOrEq(HIT_RESULT_MISS)
+        CaseOrEq(HIT_RESULT_LUCKY)
+            Set(LVarA, LVar0)
+            Call(GetGoalPos, BobombId, LVar0, LVar1, LVar2)
+            Add(LVar0, 30)
+            Call(SetGoalPos, BobombId, LVar0, LVar1, LVar2)
+            Call(JumpToGoal, BobombId, 22, FALSE, TRUE, FALSE)
+            ExecWait(N(BobombExplode))
+            Call(SetAnimation, BobombId, PRT_MAIN, ANIM_Bobomb_BurnStill)
+            Wait(2)
+            IfEq(LVarA, HIT_RESULT_LUCKY)
+                Call(EnemyTestTarget, BobombId, LVar0, DAMAGE_TYPE_TRIGGER_LUCKY, 0, 0, 0)
+            EndIf
+            Wait(10)
+            Call(SetActorRotationOffset, BobombId, 0, 0, 0)
+            Call(SetActorRotation, BobombId, 0, 0, 0)
+            SetConst(LVar0, PRT_MAIN)
+            SetConst(LVar1, -1)
+            Set(LVar2, EXEC_DEATH_NO_SPINNING)
+            ExecWait(EVS_Enemy_Death)
+            Return
+        EndCaseGroup
+    EndSwitch
+
+    Call(GetGoalPos, BobombId, LVar0, LVar1, LVar2)
+    Call(SetGoalPos, BobombId, LVar0, LVar1, LVar2)
+    Call(JumpToGoal, BobombId, 22, FALSE, TRUE, FALSE)
+    ExecWait(N(BobombExplode))
+    Call(SetAnimation, BobombId, PRT_MAIN, ANIM_Bobomb_BurnStill)
+    Call(EnemyDamageTarget, BobombId, LVar0, DAMAGE_TYPE_BLAST | DAMAGE_TYPE_NO_CONTACT, 0, 0, 5, BS_FLAGS1_TRIGGER_EVENTS)
+    Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
+    Wait(15)
+    SetConst(LVar0, PRT_MAIN)
+    SetConst(LVar1, ANIM_Bobomb_BurnStill)
+    Set(LVar2, EXEC_DEATH_NO_SPINNING)
+    ExecWait(EVS_Enemy_Death)
+    Return
+    End
+};
+
+EvtScript N(EVS_ChargedShellShotIntoBobomb) = {
+    #define Lbl_End 0x10
+    Call(SetTargetActor, ACTOR_SELF, BobombId)
+
+    Call(UseBattleCamPreset, BTL_CAM_ENEMY_APPROACH)
+    Call(BattleCamTargetActor, ACTOR_SELF)
+    Wait(10)
+    ChildThread
+        Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
+        Add(LVar1, 4)
+        PlayEffect(EFFECT_SMOKE_IMPACT, 1, LVar0, LVar1, LVar2, 32, 4, 0, 10, 0)
+        Wait(3)
+        PlayEffect(EFFECT_SMOKE_IMPACT, 1, LVar0, LVar1, LVar2, 32, 4, 0, 10, 0)
+        Wait(2)
+        PlayEffect(EFFECT_SMOKE_IMPACT, 1, LVar0, LVar1, LVar2, 32, 4, 0, 10, 0)
+    EndChildThread
+    Call(PlaySoundAtActor, ACTOR_SELF, SOUND_SHELL_SPIN)
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_KoopaTroopa_ShellSpin)
+    Wait(20)
+    Call(AddActorDecoration, ACTOR_SELF, PRT_MAIN, WHIRLWIND_DECOR_IDX, ACTOR_DECORATION_WHIRLWIND)
+    Call(PlaySoundAtActor, ACTOR_SELF, SOUND_DIZZY_SHELL)
+    Wait(40)
+    Call(func_8024ECF8, BTL_CAM_MODEY_MINUS_1, BTL_CAM_MODEX_1, FALSE) // BTL_CAM_MODEY_0 -> focus cam on y pos of enemy
+
+    Call(PlaySoundAtActor, ACTOR_SELF, SOUND_SHELL_TOSS)
+    Call(SetActorSounds, ACTOR_SELF, ACTOR_SOUND_WALK, SOUND_NONE, SOUND_NONE)
+    //Call(EnemyTestTarget, ACTOR_SELF, LVar0, 0, 0, 1, BS_FLAGS1_INCLUDE_POWER_UPS)
+    // Not lucky
+
+
+    Call(SetGoalToTarget, ACTOR_SELF)
+    Call(SetActorSpeed, ACTOR_SELF, Float(24.0))
+    Call(RunToGoal, ACTOR_SELF, 0, FALSE)
+    Call(ResetAllActorSounds, ACTOR_SELF)
+    Call(RemoveActorDecoration, ACTOR_SELF, PRT_MAIN, WHIRLWIND_DECOR_IDX)
+    Wait(2)
+
+    Thread
+        // return home
+        Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
+        Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
+        Add(LVar0, 40)
+        Set(LVar1, 0)
+        Call(SetActorJumpGravity, ACTOR_SELF, Float(1.8))
+        Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
+        Call(JumpToGoal, ACTOR_SELF, 10, FALSE, TRUE, FALSE)
+        Add(LVar0, 30)
+        Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
+        Call(JumpToGoal, ACTOR_SELF, 8, FALSE, TRUE, FALSE)
+        Add(LVar0, 20)
+        Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
+        Call(JumpToGoal, ACTOR_SELF, 6, FALSE, TRUE, FALSE)
+        Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_KoopaTroopa_ShellExit)
+        Wait(8)
+        SetConst(LVar0, PRT_MAIN)
+        SetConst(LVar1, ANIM_KoopaTroopa_Run)
+        ExecWait(EVS_Enemy_ReturnHome)
+        Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_KoopaTroopa_Idle)
+    EndThread
+
+    // Launch bobomb
+    ExecGetTID(N(BobombThrow), LVarF)
+    Label(0x1e)
+    IsThreadRunning(LVarF, LVarD)
+    IfEq(LVarD, TRUE)
+        Wait(1)
+        Goto(0x1e)
+    EndIf
+
+    Label(Lbl_End)
+    Call(SetActorVar, ACTOR_SELF, AVAR_IsInShell, FALSE)
+    Call(SetIdleAnimations, ACTOR_SELF, PRT_MAIN, Ref(N(DefaultAnims)))
+    Call(BindIdle, ACTOR_SELF, Ref(N(EVS_Idle)))
+    Call(SetDefenseTable, ACTOR_SELF, PRT_MAIN, Ref(N(NormalDefense)))
+    Call(SetTargetOffset, ACTOR_SELF, PRT_MAIN, -4, 32)
+    Call(SetPartEventFlags, ACTOR_SELF, PRT_MAIN, ACTOR_EVENT_FLAG_FLIPABLE)
+
+    Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
+    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Return
+    End
+
+    #undef Lbl_End
+};
+
+// todo: move somewhere nice
+API_CALLABLE(N(FindEnemyWithId)) {
+    Bytecode* args = script->ptrReadPos;
+    BattleStatus* battleStatus = &gBattleStatus;
+    s32 targetId = evt_get_variable(script, *args++);
+    s32 retActorId = *args++;
+    s32 i;
+
+    for (i = 0; i < ARRAY_COUNT(battleStatus->enemyActors); i++) {
+        Actor* targetActor = battleStatus->enemyActors[i];
+        if (targetActor == NULL)
+            continue;
+        if (targetActor->actorType != targetId)
+            continue;
+
+        evt_set_variable(script, retActorId, ACTOR_ENEMY0 + i);
+        return ApiStatus_DONE2;
+    }
+
+    evt_set_variable(script, retActorId, FALSE);
+    return ApiStatus_DONE2;
+}
+
+API_CALLABLE(N(FindBestBobomb)) {
+    Bytecode* args = script->ptrReadPos;
+    BattleStatus* battleStatus = &gBattleStatus;
+    s32 retActorId = *args++;
+    s32 i;
+    s32 highestTurnCount = -1;
+    s32 bestI = -1;
+
+    for (i = 0; i < ARRAY_COUNT(battleStatus->enemyActors); i++) {
+        Actor* targetActor = battleStatus->enemyActors[i];
+        if (targetActor == NULL)
+            continue;
+        if (targetActor->actorType != ACTOR_TYPE_BOB_OMB)
+            continue;
+
+        // Don't launch into already ignited bobombs, thats a waste
+        if (targetActor->state.varTable[8/*AVAR_Ignited*/] == 1)
+            continue;
+
+
+        s32 turnCount = targetActor->state.varTable[0/*AVAR_TurnsUntilIgnition*/];
+        if (turnCount > highestTurnCount) {
+            highestTurnCount = turnCount;
+            bestI = i;
+        }
+    }
+
+    if (bestI != -1) {
+        evt_set_variable(script, retActorId, ACTOR_ENEMY0 + bestI);
+        return ApiStatus_DONE2;
+    }
+
+    evt_set_variable(script, retActorId, FALSE);
+    return ApiStatus_DONE2;
+}
 
 EvtScript N(EVS_TakeTurn) = {
     Call(UseIdleAnimation, ACTOR_SELF, FALSE)
@@ -833,7 +1070,13 @@ EvtScript N(EVS_TakeTurn) = {
 
     Call(GetActorVar, ACTOR_SELF, AVAR_IsInShell, LVar0)
     IfEq(LVar0, TRUE)
-        ExecWait(N(EVS_ChargedShellShot))
+        Call(N(FindBestBobomb), LVarE)
+        IfEq(LVarE, FALSE)
+            ExecWait(N(EVS_ChargedShellShot))
+            Return
+        EndIf
+        // We have a bobomb on LVarE
+        ExecWait(N(EVS_ChargedShellShotIntoBobomb))
         Return
     EndIf
 

@@ -15,13 +15,15 @@ enum N(ActorPartIDs) {
 };
 
 enum N(ActorVars) {
-    AVAR_HitDuringCombo = 0,
-    AVAR_Ignited        = 8,
+    AVAR_HitDuringCombo     = 9,
+    // These are also referenced by number in koopa_troopa
+    AVAR_Ignited            = 8,
+    AVAR_TurnsUntilIgnition = 0, // new: how many turns until the bomb spontaneously ignites. Should be set by formations!
 };
 
 enum N(ActorParams) {
     DMG_TACKLE          = 1,
-    DMG_EXPLOSION       = 2,
+    DMG_EXPLOSION       = 5,
 };
 
 s32 N(DefaultAnims)[] = {
@@ -34,6 +36,19 @@ s32 N(DefaultAnims)[] = {
     STATUS_KEY_PARALYZE,  ANIM_Bobomb_Still,
     STATUS_KEY_DIZZY,     ANIM_Bobomb_Dizzy,
     STATUS_KEY_FEAR,      ANIM_Bobomb_Dizzy,
+    STATUS_END,
+};
+
+s32 N(AngryAnims)[] = { // Used 1 turn before ignition
+    STATUS_KEY_NORMAL,    ANIM_Bobomb_WalkAngry,
+    STATUS_KEY_STONE,     ANIM_Bobomb_Still,
+    STATUS_KEY_SLEEP,     ANIM_Bobomb_Sleep,
+    STATUS_KEY_POISON,    ANIM_Bobomb_WalkAngry,
+    STATUS_KEY_STOP,      ANIM_Bobomb_Still,
+    STATUS_KEY_STATIC,    ANIM_Bobomb_IdleAngry,
+    STATUS_KEY_PARALYZE,  ANIM_Bobomb_Still,
+    STATUS_KEY_DIZZY,     ANIM_Bobomb_DizzyAngry,
+    STATUS_KEY_FEAR,      ANIM_Bobomb_DizzyAngry,
     STATUS_END,
 };
 
@@ -117,6 +132,7 @@ ActorPartBlueprint N(ActorParts)[] = {
         .eventFlags = ACTOR_EVENT_FLAG_EXPLODE_ON_IGNITION,
         .elementImmunityFlags = 0,
         .projectileTargetOffset = { 0, -9 },
+        .contactDamage = DMG_EXPLOSION,
     },
 };
 
@@ -144,12 +160,31 @@ ActorBlueprint NAMESPACE = {
     .spPool = CURRENT_SP_POOL,
 };
 
+extern EvtScript N(EVS_Ignite);
+
+static EvtScript N(timer_events) = {
+    Call(GetActorVar, ACTOR_SELF, AVAR_TurnsUntilIgnition, LVar0)
+    Switch(LVar0)
+        CaseEq(0)
+            ExecWait(N(EVS_Ignite))
+        CaseEq(1)
+            // 1 turn left, change to more angry animations
+            Call(SetIdleAnimations, ACTOR_SELF, PRT_MAIN, Ref(N(AngryAnims)))
+            Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Bobomb_IdleAngry)
+            //Call(AddActorDecoration, ACTOR_SELF, PRT_MAIN, 0, ACTOR_DECORATION_STEAM_EMITTER)
+    EndSwitch
+
+    Return
+    End
+};
+
 EvtScript N(EVS_Init) = {
     Call(BindTakeTurn, ACTOR_SELF, Ref(N(EVS_TakeTurn)))
     Call(BindIdle, ACTOR_SELF, Ref(N(EVS_Idle)))
     Call(BindHandleEvent, ACTOR_SELF, Ref(N(EVS_HandleEvent)))
     Call(SetActorVar, ACTOR_SELF, AVAR_Ignited, FALSE)
     Call(SetActorVar, ACTOR_SELF, AVAR_HitDuringCombo, FALSE)
+    Exec(N(timer_events))
     Return
     End
 };
@@ -164,6 +199,7 @@ EvtScript N(EVS_Ignite) = {
     IfFlag(LVar0, STATUS_FLAGS_IMMOBILIZED)
         Return
     EndIf
+    Call(RemoveActorDecoration, ACTOR_SELF, PRT_MAIN, 0)
     Label(0)
     Call(SetActorVar, ACTOR_SELF, AVAR_Ignited, TRUE)
     Call(SetIdleAnimations, ACTOR_SELF, PRT_MAIN, Ref(N(IgnitedAnims)))
@@ -188,6 +224,7 @@ EvtScript N(EVS_Ignite) = {
 EvtScript N(EVS_Defuse) = {
     Call(BindHandleEvent, ACTOR_SELF, Ref(N(EVS_HandleEvent)))
     Call(SetActorVar, ACTOR_SELF, AVAR_Ignited, FALSE)
+    Call(SetActorVar, ACTOR_SELF, AVAR_TurnsUntilIgnition, 2)
     Call(SetIdleAnimations, ACTOR_SELF, PRT_MAIN, Ref(N(DefaultAnims)))
     Call(SetPartEventBits, ACTOR_SELF, PRT_MAIN, ACTOR_EVENT_FLAG_EXPLODE_ON_CONTACT, FALSE)
     Call(SetStatusTable, ACTOR_SELF, Ref(N(StatusTable)))
@@ -689,13 +726,21 @@ EvtScript N(EVS_Attack_Blast) = {
 EvtScript N(EVS_TakeTurn) = {
     Call(UseIdleAnimation, ACTOR_SELF, FALSE)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
+
     Call(GetActorVar, ACTOR_SELF, AVAR_Ignited, LVar0)
-    IfFalse(LVar0)
-        ExecWait(N(EVS_Attack_Tackle))
-    Else
+    IfTrue(LVar0)
         ExecWait(N(EVS_Attack_Blast))
         Return
     EndIf
+
+    ExecWait(N(EVS_Attack_Tackle))
+
+    Call(GetActorVar, ACTOR_SELF, AVAR_TurnsUntilIgnition, LVar0)
+    Sub(LVar0, 1)
+    Call(SetActorVar, ACTOR_SELF, AVAR_TurnsUntilIgnition, LVar0)
+
+    ExecWait(N(timer_events))
+
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
     Call(UseIdleAnimation, ACTOR_SELF, TRUE)
     Return
