@@ -2712,3 +2712,11 @@
 	Star Rod? Or will wishes [BR]
 	forever go ungranted?[Wait][End]
 }
+
+#message:1D:(Menus_Battle_WaveBattle) {
+	Wave Battle: [Var 0] Waves[End]
+}
+
+#message:1D:(Menus_Battle_NextWave) {
+	Wave [Var 0]![End]
+}

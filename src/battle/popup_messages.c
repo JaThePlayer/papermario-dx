@@ -152,6 +152,9 @@ s32 BattleMessages[] = {
     [BTL_MSG_CANT_SWITCH_UNUSED]    MSG_Menus_Battle_CantSwitch,
     [BTL_MSG_CANT_MOVE_UNUSED]      MSG_Menus_Battle_CantMove,
     [BTL_MSG_CANT_SELECT_NOW_ALT]   MSG_Menus_Battle_CantSelectNow,
+
+    [BTL_MSG_NEXT_WAVE] MSG_Menus_Battle_NextWave,
+    [BTL_MSG_WAVE_BATTLE] MSG_Menus_Battle_WaveBattle,
 };
 
 s32 bActorMessages[] = {
@@ -669,6 +672,8 @@ void btl_update_message_popup(void* data) {
         case BTL_MSG_CANT_SWITCH_UNUSED:
         case BTL_MSG_CANT_MOVE_UNUSED:
         case BTL_MSG_CANT_SELECT_NOW_ALT:
+        case BTL_MSG_NEXT_WAVE:
+        case BTL_MSG_WAVE_BATTLE:
             switch (popup->showMsgState) {
                 default:
                     break;
@@ -1264,6 +1269,8 @@ void btl_message_popup_draw_content(void* data, s32 x, s32 y) {
         case BTL_MSG_HEAL_ALL:
         case BTL_MSG_ENEMY_TRANSPARENT:
         case BTL_MSG_ENEMY_CHARGED:
+        case BTL_MSG_NEXT_WAVE:
+        case BTL_MSG_WAVE_BATTLE:
             messageID = BattleMessages[popup->messageIndex];
             msgLinesIdx = get_msg_lines(messageID) - 1;
             y += BattleMessage_TextOffsetsY[msgLinesIdx];
@@ -1549,6 +1556,8 @@ void btl_show_message_popup(void* data) {
         case BTL_MSG_HEAL_ALL:
         case BTL_MSG_ENEMY_TRANSPARENT:
         case BTL_MSG_ENEMY_CHARGED:
+        case BTL_MSG_NEXT_WAVE:
+        case BTL_MSG_WAVE_BATTLE:
             if (popup->needsInit) {
                 s32 messageID;
 

@@ -2269,6 +2269,7 @@
     tattleCamOffset: [ 0, 0, 0 ]
     shadowOffset: 0
 - SlotMachineStart:
+    ignoreDuringCount: TRUE
     level: 99
     nameMsg: MSG_EnemyName_SlotMachineStart
     tattleMsg: MSG_EnemyTattle_SlotMachineStart
@@ -2355,4 +2356,27 @@
     hurtSound: SOUND_ACTOR_HURT
     stepDelay: [ 30, 30 ]
     tattleCamOffset: [ 0, 5, 0 ]
+    shadowOffset: 0
+- FireBros:
+    level: 3
+    nameMsg: MSG_EnemyName_FireBros
+    tattleMsg: MSG_EnemyTattle_FireBros
+    walkSound: [ SOUND_ACTOR_STEP_A, SOUND_ACTOR_STEP_B ]
+    flySound: [ SOUND_ACTOR_STEP_A, SOUND_ACTOR_STEP_B ]
+    jumpSound: SOUND_ACTOR_JUMP
+    hurtSound: SOUND_ACTOR_HURT
+    stepDelay: [ 30, 30 ]
+    tattleCamOffset: [ 0, 2, 0 ]
+    shadowOffset: 0
+- Controller:
+    ignoreDuringCount: TRUE
+    level: 0
+    nameMsg: MSG_EnemyName_SlotMachineStart
+    tattleMsg: MSG_EnemyTattle_SlotMachineStart
+    walkSound: [ SOUND_ACTOR_STEP_A, SOUND_ACTOR_STEP_B ]
+    flySound: [ SOUND_ACTOR_STEP_A, SOUND_ACTOR_STEP_B ]
+    jumpSound: SOUND_ACTOR_JUMP
+    hurtSound: SOUND_ACTOR_HURT
+    stepDelay: [ 30, 30 ]
+    tattleCamOffset: [ 0, 226, 0 ]
     shadowOffset: 0
