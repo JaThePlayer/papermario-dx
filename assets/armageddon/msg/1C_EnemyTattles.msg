@@ -2947,3 +2947,21 @@
 	HP, unlike normal Fuzzies.[BR]
 	[Wait][End]
 }
+
+#message:1C:(EnemyTattle_FireBros) {
+	[Style right]
+	These are the Fire Bros.[BR]
+	[Wait][Next]
+	They throw fireballs, which'll[BR]
+	burn you if not guarded![BR]
+	[Wait][Next]
+	Not only that, but they also[BR]
+	seem to have a synergy with[BR]
+	the local Bob-ombs...[BR]
+	[Wait][Next]
+	We should definitely be weary[BR]
+	of Bob-ombs getting ignited[BR]
+	earlier than anticipated with[BR]
+	these guys around![BR]
+	[Wait][End]
+}

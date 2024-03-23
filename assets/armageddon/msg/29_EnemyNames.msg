@@ -529,3 +529,7 @@
 #message:29:(EnemyName_FlowerFuzzy) {
 	Flower Fuzzy[End]
 }
+
+#message:29:(EnemyName_FireBros) {
+	Fire Bros.[End]
+}

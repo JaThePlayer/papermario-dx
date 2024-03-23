@@ -6111,6 +6111,7 @@ segments:
     - [auto, c, actor/bob_omb]
     - [auto, c, actor/koopa_troopa]
     - [auto, c, actor/paratroopa]
+    - [auto, c, actor/fire_bros]
     - [auto, c, stage/trd_01]
     - [auto, c, stage/trd_02]
     - [auto, c, stage/trd_02b]
