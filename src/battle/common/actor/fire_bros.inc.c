@@ -22,7 +22,7 @@ enum N(ActorVars) {
 };
 
 enum N(ActorParams) {
-    DMG_FIRE_THROW    = 1, // + fire
+    DMG_FIRE_THROW    = 2, // + fire
 };
 
 s32 N(DefaultAnims)[] = {
@@ -276,7 +276,7 @@ EvtScript N(fireThrowAtMario) = {
         Call(SetPartPos, ACTOR_SELF, PRT_FIREBALL, 0, 50, 0)
         Call(SetPartFlagBits, ACTOR_SELF, PRT_FIREBALL, ACTOR_PART_FLAG_INVISIBLE, FALSE)
         Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_FireBros_Anim0C)
-        Goto(100)
+        Goto(5)
     EndIf
     ChildThread
         Set(LVar0, 0)
@@ -295,7 +295,7 @@ EvtScript N(fireThrowAtMario) = {
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_FireBros_Anim0C)
     Wait(8)
     Call(SetPartFlagBits, ACTOR_SELF, PRT_FIREBALL, ACTOR_PART_FLAG_INVISIBLE, FALSE)
-    Label(100)
+    Label(5)
     Thread
         Wait(15)
         Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_FireBros_Anim02)
@@ -400,7 +400,7 @@ EvtScript N(fireThrowAtBomb) = {
         Call(SetPartPos, ACTOR_SELF, PRT_FIREBALL, 0, 50, 0)
         Call(SetPartFlagBits, ACTOR_SELF, PRT_FIREBALL, ACTOR_PART_FLAG_INVISIBLE, FALSE)
         Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_FireBros_Anim0C)
-        Goto(100)
+        Goto(5)
     EndIf
 
     Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
@@ -411,7 +411,7 @@ EvtScript N(fireThrowAtBomb) = {
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_FireBros_Anim0C)
     Wait(8)
     Call(SetPartFlagBits, ACTOR_SELF, PRT_FIREBALL, ACTOR_PART_FLAG_INVISIBLE, FALSE)
-    Label(100)
+    Label(5)
     Thread
         Wait(15)
         Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_FireBros_Anim02)
@@ -434,9 +434,10 @@ EvtScript N(fireThrowAtBomb) = {
 
     Call(SetPartFlagBits, ACTOR_SELF, PRT_FIREBALL, ACTOR_PART_FLAG_INVISIBLE, TRUE)
     Exec(N(bobombIgnite))
+    Wait(4)
 
-    Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    //Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
+    //Call(UseIdleAnimation, ACTOR_SELF, TRUE)
     Return
     End
 };
@@ -471,7 +472,7 @@ API_CALLABLE(N(FindBestBobomb)) {
             continue;
 
         s32 turnCount = targetActor->state.varTable[0/*AVAR_TurnsUntilIgnition*/];
-        if (turnCount > highestTurnCount) {
+        if (turnCount >= highestTurnCount) {
             highestTurnCount = turnCount;
             bestI = i;
         }
@@ -487,10 +488,11 @@ API_CALLABLE(N(FindBestBobomb)) {
 }
 
 EvtScript N(EVS_TakeTurn) = {
+    STANDARD_ITEM_USE_AI()
+
     Call(N(FindBestBobomb), ACTOR_SELF, BobombId)
     IfNe(BobombId, FALSE)
         ExecWait(N(fireThrowAtBomb))
-        Return
     EndIf
 
     ExecWait(N(fireThrowAtMario))

@@ -35,7 +35,7 @@ enum N(ActorPartIDs) {
 };
 
 enum N(ActorVars) {
-    AVAR_AerialFlip     = 0, // TRUE if current hit should trigger a flip event when KnockDown is done
+    AVAR_AerialFlip     = 7, // TRUE if current hit should trigger a flip event when KnockDown is done
     AVAR_IsFlipped      = 8,
     AVAR_FlippedTurns   = 9,
 };

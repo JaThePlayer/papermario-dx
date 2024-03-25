@@ -1073,3 +1073,7 @@
 #message:26:(ItemName_StarPiece) {
 	Star Piece[End]
 }
+
+#message:26:(ItemName_ChillJump) {
+	Chill Stomp[End]
+}

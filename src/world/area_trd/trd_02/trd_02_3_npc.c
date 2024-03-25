@@ -77,7 +77,7 @@ NpcData N(NpcData_KoopaTroopa) = {
 
 NpcGroupList N(DefaultNPCs) = {
     NPC_GROUP(N(NpcData_Bobomb_01), BTL_TRD_1_FORMATION_10, BTL_TRD_1_STAGE_09),
-    NPC_GROUP(N(NpcData_Bobomb_02), BTL_TRD_1_FORMATION_10, BTL_TRD_1_STAGE_09),
+    NPC_GROUP(N(NpcData_Bobomb_02), BTL_TRD_1_FORMATION_0F, BTL_TRD_1_STAGE_09),
     NPC_GROUP(N(NpcData_KoopaTroopa), BTL_TRD_1_FORMATION_07, BTL_TRD_1_STAGE_0C),
     {}
 };

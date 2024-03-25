@@ -11,10 +11,6 @@ extern EvtScript N(EVS_Idle);
 extern EvtScript N(EVS_TakeTurn);
 extern EvtScript N(EVS_HandleEvent);
 
-enum N(ActorPartIDs) {
-    PRT_MAIN        = 1,
-};
-
 enum N(ActorVars) {
     AVAR_Formation = 0, // Should be set by formations!
     AVAR_FormationCount = 1, // Should be set by formations, should be equal to ARRAY_COUNT(AVAR_Formation)
@@ -55,7 +51,7 @@ s32 N(StatusTable)[] = {
 ActorPartBlueprint N(ActorParts)[] = {
     {
         .flags = ACTOR_PART_FLAG_NO_TARGET,
-        .index = PRT_MAIN,
+        .index = 1,
         .posOffset = { 0, 0, 0 },
         .targetOffset = { 0, 20 },
         .opacity = 255,

@@ -146,12 +146,18 @@
 }
 
 #message:28:(PartnerDesc_Bombette_Battle_BodySlam) {
-	Body Slam an enemy.[End]
+	Body Slam the front enemy.[BR]
+	ATK: 3 / 4 / 5[End]
 }
 
 #message:28:(PartnerDesc_Bombette_Battle_Bomb) {
-	Explode and destroy an enemy[BR]
-	on the ground.[End]
+	Explode a ground enemy, dealing[BR]
+	high damage and inflicting Burn.[BR]
+	ATK: 4 / 5 / 6[BR]
+	[BR]
+	Burn Turns: 2 / 3 / 3[BR]
+	Burn Damage: 1 / 1 / 2[BR]
+	[End]
 }
 
 #message:28:(PartnerDesc_Bombette_Battle_PowerBomb) {

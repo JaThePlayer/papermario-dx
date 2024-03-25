@@ -623,6 +623,6 @@ NpcData N(NpcData_Inmates)[] = {
 NpcGroupList N(NpcGroup_Prisoners) = {
     NPC_GROUP(N(NpcData_Bombette)),
     NPC_GROUP(N(NpcData_Inmates)),
-    NPC_GROUP(N(NpcData_Jailers), BTL_TRD_1_FORMATION_04, BTL_TRD_1_STAGE_0B),
+    NPC_GROUP(N(NpcData_Jailers), BTL_TRD_1_FORMATION_06, BTL_TRD_1_STAGE_0B),
     {}
 };

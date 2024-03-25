@@ -28,7 +28,7 @@ enum N(ActorVars) {
 };
 
 s32 N(DefenseTable)[] = {
-    ELEMENT_NORMAL,   1,
+    ELEMENT_NORMAL,   2,
     ELEMENT_END,
 };
 
@@ -88,7 +88,7 @@ ActorBlueprint NAMESPACE = {
     .flags = 0,
     .type = ACTOR_TYPE_BILL_BLASTER,
     .level = ACTOR_LEVEL_BILL_BLASTER,
-    .maxHP = 4,
+    .maxHP = 6,
     .partCount = ARRAY_COUNT(N(ActorParts)),
     .partsData = N(ActorParts),
     .initScript = &N(EVS_Init),
@@ -105,7 +105,7 @@ ActorBlueprint NAMESPACE = {
     .healthBarOffset = { 8, 0 },
     .statusIconOffset = { -24, 20 },
     .statusTextOffset = { 5, 25 },
-    .spPool = CURRENT_SP_POOL,
+    .spPool = SP_POOL_NONE,
 };
 
 s32 N(DefaultAnims)[] = {

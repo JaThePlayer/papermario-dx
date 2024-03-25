@@ -761,7 +761,8 @@
 }
 
 #message:1D:(Menus_Action_ChangePartner) {
-	You'll change your party member![End]
+	Change your party member! No turn[BR]
+	cost before the first action.[End]
 }
 
 #message:1D:(Menus_Action_DoNothing) {

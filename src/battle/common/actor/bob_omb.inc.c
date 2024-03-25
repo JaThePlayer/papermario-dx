@@ -140,7 +140,7 @@ ActorBlueprint NAMESPACE = {
     .flags = 0,
     .type = ACTOR_TYPE_BOB_OMB,
     .level = ACTOR_LEVEL_BOB_OMB,
-    .maxHP = 3,
+    .maxHP = 5,
     .partCount = ARRAY_COUNT(N(ActorParts)),
     .partsData = N(ActorParts),
     .initScript = &N(EVS_Init),
@@ -297,10 +297,6 @@ EvtScript N(EVS_HandleEvent) = {
                 SetConst(LVar0, PRT_MAIN)
                 SetConst(LVar1, ANIM_Bobomb_Hurt)
                 ExecWait(EVS_Enemy_Hit)
-                Call(GetLastDamage, ACTOR_SELF, LVar0)
-                IfNe(LVar0, 0)
-                    ExecWait(N(EVS_Ignite))
-                EndIf
             EndIf
         CaseOrEq(EVENT_BURN_HIT)
         CaseOrEq(EVENT_BURN_DEATH)
@@ -319,10 +315,6 @@ EvtScript N(EVS_HandleEvent) = {
             SetConst(LVar0, PRT_MAIN)
             SetConst(LVar1, ANIM_Bobomb_Hurt)
             ExecWait(EVS_Enemy_SpinSmashHit)
-            Call(GetLastDamage, ACTOR_SELF, LVar0)
-            IfNe(LVar0, 0)
-                ExecWait(N(EVS_Ignite))
-            EndIf
         CaseEq(EVENT_SPIN_SMASH_DEATH)
             SetConst(LVar0, PRT_MAIN)
             SetConst(LVar1, ANIM_Bobomb_Hurt)
@@ -348,10 +340,6 @@ EvtScript N(EVS_HandleEvent) = {
             SetConst(LVar0, PRT_MAIN)
             SetConst(LVar1, ANIM_Bobomb_Idle)
             ExecWait(EVS_Enemy_NoDamageHit)
-            Call(GetActorVar, ACTOR_SELF, AVAR_HitDuringCombo, LVar0)
-            IfEq(LVar0, TRUE)
-                ExecWait(N(EVS_Ignite))
-            EndIf
         EndCaseGroup
         CaseEq(EVENT_DEATH)
             Call(GetLastElement, LVarE)
@@ -733,12 +721,14 @@ EvtScript N(EVS_TakeTurn) = {
         Return
     EndIf
 
+    STANDARD_ITEM_USE_AI_GOTO(10)
+
     ExecWait(N(EVS_Attack_Tackle))
 
+    Label(10)
     Call(GetActorVar, ACTOR_SELF, AVAR_TurnsUntilIgnition, LVar0)
     Sub(LVar0, 1)
     Call(SetActorVar, ACTOR_SELF, AVAR_TurnsUntilIgnition, LVar0)
-
     ExecWait(N(timer_events))
 
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)

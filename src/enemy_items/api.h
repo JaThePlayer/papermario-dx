@@ -96,13 +96,23 @@ extern EvtScript EnemyItems_TryUseHeldItem_WithAI;
 // applies effects for Armageddon items
 extern API_CALLABLE(ApplyCustomItemEffects);
 
-// Handles calling the default item use AI, and returns from the Evt if an item was used
+/// Handles calling the default item use AI, and returns from the Evt if an item was used
 #define STANDARD_ITEM_USE_AI() \
     Call(GetBattlePhase, LVar0) \
     IfNe(LVar0, PHASE_FIRST_STRIKE) \
         ExecWait(EnemyItems_TryUseHeldItem_WithAI) \
         IfNe(LVar0, 0) \
             Return \
+        EndIf \
+    EndIf
+
+/// Handles calling the default item use AI, and goto's to the given label
+#define STANDARD_ITEM_USE_AI_GOTO(labelId) \
+    Call(GetBattlePhase, LVar0) \
+    IfNe(LVar0, PHASE_FIRST_STRIKE) \
+        ExecWait(EnemyItems_TryUseHeldItem_WithAI) \
+        IfNe(LVar0, 0) \
+            Goto(labelId) \
         EndIf \
     EndIf
 

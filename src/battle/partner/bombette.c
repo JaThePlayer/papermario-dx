@@ -5,6 +5,7 @@
 #include "sprite/npc/BattleBombette.h"
 #include "battle/action_cmd/bomb.h"
 #include "battle/action_cmd/body_slam.h"
+#include "misc_patches/custom_status.h"
 
 #define NAMESPACE battle_partner_bombette
 
@@ -122,8 +123,28 @@ API_CALLABLE(N(GetBombDamage)) {
     s32 mashResult = evt_get_variable(script, *args++);
     s32 damage = 0;
 
+    u8 burnTurns = 0;
+    u8 burnPotency = 1;
+
     switch (partnerActor->actorBlueprint->level) {
         case PARTNER_RANK_NORMAL:
+            burnTurns = 2;
+
+            if (mashResult <= 35) {
+                damage = 1;
+            } else if (mashResult <= 60) {
+                damage = 2;
+            } else if (mashResult <= 80) {
+                damage = 3;
+            } else if (mashResult <= 99) {
+                damage = 3;
+            } else {
+                damage = 4;
+            }
+            break;
+        case PARTNER_RANK_SUPER:
+            burnTurns = 3;
+
             if (mashResult <= 35) {
                 damage = 1;
             } else if (mashResult <= 60) {
@@ -136,7 +157,10 @@ API_CALLABLE(N(GetBombDamage)) {
                 damage = 5;
             }
             break;
-        case PARTNER_RANK_SUPER:
+        case PARTNER_RANK_ULTRA:
+            burnTurns = 3;
+            burnPotency = 2;
+
             if (mashResult <= 35) {
                 damage = 1;
             } else if (mashResult <= 60) {
@@ -149,19 +173,6 @@ API_CALLABLE(N(GetBombDamage)) {
                 damage = 6;
             }
             break;
-        case PARTNER_RANK_ULTRA:
-            if (mashResult <= 35) {
-                damage = 1;
-            } else if (mashResult <= 60) {
-                damage = 3;
-            } else if (mashResult <= 80) {
-                damage = 5;
-            } else if (mashResult <= 99) {
-                damage = 6;
-            } else {
-                damage = 7;
-            }
-            break;
     }
 
     if (mashResult > 99) {
@@ -171,6 +182,7 @@ API_CALLABLE(N(GetBombDamage)) {
     }
 
     script->varTable[15] = damage;
+    set_next_attack_custom_status(BURN_STATUS, burnTurns, burnPotency, 100);
 
     return ApiStatus_DONE2;
 }
@@ -973,10 +985,10 @@ EvtScript N(EVS_Attack_BodySlam) = {
     Switch(LVar2)
         CaseEq(MOVE_BODY_SLAM1)
             Set(LVarE, 1)
-            Set(LVarF, 2)
+            Set(LVarF, 3)
         CaseEq(MOVE_BODY_SLAM2)
             Set(LVarE, 2)
-            Set(LVarF, 3)
+            Set(LVarF, 4)
         CaseEq(MOVE_BODY_SLAM3)
             Set(LVarE, 3)
             Set(LVarF, 5)
@@ -1389,14 +1401,7 @@ EvtScript N(EVS_Attack_FirstStrike) = {
     EndIf
     Set(LVarF, 1)
     Call(GetMenuSelection, LVar0, LVar1, LVar2)
-    Switch(LVar2)
-        CaseEq(MOVE_BODY_SLAM1)
-            Set(LVarF, 5)
-        CaseEq(MOVE_BODY_SLAM2)
-            Set(LVarF, 6)
-        CaseEq(MOVE_BODY_SLAM3)
-            Set(LVarF, 7)
-    EndSwitch
+    Call(N(GetBombDamage), 100)
     Call(PartnerDamageEnemy, LVar0, DAMAGE_TYPE_BLAST | DAMAGE_TYPE_NO_CONTACT, 0, 0, LVarF, BS_FLAGS1_TRIGGER_EVENTS | BS_FLAGS1_INCLUDE_POWER_UPS)
     Label(10)
     Set(LVar0, 0)

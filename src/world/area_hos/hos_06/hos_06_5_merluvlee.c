@@ -31,7 +31,7 @@ BadgeHint N(BadgeHintData)[] = {
     { MSG_MerluvleeHint_Multibounce,      ITEM_MULTIBOUNCE,    STORY_CH1_DEFEATED_JR_TROOPA },
     { MSG_MerluvleeHint_SleepStomp,       ITEM_SLEEP_STOMP,    STORY_CH2_STAR_SPRIT_DEPARTED },
     { MSG_MerluvleeHint_DDownJump,        ITEM_D_DOWN_JUMP,    STORY_CH3_SAW_TUBBA_EAT_BOO },
-    { MSG_MerluvleeHint_PowerBounce,      ITEM_POWER_BOUNCE,   STORY_CH1_SPOTTED_BY_KOOPA_BROS },
+    { MSG_MerluvleeHint_PowerBounce,      ITEM_CHILL_JUMP,   STORY_CH1_SPOTTED_BY_KOOPA_BROS },
     { MSG_MerluvleeHint_DizzyStomp,       ITEM_DIZZY_STOMP,    STORY_CH5_ENTERED_MT_LAVA_LAVA },
     { MSG_MerluvleeHint_MegaJump,         ITEM_MEGA_JUMP,      STORY_CH7_MAYOR_MURDER_MYSTERY },
     { MSG_MerluvleeHint_PowerSmash,       ITEM_POWER_SMASH,    STORY_CH2_GOT_SUPER_HAMMER },

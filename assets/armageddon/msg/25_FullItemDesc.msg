@@ -453,7 +453,7 @@
 
 #message:25:(ItemFullDesc_PowerJump) {
 	Lets you do a Power Jump.[BR]
-	Uses 2 FP.[BR]
+	Uses 2 FP for +2 ATK.[BR]
 	Mario stomps on a single enemy[BR]
 	using a lot of attack power.[End]
 }
@@ -1465,4 +1465,9 @@
 #message:25:(ItemFullDesc_KootRedJar) {
 	A jar at Little Mouser's Shop.[BR]
 	A collector's item, perhaps?[End]
+}
+
+#message:25:(ItemFullDesc_ChillJump) {
+	Lets you do a Chill Stomp. Drops[BR]
+	enemy ATK by 1 for 3 turns. 3 FP.[End]
 }

@@ -23,7 +23,7 @@ enum N(ActorVars) {
 };
 
 enum N(ActorParams) {
-    DMG_IMPACT      = 2,
+    DMG_IMPACT      = 4,
 };
 
 s32 N(DefenseTable)[] = {
@@ -74,7 +74,7 @@ ActorPartBlueprint N(ActorParts)[] = {
 ActorBlueprint NAMESPACE = {
     .flags = ACTOR_FLAG_FLYING,
     .type = ACTOR_TYPE_BULLET_BILL,
-    .level = ACTOR_LEVEL_BULLET_BILL,
+    .level = 0,
     .maxHP = 2,
     .partCount = ARRAY_COUNT(N(ActorParts)),
     .partsData = N(ActorParts),
@@ -127,6 +127,13 @@ EvtScript N(EVS_Init) = {
         EndIf
         Add(LVar1, LVar5)
         Add(LVar2, LVar6)
+
+        // New: ~33% to float
+        Call(RandInt, 100, LVarA)
+        IfGe(LVarA, 67)
+            Add(LVar2, 30)
+        EndIf
+
         Call(SetActorPos, ACTOR_SELF, LVar1, LVar2, LVar3)
         Call(CopyStatusEffects, LVar0, ACTOR_SELF)
         Call(CopyBuffs, LVar0, ACTOR_SELF)
@@ -259,10 +266,7 @@ EvtScript N(EVS_TakeTurn) = {
         CaseOrEq(HIT_RESULT_MISS)
         CaseOrEq(HIT_RESULT_LUCKY)
             Set(LVarA, LVar0)
-            Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Set(LVar3, LVar1)
             Call(GetActorPos, ACTOR_PLAYER, LVar0, LVar1, LVar2)
-            Set(LVar1, LVar3)
             Sub(LVar0, 90)
             Call(SetActorJumpGravity, ACTOR_SELF, Float(0.01))
             Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
@@ -278,11 +282,9 @@ EvtScript N(EVS_TakeTurn) = {
             Return
         EndCaseGroup
     EndSwitch
-    Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-    Set(LVar3, LVar1)
     Call(GetActorPos, ACTOR_PLAYER, LVar0, LVar1, LVar2)
-    Set(LVar1, LVar3)
     Add(LVar0, 10)
+    Add(LVar1, 10)
     Call(SetActorJumpGravity, ACTOR_SELF, Float(0.01))
     Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
     Call(JumpToGoal, ACTOR_SELF, 12, FALSE, TRUE, FALSE)

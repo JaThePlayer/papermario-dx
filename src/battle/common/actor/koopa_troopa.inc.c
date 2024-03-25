@@ -18,9 +18,10 @@ enum N(ActorPartIDs) {
 };
 
 enum N(ActorVars) {
-    AVAR_IsFlipped     = 8,
-    AVAR_FlippedTurns  = 9,
-    AVAR_IsInShell     = 10,
+    AVAR_InShellAtStart = 0, // Go into shell at the start of battle, set by formations
+    AVAR_IsFlipped      = 8,
+    AVAR_FlippedTurns   = 9,
+    AVAR_IsInShell      = 10,
 };
 
 enum N(ActorParams) {
@@ -164,10 +165,28 @@ s32 N(InShellAnims)[] = {
     STATUS_END,
 };
 
+extern EvtScript N(EVS_GoIntoShell);
+
+EvtScript N(EVS_HandlePhase) = {
+    // Start of battle popup
+    Call(GetBattlePhase, LVar0)
+    Switch(LVar0)
+        CaseEq(PHASE_PLAYER_BEGIN)
+            Call(GetActorVar, ACTOR_SELF, AVAR_InShellAtStart, LVar0)
+            IfEq(LVar0, TRUE)
+                Call(SetActorVar, ACTOR_SELF, AVAR_InShellAtStart, FALSE)
+                ExecWait(N(EVS_GoIntoShell))
+            EndIf
+    EndSwitch
+    Return
+    End
+};
+
 EvtScript N(EVS_Init) = {
     Call(BindTakeTurn, ACTOR_SELF, Ref(N(EVS_TakeTurn)))
     Call(BindIdle, ACTOR_SELF, Ref(N(EVS_Idle)))
     Call(BindHandleEvent, ACTOR_SELF, Ref(N(EVS_HandleEvent)))
+    Call(BindHandlePhase, ACTOR_SELF, Ref(N(EVS_HandlePhase)))
     Call(SetActorVar, ACTOR_SELF, AVAR_IsFlipped, FALSE)
     Call(SetActorVar, ACTOR_SELF, AVAR_IsInShell, FALSE)
     Return
@@ -1041,7 +1060,7 @@ API_CALLABLE(N(FindBestBobomb)) {
 
 
         s32 turnCount = targetActor->state.varTable[0/*AVAR_TurnsUntilIgnition*/];
-        if (turnCount > highestTurnCount) {
+        if (turnCount >= highestTurnCount) {
             highestTurnCount = turnCount;
             bestI = i;
         }
@@ -1080,10 +1099,10 @@ EvtScript N(EVS_TakeTurn) = {
         Return
     EndIf
 
-    // Not flipped at the start of turn, go into shell now, or use an item
-    STANDARD_ITEM_USE_AI()
-
+    // Not flipped at the start of turn - shell shot or item, then go into shell
+    STANDARD_ITEM_USE_AI_GOTO(5)
     ExecWait(N(EVS_ShellShot))
+    Label(5)
     ExecWait(N(EVS_GoIntoShell))
 
     Return
