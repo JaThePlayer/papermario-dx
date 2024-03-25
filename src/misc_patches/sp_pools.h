@@ -57,6 +57,9 @@ extern u8 sp_pool_caps[SP_POOL_COUNT];
 // Whether the given pool id actually corresponds to a pool
 u8 sp_pool_is_pooled(u8 id);
 
+/// Returns the cap of the given pool
+u8 sp_pool_cap(u8 id);
+
 // returns how much sp has been used from the given pool.
 u8 sp_pool_used(u8 id);
 

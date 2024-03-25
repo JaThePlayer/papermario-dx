@@ -45,6 +45,7 @@ enum DebugMenuStates {
     DBM_EDIT_MEMORY,
     DBM_VIEW_COLLISION,
     DBM_CHEAT_MENU,
+    DBM_SP_POOLS,
 };
 
 s32 DebugMenuState = DBM_NONE;
@@ -429,6 +430,7 @@ DebugMenuEntry DebugMainMenu[] = {
 //  { "Edit Memory",    NULL, DBM_EDIT_MEMORY },
     { "View Collision", NULL, DBM_VIEW_COLLISION },
     { "Cheats",         NULL, DBM_CHEAT_MENU },
+    { "SP Pools",       NULL, DBM_SP_POOLS },
 };
 s32 MainMenuPos = 0;
 
@@ -537,6 +539,9 @@ void dx_debug_menu_main() {
                 break;
             case DBM_CHEAT_MENU:
                 dx_debug_update_cheat_menu();
+                break;
+            case DBM_SP_POOLS:
+                armageddon_debug_sp_pools();
                 break;
         }
     }
@@ -2147,3 +2152,35 @@ void dx_debug_console_main() {
 }
 
 #endif
+
+/// Armageddon-specific displays
+
+// SP Pools
+
+#include "misc_patches/sp_pools.h"
+
+s32 spPoolsPos = 0;
+void armageddon_debug_sp_pools(void) {
+    s32 idx;
+    s32 val, dx;
+
+    if (RELEASED(BUTTON_L)) {
+        DebugMenuState = DBM_MAIN_MENU;
+    } else if (RELEASED(BUTTON_R)) {
+        sfx_play_sound(SOUND_MENU_BADGE_EQUIP);
+    }
+
+    spPoolsPos = dx_debug_menu_nav_1D_vertical(spPoolsPos, 0, ARRAY_COUNT(sp_pool_caps) - 1, FALSE);
+
+    // draw
+    dx_debug_draw_box(SubBoxPosX, SubBoxPosY + RowHeight, 95, 5 * RowHeight + 8, WINDOW_STYLE_20, 192);
+
+    for (idx = 1; idx < ARRAY_COUNT(sp_pool_caps) - 1; idx++) {
+        s32 color = (spPoolsPos == idx - 1) ? HighlightColor : DefaultColor;
+
+        dx_debug_draw_number(idx, "%2d:", color, 255, SubmenuPosX, SubmenuPosY + (idx - spPoolsPos) * RowHeight);
+
+        dx_debug_draw_number(sp_pool_used(idx), "%2d", color, 255, SubmenuPosX + 24, SubmenuPosY + (idx - spPoolsPos) * RowHeight);
+        dx_debug_draw_number(sp_pool_cap(idx), "%2d", color, 255, SubmenuPosX + 48, SubmenuPosY + (idx - spPoolsPos) * RowHeight);
+    }
+}

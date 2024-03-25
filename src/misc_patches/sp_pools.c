@@ -2,8 +2,9 @@
 #include "common.h"
 
 u8 sp_pool_caps[SP_POOL_COUNT] = {
-    60, // SP_POOL_PROLOGUE
-    125, // SP_POOL_PLEASANT_PATH
+    [SP_POOL_PROLOGUE] = 60,
+    [SP_POOL_PLEASANT_PATH] = 125,
+    [SP_POOL_KOOPA_BROS_FORT] = 90,
 };
 
 // stores how much sp was taken from each pool in the current battle
@@ -26,14 +27,23 @@ u8 sp_pool_used(u8 id) {
     return gPlayerData.spAreaPools[INDEX_POOL(id)];
 }
 
-// returns how much sp is left in a given pool
-u8 sp_pool_remaining(u8 id) {
-    u8 remaining;
+/// Returns the cap of the given pool
+u8 sp_pool_cap(u8 id) {
     if (id == SP_POOL_NONE) {
         return 0;
     }
 
-    remaining = sp_pool_caps[INDEX_POOL(id)] - sp_pool_used(id);
+    return sp_pool_caps[id];
+}
+
+// returns how much sp is left in a given pool
+u8 sp_pool_remaining(u8 id) {
+    s8 remaining;
+    if (id == SP_POOL_NONE) {
+        return 0;
+    }
+
+    remaining = sp_pool_cap(id) - sp_pool_used(id);
     if (remaining < 0)
         remaining = 0;
 
