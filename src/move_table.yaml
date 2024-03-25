@@ -27,7 +27,7 @@
     costBP: 0
 - Hammer1:
     nameMsg: MSG_Menus_Hammer
-    fullDescMsg: MSG_NONE
+    fullDescMsg: MSG_ItemShortDesc_Hammer
     shortDescMsg: MSG_ItemShortDesc_Hammer
     flags: [ TARGET_FLAG_SELECT_ONE, TARGET_FLAG_GROUND, TARGET_FLAG_SMASH_LIKE, TARGET_FLAG_NOT_BEHIND, TARGET_FLAG_ALLOW_TARGET_ONLY ]
     category: MOVE_TYPE_HAMMER
@@ -304,6 +304,15 @@
     actionTip: BTL_MSG_ACTION_TIP_PRESS_BEFORE_LANDING
     costFP: 2
     costBP: 1
+- ChillJump:
+    nameMsg: MSG_ItemName_ChillJump
+    fullDescMsg: MSG_ItemFullDesc_ChillJump
+    shortDescMsg: MSG_ItemFullDesc_ChillJump
+    flags: [ TARGET_FLAG_SELECT_ONE, TARGET_FLAG_80, TARGET_FLAG_JUMP_LIKE, TARGET_FLAG_NOT_BELOW, TARGET_FLAG_ALLOW_TARGET_ONLY, TARGET_FLAG_NO_CEILING ]
+    category: MOVE_TYPE_JUMP
+    actionTip: BTL_MSG_ACTION_TIP_PRESS_BEFORE_LANDING
+    costFP: 3
+    costBP: 2
 - DizzyStomp:
     nameMsg: MSG_PlayerMoveName_DizzyStomp
     fullDescMsg: MSG_ItemFullDesc_DizzyStomp
@@ -1233,7 +1242,7 @@
     costBP: 0
 - ShellToss1:
     nameMsg: MSG_PartnerMoveName_ShellToss1
-    fullDescMsg: MSG_PartnerDesc_Kooper_Pause_ShellToss1
+    fullDescMsg: MSG_PartnerDesc_Kooper_Battle_ShellToss
     shortDescMsg: MSG_PartnerDesc_Kooper_Battle_ShellToss
     flags: [ TARGET_FLAG_SELECT_ONE, TARGET_FLAG_GROUND, TARGET_FLAG_NOT_BEHIND, TARGET_FLAG_ALLOW_TARGET_ONLY ]
     category: MOVE_TYPE_PARTNER
@@ -1242,7 +1251,7 @@
     costBP: 0
 - ShellToss2:
     nameMsg: MSG_PartnerMoveName_ShellToss2
-    fullDescMsg: MSG_PartnerDesc_Kooper_Pause_ShellToss2
+    fullDescMsg: MSG_PartnerDesc_Kooper_Battle_ShellToss
     shortDescMsg: MSG_PartnerDesc_Kooper_Battle_ShellToss
     flags: [ TARGET_FLAG_SELECT_ONE, TARGET_FLAG_GROUND, TARGET_FLAG_NOT_BEHIND, TARGET_FLAG_ALLOW_TARGET_ONLY ]
     category: MOVE_TYPE_PARTNER
@@ -1251,7 +1260,7 @@
     costBP: 0
 - ShellToss3:
     nameMsg: MSG_PartnerMoveName_ShellToss3
-    fullDescMsg: MSG_PartnerDesc_Kooper_Pause_ShellToss3
+    fullDescMsg: MSG_PartnerDesc_Kooper_Battle_ShellToss
     shortDescMsg: MSG_PartnerDesc_Kooper_Battle_ShellToss
     flags: [ TARGET_FLAG_SELECT_ONE, TARGET_FLAG_GROUND, TARGET_FLAG_NOT_BEHIND, TARGET_FLAG_ALLOW_TARGET_ONLY ]
     category: MOVE_TYPE_PARTNER
@@ -1260,7 +1269,7 @@
     costBP: 0
 - PowerShell:
     nameMsg: MSG_PartnerMoveName_PowerShell
-    fullDescMsg: MSG_PartnerDesc_Kooper_Pause_PowerShell
+    fullDescMsg: MSG_PartnerDesc_Kooper_Battle_PowerShell
     shortDescMsg: MSG_PartnerDesc_Kooper_Battle_PowerShell
     flags: [ TARGET_FLAG_GROUND, TARGET_FLAG_PRIMARY_ONLY ]
     category: MOVE_TYPE_PARTNER
@@ -1287,7 +1296,7 @@
     costBP: 0
 - BodySlam1:
     nameMsg: MSG_PartnerMoveName_BodySlam1
-    fullDescMsg: MSG_PartnerDesc_Bombette_Pause_BodySlam1
+    fullDescMsg: MSG_PartnerDesc_Bombette_Battle_BodySlam
     shortDescMsg: MSG_PartnerDesc_Bombette_Battle_BodySlam
     flags: [ TARGET_FLAG_SELECT_ONE, TARGET_FLAG_GROUND, TARGET_FLAG_NOT_BEHIND, TARGET_FLAG_ALLOW_TARGET_ONLY ]
     category: MOVE_TYPE_PARTNER
@@ -1296,7 +1305,7 @@
     costBP: 0
 - BodySlam2:
     nameMsg: MSG_PartnerMoveName_BodySlam2
-    fullDescMsg: MSG_PartnerDesc_Bombette_Pause_BodySlam2
+    fullDescMsg: MSG_PartnerDesc_Bombette_Battle_BodySlam
     shortDescMsg: MSG_PartnerDesc_Bombette_Battle_BodySlam
     flags: [ TARGET_FLAG_SELECT_ONE, TARGET_FLAG_GROUND, TARGET_FLAG_NOT_BEHIND, TARGET_FLAG_ALLOW_TARGET_ONLY ]
     category: MOVE_TYPE_PARTNER
@@ -1305,7 +1314,7 @@
     costBP: 0
 - BodySlam3:
     nameMsg: MSG_PartnerMoveName_BodySlam3
-    fullDescMsg: MSG_PartnerDesc_Bombette_Pause_BodySlam3
+    fullDescMsg: MSG_PartnerDesc_Bombette_Battle_BodySlam
     shortDescMsg: MSG_PartnerDesc_Bombette_Battle_BodySlam
     flags: [ TARGET_FLAG_SELECT_ONE, TARGET_FLAG_GROUND, TARGET_FLAG_NOT_BEHIND, TARGET_FLAG_ALLOW_TARGET_ONLY ]
     category: MOVE_TYPE_PARTNER
@@ -1314,7 +1323,7 @@
     costBP: 0
 - Bomb:
     nameMsg: MSG_PartnerMoveName_Bomb
-    fullDescMsg: MSG_PartnerDesc_Bombette_Pause_Bomb
+    fullDescMsg: MSG_PartnerDesc_Bombette_Battle_Bomb
     shortDescMsg: MSG_PartnerDesc_Bombette_Battle_Bomb
     flags: [ TARGET_FLAG_SELECT_ONE, TARGET_FLAG_GROUND, TARGET_FLAG_NOT_BEHIND, TARGET_FLAG_ALLOW_TARGET_ONLY ]
     category: MOVE_TYPE_PARTNER
@@ -1323,7 +1332,7 @@
     costBP: 0
 - PowerBomb:
     nameMsg: MSG_PartnerMoveName_PowerBomb
-    fullDescMsg: MSG_PartnerDesc_Bombette_Pause_PowerBomb
+    fullDescMsg: MSG_PartnerDesc_Bombette_Battle_PowerBomb
     shortDescMsg: MSG_PartnerDesc_Bombette_Battle_PowerBomb
     flags: [ TARGET_FLAG_GROUND, TARGET_FLAG_PRIMARY_ONLY ]
     category: MOVE_TYPE_PARTNER
@@ -1332,7 +1341,7 @@
     costBP: 0
 - MegaBomb:
     nameMsg: MSG_PartnerMoveName_MegaBomb
-    fullDescMsg: MSG_PartnerDesc_Bombette_Pause_MegaBomb
+    fullDescMsg: MSG_PartnerDesc_Bombette_Battle_MegaBomb
     shortDescMsg: MSG_PartnerDesc_Bombette_Battle_MegaBomb
     flags: [ TARGET_FLAG_2, TARGET_FLAG_PRIMARY_ONLY ]
     category: MOVE_TYPE_PARTNER

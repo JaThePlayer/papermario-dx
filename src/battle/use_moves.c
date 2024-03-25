@@ -45,6 +45,7 @@ extern EvtScript battle_move_sleep_stomp_EVS_UseMove;
 extern EvtScript battle_move_dizzy_stomp_EVS_UseMove;
 extern EvtScript battle_move_shrink_stomp_EVS_UseMove;
 extern EvtScript battle_move_earthquake_jump_EVS_UseMove;
+extern EvtScript battle_move_chill_jump_EVS_UseMove;
 
 BattleMoveEntry gMoveScriptTable[] = {
     [MOVE_NONE]                 {},
@@ -96,6 +97,7 @@ BattleMoveEntry gMoveScriptTable[] = {
     [MOVE_D_DOWN_JUMP]          BTL_MOVE(d_down_jump, EVS_UseMove),
     [MOVE_SHRINK_STOMP]         BTL_MOVE(shrink_stomp, EVS_UseMove),
     [MOVE_EARTHQUAKE_JUMP]      BTL_MOVE(earthquake_jump, EVS_UseMove),
+    [MOVE_CHILL_JUMP]           BTL_MOVE(chill_jump, EVS_UseMove),
 };
 
 API_CALLABLE(LoadMoveScript) {

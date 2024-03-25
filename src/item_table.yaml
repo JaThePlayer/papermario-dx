@@ -1960,7 +1960,7 @@
     sellValue: 7
     sortValue: 0
     targetFlags: [ TARGET_FLAG_PLAYER ]
-    typeFlags: [ ITEM_TYPE_FLAG_BATTLE_USABLE, ITEM_TYPE_FLAG_CONSUMABLE, ITEM_TYPE_FLAG_FOOD_OR_DRINK, ITEM_TYPE_FLAG_ENTITY_FULLSIZE ]
+    typeFlags: [ ITEM_TYPE_FLAG_BATTLE_USABLE, ITEM_TYPE_FLAG_CONSUMABLE, ITEM_TYPE_FLAG_ENTITY_FULLSIZE ]
     moveID: MOVE_NONE
     potencyA: 4
     potencyB: 0
@@ -5138,5 +5138,19 @@
     targetFlags: [ TARGET_FLAG_PLAYER ]
     typeFlags: [ ITEM_TYPE_FLAG_ENTITY_FULLSIZE ]
     moveID: MOVE_NONE
+    potencyA: 0
+    potencyB: 0
+- ChillJump:
+    nameMsg: MSG_ItemName_ChillJump
+    fullDescMsg: MSG_ItemFullDesc_ChillJump
+    shortDescMsg: MSG_ItemFullDesc_ChillJump
+    icon: badge/EarthquakeJump
+    itemEntityTemplate: STANDARD
+    hudElementTemplate: ITEM
+    sellValue: 100
+    sortValue: 11
+    targetFlags: []
+    typeFlags: [ ITEM_TYPE_FLAG_BADGE, ITEM_TYPE_FLAG_ENTITY_FULLSIZE ]
+    moveID: MOVE_CHILL_JUMP
     potencyA: 0
     potencyB: 0
