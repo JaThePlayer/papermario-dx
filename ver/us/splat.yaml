@@ -7206,6 +7206,13 @@ segments:
     vram_class: battle_move
     subsegments:
     - [auto, c, sleep_stomp]
+  - name: battle_move_chill_jump
+    dir: battle/move/jump
+    type: code
+    start: auto
+    vram_class: battle_move
+    subsegments:
+    - [auto, c, chill_jump]
   - name: battle_move_dizzy_stomp
     dir: battle/move/jump
     type: code
