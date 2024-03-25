@@ -416,7 +416,11 @@ HitResult calc_enemy_damage_target(Actor* attacker) {
     }
 
     damage += custom_status_get_potency(attacker, ATK_UP_TEMP_STATUS);
+    damage += enemy_items_count_items_with_move_id(attacker, MOVE_POWER_PLUS);
+    damage += enemy_items_count_items_with_move_id(attacker, MOVE_P_UP_D_DOWN);
+
     damage -= custom_status_get_potency(attacker, ATK_DOWN_TEMP_STATUS);
+    damage -= enemy_items_count_items_with_move_id(attacker, MOVE_P_DOWN_D_UP);
 
     if (attacker->debuff == STATUS_KEY_SHRINK) {
         if (damage > 0) {
@@ -3495,6 +3499,14 @@ API_CALLABLE(CopyStatusEffects) {
     inflict_status(actorTo, actorFrom->stoneStatus, actorFrom->stoneDuration);
     inflict_status(actorTo, actorFrom->koStatus, actorFrom->koDuration);
     inflict_status(actorTo, actorFrom->transparentStatus, actorFrom->transparentDuration);
+
+    for (s32 i = 0; i < ARRAY_COUNT(actorFrom->customStatuses); i++)
+    {
+        StatusInfo* status = &actorFrom->customStatuses[i];
+        if (status->turns > 0) {
+            try_inflict_custom_status(actorTo, actorTo->curPos, i, status->turns, status->potency, 100);
+        }
+    }
 
     actorFrom->statusAfflicted = 0;
     actorTo->statusAfflicted = 0;

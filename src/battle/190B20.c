@@ -746,7 +746,7 @@ void btl_init_menu_boots(void) {
     // Standard jump move
     moveCount = 1;
     battleStatus->submenuMoves[0] = playerData->bootsLevel + MOVE_JUMP1;
-    battleStatus->submenuIcons[0] = ITEM_PARTNER_ATTACK;
+    battleStatus->submenuIcons[0] = playerData->bootsLevel + ITEM_BOOTS;
 
     // Jump badges
     do {
@@ -836,7 +836,7 @@ void btl_init_menu_hammer(void) {
     // Standard hammer move
     moveCount = 1;
     battleStatus->submenuMoves[0] = playerData->hammerLevel + MOVE_HAMMER1;
-    battleStatus->submenuIcons[0] = ITEM_PARTNER_ATTACK;
+    battleStatus->submenuIcons[0] = playerData->hammerLevel + ITEM_HAMMER;
 
     // Hammer badges
     do {
@@ -1985,6 +1985,7 @@ Actor* create_actor(Formation formation) {
     actor->hudElementDataIndex = create_status_icon_set();
     enemy_items_zero_initialize(actor);
     custom_status_zero_initialize(actor);
+
     if (formation->item != ITEM_NONE) {
         float ox, oy, oz;
         ox = formationActor->itemOffset.x;
@@ -2000,7 +2001,14 @@ Actor* create_actor(Formation formation) {
             oz = -4.f;
         }
 
-        enemy_items_add_item(actor, formation->item, ox, oy, oz);
+        if (formation->items != NULL) {
+            // formation->item is treated as ARRAY_COUNT(formation->items)
+            for (s32 i = 0; i < formation->item; i++) {
+                enemy_items_add_item(actor, formation->items[i], ox, oy, oz);
+            }
+        } else {
+            enemy_items_add_item(actor, formation->item, ox, oy, oz);
+        }
     }
 
     return actor;
@@ -2327,16 +2335,21 @@ s32 get_defense(Actor* actor, s32* defenseTable, s32 elementFlags) {
             minDefense = 0;
         }
     } else {
-        // factor in DEF-down and DEF-up statuses
+        // factor in DEF-up statuses
         minDefense += custom_status_get_potency(actor, DEF_UP_TEMP_STATUS);
         minDefense += custom_status_get_potency(actor, CLOSE_CALL_STATUS);
+        minDefense += enemy_items_count_items_with_move_id(actor, MOVE_DEFEND_PLUS);
+        minDefense += enemy_items_count_items_with_move_id(actor, MOVE_P_DOWN_D_UP);
 
-        // if there's any defense to pierce in the first place
+        // if there's any defense to pierce in the first place, apply def-down
         if (minDefense > 0) {
             minDefense -= custom_status_get_potency(actor, DEF_DOWN_TEMP_STATUS);
             minDefense = minDefense < 0 ? 0 : minDefense;
         }
     }
+
+    // things that allow negative DEF here:
+    minDefense -= enemy_items_count_items_with_move_id(actor, MOVE_P_UP_D_DOWN);
 
     return minDefense;
 }
