@@ -178,7 +178,7 @@ EffectInstance* stat_change_main(s32 arrowType, s32 amt, f32 x, f32 y, f32 z, f3
     part->unk_34 = 0;
 
     part->arrowType = arrowType; //D_E00AC880[arg0].type;
-    part->arrowValue = arrowType == ARROW_TYPE_ATK_DOWN ? -amt : amt; //D_E00AC880[arg0].value;
+    part->arrowValue = (arrowType == ARROW_TYPE_ATK_DOWN || arrowType == ARROW_TYPE_DEF_DOWN) ? -amt : amt; //D_E00AC880[arg0].value;
 
     return effect;
 }
