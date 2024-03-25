@@ -2570,8 +2570,7 @@ void btl_state_update_player_menu(void) {
                                 battleStatus->submenuIcons[entryIdx] = playerData->equippedBadges[i];
                                 battleStatus->submenuStatus[entryIdx] = 1;
 
-                                cost -= player_team_is_ability_active(playerActor, ABILITY_FLOWER_SAVER);
-                                cost -= 2 * player_team_is_ability_active(playerActor, ABILITY_FLOWER_FANATIC);
+                                cost += getFpCostChange(playerActor);
 
                                 if (playerData->curFP < cost) {
                                     battleStatus->submenuStatus[entryIdx] = 0;
