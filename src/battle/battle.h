@@ -170,6 +170,7 @@ typedef struct FormationRow {
     /* 0x14 */ s32 var2;
     /* 0x18 */ s32 var3;
     /* new  */ s16 item; // first held item
+    /* new  */ s16* items; // pointer to a list of items of length equal to 'item'.
 } FormationRow; // size = 0x1C * n
 
 typedef FormationRow Formation[];
