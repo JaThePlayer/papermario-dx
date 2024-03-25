@@ -1758,8 +1758,16 @@ s32 is_ability_active(s32 ability) {
         return 0;
     }
 
+    // First turn always has quick change
+    if (ability == ABILITY_QUICK_CHANGE && gBattleStatus.turnCounter == 1
+    && !(gBattleStatus.flags2 & BS_FLAGS2_PLAYER_TURN_USED)
+    && !(gBattleStatus.flags2 & BS_FLAGS2_PARTNER_TURN_USED))
+        return 1;
+
     for (i = 0; i < ARRAY_COUNT(playerData->equippedBadges); i++) {
         badgeItemID = playerData->equippedBadges[i];
+        if (badgeItemID == ITEM_NONE)
+            continue;
 
         if (badgeItemID != ITEM_NONE) {
             badgeMoveID = gItemTable[badgeItemID].moveID;

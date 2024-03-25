@@ -325,6 +325,7 @@ void btl_state_update_normal_start(void) {
             battleStatus->camMovementScript = script;
             battleStatus->camMovementScriptID = script->id;
             gBattleSubState = BTL_SUBSTATE_NORMAL_START_CREATE_ENEMIES;
+            battleStatus->turnCounter = 0;
             break;
         case BTL_SUBSTATE_NORMAL_START_CREATE_ENEMIES:
             statusBar = &gStatusBar;
@@ -540,6 +541,8 @@ void btl_state_update_begin_turn(void) {
     s16* enemyIDs;
 
     if (gBattleSubState == BTL_SUBSTATE_BEGIN_TURN_INIT) {
+        battleStatus->turnCounter++;
+
         battleStatus->flags2 &= ~BS_FLAGS2_PLAYER_TURN_USED;
         battleStatus->flags2 &= ~BS_FLAGS2_PARTNER_TURN_USED;
         battleStatus->flags2 &= ~BS_FLAGS2_OVERRIDE_INACTIVE_PLAYER;

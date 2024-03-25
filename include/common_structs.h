@@ -997,6 +997,7 @@ typedef struct BattleStatus {
     /* new */ u8 curAttackCustomStatusPotency;
     /* new */ u8 curAttackCustomStatusTurns;
     /* new */ u8 curAttackCustomStatusChance;
+    /* new */ s32 turnCounter;
 } BattleStatus; // size = 0x460
 
 typedef struct TextureHeader {
