@@ -32,6 +32,7 @@
 #define ACTOR_BY_IDX_ARG(enemy, pos, _priority, _var0) { .actor = &enemy, .home = { .index = pos }, .priority = _priority, .var0 = _var0 }
 #define ACTOR_BY_IDX_ARG_ITEM(enemy, pos, _priority, _var0, itemId) { .actor = &enemy, .home = { .index = pos }, .priority = _priority, .item = itemId, .var0 = _var0 }
 #define ACTOR_BY_IDX_ARG_ITEMS(enemy, pos, _priority, _var0, itemArray) { .actor = &enemy, .home = { .index = pos }, .priority = _priority, .item = ARRAY_COUNT(itemArray), .items = &itemArray, .var0 = _var0 }
+#define ACTOR_BY_POS_ARG(enemy, _pos, _priority, _var0) { .actor = &enemy, .home = { .vec = &_pos }, .priority = _priority, .var0 = _var0 }
 
 ///Allows setting actor var 0 and 1
 #define ACTOR_BY_IDX_ARG_2(enemy, pos, _priority, _var0, _var1) { .actor = &enemy, .home = { .index = pos }, .priority = _priority, .var0 = _var0, .var1 = _var1 }

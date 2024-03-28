@@ -66,7 +66,7 @@ ActorBlueprint NAMESPACE = {
     .flags = ACTOR_FLAG_NO_HEALTH_BAR | ACTOR_FLAG_NO_ATTACK,
     .type = THIS_ACTOR_TYPE,
     .level = THIS_LEVEL,
-    .maxHP = 5,
+    .maxHP = 7,
     .partCount = ARRAY_COUNT(N(ActorParts)),
     .partsData = N(ActorParts),
     .initScript = &N(EVS_Init),
@@ -460,7 +460,7 @@ EvtScript N(HandleCommand) = {
                     Call(SetIdleAnimations, ACTOR_SELF, PRT_MAIN, Ref(N(ToppledAnims)))
                     Call(SetDefenseTable, ACTOR_SELF, PRT_MAIN, Ref(N(ToppledDefense)))
                     Call(SetActorVar, ACTOR_SELF, AVAR_Koopa_State, AVAL_Koopa_State_Toppled)
-                    Call(SetActorVar, ACTOR_SELF, AVAR_Koopa_ToppleTurns, 2)
+                    Call(SetActorVar, ACTOR_SELF, AVAR_Koopa_ToppleTurns, 1)
                     Call(SetTargetOffset, ACTOR_SELF, PRT_MAIN, 0, 18)
                 EndCaseGroup
             EndSwitch
@@ -506,7 +506,7 @@ EvtScript N(HandleCommand) = {
                     Call(SetIdleAnimations, ACTOR_SELF, PRT_MAIN, Ref(N(ToppledAnims)))
                     Call(SetDefenseTable, ACTOR_SELF, PRT_MAIN, Ref(N(ToppledDefense)))
                     Call(SetActorVar, ACTOR_SELF, AVAR_Koopa_State, AVAL_Koopa_State_Toppled)
-                    Call(SetActorVar, ACTOR_SELF, AVAR_Koopa_ToppleTurns, 2)
+                    Call(SetActorVar, ACTOR_SELF, AVAR_Koopa_ToppleTurns, 1)
                     Call(SetTargetOffset, ACTOR_SELF, PRT_MAIN, 0, 18)
                 EndCaseGroup
             EndSwitch
@@ -602,6 +602,7 @@ EvtScript N(HandleCommand) = {
                         Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
                         Call(SetGoalToTarget, ACTOR_SELF)
                         Call(GetActorVar, BOSS_ACTOR, AVAR_Boss_TowerHeight, LVar1)
+                        Add(LVar1, 2) // new: +2 atk
                         Call(EnemyDamageTarget, ACTOR_SELF, LVar0, 0, SUPPRESS_EVENT_ALL, 0, LVar1, BS_FLAGS1_TRIGGER_EVENTS)
                     EndThread
                     Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
@@ -908,7 +909,7 @@ EvtScript N(EVS_HandleEvent) = {
             Return
         CaseEq(EVENT_FLIP_TRIGGER)
             Call(SetActorVar, ACTOR_SELF, AVAR_Koopa_State, AVAL_Koopa_State_Toppled)
-            Call(SetActorVar, ACTOR_SELF, AVAR_Koopa_ToppleTurns, 2)
+            Call(SetActorVar, ACTOR_SELF, AVAR_Koopa_ToppleTurns, 1)
             Call(SetIdleAnimations, ACTOR_SELF, PRT_MAIN, Ref(N(ToppledAnims)))
             Call(SetDefenseTable, ACTOR_SELF, PRT_MAIN, Ref(N(ToppledDefense)))
             Call(SetTargetOffset, ACTOR_SELF, PRT_MAIN, 0, 18)

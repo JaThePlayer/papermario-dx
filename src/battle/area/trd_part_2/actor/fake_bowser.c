@@ -1,6 +1,7 @@
 #include "../area.h"
 #include "sprite/npc/KoopaBros.h"
 #include "mapfs/trd_bt00_shape.h"
+#include "battle/common/actor/bob_omb.inc.c"
 
 #define NAMESPACE A(fake_bowser)
 
@@ -49,7 +50,7 @@ enum N(ActorPartIDs) {
 };
 
 enum N(ActorParams) {
-    DMG_STRIKE          = 1,
+    DMG_STRIKE          = 3,
 };
 
 enum N(AnimState) {
@@ -73,7 +74,6 @@ enum N(AnimState) {
 
 s32 N(BowserDefense)[] = {
     ELEMENT_NORMAL,   1,
-    ELEMENT_BLAST,    1,
     ELEMENT_END,
 };
 
@@ -251,7 +251,7 @@ ActorBlueprint NAMESPACE = {
     .flags = ACTOR_FLAG_NO_SHADOW,
     .type = ACTOR_TYPE_FAKE_BOWSER,
     .level = ACTOR_LEVEL_FAKE_BOWSER,
-    .maxHP = 10,
+    .maxHP = 15,
     .partCount = ARRAY_COUNT(N(ActorParts)),
     .partsData = N(ActorParts),
     .initScript = &N(EVS_Init),
@@ -293,6 +293,7 @@ EvtScript N(EVS_Init) = {
     Call(SetActorVar, ACTOR_SELF, AVAR_Boss_TowerState, AVAL_Boss_TowerState_None)
     Call(SetActorVar, ACTOR_SELF, AVAR_Boss_BowserTaunts, 0)
     Call(SetActorVar, ACTOR_SELF, AVAR_Boss_TowerHeight, 0)
+    SET_ACTOR_VAR(AVAR_Boss_TurnCounter, 0)
     Set(ArrayVar(0), ANIM_BEGIN_IDLE)
     Call(SetActorPos, ACTOR_SELF, 96, 0, 0)
     Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
@@ -1466,7 +1467,95 @@ EvtScript N(EVS_FakeBowser_HandleEvent) = {
     End
 };
 
+// returns on LFlag1-4
+EvtScript N(EVS_GetUsedColumns) = {
+    Set(LFlag1, FALSE)
+    Set(LFlag2, FALSE)
+    Set(LFlag3, FALSE)
+    Set(LFlag4, FALSE)
+    Call(CreateHomeTargetList, TARGET_FLAG_2 | TARGET_FLAG_PRIMARY_ONLY)
+    Call(InitTargetIterator)
+    Label(0)
+        Call(GetOwnerTarget, LVar0, LVar1)
+        Call(GetIndexFromHome, LVar0, LVar1)
+        Mod(LVar1, 4)
+        Switch(LVar1)
+            CaseEq(0)
+                Set(LFlag1, TRUE)
+            CaseEq(1)
+                Set(LFlag2, TRUE)
+            CaseEq(2)
+                Set(LFlag3, TRUE)
+            CaseEq(3)
+                Set(LFlag4, TRUE)
+        EndSwitch
+        Call(ChooseNextTarget, ITER_NEXT, LVar0)
+        IfNe(LVar0, ITER_NO_MORE)
+            Goto(0)
+        EndIf
+    Return
+    End
+};
+
+// TODO: Summon koopas?
+// TODO: KILL ALL SUMMONS BEFORE KOOPA BROS SHOW UP!
+
+Vec3i N(SummonPos) = { 0, 300, 0 };
+
+Formation N(form_1_bobomb) = {
+    ACTOR_BY_POS_ARG(A(bob_omb), N(SummonPos), 10, 1),
+};
+
+// in - LVarE - formation*
+// in - LVarF - targetIndex
+EvtScript N(summon_enemy) = {
+    Call(SummonEnemy, LVarE, FALSE)
+    Call(SetGoalToIndex, LVar0, LVarF)
+    Call(SetActorJumpGravity, LVar0, Float(2.0))
+    Call(FallToGoal, LVar0, 30)
+    Return
+    End
+};
+
 EvtScript N(EVS_FakeBowser_TakeTurn) = {
+    /*
+    // Summons
+    GET_ACTOR_VAR(AVAR_Boss_TurnCounter, LVarA)
+    ExecWait(N(EVS_GetUsedColumns))
+    Switch(LVarA)
+        CaseEq(0)
+            IfEq(LFlag1, FALSE)
+                Set(LVarE, Ref(N(form_1_bobomb)))
+                Set(LVarF, BTL_POS_GROUND_A)
+                ExecWait(N(summon_enemy))
+            EndIf
+        CaseEq(1)
+            IfEq(LFlag2, FALSE)
+                Set(LVarE, Ref(N(form_1_bobomb)))
+                Set(LVarF, BTL_POS_GROUND_B)
+                ExecWait(N(summon_enemy))
+            EndIf
+        CaseEq(2)
+            IfEq(LFlag1, FALSE)
+                Set(LVarE, Ref(N(form_1_bobomb)))
+                Set(LVarF, BTL_POS_GROUND_A)
+                ExecWait(N(summon_enemy))
+            EndIf
+            IfEq(LFlag2, FALSE)
+                Set(LVarE, Ref(N(form_1_bobomb)))
+                Set(LVarF, BTL_POS_GROUND_B)
+                ExecWait(N(summon_enemy))
+            EndIf
+        CaseEq(3)
+            // Empty
+        CaseEq(4)
+            // Empty
+    EndSwitch
+    Add(LVarA, 1)
+    Mod(LVarA, 5)
+    SET_ACTOR_VAR(AVAR_Boss_TurnCounter, LVarA)
+    */
+
     UseArray(FakeBowserAnimState)
     Call(UseIdleAnimation, ACTOR_SELF, FALSE)
     Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
@@ -2498,7 +2587,7 @@ EvtScript N(EVS_TryFormingTower) = {
     Return
     End
     #undef VAR_STANDING_COUNT
-    #undef VAR_CUR_KOOPA_IDX 
+    #undef VAR_CUR_KOOPA_IDX
 };
 
 // count the number of standing koopa bros

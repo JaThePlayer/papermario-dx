@@ -47,10 +47,11 @@ ch8 - star road, castle                  - 2
 #define SP_POOL_BOWSER_CASTLE_P2 21
 #define SP_POOL_PEACH_CASTLE 22
 // OPTIONAL
-#define SP_POOL_SEWERS 23
+#define SP_POOL_DISCARD 23 // set to 0 to disable SP gain - for bosses summoning normal enemies
+#define SP_POOL_SEWERS 24
 
 // should be equal to the highest SP_POOL_ index
-#define SP_POOL_COUNT 23
+#define SP_POOL_COUNT 24
 
 extern u8 sp_pool_caps[SP_POOL_COUNT];
 
