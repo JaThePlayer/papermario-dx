@@ -29,3 +29,18 @@
         Call(FreezeBattleState, FALSE) \
     EndThread \
     Call(WaitForBuffDone)
+
+// Executes instructions provided in the 'callback' argument for each enemy in the battle.
+// 'label' is a label id to be used inside the macro, it should not be used anywhere else in the script.
+// 'flags' are passed to CreateCurrentPosTargetList
+// 'enemy' is an lvar that will be populated with an enemy id when 'callback' is executed
+#define FOREACH_ENEMY(enemy, label, flags, callback) \
+    Call(CreateCurrentPosTargetList, flags) \
+    Call(InitTargetIterator) \
+    Label(label) \
+    Call(GetOwnerTarget, enemy, 0) \
+    callback \
+    Call(ChooseNextTarget, ITER_NEXT, enemy) \
+    IfNe(enemy, ITER_NO_MORE) \
+        Goto(label) \
+    EndIf

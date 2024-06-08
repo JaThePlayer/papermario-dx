@@ -29,6 +29,7 @@ typedef struct StatusType {
     StatusFxRemoveIconFunc onRemoveIcon;
     StatusFxOnDecrementFunc onDecrement;
     s8 decrementLate; // whether the status should be decremented after enemies attack, like Chill Out
+    s8 isDebuff; /// Whether the status is treated as a debuff, for debuff clearing items/moves
 } StatusType;
 
 extern StatusType gCustomStatusTypes[CUSTOM_STATUS_AMT];
@@ -56,5 +57,7 @@ void custom_status_render_all_icons(Actor* actor);
 void custom_status_remove_icons(s32 iconId);
 
 Vec3f get_expected_arrow_pos(Actor* actor);
+
+void custom_status_clear_debuffs(Actor* actor);
 
 #endif

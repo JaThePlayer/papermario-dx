@@ -439,7 +439,8 @@ static API_CALLABLE(GetActorHeadYPos) {
     return ApiStatus_DONE2;
 }
 
-EvtScript EnemyItems_UseHeldItem = {
+// in: LVarA - itemId
+EvtScript EnemyItems_UseItemById = {
     Call(GetActorPos, ACTOR_SELF, LVar7, LVar1, LVar2)
     Call(GetActorHeadYPos, ACTOR_SELF, LVar6)
     Call(PlaySoundAtActor, ACTOR_SELF, SOUND_USE_ITEM)
@@ -450,10 +451,6 @@ EvtScript EnemyItems_UseHeldItem = {
     Set(LVar3, LVar1)
     Add(LVar3, 10)
     Add(LVar3, 2)
-
-    // remove the existing item
-    Call(EnemyItems_GetHeldItem, ACTOR_SELF, LVar8, LVarA, LVar9)
-    Call(EnemyItems_RemoveHeldItem, ACTOR_SELF, LVar8)
 
     // create new item
     PlayEffect(EFFECT_RADIAL_SHIMMER, 1, LVar7, LVar3, LVar2, Float(1.0), 30, 0)
@@ -467,11 +464,21 @@ EvtScript EnemyItems_UseHeldItem = {
 
     // so that scripts know they're being used by the enemy
     Call(EnemyItems_SetCalledByEnemy, 1)
-
     // call the right script for the item
     ExecWait(LVar0)
-
+    // cleanup
     Call(EnemyItems_SetCalledByEnemy, 0)
+
+    Return
+    End
+};
+
+EvtScript EnemyItems_UseHeldItem = {
+    // remove the existing item
+    Call(EnemyItems_GetHeldItem, ACTOR_SELF, LVar8, LVarA, LVar9)
+    Call(EnemyItems_RemoveHeldItem, ACTOR_SELF, LVar8)
+
+    ExecWait(EnemyItems_UseItemById)
 
     Return
     End

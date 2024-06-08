@@ -98,6 +98,8 @@ API_CALLABLE(N(RemovePlayerDebuffs)) {
         actor->disableEffect->data.disableX->koDuration = 0;
     }
 
+    custom_status_clear_debuffs(actor);
+
     btl_update_ko_status();
     return ApiStatus_DONE2;
 }
@@ -130,6 +132,9 @@ API_CALLABLE(N(SpawnFlowerRecoverFX)) {
     return ApiStatus_DONE2;
 }
 
+#define HpHeal 7
+#define FpHeal 7
+
 EvtScript N(EVS_UsePower) = {
     ExecWait(N(EVS_StarPower_WishForSpirit))
     SetConst(LVar0, ANIM_BattleEldstar_Idle)
@@ -148,16 +153,16 @@ EvtScript N(EVS_UsePower) = {
     Call(GetActorPos, ACTOR_PLAYER, LVar0, LVar1, LVar2)
     Add(LVar0, 0)
     Add(LVar1, 35)
-    Call(N(SpawnHeartRecoverFX), LVar0, LVar1, LVar2, 5)
+    Call(N(SpawnHeartRecoverFX), LVar0, LVar1, LVar2, HpHeal)
     Call(GetActorPos, ACTOR_PLAYER, LVar0, LVar1, LVar2)
     Add(LVar0, 20)
     Add(LVar1, 25)
-    Call(N(SpawnFlowerRecoverFX), LVar0, LVar1, LVar2, 5)
+    Call(N(SpawnFlowerRecoverFX), LVar0, LVar1, LVar2, FpHeal)
     Call(GetActorPos, ACTOR_PLAYER, LVar0, LVar1, LVar2)
     Add(LVar1, 25)
-    Call(ShowStartRecoveryShimmer, LVar0, LVar1, LVar2, 5)
-    Call(N(AddHP), 5)
-    Call(N(AddFP), 5)
+    Call(ShowStartRecoveryShimmer, LVar0, LVar1, LVar2, HpHeal)
+    Call(N(AddHP), HpHeal)
+    Call(N(AddFP), FpHeal)
     Call(N(RemovePlayerDebuffs))
     Wait(30)
     Call(PlayerYieldTurn)

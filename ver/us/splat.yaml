@@ -6038,15 +6038,14 @@ segments:
     subalign: 4
     subsegments:
     - [auto, c, area]
-    - [auto, c, actor/tutorial_spiked_goomba]
-    - [auto, c, actor/tutorial_paragoomba]
-    - [auto, c, actor/paragoomba]
     - [auto, c, actor/jr_troopa]
     - [auto, c, actor/egg_jr_troopa]
     - [auto, c, actor/para_jr_troopa]
     - [auto, c, actor/spiked_para_jr_troopa]
     - [auto, c, actor/mage_jr_troopa]
     - [auto, c, actor/final_jr_troopa]
+    - [auto, c, actor/koopa_troopa]
+    - [auto, c, actor/fuzzy]
     - [auto, c, stage/kmr_02]
     - [auto, c, stage/kmr_03]
     - [auto, c, stage/kmr_04]

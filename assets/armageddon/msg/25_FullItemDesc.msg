@@ -233,7 +233,7 @@
 
 #message:25:(ItemFullDesc_SpicySoup) {
 	A hot soup cooked by Tayce T.[BR]
-	Restores 4 HP and 4 FP.[End]
+	+1 HP, +2 ATK for 1 turn.[End]
 }
 
 #message:25:(ItemFullDesc_ApplePie) {

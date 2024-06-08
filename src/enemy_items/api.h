@@ -78,6 +78,12 @@ s32 enemy_items_count_items_with_move_id(Actor* actor, s32 moveID);
 extern EvtScript EnemyItems_UseHealingItem;
 
 // Script which handles the usage of an item by an enemy, loading the right script etc.
+// Expects LVarA to contain the item ID to use.
+// The enemy doesn't need to have an item of this id, and no items are removed from the enemy's inventory.
+// Might clobber a *lot* of LVar's, so just assume all of them got messed up after calling this.
+extern EvtScript EnemyItems_UseItemById;
+
+// Script which handles the usage of an item by an enemy, loading the right script etc.
 // Expects LVar8 to store the index of the item to use
 // Might crash if the enemy doesn't have an item at this index.
 // might clobber a *lot* of LVar's, so just assume all of them got messed up after calling this.

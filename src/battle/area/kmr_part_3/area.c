@@ -1,14 +1,18 @@
 #include "area.h"
 
+#include "battle/common/actor/wave_battle_controller.inc.c"
+
 extern ActorBlueprint A(jr_troopa);
 extern ActorBlueprint A(egg_jr_troopa);
 extern ActorBlueprint A(para_jr_troopa);
 extern ActorBlueprint A(spiked_para_jr_troopa);
 extern ActorBlueprint A(mage_jr_troopa);
 extern ActorBlueprint A(final_jr_troopa);
-extern ActorBlueprint A(paragoomba);
-extern ActorBlueprint A(tutorial_paragoomba);
-extern ActorBlueprint A(tutorial_spiked_goomba);
+
+// Egg Jr Troopa Summons
+extern ActorBlueprint A(fuzzy);
+extern ActorBlueprint A(koopa_troopa);
+extern ActorBlueprint A(egg_jr_troopa_final_wave_notifier);
 
 extern Stage A(kmr_02);
 extern Stage A(kmr_03);
@@ -22,20 +26,41 @@ extern Stage A(mac_01);
 extern Stage A(kpa_13);
 
 Formation A(Formation_00) = {
-    ACTOR_BY_IDX(A(tutorial_spiked_goomba), BTL_POS_GROUND_C, 0),
+    ACTOR_BY_IDX(A(jr_troopa), BTL_POS_GROUND_C, 0),
 };
 
 Formation A(Formation_01) = {
-    ACTOR_BY_IDX(A(paragoomba), BTL_POS_AIR_B, 10),
-    ACTOR_BY_IDX(A(tutorial_paragoomba), BTL_POS_AIR_C, 9),
+    ACTOR_BY_IDX(A(jr_troopa), BTL_POS_GROUND_C, 10),
 };
 
 Formation A(Formation_02) = {
     ACTOR_BY_IDX(A(jr_troopa), BTL_POS_GROUND_C, 0),
 };
 
+Formation A(Formation_03_Wave4) = {
+    ACTOR_BY_IDX(A(egg_jr_troopa_final_wave_notifier), BTL_POS_GROUND_A, 10),
+};
+
+Formation A(Formation_03_Wave3) = {
+    ACTOR_BY_IDX(A(koopa_troopa), BTL_POS_GROUND_A, 10),
+    ACTOR_BY_IDX(A(fuzzy), BTL_POS_GROUND_B, 9),
+
+    NEXT_WAVE(A(Formation_03_Wave4)),
+};
+
+Formation A(Formation_03_Wave2) = {
+    ACTOR_BY_IDX(A(fuzzy), BTL_POS_GROUND_A, 10),
+    ACTOR_BY_IDX(A(fuzzy), BTL_POS_GROUND_B, 9),
+
+    NEXT_WAVE(A(Formation_03_Wave3)),
+};
+
 Formation A(Formation_03) = {
-    ACTOR_BY_IDX(A(egg_jr_troopa), BTL_POS_GROUND_C, 0),
+    ACTOR_BY_IDX(A(koopa_troopa), BTL_POS_GROUND_A, 10),
+    ACTOR_BY_IDX(A(koopa_troopa), BTL_POS_GROUND_B, 9),
+
+    ACTOR_BY_IDX(A(egg_jr_troopa), BTL_POS_GROUND_D, 11),
+    WAVE_BATTLE(A(Formation_03_Wave2), 4),
 };
 
 Formation A(Formation_04) = {

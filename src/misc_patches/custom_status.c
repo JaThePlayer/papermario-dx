@@ -10,23 +10,24 @@
 #include "statuses/burn.c"
 #include "statuses/fp_cost.c"
 
-#define STATUS_ENTRY(namespace) { \
+#define STATUS_ENTRY(namespace, _isDebuff) { \
         .onApply = &namespace##_on_apply, \
         .drawIcon = &namespace##_create_icon, \
         .onRemoveIcon = &namespace##_remove_icon, \
         .decrementLate = namespace##_DECREMENT_LATE, \
         .onDecrement = &namespace##_on_decrement, \
+        .isDebuff = _isDebuff, \
     }
 
 StatusType gCustomStatusTypes[CUSTOM_STATUS_AMT] = {
     [NONE_CUSTOM_STATUS] = {},
-    [ATK_DOWN_TEMP_STATUS] = STATUS_ENTRY(temp_atk_down),
-    [DEF_DOWN_TEMP_STATUS] = STATUS_ENTRY(temp_def_down),
-    [ATK_UP_TEMP_STATUS] = STATUS_ENTRY(temp_atk_up),
-    [DEF_UP_TEMP_STATUS] = STATUS_ENTRY(temp_def_up),
-    [CLOSE_CALL_STATUS] = STATUS_ENTRY(close_call),
-    [BURN_STATUS] = STATUS_ENTRY(burn_status),
-    [FP_COST_STATUS] = STATUS_ENTRY(fp_cost_status),
+    [ATK_DOWN_TEMP_STATUS] = STATUS_ENTRY(temp_atk_down, TRUE),
+    [DEF_DOWN_TEMP_STATUS] = STATUS_ENTRY(temp_def_down, TRUE),
+    [ATK_UP_TEMP_STATUS] = STATUS_ENTRY(temp_atk_up, FALSE),
+    [DEF_UP_TEMP_STATUS] = STATUS_ENTRY(temp_def_up, FALSE),
+    [CLOSE_CALL_STATUS] = STATUS_ENTRY(close_call, FALSE),
+    [BURN_STATUS] = STATUS_ENTRY(burn_status, TRUE),
+    [FP_COST_STATUS] = STATUS_ENTRY(fp_cost_status, FALSE),
 };
 
 // Gets the potency of the given status for the given actor. 0 if actor doesn't have this status
@@ -38,6 +39,22 @@ s8 custom_status_get_potency(Actor* actor, s8 customStatusId) {
     return 0;
 }
 
+static void custom_status_decrease_turn_count_impl(Actor* actor, u8 newTurns, StatusInfo* status, StatusType* statusType) {
+    if (statusType->onDecrement) {
+        statusType->onDecrement(actor);
+    }
+
+    status->turns = newTurns;
+
+    if (status->turns == 0) {
+        // status just got removed now
+        status->potency = 0;
+        if (statusType->onRemoveIcon) {
+            statusType->onRemoveIcon(actor->hudElementDataIndex);
+        }
+    }
+}
+
 static void custom_status_decrement_impl(Actor* actor, s8 isLate) {
     for (s32 i = 0; i < ARRAY_COUNT(actor->customStatuses); i++)
     {
@@ -45,17 +62,7 @@ static void custom_status_decrement_impl(Actor* actor, s8 isLate) {
         StatusType* statusType = &gCustomStatusTypes[i];
 
         if (statusType->decrementLate == isLate && status->turns > 0) {
-            if (statusType->onDecrement) {
-                statusType->onDecrement(actor);
-            }
-            status->turns--;
-            if (status->turns == 0) {
-                // status just got removed now
-                status->potency = 0;
-                if (statusType->onRemoveIcon) {
-                    statusType->onRemoveIcon(actor->hudElementDataIndex);
-                }
-            }
+            custom_status_decrease_turn_count_impl(actor, status->turns - 1, status, statusType);
         }
     }
 }
@@ -167,4 +174,16 @@ Vec3f get_expected_arrow_pos(Actor* actor) {
     res.z = z;
 
     return res;
+}
+
+void custom_status_clear_debuffs(Actor* actor) {
+    for (s32 i = 0; i < ARRAY_COUNT(actor->customStatuses); i++)
+    {
+        StatusInfo* status = &actor->customStatuses[i];
+        StatusType* statusType = &gCustomStatusTypes[i];
+
+        if (status->turns > 0 && statusType->isDebuff) {
+            custom_status_decrease_turn_count_impl(actor, 0, status, statusType);
+        }
+    }
 }

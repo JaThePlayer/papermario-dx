@@ -3,6 +3,13 @@
 
 #define NAMESPACE A(egg_jr_troopa)
 
+/*
+Wave Battle
+- Jr troopa hides in his egg, which makes him invulnerable
+- He buffs enemies with infinite items
+- Afterwards, he rages and leaves the egg, making him super weak
+*/
+
 extern EvtScript N(EVS_Init);
 extern EvtScript N(EVS_Idle);
 extern EvtScript N(EVS_TakeTurn);
@@ -18,6 +25,8 @@ enum N(ActorPartIDs) {
 enum N(ActorVars) {
     AVAR_ShowedNewPower     = 0,
     AVAR_HitReact_State     = 1,
+    AVAR_JrTroopaPhase     = 2,
+
     AVAL_HitReact_None      = 0,
     AVAL_HitReact_Ready     = 1,
     AVAL_HitReact_Done      = 2,
@@ -56,15 +65,15 @@ s32 N(EggAnims)[] = {
 };
 
 s32 N(DefenseTable)[] = {
-    ELEMENT_NORMAL,   1,
+    ELEMENT_NORMAL,   0,
     ELEMENT_END,
 };
 
 s32 N(StatusTable)[] = {
     STATUS_KEY_NORMAL,            100,
     STATUS_KEY_DEFAULT,           100,
-    STATUS_KEY_SLEEP,              80,
-    STATUS_KEY_POISON,              0,
+    STATUS_KEY_SLEEP,              50,
+    STATUS_KEY_POISON,            100,
     STATUS_KEY_FROZEN,              0,
     STATUS_KEY_DIZZY,              50,
     STATUS_KEY_FEAR,                0,
@@ -87,7 +96,7 @@ s32 N(StatusTable)[] = {
 
 ActorPartBlueprint N(ActorParts)[] = {
     {
-        .flags = ACTOR_PART_FLAG_PRIMARY_TARGET,
+        .flags = ACTOR_PART_FLAG_NO_TARGET,
         .index = PRT_MAIN,
         .posOffset = { 0, 0, 0 },
         .targetOffset = { -6, 18 },
@@ -101,10 +110,10 @@ ActorPartBlueprint N(ActorParts)[] = {
 };
 
 ActorBlueprint NAMESPACE = {
-    .flags = 0,
+    .flags = ACTOR_FLAG_NO_DMG_APPLY,
     .type = ACTOR_TYPE_JR_TROOPA_2,
     .level = ACTOR_LEVEL_JR_TROOPA_2,
-    .maxHP = 15,
+    .maxHP = 10,
     .partCount = ARRAY_COUNT(N(ActorParts)),
     .partsData = N(ActorParts),
     .initScript = &N(EVS_Init),
@@ -121,6 +130,7 @@ ActorBlueprint NAMESPACE = {
     .healthBarOffset = { 0, 0 },
     .statusIconOffset = { -15, 30 },
     .statusTextOffset = { 10, 20 },
+    .spPool = SP_POOL_NONE,
 };
 
 EvtScript N(EVS_Cam_FocusOnJrTroopa) = {
@@ -231,6 +241,7 @@ EvtScript N(EVS_Init) = {
     Call(BindHandlePhase, ACTOR_SELF, Ref(N(EVS_HandlePhase)))
     Call(SetActorVar, ACTOR_SELF, AVAR_ShowedNewPower, FALSE)
     Call(SetActorVar, ACTOR_SELF, AVAR_HitReact_State, AVAL_HitReact_None)
+    Call(SetActorVar, ACTOR_SELF, AVAR_JrTroopaPhase, 0)
     Return
     End
 };
@@ -308,7 +319,7 @@ EvtScript N(EVS_HandleEvent) = {
             SetConst(LVar0, PRT_MAIN)
             SetConst(LVar1, ANIM_JrTroopa_Run)
             ExecWait(EVS_Enemy_ReturnHome)
-            ExecWait(N(EVS_ReenterEgg))
+            //ExecWait(N(EVS_ReenterEgg))
         CaseEq(EVENT_SHOCK_DEATH)
             SetConst(LVar0, PRT_MAIN)
             SetConst(LVar1, ANIM_JrTroopa_Hurt)
@@ -347,6 +358,7 @@ EvtScript N(EVS_HandleEvent) = {
 };
 
 EvtScript N(EVS_SetupHitReaction) = {
+    /*
     Call(GetActorVar, ACTOR_SELF, AVAR_HitReact_State, LVar0)
     IfEq(LVar0, AVAL_HitReact_None)
         Call(GetLastDamage, ACTOR_SELF, LVar1)
@@ -361,11 +373,13 @@ EvtScript N(EVS_SetupHitReaction) = {
             EndIf
         EndIf
     EndIf
+    */
     Return
     End
 };
 
 EvtScript N(EVS_TryHitReaction) = {
+    /*
     Call(GetActorVar, ACTOR_SELF, AVAR_HitReact_State, LVar0)
     IfEq(LVar0, AVAL_HitReact_Ready)
         Call(GetStatusFlags, ACTOR_SELF, LVar0)
@@ -384,11 +398,60 @@ EvtScript N(EVS_TryHitReaction) = {
         EndIf
     EndIf
     Call(FreezeBattleCam, FALSE)
+    */
     Return
     End
 };
 
+extern EvtScript N(Tackle);
+
 EvtScript N(EVS_TakeTurn) = {
+    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
+
+    Call(GetActorVar, ACTOR_SELF, AVAR_JrTroopaPhase, LVar0)
+
+    Switch(LVar0)
+        CaseEq(0)
+            #define enemy LVarF
+            FOREACH_ENEMY(enemy, /*tempLabel*/1, TARGET_FLAG_2 | TARGET_FLAG_PRIMARY_ONLY,
+                Call(SetTargetActor, ACTOR_SELF, enemy)
+
+                Call(RandInt, 100, LVar0)
+                IfGt(LVar0, 50)
+                    Set(LVarA, ITEM_SPICY_SOUP)
+                Else
+                    Set(LVarA, ITEM_GOOMNUT)
+                EndIf
+
+                Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_JrTroopa_EggTalk)
+                ExecWait(EnemyItems_UseItemById)
+                Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_JrTroopa_EggIdle)
+                Wait(20)
+            )
+            #undef enemy
+        CaseEq(1) // exit the shell
+            Call(SetActorVar, ACTOR_SELF, AVAR_JrTroopaPhase, 2)
+
+            Call(ActorSpeak, MSG_CH1_012A, ACTOR_SELF, PRT_MAIN, ANIM_JrTroopa_Dizzy, ANIM_JrTroopa_Dizzy)
+            Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_JrTroopa_PointTalk)
+            Call(EndActorSpeech, ACTOR_SELF, PRT_MAIN, -1, -1)
+
+            Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_JrTroopa_Idle)
+            Call(SetIdleAnimations, ACTOR_SELF, PRT_MAIN, Ref(N(DefaultAnims)))
+
+            ExecWait(N(Tackle))
+        CaseEq(2)
+            ExecWait(N(Tackle))
+    EndSwitch
+
+    Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
+    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Return
+    End
+};
+
+EvtScript N(Tackle) = {
     Call(UseIdleAnimation, ACTOR_SELF, FALSE)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(PlaySoundAtActor, ACTOR_SELF, SOUND_OPEN_SHELL)
@@ -452,7 +515,7 @@ EvtScript N(EVS_TakeTurn) = {
             Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_JrTroopa_Idle)
             Call(RemoveActorDecoration, ACTOR_SELF, PRT_MAIN, 0)
             Call(SetActorYaw, ACTOR_SELF, 0)
-            ExecWait(N(EVS_ReenterEgg))
+            //ExecWait(N(EVS_ReenterEgg))
             Call(UseIdleAnimation, ACTOR_SELF, TRUE)
             Return
         EndCaseGroup
@@ -491,7 +554,7 @@ EvtScript N(EVS_TakeTurn) = {
             Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_JrTroopa_Run)
             Call(RunToGoal, ACTOR_SELF, 0, FALSE)
             Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_JrTroopa_Idle)
-            ExecWait(N(EVS_ReenterEgg))
+            //ExecWait(N(EVS_ReenterEgg))
     EndSwitch
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
     Call(UseIdleAnimation, ACTOR_SELF, TRUE)
@@ -532,4 +595,52 @@ EvtScript N(EVS_HandlePhase) = {
     Call(UseIdleAnimation, ACTOR_SELF, TRUE)
     Return
     End
+};
+
+EvtScript N(notify_final_wave) = {
+    Call(SetActorVar, ACTOR_ENEMY2, AVAR_JrTroopaPhase, 1)
+    Call(SetActorFlagBits, ACTOR_ENEMY2, ACTOR_FLAG_NO_DMG_APPLY, FALSE)
+    Call(SetPartFlagBits, ACTOR_ENEMY2, PRT_MAIN, ACTOR_PART_FLAG_NO_TARGET, FALSE)
+    Call(SetPartFlagBits, ACTOR_ENEMY2, PRT_MAIN, ACTOR_PART_FLAG_PRIMARY_TARGET, TRUE)
+    Return
+    End
+};
+
+ActorPartBlueprint N(ActorParts_final_wave_notifier)[] = {
+    {
+        .flags = ACTOR_PART_FLAG_NO_TARGET,
+        .index = 1,
+        .posOffset = { 0, 0, 0 },
+        .targetOffset = { 0, 20 },
+        .opacity = 255,
+        .idleAnimations = NULL,
+        .defenseTable = N(DefenseTable),
+        .eventFlags = 0,
+        .elementImmunityFlags = 0,
+        .projectileTargetOffset = { 0, -10 },
+    },
+};
+
+ActorBlueprint N(final_wave_notifier) = {
+    .flags = ACTOR_FLAG_NO_DMG_APPLY | ACTOR_FLAG_INVISIBLE | ACTOR_FLAG_NO_SHADOW,
+    .type = ACTOR_TYPE_CONTROLLER,
+    .level = 0,
+    .maxHP = 99,
+    .partCount = ARRAY_COUNT(N(ActorParts_final_wave_notifier)),
+    .partsData = N(ActorParts_final_wave_notifier),
+    .initScript = &N(notify_final_wave),
+    .statusTable = N(StatusTable),
+    .escapeChance = 0,
+    .airLiftChance = 0,
+    .hurricaneChance = 0,
+    .spookChance = 0,
+    .upAndAwayChance = 0,
+    .spinSmashReq = 0,
+    .powerBounceChance = 80,
+    .coinReward = 0,
+    .size = { 32, 32 },
+    .healthBarOffset = { 0, 0 },
+    .statusIconOffset = { -15, 30 },
+    .statusTextOffset = { 10, 20 },
+    .spPool = SP_POOL_NONE,
 };
