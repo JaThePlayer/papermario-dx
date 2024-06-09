@@ -415,12 +415,11 @@ HitResult calc_enemy_damage_target(Actor* attacker) {
         damage -= attacker->chillOutAmount;
     }
 
-    damage += custom_status_get_potency(attacker, ATK_UP_TEMP_STATUS);
     damage += enemy_items_count_items_with_move_id(attacker, MOVE_POWER_PLUS);
     damage += enemy_items_count_items_with_move_id(attacker, MOVE_P_UP_D_DOWN);
-
-    damage -= custom_status_get_potency(attacker, ATK_DOWN_TEMP_STATUS);
     damage -= enemy_items_count_items_with_move_id(attacker, MOVE_P_DOWN_D_UP);
+
+    damage += getDamageChangeFromStatus(attacker);
 
     if (attacker->debuff == STATUS_KEY_SHRINK) {
         if (damage > 0) {
@@ -2920,6 +2919,7 @@ API_CALLABLE(EnemyDamageTarget) {
     }
 
     actor = get_actor(actorID);
+    actor->attackedThisTurn = TRUE;
     outVar = *args++;
     battleStatus->curAttackElement = *args++;
     battleStatus->curAttackEventSuppression = *args++;

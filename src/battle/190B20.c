@@ -1459,6 +1459,7 @@ void load_player_actor(void) {
 
     enemy_items_zero_initialize(player);
     custom_status_zero_initialize(player);
+    player->attackedThisTurn = FALSE;
 }
 
 void load_partner_actor(void) {
@@ -1715,6 +1716,7 @@ void load_partner_actor(void) {
 
         enemy_items_zero_initialize(partnerActor);
         custom_status_zero_initialize(partnerActor);
+        partnerActor->attackedThisTurn = FALSE;
     }
 }
 
@@ -1985,6 +1987,7 @@ Actor* create_actor(Formation formation) {
     actor->hudElementDataIndex = create_status_icon_set();
     enemy_items_zero_initialize(actor);
     custom_status_zero_initialize(actor);
+    actor->attackedThisTurn = FALSE;
 
     if (formation->item != ITEM_NONE) {
         float ox, oy, oz;

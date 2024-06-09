@@ -403,8 +403,7 @@ HitResult calc_partner_damage_enemy(void) {
 
         damageDealt = battleStatus->curAttackDamage + partner->attackBoost;
 
-        damageDealt += custom_status_get_potency(partner, ATK_UP_TEMP_STATUS);
-        damageDealt -= custom_status_get_potency(partner, ATK_DOWN_TEMP_STATUS);
+        damageDealt += getDamageChangeFromStatus(partner);
 
         if (gBattleStatus.flags1 & BS_FLAGS1_TRIGGER_EVENTS) {
             if (battleStatus->curAttackElement & DAMAGE_TYPE_BLAST
@@ -1150,6 +1149,7 @@ API_CALLABLE(PartnerDamageEnemy) {
     }
 
     battleStatus->statusDuration = (battleStatus->curAttackStatus & 0xF00) >> 8;
+    battleStatus->partnerActor->attackedThisTurn = TRUE;
     damageResult = calc_partner_damage_enemy();
 
     if (damageResult < 0) {
@@ -1303,6 +1303,7 @@ API_CALLABLE(PartnerPowerBounceEnemy) {
     }
 
     battleStatus->statusDuration = (battleStatus->curAttackStatus & 0xF00) >> 8;
+    battleStatus->partnerActor->attackedThisTurn = TRUE;
     damageResult = calc_partner_damage_enemy();
 
     if (damageResult < 0) {

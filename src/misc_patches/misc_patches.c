@@ -11,3 +11,17 @@ s32 getFpCostChange(Actor* player) {
 
     return fpCost;
 }
+
+s32 getDamageChangeFromStatus(Actor* actor) {
+    s32 change = 0;
+
+    change += custom_status_get_potency(actor, ATK_UP_TEMP_STATUS);
+    change -= custom_status_get_potency(actor, ATK_DOWN_TEMP_STATUS);
+    change += custom_status_get_potency(actor, CHARGE_STATUS);
+
+    return change;
+}
+
+void clearChargesFrom(Actor* actor) {
+    custom_status_clear(actor, CHARGE_STATUS);
+}

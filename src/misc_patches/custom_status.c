@@ -9,25 +9,29 @@
 #include "statuses/close_call_status.c"
 #include "statuses/burn.c"
 #include "statuses/fp_cost.c"
+#include "statuses/charge.c"
 
-#define STATUS_ENTRY(namespace, _isDebuff) { \
+#define STATUS_ENTRY(namespace, _isDebuff, _hasTurnCount, _stacking) { \
         .onApply = &namespace##_on_apply, \
         .drawIcon = &namespace##_create_icon, \
         .onRemoveIcon = &namespace##_remove_icon, \
         .decrementLate = namespace##_DECREMENT_LATE, \
         .onDecrement = &namespace##_on_decrement, \
         .isDebuff = _isDebuff, \
+        .hasTurnCount = _hasTurnCount, \
+        .stackingBehaviour = _stacking, \
     }
 
 StatusType gCustomStatusTypes[CUSTOM_STATUS_AMT] = {
     [NONE_CUSTOM_STATUS] = {},
-    [ATK_DOWN_TEMP_STATUS] = STATUS_ENTRY(temp_atk_down, TRUE),
-    [DEF_DOWN_TEMP_STATUS] = STATUS_ENTRY(temp_def_down, TRUE),
-    [ATK_UP_TEMP_STATUS] = STATUS_ENTRY(temp_atk_up, FALSE),
-    [DEF_UP_TEMP_STATUS] = STATUS_ENTRY(temp_def_up, FALSE),
-    [CLOSE_CALL_STATUS] = STATUS_ENTRY(close_call, FALSE),
-    [BURN_STATUS] = STATUS_ENTRY(burn_status, TRUE),
-    [FP_COST_STATUS] = STATUS_ENTRY(fp_cost_status, FALSE),
+    [ATK_DOWN_TEMP_STATUS] = STATUS_ENTRY(temp_atk_down, TRUE, TRUE, STATUS_STACKING_OVERRIDE),
+    [DEF_DOWN_TEMP_STATUS] = STATUS_ENTRY(temp_def_down, TRUE, TRUE, STATUS_STACKING_OVERRIDE),
+    [ATK_UP_TEMP_STATUS] = STATUS_ENTRY(temp_atk_up, FALSE, TRUE, STATUS_STACKING_OVERRIDE),
+    [DEF_UP_TEMP_STATUS] = STATUS_ENTRY(temp_def_up, FALSE, TRUE, STATUS_STACKING_OVERRIDE),
+    [CLOSE_CALL_STATUS] = STATUS_ENTRY(close_call, FALSE, TRUE, STATUS_STACKING_OVERRIDE),
+    [BURN_STATUS] = STATUS_ENTRY(burn_status, TRUE, TRUE, STATUS_STACKING_OVERRIDE),
+    [FP_COST_STATUS] = STATUS_ENTRY(fp_cost_status, FALSE, TRUE, STATUS_STACKING_OVERRIDE),
+    [CHARGE_STATUS] = STATUS_ENTRY(charge_status, FALSE, FALSE, STATUS_STACKING_ADD_POTENCY),
 };
 
 // Gets the potency of the given status for the given actor. 0 if actor doesn't have this status
@@ -61,7 +65,7 @@ static void custom_status_decrement_impl(Actor* actor, s8 isLate) {
         StatusInfo* status = &actor->customStatuses[i];
         StatusType* statusType = &gCustomStatusTypes[i];
 
-        if (statusType->decrementLate == isLate && status->turns > 0) {
+        if (statusType->hasTurnCount && statusType->decrementLate == isLate && status->turns > 0) {
             custom_status_decrease_turn_count_impl(actor, status->turns - 1, status, statusType);
         }
     }
@@ -90,8 +94,21 @@ s32 try_inflict_custom_status(Actor* actor, Vec3f position, s8 customStatusId, u
     StatusType* statusType = &gCustomStatusTypes[customStatusId];
     // todo: resistance
 
-    status->turns = turns;
-    status->potency = potency;
+    switch (statusType->stackingBehaviour)
+    {
+        case STATUS_STACKING_OVERRIDE:
+            status->turns = turns;
+            status->potency = potency;
+            break;
+        case STATUS_STACKING_ADD_POTENCY:
+            status->turns = turns;
+            status->potency += potency;
+            if (status->potency > 99 || status->potency < 0) {
+                status->potency = 99;
+            }
+            break;
+    }
+
 
     if (statusType->onApply) {
         statusType->onApply(actor, position, potency);
@@ -176,14 +193,27 @@ Vec3f get_expected_arrow_pos(Actor* actor) {
     return res;
 }
 
-void custom_status_clear_debuffs(Actor* actor) {
+void custom_status_clear(Actor* actor, s8 customStatusId) {
+    StatusInfo* status = &actor->customStatuses[customStatusId];
+    StatusType* statusType = &gCustomStatusTypes[customStatusId];
+
+    if (status->turns > 0)
+        custom_status_decrease_turn_count_impl(actor, 0, status, statusType);
+}
+
+s32 custom_status_clear_debuffs(Actor* actor) {
+    s32 amt = 0;
+
     for (s32 i = 0; i < ARRAY_COUNT(actor->customStatuses); i++)
     {
         StatusInfo* status = &actor->customStatuses[i];
         StatusType* statusType = &gCustomStatusTypes[i];
 
         if (status->turns > 0 && statusType->isDebuff) {
+            amt += 1;
             custom_status_decrease_turn_count_impl(actor, 0, status, statusType);
         }
     }
+
+    return amt;
 }

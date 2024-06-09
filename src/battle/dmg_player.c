@@ -293,6 +293,8 @@ HitResult calc_player_damage_enemy(void) {
         return HIT_RESULT_HIT;
     }
 
+    player->attackedThisTurn = TRUE;
+
     targetPart = get_actor_part(target, currentTargetPartID);
 
     ASSERT(targetPart != NULL);
@@ -504,8 +506,7 @@ HitResult calc_player_damage_enemy(void) {
 
         currentAttackDamage += player->attackBoost;
 
-        currentAttackDamage += custom_status_get_potency(player, ATK_UP_TEMP_STATUS);
-        currentAttackDamage -= custom_status_get_potency(player, ATK_DOWN_TEMP_STATUS);
+        currentAttackDamage += getDamageChangeFromStatus(player);
 
         if (player_team_is_ability_active(player, ABILITY_HP_DRAIN)) {
             battleStatus->hpDrainCount++;

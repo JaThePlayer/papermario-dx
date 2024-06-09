@@ -17,6 +17,7 @@ typedef struct StatusIconType {
 #include "status_icons/temp_atk_down.c"
 #include "status_icons/burn.c"
 #include "status_icons/fp_cost.c"
+#include "status_icons/charge.c"
 
 StatusIconType gCustomStatusIconTypes[CUSTOM_ICON_AMT] = {
     [DEF_DOWN_ICON_ID] = STATUS_ICON_ENTRY(status_temp_def_down),
@@ -25,6 +26,7 @@ StatusIconType gCustomStatusIconTypes[CUSTOM_ICON_AMT] = {
     [ATK_UP_ICON_ID] = STATUS_ICON_ENTRY(status_temp_atk_up),
     [BURN_ICON_ID] = STATUS_ICON_ENTRY(status_icon_burn),
     [FP_COST_DOWN_ICON_ID] = STATUS_ICON_ENTRY(status_icon_fp_cost_down),
+    [CHARGE_ICON_ID] = STATUS_ICON_ENTRY(status_icon_charge),
 };
 
 void custom_status_icons_init(CustomHudComplexStatusIcon customIcons[CUSTOM_ICON_AMT]) {

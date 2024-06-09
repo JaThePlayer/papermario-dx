@@ -8,4 +8,8 @@
 // returns how much fp costs are changed by
 s32 getFpCostChange(Actor* player);
 
+s32 getDamageChangeFromStatus(Actor* actor);
+
+void clearChargesFrom(Actor* actor);
+
 #endif

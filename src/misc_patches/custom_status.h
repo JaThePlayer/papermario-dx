@@ -13,6 +13,7 @@
 #define CLOSE_CALL_STATUS 5
 #define BURN_STATUS 6
 #define FP_COST_STATUS 7
+#define CHARGE_STATUS 8
 
 // A function which gets called when a custom status gets applied
 typedef void(*StatusFxApplyFunc)(Actor* target, Vec3f position, u8 potency);
@@ -23,6 +24,11 @@ typedef void(*StatusFxRemoveIconFunc)(s32 iconId);
 
 typedef void(*StatusFxOnDecrementFunc)(Actor* target);
 
+enum StackingBehaviours {
+    STATUS_STACKING_OVERRIDE = 0, /// New applications of the status override the previous
+    STATUS_STACKING_ADD_POTENCY = 1, /// Adds the potency of the new application on top of the previous potency.
+};
+
 typedef struct StatusType {
     StatusFxApplyFunc onApply;
     StatusFxDrawIconFunc drawIcon;
@@ -30,6 +36,8 @@ typedef struct StatusType {
     StatusFxOnDecrementFunc onDecrement;
     s8 decrementLate; // whether the status should be decremented after enemies attack, like Chill Out
     s8 isDebuff; /// Whether the status is treated as a debuff, for debuff clearing items/moves
+    s8 hasTurnCount; /// Whether this status has a turn counter.
+    s8 stackingBehaviour; /// How stacking the status works. Defaults to STATUS_STACKING_OVERRIDE
 } StatusType;
 
 extern StatusType gCustomStatusTypes[CUSTOM_STATUS_AMT];
@@ -58,6 +66,10 @@ void custom_status_remove_icons(s32 iconId);
 
 Vec3f get_expected_arrow_pos(Actor* actor);
 
-void custom_status_clear_debuffs(Actor* actor);
+/// Clears the status from the given actor.
+void custom_status_clear(Actor* actor, s8 customStatusId);
+
+/// Clears all debufs, returns how many debuffs were cleared.
+s32 custom_status_clear_debuffs(Actor* actor);
 
 #endif

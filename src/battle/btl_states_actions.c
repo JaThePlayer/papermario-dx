@@ -2853,6 +2853,11 @@ void btl_state_update_player_move(void) {
                 battleStatus->hammerCharge = 0;
             }
 
+            if (player->attackedThisTurn) {
+                player->attackedThisTurn = FALSE;
+                clearChargesFrom(player);
+            }
+
             for (i = 0; i < ARRAY_COUNT(battleStatus->enemyActors); i++) {
                 actor = battleStatus->enemyActors[i];
                 if (actor != NULL && !(actor->flags & ACTOR_FLAG_NO_DMG_APPLY)) {
@@ -3339,6 +3344,11 @@ void btl_state_update_partner_move(void) {
 
             btl_update_ko_status();
 
+            if (partner->attackedThisTurn) {
+                partner->attackedThisTurn = FALSE;
+                clearChargesFrom(partner);
+            }
+
             if (partner->statusAfflicted == STATUS_KEY_DAZE && !btl_are_all_enemies_defeated()) {
                 btl_cam_use_preset(BTL_CAM_PARTNER_INJURED);
                 btl_show_battle_message(BTL_MSG_PARTNER_INJURED, 60);
@@ -3736,6 +3746,12 @@ void btl_state_update_enemy_move(void) {
 
             gBattleStatus.flags1 &= ~BS_FLAGS1_EXECUTING_MOVE;
             gBattleStatus.flags2 &= ~BS_FLAGS2_IGNORE_DARKNESS;
+
+            if (battleStatus->curTurnEnemy->attackedThisTurn) {
+                battleStatus->curTurnEnemy->attackedThisTurn = FALSE;
+                clearChargesFrom(battleStatus->curTurnEnemy);
+            }
+
             if (btl_check_enemies_defeated()) {
                 return;
             }

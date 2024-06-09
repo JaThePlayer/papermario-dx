@@ -1967,6 +1967,7 @@ typedef struct Actor {
     /* 0x440 */ struct EffectInstance* disableEffect;
     /* new   */ ActorHeldItem heldItems[MAX_ENEMY_ITEMS];
     /* new   */ StatusInfo customStatuses[CUSTOM_STATUS_AMT];
+    /* new   */ u8 attackedThisTurn;
 } Actor; // size = 0x444
 
 typedef struct BackgroundHeader {
