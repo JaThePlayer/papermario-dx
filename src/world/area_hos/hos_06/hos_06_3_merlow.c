@@ -49,24 +49,26 @@ EvtScript N(EVS_NpcInteract_Merluvlee_Passthrough) = {
     End
 };
 
+// Star Pieces: =vanilla-8+8
 ShopItemData N(MerlowBadgeInventory)[MERLOW_BADGE_COUNT] = {
-    { .itemID = ITEM_ATTACK_FX_A,    .price =  1, .descMsg = MSG_ItemFullDesc_AttackFXA },
-    { .itemID = ITEM_PAY_OFF,        .price =  1, .descMsg = MSG_ItemFullDesc_PayOff },
-    { .itemID = ITEM_CHILL_OUT,      .price =  3, .descMsg = MSG_ItemFullDesc_ChillOut },
-    { .itemID = ITEM_PRETTY_LUCKY,   .price =  5, .descMsg = MSG_ItemFullDesc_PrettyLucky },
-    { .itemID = ITEM_FEELING_FINE,   .price =  5, .descMsg = MSG_ItemFullDesc_FeelingFine },
+    { .itemID = ITEM_ATTACK_FX_A,    .price =  1 },
+    { .itemID = ITEM_PAY_OFF,        .price =  1 },
+    { .itemID = ITEM_PEEKABOO,       .price =  2 }, // was 10 -> -8
+    { .itemID = ITEM_CHILL_OUT,      .price =  3 },
+    { .itemID = ITEM_PRETTY_LUCKY,   .price =  5 },
+    { .itemID = ITEM_FEELING_FINE,   .price =  5 },
 
-    { .itemID = ITEM_HAPPY_HEART_A,  .price =  8, .descMsg = MSG_ItemFullDesc_HappyHeart },
-    { .itemID = ITEM_HAPPY_FLOWER_A, .price =  8, .descMsg = MSG_ItemFullDesc_HappyFlower },
-    { .itemID = ITEM_PEEKABOO,       .price = 10, .descMsg = MSG_ItemFullDesc_Peekaboo },
-    { .itemID = ITEM_ZAP_TAP,        .price = 10, .descMsg = MSG_ItemFullDesc_ZapTap },
-    { .itemID = ITEM_HEART_FINDER,   .price = 12, .descMsg = MSG_ItemFullDesc_HeartFinder },
+    { .itemID = ITEM_HAPPY_HEART_A,  .price =  8 },
+    { .itemID = ITEM_HAPPY_FLOWER_A, .price =  8 },
+    { .itemID = ITEM_MUSH_POWER,     .price =  8 }, // new 8 -> +8
+    { .itemID = ITEM_ZAP_TAP,        .price = 10 },
+    { .itemID = ITEM_HEART_FINDER,   .price = 12 },
 
-    { .itemID = ITEM_FLOWER_FINDER,  .price = 12, .descMsg = MSG_ItemFullDesc_FlowerFinder },
-    { .itemID = ITEM_HP_DRAIN,       .price = 15, .descMsg = MSG_ItemFullDesc_HPDrain },
-    { .itemID = ITEM_MONEY_MONEY,    .price = 20, .descMsg = MSG_ItemFullDesc_MoneyMoney },
-    { .itemID = ITEM_FLOWER_SAVER_A, .price = 25, .descMsg = MSG_ItemFullDesc_FlowerSaver },
-    { .itemID = ITEM_POWER_PLUS_A,   .price = 25, .descMsg = MSG_ItemFullDesc_PowerPlus },
+    { .itemID = ITEM_FLOWER_FINDER,  .price = 12 },
+    { .itemID = ITEM_HP_DRAIN,       .price = 15 },
+    { .itemID = ITEM_MONEY_MONEY,    .price = 20 },
+    { .itemID = ITEM_FLOWER_SAVER_A, .price = 25 },
+    { .itemID = ITEM_POWER_PLUS_A,   .price = 25 },
 };
 
 API_CALLABLE(N(Merlow_GetPlayerStarPieces)) {
@@ -80,8 +82,12 @@ API_CALLABLE(N(Merlow_SetBadgePurchased)) {
     Bytecode* args = script->ptrReadPos;
     s32 index = evt_get_variable(script, *args++);
 
-    evt_set_variable(NULL, GF_HOS06_MerlowBadge_00 + index, TRUE);
+    //evt_set_variable(NULL, GF_HOS06_MerlowBadge_00 + index, TRUE);
     return ApiStatus_DONE2;
+}
+
+s32 merlow_does_player_have_badge(s32 id) {
+    return find_item(id) != -1;
 }
 
 API_CALLABLE(N(Merlow_ShopBadgesPopup)) {
@@ -94,19 +100,20 @@ API_CALLABLE(N(Merlow_ShopBadgesPopup)) {
         menu = script->functionTempPtr[2];
         menuPos = 0;
         for (i = 0; i < MERLOW_BADGE_COUNT; i++) {
-            if (!evt_get_variable(NULL, GF_HOS06_MerlowBadge_00 + i)) {
-                ItemData* item = &gItemTable[N(MerlowBadgeInventory)[i].itemID];
+            ShopItemData* shopItem = &N(MerlowBadgeInventory)[i];
+            if (!merlow_does_player_have_badge(shopItem->itemID)) {
+                ItemData* item = &gItemTable[shopItem->itemID];
                 IconHudScriptPair* itemHudScripts = &gItemHudScripts[item->hudElemID];
                 menu->userIndex[menuPos] = i;
                 menu->nameMsg[menuPos] = item->nameMsg;
                 menu->ptrIcon[menuPos] = itemHudScripts->enabled;
-                menu->enabled[menuPos] = playerData->starPieces >= N(MerlowBadgeInventory)[i].price;
-                if (playerData->starPieces < N(MerlowBadgeInventory)[i].price) {
+                menu->enabled[menuPos] = playerData->starPieces >= shopItem->price;
+                if (playerData->starPieces < shopItem->price) {
                     menu->ptrIcon[menuPos] = itemHudScripts->disabled;
                     menu->enabled[menuPos] = FALSE;
                 }
-                menu->descMsg[menuPos] = N(MerlowBadgeInventory)[i].descMsg;
-                menu->value[menuPos] = N(MerlowBadgeInventory)[i].price;
+                menu->descMsg[menuPos] = item->fullDescMsg;
+                menu->value[menuPos] = shopItem->price;
                 menuPos++;
             }
         }
