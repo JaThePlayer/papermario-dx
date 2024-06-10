@@ -4073,6 +4073,10 @@ void btl_state_update_first_strike(void) {
             }
             if (player->takeTurnScript == NULL || !does_script_exist(player->takeTurnScriptID)) {
                 player->takeTurnScript = NULL;
+                if (player->attackedThisTurn) {
+                    player->attackedThisTurn = FALSE;
+                    clearChargesFrom(player);
+                }
                 btl_set_state(BATTLE_STATE_BEGIN_TURN);
             }
             break;
