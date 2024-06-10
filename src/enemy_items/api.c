@@ -275,6 +275,22 @@ static void RecoverFpFromCustomItemEffect(Actor* actor, s32 amt) {
 
 }
 
+// counts badges with given move id either for the player or enemies
+s32 badge_count_by_move_id(Actor* actor, s32 moveId) {
+    if (actor == gBattleStatus.playerActor) {
+        s32 sum = 0;
+        for (s32 idx = 0; idx < ARRAY_COUNT(gPlayerData.equippedBadges); idx++) {
+            s32 badgeMoveID = gItemTable[gPlayerData.equippedBadges[idx]].moveID;
+            if (badgeMoveID == moveId) {
+                sum += 1;
+            }
+        }
+        return sum;
+    }
+
+    return enemy_items_count_items_with_move_id(actor, moveId);
+}
+
 // Applies custom effects from items
 API_CALLABLE(ApplyCustomItemEffects) {
     Bytecode* args = script->ptrReadPos;
@@ -301,7 +317,7 @@ API_CALLABLE(ApplyCustomItemEffects) {
     #define ELECTRIFY(turns) inflict_status(actor, STATUS_KEY_STATIC, turns)
     #define POISON(turns) inflict_status(actor, STATUS_KEY_POISON, turns)
 
-    #define CHARGE(amt) INFLICT(CHARGE_STATUS, 1, 1, amt)
+    #define CHARGE(amt) INFLICT(CHARGE_STATUS, 99, 99, amt)
 
     #define RECOVER_FP(amt) RecoverFpFromCustomItemEffect(actor, amt)
 
@@ -321,6 +337,9 @@ API_CALLABLE(ApplyCustomItemEffects) {
         case ITEM_SPICY_SOUP:
             ATK_UP(1, 2);
             break;
+        case ITEM_VOLT_SHROOM:
+            ELECTRIFY(3);
+            break;
         case ITEM_HOT_SHROOM:
             ELECTRIFY(2);
             CHARGE(1);
@@ -336,6 +355,23 @@ API_CALLABLE(ApplyCustomItemEffects) {
         case ITEM_MISTAKE:
             POISON(3);
             break;
+    }
+
+    {
+        s32 mushPowerCount = badge_count_by_move_id(actor, MOVE_MUSH_POWER);
+        if (mushPowerCount > 0) {
+            switch (itemIdx)
+            {
+                case ITEM_DRIED_SHROOM:
+                case ITEM_MUSHROOM:
+                case ITEM_SUPER_SHROOM:
+                case ITEM_ULTRA_SHROOM:
+                case ITEM_LIFE_SHROOM:
+                case ITEM_VOLT_SHROOM:
+                    CHARGE(mushPowerCount);
+                    break;
+            }
+        }
     }
 
     #undef DEF_UP

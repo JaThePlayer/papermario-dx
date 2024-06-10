@@ -1,6 +1,6 @@
   # valid icon types are:
   #   solo      ci4 image followed by one palette
-  #   pair      ci4 image followed by two palettes; the second will be called .disabled 
+  #   pair      ci4 image followed by two palettes; the second will be called .disabled
   #   rgba16    rgba image; used by one strange entry
 
   - [solo, key/Gift, 32, 32]
@@ -391,3 +391,4 @@
   - [solo, anim/sp_small_5, 8, 8]
   - [solo, anim/sp_small_6, 8, 8]
   - [solo, anim/sp_small_7, 8, 8]
+  - [pair, badge/MushPower, 32, 32]

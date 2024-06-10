@@ -41,8 +41,7 @@
 }
 
 #message:25:(ItemFullDesc_VoltShroom) {
-	Electrifies Mario for a short[BR]
-	time.[BR]
+	Electrifies Mario for 3 turns.[BR]
 	Any enemies who touch him will[BR]
 	take damage.  [End]
 }
@@ -1476,4 +1475,11 @@
 #message:25:(ItemFullDesc_ChillJump) {
 	Lets you do a Chill Stomp. Drops[BR]
 	enemy ATK by 1 for 3 turns. 3 FP.[End]
+}
+
+#message:25:(ItemFullDesc_MushPower) {
+	Eating a raw mushroom charges next[BR]
+	attack by 1 ATK.[BR]
+	Only triggers if food poisoning[BR]
+	doesn't come into play.[End]
 }

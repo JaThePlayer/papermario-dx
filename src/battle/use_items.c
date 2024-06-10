@@ -39,22 +39,22 @@ extern EvtScript battle_item_dried_shroom_EVS_UseItem;
 // items in this list must correspond with BattleMoveEntry in gBattleItemTable
 s32 ItemKeys[] = {
     GENERIC_FOOD_ITEM,
-    ITEM_MUSHROOM,
+    FOOD_POISONING_ITEM,
+    //ITEM_MUSHROOM,
     ITEM_FIRE_FLOWER,
     ITEM_DUSTY_HAMMER,
     ITEM_POW_BLOCK,
     ITEM_PEBBLE,
-    ITEM_VOLT_SHROOM,
+    //ITEM_VOLT_SHROOM,
     ITEM_THUNDER_RAGE,
     ITEM_SNOWMAN_DOLL,
-    FOOD_POISONING_ITEM,
     ITEM_SHOOTING_STAR,
     ITEM_SLEEPY_SHEEP,
     ITEM_STONE_CAP,
     //ITEM_TASTY_TONIC,
     ITEM_THUNDER_BOLT,
-    ITEM_SUPER_SHROOM,
-    ITEM_ULTRA_SHROOM,
+    // ITEM_SUPER_SHROOM,
+    // ITEM_ULTRA_SHROOM,
     //ITEM_SUPER_SODA,
     ITEM_HUSTLE_DRINK,
     ITEM_STOP_WATCH,
@@ -65,7 +65,7 @@ s32 ItemKeys[] = {
     ITEM_FRIGHT_JAR,
     ITEM_MYSTERY,
     ITEM_REPEL_GEL,
-    ITEM_LIFE_SHROOM,
+    // ITEM_LIFE_SHROOM,
     ITEM_COCONUT,
     ITEM_ELECTRO_POP,
     ITEM_STRANGE_CAKE,
@@ -75,22 +75,22 @@ s32 ItemKeys[] = {
 
 BattleMoveEntry gBattleItemTable[] = {
     BTL_ITEM(food),
-    BTL_ITEM(mushroom),
+    BTL_ITEM(dried_shroom),
+    //BTL_ITEM(mushroom),
     BTL_ITEM(fire_flower),
     BTL_ITEM(dusty_hammer),
     BTL_ITEM(pow_block),
     BTL_ITEM(pebble),
-    BTL_ITEM(volt_shroom),
+    //BTL_ITEM(volt_shroom),
     BTL_ITEM(thunder_rage),
     BTL_ITEM(snowman_doll),
-    BTL_ITEM(dried_shroom),
     BTL_ITEM(shooting_star),
     BTL_ITEM(sleepy_sheep),
     BTL_ITEM(stone_cap),
     //BTL_ITEM(tasty_tonic),
     BTL_ITEM(thunder_bolt),
-    BTL_ITEM(mushroom),
-    BTL_ITEM(mushroom),
+    //BTL_ITEM(mushroom),
+    //BTL_ITEM(mushroom),
     //BTL_ITEM(super_soda),
     BTL_ITEM(hustle_drink),
     BTL_ITEM(stop_watch),
@@ -101,7 +101,7 @@ BattleMoveEntry gBattleItemTable[] = {
     BTL_ITEM(fright_jar),
     BTL_ITEM(mystery),
     BTL_ITEM(repel_gel),
-    BTL_ITEM(life_shroom),
+    //BTL_ITEM(life_shroom),
     BTL_ITEM(coconut),
     BTL_ITEM(electro_pop),
     BTL_ITEM(strange_cake),
@@ -161,7 +161,7 @@ API_CALLABLE(LoadItemScript) {
     if (item->typeFlags & ITEM_TYPE_FLAG_FOOD_OR_DRINK) {
         if (food_poison_was_used(itemID)) {
             // Swap out item script for dried shroom
-            i = 9;
+            i = 1;
         } else {
             food_poison_mark_used(itemID);
         }

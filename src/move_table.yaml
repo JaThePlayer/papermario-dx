@@ -1672,3 +1672,12 @@
     actionTip: BTL_MSG_ACTION_TIP_MASH_LEFT
     costFP: 5
     costBP: 0
+- MushPower:
+    nameMsg: MSG_ItemName_MushPower
+    fullDescMsg: MSG_ItemFullDesc_MushPower
+    shortDescMsg: MSG_ItemFullDesc_MushPower
+    flags: []
+    category: MOVE_TYPE_DEFENSE_UP
+    actionTip: NONE
+    costFP: 0
+    costBP: 3

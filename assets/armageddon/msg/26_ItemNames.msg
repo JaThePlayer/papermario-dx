@@ -1077,3 +1077,7 @@
 #message:26:(ItemName_ChillJump) {
 	Chill Stomp[End]
 }
+
+#message:26:(ItemName_MushPower) {
+	Mush Power[End]
+}
