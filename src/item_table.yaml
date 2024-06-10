@@ -1929,7 +1929,7 @@
     icon: food/TastyTonic
     itemEntityTemplate: STANDARD
     hudElementTemplate: ITEM
-    sellValue: 1
+    sellValue: 3
     sortValue: 0
     targetFlags: [ TARGET_FLAG_SELECT_ONE, TARGET_FLAG_PLAYER ]
     typeFlags: [ ITEM_TYPE_FLAG_WORLD_USABLE, ITEM_TYPE_FLAG_BATTLE_USABLE, ITEM_TYPE_FLAG_CONSUMABLE, ITEM_TYPE_FLAG_FOOD_OR_DRINK, ITEM_TYPE_FLAG_USE_DRINK_ANIMATION, ITEM_TYPE_FLAG_ENTITY_FULLSIZE ]
@@ -2410,7 +2410,7 @@
     targetFlags: [ TARGET_FLAG_SELECT_ONE, TARGET_FLAG_PLAYER ]
     typeFlags: [ ITEM_TYPE_FLAG_WORLD_USABLE, ITEM_TYPE_FLAG_BATTLE_USABLE, ITEM_TYPE_FLAG_CONSUMABLE, ITEM_TYPE_FLAG_FOOD_OR_DRINK, ITEM_TYPE_FLAG_ENTITY_FULLSIZE ]
     moveID: MOVE_NONE
-    potencyA: 5
+    potencyA: 7
     potencyB: 0
 - Coconut:
     nameMsg: MSG_ItemName_Coconut
@@ -2606,8 +2606,8 @@
     targetFlags: [ TARGET_FLAG_SELECT_ONE, TARGET_FLAG_PLAYER ]
     typeFlags: [ ITEM_TYPE_FLAG_WORLD_USABLE, ITEM_TYPE_FLAG_BATTLE_USABLE, ITEM_TYPE_FLAG_CONSUMABLE, ITEM_TYPE_FLAG_FOOD_OR_DRINK, ITEM_TYPE_FLAG_ENTITY_FULLSIZE ]
     moveID: MOVE_NONE
-    potencyA: 15
-    potencyB: 5
+    potencyA: 5
+    potencyB: 0
 - SweetShroom:
     nameMsg: MSG_ItemName_SweetShroom
     fullDescMsg: MSG_ItemFullDesc_SweetShroom
@@ -2747,7 +2747,7 @@
     typeFlags: [ ITEM_TYPE_FLAG_WORLD_USABLE, ITEM_TYPE_FLAG_BATTLE_USABLE, ITEM_TYPE_FLAG_CONSUMABLE, ITEM_TYPE_FLAG_FOOD_OR_DRINK, ITEM_TYPE_FLAG_USE_DRINK_ANIMATION, ITEM_TYPE_FLAG_ENTITY_FULLSIZE ]
     moveID: MOVE_NONE
     potencyA: 0
-    potencyB: 7
+    potencyB: 5
 - HoneySuper:
     nameMsg: MSG_ItemName_HoneySuper
     fullDescMsg: MSG_ItemFullDesc_HoneySuper
@@ -2830,7 +2830,7 @@
     targetFlags: [ TARGET_FLAG_SELECT_ONE, TARGET_FLAG_PLAYER ]
     typeFlags: [ ITEM_TYPE_FLAG_WORLD_USABLE, ITEM_TYPE_FLAG_BATTLE_USABLE, ITEM_TYPE_FLAG_CONSUMABLE, ITEM_TYPE_FLAG_FOOD_OR_DRINK, ITEM_TYPE_FLAG_ENTITY_FULLSIZE ]
     moveID: MOVE_NONE
-    potencyA: 10
+    potencyA: 13
     potencyB: 0
 - HoneyShroom:
     nameMsg: MSG_ItemName_HoneyShroom
@@ -3013,7 +3013,7 @@
     typeFlags: [ ITEM_TYPE_FLAG_WORLD_USABLE, ITEM_TYPE_FLAG_BATTLE_USABLE, ITEM_TYPE_FLAG_CONSUMABLE, ITEM_TYPE_FLAG_FOOD_OR_DRINK, ITEM_TYPE_FLAG_ENTITY_FULLSIZE ]
     moveID: MOVE_NONE
     potencyA: 0
-    potencyB: 10
+    potencyB: 5
 - MapleShroom:
     nameMsg: MSG_ItemName_MapleShroom
     fullDescMsg: MSG_ItemFullDesc_MapleShroom

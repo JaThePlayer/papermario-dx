@@ -74,12 +74,13 @@
 
 #message:25:(ItemFullDesc_TastyTonic) {
 	A very tasty tonic. Cures[BR]
-	poisoning and shrinking.[End]
+	debuffs, and recovers 5 FP[BR]
+	per cleared debuff.[End]
 }
 
 #message:25:(ItemFullDesc_SuperSoda) {
-	A bubbly soda. Cures shrinking or[BR]
-	poisoning and restores 5 FP.[End]
+	A bubbly soda. Cures debuffs[BR]
+	and restores 5 FP.[End]
 }
 
 #message:25:(ItemFullDesc_BlueBerry) {
@@ -171,7 +172,7 @@
 
 #message:25:(ItemFullDesc_Egg) {
 	An egg of unknown origin.[BR]
-	Restores 5 HP.[End]
+	Restores 7 HP.[End]
 }
 
 #message:25:(ItemFullDesc_Coconut) {
@@ -210,7 +211,7 @@
 }
 
 #message:25:(ItemFullDesc_DizzyDial) {
-	If it works, dazes all enemies,
+	If it works, dazes all enemies,[BR]
 	making them miss attacks.[BR]
 	It's especially effective against[BR]
 	flying enemies.[End]
@@ -298,7 +299,9 @@
 
 #message:25:(ItemFullDesc_HotShroom) {
 	A snack made by Tayce T.[BR]
-	Restores 15 HP and 5 FP.[End]
+	Restores 5 HP, electrifies[BR]
+	Mario for 2 turns and[BR]
+	charges next move by 1 ATK.[End]
 }
 
 #message:25:(ItemFullDesc_ShroomSteak) {
@@ -353,12 +356,14 @@
 
 #message:25:(ItemFullDesc_Mistake) {
 	This doesn't look very good![BR]
-	Restores 1 HP and 1 FP.[End]
+	Restores 1 HP and 1 FP.[BR]
+	Poisons you for 3 turns.[End]
 }
 
 #message:25:(ItemFullDesc_KoopaTea) {
 	Tea brewed by Tayce T.[BR]
-	Restores 7 FP.[End]
+	Restores 5 FP, reduces FP[BR]
+	costs by 1 for 4 turns.[End]
 }
 
 #message:25:(ItemFullDesc_Spaghetti) {
@@ -373,7 +378,7 @@
 
 #message:25:(ItemFullDesc_FriedEgg) {
 	Food cooked by Tayce T.[BR]
-	Restores 10 HP.[End]
+	Restores 13 HP.[End]
 }
 
 #message:25:(ItemFullDesc_HoneyCandy) {
@@ -438,7 +443,8 @@
 
 #message:25:(ItemFullDesc_NuttyCake) {
 	A nut cake baked by Tayce T.[BR]
-	Restores 10 FP.[End]
+	Restores 5 FP and increases[BR]
+	DEF by 1 for 2 turns.[End]
 }
 
 #message:25:(ItemFullDesc_BoiledEgg) {

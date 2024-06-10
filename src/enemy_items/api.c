@@ -17,6 +17,14 @@ static Actor* get_actor_from_evt_var(Evt* script, s32 var) {
     return actor;
 }
 
+static s32 get_actor_head_y_pos(Actor* actor) {
+    if (!(actor->flags & ACTOR_FLAG_HALF_HEIGHT)) {
+        return actor->curPos.y + actor->headOffset.y + actor->size.y;
+    } else {
+        return actor->curPos.y + actor->headOffset.y + actor->size.y / 2;
+    }
+}
+
 s32 enemy_items_find_empty_slot(Actor* actor) {
     s32 i;
     for (i = 0; i < MAX_ENEMY_ITEMS; i++) {
@@ -226,6 +234,47 @@ API_CALLABLE(_GetTargetActorId) {
     return ApiStatus_DONE2;
 }
 
+static s32 ItemClearStatus(Actor* actor) {
+    s32 amt = 0;
+
+    if (actor->debuff != 0) {
+        actor->debuffDuration = 0;
+        actor->debuff = 0;
+        remove_status_debuff(actor->hudElementDataIndex);
+        amt += 1;
+    }
+
+    if (actor->koStatus != 0) {
+        actor->koDuration = 0;
+        actor->koStatus = 0;
+        actor->disableEffect->data.disableX->koDuration = 0;
+        //amt += 1; Handled already by actor->debuff check above
+    }
+
+    amt += custom_status_clear_debuffs(actor);
+
+    btl_update_ko_status();
+
+    return amt;
+}
+
+static void RecoverFpFromCustomItemEffect(Actor* actor, s32 amt) {
+    PlayerData* playerData = &gPlayerData;
+
+    fx_recover(1, actor->curPos.x + 20, get_actor_head_y_pos(actor), actor->curPos.z, amt);
+
+    if (actor == gBattleStatus.playerActor) {
+        s32 newFP = playerData->curFP + amt;
+
+        if (newFP > playerData->curMaxFP) {
+            newFP = playerData->curMaxFP;
+        }
+
+        playerData->curFP = newFP;
+    }
+
+}
+
 // Applies custom effects from items
 API_CALLABLE(ApplyCustomItemEffects) {
     Bytecode* args = script->ptrReadPos;
@@ -244,19 +293,48 @@ API_CALLABLE(ApplyCustomItemEffects) {
     #define INFLICT(status, turns, enemyTurns, potency) try_inflict_custom_status(actor, actor->curPos, status, isPlayer ? turns : enemyTurns, potency, 100);
     // increase turn count for enemies, as the first turn is wasted
     #define DEF_UP(turns, potency) INFLICT(DEF_UP_TEMP_STATUS, turns, turns + 1, potency)
-    #define ATK_UP(turns, potency) INFLICT(ATK_UP_TEMP_STATUS, turns, turns + 1, potency)
+    // increase turn count for both mario and enemies, as the first turn is wasted
+    #define ATK_UP(turns, potency) INFLICT(ATK_UP_TEMP_STATUS, turns + 1, turns + 1, potency)
 
     #define FP_COST(turns, potency) INFLICT(FP_COST_STATUS, turns, turns + 1, potency)
+
+    #define ELECTRIFY(turns) inflict_status(actor, STATUS_KEY_STATIC, turns)
+    #define POISON(turns) inflict_status(actor, STATUS_KEY_POISON, turns)
+
+    #define CHARGE(amt) INFLICT(CHARGE_STATUS, 1, 1, amt)
+
+    #define RECOVER_FP(amt) RecoverFpFromCustomItemEffect(actor, amt)
 
     switch (itemIdx) {
         case ITEM_GOOMNUT:
             DEF_UP(1, 2);
             break;
-        case ITEM_SPICY_SOUP:
-            ATK_UP(1, 2);
+        case ITEM_NUTTY_CAKE:
+            DEF_UP(2, 1);
             break;
         case ITEM_KOOPA_LEAF:
             FP_COST(2, -2);
+            break;
+        case ITEM_KOOPA_TEA:
+            FP_COST(4, -1);
+            break;
+        case ITEM_SPICY_SOUP:
+            ATK_UP(1, 2);
+            break;
+        case ITEM_HOT_SHROOM:
+            ELECTRIFY(2);
+            CHARGE(1);
+            break;
+        case ITEM_SUPER_SODA:
+            ItemClearStatus(actor);
+            break;
+        case ITEM_TASTY_TONIC: {
+            s32 amt = ItemClearStatus(actor);
+            RECOVER_FP(amt * 5);
+            break;
+        }
+        case ITEM_MISTAKE:
+            POISON(3);
             break;
     }
 
@@ -426,13 +504,7 @@ extern API_CALLABLE(LoadItemScriptForEnemy);
 static API_CALLABLE(GetActorHeadYPos) {
     Bytecode* args = script->ptrReadPos;
     Actor* actor = get_actor_from_evt_var(script, *args++);
-    s32 headY;
-
-    if (!(actor->flags & ACTOR_FLAG_HALF_HEIGHT)) {
-        headY = actor->curPos.y + actor->headOffset.y + actor->size.y;
-    } else {
-        headY = actor->curPos.y + actor->headOffset.y + actor->size.y / 2;
-    }
+    s32 headY = get_actor_head_y_pos(actor);
 
     evt_set_variable(script, *args++, headY);
 
@@ -447,7 +519,7 @@ EvtScript EnemyItems_UseItemById = {
 
     Wait(4)
     Add(LVar1, 10) // was 45
-    Add(LVar1, LVar6)
+    Set(LVar1, LVar6) // was Add, probably bug
     Set(LVar3, LVar1)
     Add(LVar3, 10)
     Add(LVar3, 2)
