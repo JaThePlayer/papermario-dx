@@ -1080,7 +1080,7 @@
     costBP: 3
 - Focus:
     nameMsg: MSG_Menus_StarPower_Focus
-    fullDescMsg: MSG_NONE
+    fullDescMsg: MSG_Menus_StarPowerDesc_Focus
     shortDescMsg: MSG_Menus_StarPowerDesc_Focus
     flags: [ TARGET_FLAG_OVERRIDE ]
     category: MOVE_TYPE_STAR_POWER
@@ -1089,7 +1089,7 @@
     costBP: 0
 - Refresh:
     nameMsg: MSG_Menus_StarPower_Refresh
-    fullDescMsg: MSG_NONE
+    fullDescMsg: MSG_Menus_StarPowerDesc_Refresh
     shortDescMsg: MSG_Menus_StarPowerDesc_Refresh
     flags: [ TARGET_FLAG_PLAYER ]
     category: MOVE_TYPE_STAR_POWER
@@ -1098,7 +1098,7 @@
     costBP: 1
 - Lullaby:
     nameMsg: MSG_Menus_StarPower_Lullaby
-    fullDescMsg: MSG_NONE
+    fullDescMsg: MSG_Menus_StarPowerDesc_Lullaby
     shortDescMsg: MSG_Menus_StarPowerDesc_Lullaby
     flags: [ TARGET_FLAG_2, TARGET_FLAG_PRIMARY_ONLY ]
     category: MOVE_TYPE_STAR_POWER
@@ -1107,7 +1107,7 @@
     costBP: 1
 - StarStorm:
     nameMsg: MSG_Menus_StarPower_StarStorm
-    fullDescMsg: MSG_NONE
+    fullDescMsg: MSG_Menus_StarPowerDesc_StarStorm
     shortDescMsg: MSG_Menus_StarPowerDesc_StarStorm
     flags: [ TARGET_FLAG_2, TARGET_FLAG_PRIMARY_ONLY ]
     category: MOVE_TYPE_STAR_POWER
@@ -1116,7 +1116,7 @@
     costBP: 2
 - ChillOutMove:
     nameMsg: MSG_Menus_StarPower_ChillOut
-    fullDescMsg: MSG_NONE
+    fullDescMsg: MSG_Menus_StarPowerDesc_ChillOut
     shortDescMsg: MSG_Menus_StarPowerDesc_ChillOut
     flags: [ TARGET_FLAG_2, TARGET_FLAG_PRIMARY_ONLY ]
     category: MOVE_TYPE_STAR_POWER
@@ -1125,7 +1125,7 @@
     costBP: 2
 - Smooch:
     nameMsg: MSG_Menus_StarPower_Smooch
-    fullDescMsg: MSG_NONE
+    fullDescMsg: MSG_Menus_StarPowerDesc_Smooch
     shortDescMsg: MSG_Menus_StarPowerDesc_Smooch
     flags: [ TARGET_FLAG_PLAYER ]
     category: MOVE_TYPE_STAR_POWER
@@ -1134,7 +1134,7 @@
     costBP: 3
 - TimeOut:
     nameMsg: MSG_Menus_StarPower_TimeOut
-    fullDescMsg: MSG_NONE
+    fullDescMsg: MSG_Menus_StarPowerDesc_TimeOut
     shortDescMsg: MSG_Menus_StarPowerDesc_TimeOut
     flags: [ TARGET_FLAG_2, TARGET_FLAG_PRIMARY_ONLY ]
     category: MOVE_TYPE_STAR_POWER
@@ -1143,7 +1143,7 @@
     costBP: 2
 - UpAndAway:
     nameMsg: MSG_Menus_StarPower_UpAndAway
-    fullDescMsg: MSG_NONE
+    fullDescMsg: MSG_Menus_StarPowerDesc_UpAndAway
     shortDescMsg: MSG_Menus_StarPowerDesc_UpAndAway
     flags: [ TARGET_FLAG_2, TARGET_FLAG_PRIMARY_ONLY ]
     category: MOVE_TYPE_STAR_POWER
@@ -1152,7 +1152,7 @@
     costBP: 2
 - StarBeam:
     nameMsg: MSG_Menus_StarPower_StarBeam
-    fullDescMsg: MSG_NONE
+    fullDescMsg: MSG_Menus_StarPowerDesc_StarBeam
     shortDescMsg: MSG_Menus_StarPowerDesc_StarBeam
     flags: [ TARGET_FLAG_2, TARGET_FLAG_PRIMARY_ONLY ]
     category: MOVE_TYPE_STAR_POWER
@@ -1161,7 +1161,7 @@
     costBP: 0
 - PeachBeam:
     nameMsg: MSG_Menus_StarPower_PeachBeam
-    fullDescMsg: MSG_NONE
+    fullDescMsg: MSG_Menus_StarPowerDesc_PeachBeam
     shortDescMsg: MSG_Menus_StarPowerDesc_PeachBeam
     flags: [ TARGET_FLAG_2, TARGET_FLAG_PRIMARY_ONLY ]
     category: MOVE_TYPE_STAR_POWER
@@ -1170,7 +1170,7 @@
     costBP: 0
 - PeachFocus:
     nameMsg: MSG_Menus_StarPower_Peach_Focus
-    fullDescMsg: MSG_NONE
+    fullDescMsg: MSG_Menus_StarPowerDesc_Focus
     shortDescMsg: MSG_Menus_StarPowerDesc_Focus
     flags: [ TARGET_FLAG_PARTNER ]
     category: MOVE_TYPE_STAR_POWER
@@ -1179,7 +1179,7 @@
     costBP: 0
 - TwinkDash:
     nameMsg: MSG_Menus_StarPower_Twink_Dash
-    fullDescMsg: MSG_NONE
+    fullDescMsg: MSG_Menus_StarPowerDesc_Focus
     shortDescMsg: MSG_Menus_StarPowerDesc_Focus
     flags: [ TARGET_FLAG_SELECT_ONE, TARGET_FLAG_2, TARGET_FLAG_PRIMARY_ONLY ]
     category: MOVE_TYPE_STAR_POWER

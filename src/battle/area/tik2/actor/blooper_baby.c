@@ -2,6 +2,8 @@
 #include "sprite/npc/BabyBlooper.h"
 #include "battle/action_cmd/stop_leech.h"
 #include "sprite/player.h"
+#include "misc_patches/custom_status.h"
+#include "misc_patches/misc_patches.h"
 
 #define NAMESPACE A(blooper_baby)
 
@@ -10,6 +12,7 @@ extern EvtScript N(EVS_Idle);
 extern EvtScript N(EVS_TakeTurn);
 extern EvtScript N(EVS_HandleEvent);
 extern EvtScript N(EVS_Death);
+extern EvtScript N(EVS_Attack);
 
 enum N(ActorPartIDs) {
     PRT_MAIN        = 1,
@@ -409,7 +412,51 @@ EvtScript N(EVS_Death) = {
 EvtScript N(EVS_TakeTurn) = {
     Call(UseIdleAnimation, ACTOR_SELF, FALSE)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
-    Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
+
+    Call(ActorExists, ACTOR_ENEMY0, LVar1)
+    IfTrue(LVar1)
+        Call(UseBattleCamPreset, BTL_CAM_PRESET_07)
+        Call(BattleCamTargetActor, ACTOR_SELF)
+
+        Call(GetActorPos, ACTOR_SELF, LVar1, LVar2, LVar3)
+        Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_BabyBlooper_Anim08)
+        Add(LVar2, 50)
+        PlayEffect(EFFECT_SPARKLES, 1, LVar1, LVar2, LVar3, 10, 0)
+        Wait(30)
+        Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_BabyBlooper_Anim01)
+        Wait(10)
+
+        Call(UseBattleCamPreset, BTL_CAM_PRESET_07)
+        Call(BattleCamTargetActor, ACTOR_ENEMY0)
+        Call(SetBattleCamOffsetZ, 25)
+        Call(SetBattleCamZoom, 330)
+        Call(MoveBattleCamOver, 40)
+        Wait(5)
+
+        Call(InflictCustomStatus, ACTOR_ENEMY0, CHARGE_STATUS, 99, 1, 100)
+
+        Wait(15)
+        Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
+        Wait(10)
+    EndIf
+
+    ExecWait(N(EVS_Attack))
+    Return
+    End
+};
+
+EvtScript N(EVS_Attack) = {
+    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
+
+    Call(TargetPlayerOrPartner, ACTOR_SELF, 60, LVarD)
+    // LVarD - damage
+    IfTrue(LVarD)
+        Set(LVarD, 2) // player
+    Else
+        Set(LVarD, 1) // partner
+    EndIf
+
     Call(SetGoalToTarget, ACTOR_SELF)
     Call(GetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
     Set(LVar1, 100)
@@ -444,25 +491,6 @@ EvtScript N(EVS_TakeTurn) = {
             Call(UseIdleAnimation, ACTOR_SELF, TRUE)
             Return
         EndCaseGroup
-        CaseOrEq(HIT_RESULT_HIT_STATIC)
-        CaseOrEq(HIT_RESULT_IMMUNE)
-            Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_BabyBlooper_Anim02)
-            Call(SetGoalToTarget, ACTOR_SELF)
-            Call(GetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Call(SetActorJumpGravity, ACTOR_SELF, Float(1.5))
-            Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Call(JumpToGoal, ACTOR_SELF, 16, FALSE, TRUE, FALSE)
-            IfEq(LVarF, 7)
-                Call(EnemyDamageTarget, ACTOR_SELF, LVarF, 0, 0, 0, 0, BS_FLAGS1_NICE_HIT)
-            EndIf
-            Add(LVar0, 30)
-            Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Call(JumpToGoal, ACTOR_SELF, 15, FALSE, TRUE, FALSE)
-            ExecWait(N(EVS_FloatToHome))
-            Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_RESTART)
-            Call(UseIdleAnimation, ACTOR_SELF, TRUE)
-            Return
-        EndCaseGroup
     EndSwitch
     Call(GetActorPos, ACTOR_PLAYER, LVar0, LVar1, LVar2)
     Add(LVar1, 50)
@@ -480,192 +508,8 @@ EvtScript N(EVS_TakeTurn) = {
     Call(JumpToGoal, ACTOR_SELF, 16, FALSE, TRUE, FALSE)
     Call(SetGoalToTarget, ACTOR_SELF)
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_BabyBlooper_Anim08)
-    Call(ShowMessageBox, BTL_MSG_ACTION_TIP_MASH_BUTTON, 32767)
-    Call(ShowActionHud, TRUE)
-    Call(LoadActionCommand, ACTION_COMMAND_STOP_LEECH)
-    Call(action_command_stop_leech_init)
-    Call(SetupMashMeter, 1, 15, 0, 0, 0, 0)
-    Wait(10)
-    Call(SetBattleFlagBits, BS_FLAGS1_4000, FALSE)
-    Call(action_command_stop_leech_start, 0, 32767, 3)
-    Loop(5)
-        Call(UseIdleAnimation, ACTOR_PLAYER, FALSE)
-        Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_MarioB1_Leeching)
-        Set(LFlag0, FALSE)
-        Loop(10)
-            Call(GetActionSuccessCopy, LVar1)
-            IfEq(LVar1, 1)
-                Set(LFlag0, TRUE)
-                BreakLoop
-            EndIf
-            Wait(1)
-        EndLoop
-        IfEq(LFlag0, TRUE)
-            Call(DispatchEventPlayer, EVENT_66)
-            Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
-            BreakLoop
-        EndIf
-        Call(PlaySoundAtActor, ACTOR_SELF, SOUND_LEECH)
-        Call(SetActorScale, ACTOR_SELF, Float(1.0), Float(1.0), Float(1.0))
-        Set(LFlag0, FALSE)
-        Loop(2)
-            Call(GetActionSuccessCopy, LVar1)
-            IfEq(LVar1, 1)
-                Set(LFlag0, TRUE)
-                BreakLoop
-            EndIf
-            Wait(1)
-        EndLoop
-        IfEq(LFlag0, TRUE)
-            Call(DispatchEventPlayer, EVENT_66)
-            Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
-            BreakLoop
-        EndIf
-        Call(SetActorScale, ACTOR_SELF, Float(0.9), Float(1.1), Float(1.0))
-        Set(LFlag0, FALSE)
-        Loop(2)
-            Call(GetActionSuccessCopy, LVar1)
-            IfEq(LVar1, 1)
-                Set(LFlag0, TRUE)
-                BreakLoop
-            EndIf
-            Wait(1)
-        EndLoop
-        IfEq(LFlag0, TRUE)
-            Call(DispatchEventPlayer, EVENT_66)
-            Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
-            BreakLoop
-        EndIf
-        Call(SetActorScale, ACTOR_SELF, Float(0.8), Float(1.2), Float(1.0))
-        Set(LFlag0, FALSE)
-        Loop(3)
-            Call(GetActionSuccessCopy, LVar1)
-            IfEq(LVar1, 1)
-                Set(LFlag0, TRUE)
-                BreakLoop
-            EndIf
-            Wait(1)
-        EndLoop
-        IfEq(LFlag0, TRUE)
-            Call(DispatchEventPlayer, EVENT_66)
-            Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
-            BreakLoop
-        EndIf
-        Call(SetActorScale, ACTOR_SELF, Float(0.7), Float(1.4), Float(1.0))
-        Set(LFlag0, FALSE)
-        Loop(2)
-            Call(GetActionSuccessCopy, LVar1)
-            IfEq(LVar1, 1)
-                Set(LFlag0, TRUE)
-                BreakLoop
-            EndIf
-            Wait(1)
-        EndLoop
-        IfEq(LFlag0, TRUE)
-            Call(DispatchEventPlayer, EVENT_66)
-            Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
-            BreakLoop
-        EndIf
-        Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
-        Call(SetDamageSource, DMG_SRC_LEECH)
-        Call(EnemyDamageTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_UNBLOCKABLE | DAMAGE_TYPE_IGNORE_DEFENSE, 0, 0, DMG_LEECH, BS_FLAGS1_NICE_HIT)
-        Call(StartRumble, BTL_RUMBLE_HIT_MIN)
-        Call(GetLastDamage, ACTOR_PLAYER, LVar3)
-        IfNe(LVar3, 0)
-            Call(PlaySoundAtActor, ACTOR_SELF, SOUND_RECOVER_HEART)
-            Call(PlaySoundAtActor, ACTOR_SELF, SOUND_HEART_BOUNCE)
-            Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Add(LVar1, 10)
-            Call(N(SpawnDrainHealthStartFX), LVar0, LVar1, LVar2, LVar3)
-            Thread
-                Wait(15)
-                Call(PlaySoundAtActor, ACTOR_SELF, SOUND_STAR_BOUNCE_A)
-                Call(N(SpawnDrainHealthContinueFX), LVar0, LVar1, LVar2, LVar3)
-            EndThread
-            Add(LVar0, 20)
-            Add(LVar1, 20)
-            PlayEffect(EFFECT_RECOVER, 0, LVar0, LVar1, LVar2, LVar3, 0)
-            Call(GetEnemyMaxHP, ACTOR_SELF, LVar1)
-            Call(GetActorHP, ACTOR_SELF, LVar0)
-            Add(LVar0, LVar3)
-            IfGt(LVar0, LVar1)
-                Set(LVar0, LVar1)
-            EndIf
-            Call(SetEnemyHP, ACTOR_SELF, LVar0)
-        Else
-            Call(SetActorScale, ACTOR_SELF, Float(1.0), Float(1.0), Float(1.0))
-            Call(DispatchEventPlayer, EVENT_66)
-            Call(func_80269470)
-            BreakLoop
-        EndIf
-        Call(SetActorScale, ACTOR_SELF, Float(0.7), Float(1.4), Float(1.0))
-        Set(LFlag0, FALSE)
-        Loop(3)
-            Call(GetActionSuccessCopy, LVar1)
-            IfEq(LVar1, 1)
-                Set(LFlag0, TRUE)
-                BreakLoop
-            EndIf
-            Wait(1)
-        EndLoop
-        IfEq(LFlag0, TRUE)
-            Call(DispatchEventPlayer, EVENT_66)
-            Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
-            BreakLoop
-        EndIf
-        Call(SetActorScale, ACTOR_SELF, Float(0.8), Float(1.2), Float(1.0))
-        Set(LFlag0, FALSE)
-        Loop(2)
-            Call(GetActionSuccessCopy, LVar1)
-            IfEq(LVar1, 1)
-                Set(LFlag0, TRUE)
-                BreakLoop
-            EndIf
-            Wait(1)
-        EndLoop
-        IfEq(LFlag0, TRUE)
-            Call(DispatchEventPlayer, EVENT_66)
-            Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
-            BreakLoop
-        EndIf
-        Call(SetActorScale, ACTOR_SELF, Float(0.9), Float(1.1), Float(1.0))
-        Set(LFlag0, FALSE)
-        Loop(2)
-            Call(GetActionSuccessCopy, LVar1)
-            IfEq(LVar1, 1)
-                Set(LFlag0, TRUE)
-                BreakLoop
-            EndIf
-            Wait(1)
-        EndLoop
-        IfEq(LFlag0, TRUE)
-            Call(DispatchEventPlayer, EVENT_66)
-            Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
-            BreakLoop
-        EndIf
-        Call(SetActorScale, ACTOR_SELF, Float(1.0), Float(1.0), Float(1.0))
-        Call(GetPlayerHP, LVar1)
-        IfEq(LVar1, 0)
-            Call(DispatchEventPlayer, EVENT_66)
-            Call(func_80269470)
-            BreakLoop
-        EndIf
-        Set(LFlag0, FALSE)
-        Loop(12)
-            Call(GetActionSuccessCopy, LVar1)
-            IfEq(LVar1, 1)
-                Set(LFlag0, TRUE)
-                BreakLoop
-            EndIf
-            Wait(1)
-        EndLoop
-        IfEq(LFlag0, TRUE)
-            Call(DispatchEventPlayer, EVENT_66)
-            BreakLoop
-        EndIf
-    EndLoop
-    Call(DispatchEventPlayer, EVENT_66)
-    Call(func_80269470)
+    Call(EnemyDamageTarget, ACTOR_SELF, LVar0, 0, 0, 0, LVarD, BS_FLAGS1_TRIGGER_EVENTS)
+
     Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
     Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
     Call(MoveBattleCamOver, 20)

@@ -146,6 +146,27 @@ API_CALLABLE(SetNextAttackCustomStatus) {
     return ApiStatus_DONE2;
 }
 
+// (actorId, customStatusId, turns, potency, chance)
+API_CALLABLE(InflictCustomStatus) {
+    Bytecode* args = script->ptrReadPos;
+    Actor* actor;
+
+    s32 actorID = evt_get_variable(script, *args++);
+    if (actorID == ACTOR_SELF) {
+        actorID = script->owner1.actorID;
+    }
+    actor = get_actor(actorID);
+
+    s32 id = evt_get_variable(script, *args++);
+    s32 turns = evt_get_variable(script, *args++);
+    s32 potency = evt_get_variable(script, *args++);
+    s32 chance = evt_get_variable(script, *args++);
+
+    try_inflict_custom_status(actor, actor->curPos, id, turns, potency, chance);
+
+    return ApiStatus_DONE2;
+}
+
 void custom_status_render_all_icons(Actor* actor) {
     for (s32 i = 0; i < ARRAY_COUNT(actor->customStatuses); i++)
     {

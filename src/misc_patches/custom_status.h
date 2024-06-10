@@ -45,6 +45,9 @@ extern StatusType gCustomStatusTypes[CUSTOM_STATUS_AMT];
 // (id, turns, potency, chance)
 API_CALLABLE(SetNextAttackCustomStatus);
 
+// (actorId, customStatusId, turns, potency, chance)
+API_CALLABLE(InflictCustomStatus);
+
 // Gets the potency of the given status for the given actor. 0 if actor doesn't have this status
 s8 custom_status_get_potency(Actor* actor, s8 customStatusId);
 

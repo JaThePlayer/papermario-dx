@@ -83,27 +83,6 @@ API_CALLABLE(N(FlyAroundPlayer)) {
     return ApiStatus_BLOCK;
 }
 
-API_CALLABLE(N(RemovePlayerDebuffs)) {
-    Actor* actor = gBattleStatus.playerActor;
-
-    if (actor->debuff != 0) {
-        actor->debuffDuration = 0;
-        actor->debuff = 0;
-        remove_status_debuff(actor->hudElementDataIndex);
-    }
-
-    if (actor->koStatus != 0) {
-        actor->koDuration = 0;
-        actor->koStatus = 0;
-        actor->disableEffect->data.disableX->koDuration = 0;
-    }
-
-    custom_status_clear_debuffs(actor);
-
-    btl_update_ko_status();
-    return ApiStatus_DONE2;
-}
-
 #include "common/AddHP.inc.c"
 
 #include "common/AddFP.inc.c"
@@ -163,7 +142,6 @@ EvtScript N(EVS_UsePower) = {
     Call(ShowStartRecoveryShimmer, LVar0, LVar1, LVar2, HpHeal)
     Call(N(AddHP), HpHeal)
     Call(N(AddFP), FpHeal)
-    Call(N(RemovePlayerDebuffs))
     Wait(30)
     Call(PlayerYieldTurn)
     ExecWait(N(EVS_StarPower_EndWish))

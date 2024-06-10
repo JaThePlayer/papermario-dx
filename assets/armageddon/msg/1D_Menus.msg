@@ -171,8 +171,7 @@
 }
 
 #message:1D:(Menus_StarPowerDesc_Refresh) {
-	Recover HP & FP by 5. Also[BR]
-	cures poisoning and Shrink.[End]
+	Recover HP & FP by 7.[End]
 }
 
 #message:1D:(Menus_StarPowerDesc_Lullaby) {

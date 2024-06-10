@@ -25,3 +25,33 @@ s32 getDamageChangeFromStatus(Actor* actor) {
 void clearChargesFrom(Actor* actor) {
     custom_status_clear(actor, CHARGE_STATUS);
 }
+
+API_CALLABLE(GetPartnerKoDuration) {
+    evt_set_variable(script, *script->ptrReadPos, gBattleStatus.partnerActor->koDuration);
+    return ApiStatus_DONE2;
+}
+
+// actor, chanceToTargetPlayer(in percent), out isPlayer
+API_CALLABLE(TargetPlayerOrPartner) {
+    Bytecode* args = script->ptrReadPos;
+    Actor* actor;
+
+    s32 actorID = evt_get_variable(script, *args++);
+    if (actorID == ACTOR_SELF) {
+        actorID = script->owner1.actorID;
+    }
+    actor = get_actor(actorID);
+
+    s32 chanceToTargetPlayer = evt_get_variable(script, *args++);
+
+    actor->targetPartID = 1;
+    if (gBattleStatus.partnerActor->koDuration > 0 || (rand_int(100) < chanceToTargetPlayer)) {
+        actor->targetActorID = ACTOR_PLAYER;
+        evt_set_variable(script, *args++, TRUE);
+    } else {
+        actor->targetActorID = ACTOR_PARTNER;
+        evt_set_variable(script, *args++, FALSE);
+    }
+
+    return ApiStatus_DONE2;
+}

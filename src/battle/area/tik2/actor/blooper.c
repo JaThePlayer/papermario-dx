@@ -1,5 +1,6 @@
 #include "../area.h"
 #include "sprite/npc/Blooper.h"
+#include "misc_patches/custom_status.h"
 
 #define NAMESPACE A(blooper)
 
@@ -10,6 +11,12 @@ extern EvtScript N(EVS_HandleEvent);
 extern EvtScript N(EVS_Attack_SpinDrop);
 extern EvtScript N(EVS_Attack_InkBlast);
 extern EvtScript N(EVS_Death);
+extern EvtScript N(EVS_Move_MakeBabies);
+extern EvtScript N(EVS_HandlePhase);
+extern EvtScript N(ZoomInOnBlooper);
+
+#include "common/FadeBackgroundDarken.inc.c"
+#include "common/FadeBackgroundLighten.inc.c"
 
 enum N(ActorPartIDs) {
     PRT_MAIN        = 1,
@@ -18,7 +25,12 @@ enum N(ActorPartIDs) {
 
 enum N(ActorParams) {
     DMG_SPIN_DROP   = 3,
-    DMG_INK_BLAST   = 3,
+    DMG_INK_BLAST   = 2,
+};
+
+enum N(ActorVars) {
+    AVAR_TurnCount = 0,
+    AVAR_PhaseTwo = 1,
 };
 
 EvtScript N(EVS_FloatToPos) = {
@@ -148,10 +160,10 @@ s32 N(StatusTable)[] = {
     STATUS_KEY_SHRINK,             90,
     STATUS_KEY_STOP,              100,
     STATUS_TURN_MOD_DEFAULT,        0,
-    STATUS_TURN_MOD_SLEEP,          0,
+    STATUS_TURN_MOD_SLEEP,         -1,
     STATUS_TURN_MOD_POISON,         0,
     STATUS_TURN_MOD_FROZEN,         0,
-    STATUS_TURN_MOD_DIZZY,          1,
+    STATUS_TURN_MOD_DIZZY,         -1,
     STATUS_TURN_MOD_FEAR,           0,
     STATUS_TURN_MOD_STATIC,         0,
     STATUS_TURN_MOD_PARALYZE,      -1,
@@ -187,11 +199,13 @@ ActorPartBlueprint N(ActorParts)[] = {
     },
 };
 
+#define BLOOPER_MAX_HP 40
+
 ActorBlueprint NAMESPACE = {
     .flags = ACTOR_FLAG_FLYING,
     .type = ACTOR_TYPE_BLOOPER,
     .level = ACTOR_LEVEL_BLOOPER,
-    .maxHP = 30,
+    .maxHP = BLOOPER_MAX_HP,
     .partCount = ARRAY_COUNT(N(ActorParts)),
     .partsData = N(ActorParts),
     .initScript = &N(EVS_Init),
@@ -217,6 +231,9 @@ EvtScript N(EVS_Init) = {
     Call(BindTakeTurn, ACTOR_SELF, Ref(N(EVS_TakeTurn)))
     Call(BindIdle, ACTOR_SELF, Ref(N(EVS_Idle)))
     Call(BindHandleEvent, ACTOR_SELF, Ref(N(EVS_HandleEvent)))
+    Call(BindHandlePhase, ACTOR_SELF, N(EVS_HandlePhase))
+    SET_ACTOR_VAR(AVAR_TurnCount, 0)
+    SET_ACTOR_VAR(AVAR_PhaseTwo, FALSE)
     Return
     End
 };
@@ -375,18 +392,102 @@ EvtScript N(EVS_Death) = {
     End
 };
 
-EvtScript N(EVS_TakeTurn) = {
-    Call(GetStatusFlags, ACTOR_SELF, LVar0)
-    IfNotFlag(LVar0, STATUS_FLAG_SHRINK)
-        Call(RandInt, 100, LVar0)
-        IfLt(LVar0, 50)
+EvtScript N(EVS_HandlePhase) = {
+    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
+    Call(GetBattlePhase, LVar0)
+    Switch(LVar0)
+        CaseEq(PHASE_PLAYER_BEGIN)
+            GET_ACTOR_VAR(AVAR_TurnCount, LVar0)
+            IfEq(LVar0, 0)
+                ExecWait(N(ZoomInOnBlooper))
+                ExecWait(N(EVS_Move_MakeBabies))
+            EndIf
+    EndSwitch
+    Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
+    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Return
+    End
+};
+
+EvtScript N(PhaseTwoAI) = {
+    // Phase 2 - more aggressive, can respawn babies
+    Mod(LVar0, 3)
+    Switch(LVar0)
+        CaseEq(0)
+            // Make babies if not shrunk and any babies are killed. Else, spin drop.
+            IfFlag(LVar1, STATUS_FLAG_SHRINK)
+                ExecWait(N(EVS_Attack_SpinDrop))
+                Return
+            EndIf
+
+            Call(ActorExists, ACTOR_ENEMY1, LVar4)
+            IfFalse(LVar4)
+                ExecWait(N(ZoomInOnBlooper))
+                ExecWait(N(EVS_Move_MakeBabies))
+                Return
+            EndIf
+
+            Call(ActorExists, ACTOR_ENEMY2, LVar4)
+            IfFalse(LVar4)
+                ExecWait(N(ZoomInOnBlooper))
+                ExecWait(N(EVS_Move_MakeBabies))
+                Return
+            EndIf
+
             ExecWait(N(EVS_Attack_SpinDrop))
-        Else
-            ExecWait(N(EVS_Attack_InkBlast))
-        EndIf
+        CaseEq(1)
+            IfNotFlag(LVar1, STATUS_FLAG_SHRINK)
+                ExecWait(N(EVS_Attack_InkBlast))
+            Else
+                ExecWait(N(EVS_Attack_SpinDrop))
+            EndIf
+        CaseEq(2)
+            ExecWait(N(EVS_Attack_SpinDrop))
+    EndSwitch
+    Return
+    End
+};
+
+EvtScript N(EVS_TakeTurn) = {
+    GET_ACTOR_VAR(AVAR_TurnCount, LVar0)
+    INCREMENT_ACTOR_VAR(AVAR_TurnCount)
+    Call(GetStatusFlags, ACTOR_SELF, LVar1)
+    GET_ACTOR_VAR(AVAR_PhaseTwo, LVar2)
+
+    IfTrue(LVar2)
+        ExecWait(N(PhaseTwoAI))
     Else
-        ExecWait(N(EVS_Attack_SpinDrop))
+        Call(GetActorHP, ACTOR_SELF, LVar4)
+        IfLe(LVar4, BLOOPER_MAX_HP / 2)
+            // Change to phase 2 under half HP
+            SET_ACTOR_VAR(AVAR_PhaseTwo, 1)
+
+            ExecWait(N(ZoomInOnBlooper))
+            Call(EnableActorPaletteEffects, ACTOR_SELF, PRT_MAIN, TRUE)
+            Call(SetActorPaletteSwapParams, ACTOR_SELF, PRT_MAIN, SPR_PAL_Blooper, SPR_PAL_Blooper_Supercharged, 0, 6, 12, 6, 0, 0)
+            Call(SetActorPaletteEffect, ACTOR_SELF, PRT_MAIN, ACTOR_PAL_ADJUST_BLEND_PALETTES_VARYING_INTERVALS)
+            Call(SetPartEventBits, ACTOR_SELF, PRT_TARGET, ACTOR_EVENT_FLAG_ATTACK_CHARGED, TRUE)
+            Wait(2)
+            ExecWait(N(EVS_Move_MakeBabies))
+
+            SET_ACTOR_VAR(AVAR_TurnCount, 1)
+            Return
+        EndIf
+
+        Mod(LVar0, 2)
+        Switch(LVar0)
+            CaseEq(0)
+                IfNotFlag(LVar0, STATUS_FLAG_SHRINK)
+                    ExecWait(N(EVS_Attack_InkBlast))
+                Else
+                    ExecWait(N(EVS_Attack_SpinDrop))
+                EndIf
+            CaseEq(1)
+                ExecWait(N(EVS_Attack_SpinDrop))
+        EndSwitch
     EndIf
+
     Return
     End
 };
@@ -415,73 +516,81 @@ EvtScript N(EVS_Attack_SpinDrop) = {
     Set(LVar1, 100)
     Set(LVar3, 15)
     ExecWait(N(EVS_FloatToPos))
-    Call(PlaySoundAtActor, ACTOR_SELF, SOUND_BLOOPER_FALL)
-    Call(EnemyTestTarget, ACTOR_SELF, LVarF, 0, 0, 1, BS_FLAGS1_INCLUDE_POWER_UPS)
-    Switch(LVarF)
-        CaseOrEq(HIT_RESULT_MISS)
-        CaseOrEq(HIT_RESULT_LUCKY)
-            Thread
-                Set(LVar0, 0)
-                Loop(36)
-                    Add(LVar0, 30)
-                    Call(SetActorYaw, ACTOR_SELF, LVar0)
-                    Wait(1)
-                EndLoop
-                Call(SetActorYaw, ACTOR_SELF, 0)
-            EndThread
-            Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Blooper_Anim0D)
-            Call(GetActorPos, ACTOR_PLAYER, LVar0, LVar1, LVar2)
-            Call(SetActorJumpGravity, ACTOR_SELF, Float(1.5))
-            Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Call(JumpToGoal, ACTOR_SELF, 16, FALSE, TRUE, FALSE)
+
+    GET_ACTOR_VAR(AVAR_PhaseTwo, LVarB)
+    Add(LVarB, 1)
+    Loop(LVarB)
+        Call(PlaySoundAtActor, ACTOR_SELF, SOUND_BLOOPER_FALL)
+        Call(EnemyTestTarget, ACTOR_SELF, LVarF, 0, 0, 1, BS_FLAGS1_INCLUDE_POWER_UPS)
+        Switch(LVarF)
+            CaseOrEq(HIT_RESULT_MISS)
+            CaseOrEq(HIT_RESULT_LUCKY)
+                Thread
+                    Set(LVar0, 0)
+                    Loop(36)
+                        Add(LVar0, 30)
+                        Call(SetActorYaw, ACTOR_SELF, LVar0)
+                        Wait(1)
+                    EndLoop
+                    Call(SetActorYaw, ACTOR_SELF, 0)
+                EndThread
+                Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Blooper_Anim0D)
+                Call(GetActorPos, ACTOR_PLAYER, LVar0, LVar1, LVar2)
+                Call(SetActorJumpGravity, ACTOR_SELF, Float(1.5))
+                Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
+                Call(JumpToGoal, ACTOR_SELF, 16, FALSE, TRUE, FALSE)
+                Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
+                Call(MoveBattleCamOver, 20)
+                IfEq(LVarF, HIT_RESULT_LUCKY)
+                    Call(EnemyTestTarget, ACTOR_SELF, LVarF, DAMAGE_TYPE_TRIGGER_LUCKY, 0, 0, 0)
+                EndIf
+                Add(LVar0, 30)
+                Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
+                Call(JumpToGoal, ACTOR_SELF, 12, FALSE, TRUE, FALSE)
+                Add(LVar0, 20)
+                Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
+                Call(JumpToGoal, ACTOR_SELF, 8, FALSE, TRUE, FALSE)
+                ExecWait(N(EVS_FloatToHome))
+                Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_RESTART)
+                Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+                Return
+            EndCaseGroup
+        EndSwitch
+        Thread
+            Set(LVar0, 0)
+            Loop(16)
+                Add(LVar0, 30)
+                Call(SetActorYaw, ACTOR_SELF, LVar0)
+                Wait(1)
+            EndLoop
+            Call(SetActorYaw, ACTOR_SELF, 0)
+        EndThread
+        Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Blooper_Anim0D)
+        Call(SetActorJumpGravity, ACTOR_SELF, Float(1.5))
+        Call(GetActorPos, ACTOR_PLAYER, LVar0, LVar1, LVar2)
+        Add(LVar1, 30)
+        Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
+        Call(JumpToGoal, ACTOR_SELF, 16, FALSE, TRUE, FALSE)
+        Wait(2)
+        Call(EnemyDamageTarget, ACTOR_SELF, LVar0, 0, 0, 0, DMG_SPIN_DROP, BS_FLAGS1_TRIGGER_EVENTS)
+        IfEq(LVarB, 1)
             Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
             Call(MoveBattleCamOver, 20)
-            IfEq(LVarF, HIT_RESULT_LUCKY)
-                Call(EnemyTestTarget, ACTOR_SELF, LVarF, DAMAGE_TYPE_TRIGGER_LUCKY, 0, 0, 0)
-            EndIf
-            Add(LVar0, 30)
-            Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Call(JumpToGoal, ACTOR_SELF, 12, FALSE, TRUE, FALSE)
-            Add(LVar0, 20)
-            Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Call(JumpToGoal, ACTOR_SELF, 8, FALSE, TRUE, FALSE)
-            ExecWait(N(EVS_FloatToHome))
-            Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_RESTART)
-            Call(UseIdleAnimation, ACTOR_SELF, TRUE)
-            Return
-        EndCaseGroup
-    EndSwitch
-    Thread
-        Set(LVar0, 0)
-        Loop(16)
-            Add(LVar0, 30)
-            Call(SetActorYaw, ACTOR_SELF, LVar0)
-            Wait(1)
-        EndLoop
-        Call(SetActorYaw, ACTOR_SELF, 0)
-    EndThread
-    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Blooper_Anim0D)
-    Call(SetActorJumpGravity, ACTOR_SELF, Float(1.5))
-    Call(GetActorPos, ACTOR_PLAYER, LVar0, LVar1, LVar2)
-    Add(LVar1, 30)
-    Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-    Call(JumpToGoal, ACTOR_SELF, 16, FALSE, TRUE, FALSE)
-    Wait(2)
-    Call(EnemyDamageTarget, ACTOR_SELF, LVar0, 0, 0, 0, DMG_SPIN_DROP, BS_FLAGS1_TRIGGER_EVENTS)
-    Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
-    Call(MoveBattleCamOver, 20)
-    Call(GetStatusFlags, ACTOR_PLAYER, LVar0)
-    IfFlag(LVar0, STATUS_FLAG_STONE)
-        Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Blooper_Anim04)
-    Else
-        Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Blooper_Anim00)
-    EndIf
-    Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-    Add(LVar0, 30)
-    Sub(LVar1, 15)
-    Call(SetActorJumpGravity, ACTOR_SELF, Float(1.2))
-    Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-    Call(JumpToGoal, ACTOR_SELF, 10, FALSE, TRUE, FALSE)
+        EndIf
+        Call(GetStatusFlags, ACTOR_PLAYER, LVar0)
+        IfFlag(LVar0, STATUS_FLAG_STONE)
+            Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Blooper_Anim04)
+        Else
+            Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Blooper_Anim00)
+        EndIf
+        Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
+        Add(LVar0, 30)
+        Sub(LVar1, 15)
+        Call(SetActorJumpGravity, ACTOR_SELF, Float(1.2))
+        Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
+        Call(JumpToGoal, ACTOR_SELF, 10, FALSE, TRUE, FALSE)
+    EndLoop
+
     ExecWait(N(EVS_FloatToHome))
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_RESTART)
     Call(UseIdleAnimation, ACTOR_SELF, TRUE)
@@ -582,12 +691,104 @@ EvtScript N(EVS_Attack_InkBlast) = {
     Wait(10)
     Call(SetGoalToTarget, ACTOR_SELF)
     Call(SetDamageSource, DMG_SRC_INK_BLAST)
-    Call(EnemyDamageTarget, ACTOR_SELF, LVarF, DAMAGE_TYPE_NO_CONTACT, 0, 0, DMG_INK_BLAST, BS_FLAGS1_TRIGGER_EVENTS)
+    GET_ACTOR_VAR(AVAR_PhaseTwo, LVarB)
+    IfTrue(LVarB)
+        Call(SetNextAttackCustomStatus, BURN_STATUS, 3, 1, 100)
+    EndIf
+    Call(EnemyDamageTarget, ACTOR_SELF, LVarF, DAMAGE_TYPE_NO_CONTACT, 0, DMG_STATUS_KEY(STATUS_FLAG_POISON, 3, 100), DMG_INK_BLAST, BS_FLAGS1_TRIGGER_EVENTS)
     Wait(30)
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Blooper_Anim00)
     Call(SetActorRotation, ACTOR_SELF, 0, 0, 0)
     Call(SetActorRotationOffset, ACTOR_SELF, 0, 0, 0)
     ExecWait(N(EVS_FloatToHome))
+    Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_RESTART)
+    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Return
+    End
+};
+
+
+extern ActorBlueprint A(blooper_baby);
+
+Vec3i N(SummonPos) = { 400, 0, 0 };
+
+Formation N(BabyFormation1) = {
+    ACTOR_BY_POS(A(blooper_baby), N(SummonPos), 95, 30, 68),
+};
+
+Formation N(BabyFormation2) = {
+    ACTOR_BY_POS(A(blooper_baby), N(SummonPos), 94, 134, 45),
+};
+
+EvtScript N(ZoomInOnBlooper) = {
+    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
+    Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
+    Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
+    Call(UseBattleCamPreset, BTL_CAM_PRESET_07)
+    Call(BattleCamTargetActor, ACTOR_SELF)
+    Call(SetBattleCamOffsetZ, 25) // was 50
+    Call(SetBattleCamZoom, 330)
+    Call(MoveBattleCamOver, 40)
+    Wait(20)
+    Call(PlaySoundAtActor, ACTOR_SELF, SOUND_BIG_POWER_UP)
+    Call(N(FadeBackgroundDarken))
+    Call(N(StartRumbleWithParams), 50, 20)
+    Thread
+        Call(ShakeCam, CAM_BATTLE, 0, 10, Float(0.3))
+    EndThread
+    Call(UseBattleCamPreset, BTL_CAM_PRESET_07)
+    Call(BattleCamTargetActor, ACTOR_SELF)
+    Call(SetBattleCamOffsetZ, 30) // was 65
+    Call(SetBattleCamZoom, 240)
+    Call(MoveBattleCamOver, 15)
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Blooper_Anim09)
+    Wait(15)
+    Call(N(StartRumbleWithParams), 100, 20)
+    Thread
+        Call(ShakeCam, CAM_BATTLE, 0, 10, Float(0.4))
+    EndThread
+    Call(UseBattleCamPreset, BTL_CAM_PRESET_07)
+    Call(BattleCamTargetActor, ACTOR_SELF)
+    Call(SetBattleCamOffsetZ, 40) // was 80
+    Call(SetBattleCamZoom, 150)
+    Call(MoveBattleCamOver, 15)
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Blooper_Anim0A)
+    Wait(15)
+    Call(N(StartRumbleWithParams), 150, 20)
+    Thread
+        Call(ShakeCam, CAM_BATTLE, 0, 10, Float(0.5))
+    EndThread
+    Call(UseBattleCamPreset, BTL_CAM_PRESET_07)
+    Call(BattleCamTargetActor, ACTOR_SELF)
+    Call(SetBattleCamOffsetZ, 45) // was 95
+    Call(SetBattleCamZoom, 60)
+    Call(MoveBattleCamOver, 15)
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Blooper_Anim0B)
+    Wait(30)
+    Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
+    Call(MoveBattleCamOver, 20)
+
+    Return
+    End
+};
+
+EvtScript N(EVS_Move_MakeBabies) = {
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Blooper_Anim03)
+    Wait(10)
+    Call(ActorExists, ACTOR_ENEMY1, LVar1)
+    IfFalse(LVar1)
+        Call(PlaySoundAtActor, ACTOR_SELF, SOUND_LIGHT_THROW)
+        Call(SummonEnemy, Ref(N(BabyFormation1)), FALSE)
+    EndIf
+    Call(ActorExists, ACTOR_ENEMY2, LVar1)
+    IfFalse(LVar1)
+        Call(PlaySoundAtActor, ACTOR_SELF, SOUND_LIGHT_THROW)
+        Call(SummonEnemy, Ref(N(BabyFormation2)), FALSE)
+    EndIf
+    Wait(2)
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Blooper_Anim0C)
+    Call(N(FadeBackgroundLighten))
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_RESTART)
     Call(UseIdleAnimation, ACTOR_SELF, TRUE)
     Return

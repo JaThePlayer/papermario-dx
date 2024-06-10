@@ -2192,7 +2192,7 @@
     tattleCamOffset: [ 0, 0, 0 ]
     shadowOffset: 241
 - Blooper:
-    level: 25
+    level: 15
     nameMsg: MSG_EnemyName_Blooper
     tattleMsg: MSG_EnemyTattle_Blooper
     walkSound: [ SOUND_NONE, SOUND_NONE ]

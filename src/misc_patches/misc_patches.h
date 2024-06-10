@@ -12,4 +12,11 @@ s32 getDamageChangeFromStatus(Actor* actor);
 
 void clearChargesFrom(Actor* actor);
 
+// out koDuration
+API_CALLABLE(GetPartnerKoDuration);
+
+/// Targets either the player or partner. Never targets the partner if they are knocked out.
+/// actor, chanceToTargetPlayer(in percent), out isPlayer
+API_CALLABLE(TargetPlayerOrPartner);
+
 #endif
