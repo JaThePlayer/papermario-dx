@@ -2,15 +2,21 @@
 #include "include_asset.h"
 #include "common.h"
 #include "hud_element.h"
+#include "custom_status.h"
+
+extern HudScript HES_PoisonedBegin;
+extern HudScript HES_PoisonedEnd;
 
 typedef struct StatusIconType {
     HudScript* beginHudScript;
     HudScript* endHudScript;
+    u8 customStatusid;
 } StatusIconType;
 
-#define STATUS_ICON_ENTRY(namespace) { \
+#define STATUS_ICON_ENTRY(namespace, status) { \
         .beginHudScript = &namespace##_HES_Begin, \
         .endHudScript = &namespace##_HES_End, \
+        .customStatusid = status, \
     }
 
 #include "status_icons/temp_def_down.c"
@@ -18,15 +24,21 @@ typedef struct StatusIconType {
 #include "status_icons/burn.c"
 #include "status_icons/fp_cost.c"
 #include "status_icons/charge.c"
+#include "status_icons/poison.c"
 
 StatusIconType gCustomStatusIconTypes[CUSTOM_ICON_AMT] = {
-    [DEF_DOWN_ICON_ID] = STATUS_ICON_ENTRY(status_temp_def_down),
-    [ATK_DOWN_ICON_ID] = STATUS_ICON_ENTRY(status_temp_atk_down),
-    [DEF_UP_ICON_ID] = STATUS_ICON_ENTRY(status_temp_def_up),
-    [ATK_UP_ICON_ID] = STATUS_ICON_ENTRY(status_temp_atk_up),
-    [BURN_ICON_ID] = STATUS_ICON_ENTRY(status_icon_burn),
-    [FP_COST_DOWN_ICON_ID] = STATUS_ICON_ENTRY(status_icon_fp_cost_down),
-    [CHARGE_ICON_ID] = STATUS_ICON_ENTRY(status_icon_charge),
+    [DEF_DOWN_ICON_ID] = STATUS_ICON_ENTRY(status_temp_def_down, DEF_DOWN_TEMP_STATUS),
+    [ATK_DOWN_ICON_ID] = STATUS_ICON_ENTRY(status_temp_atk_down, ATK_DOWN_TEMP_STATUS),
+    [DEF_UP_ICON_ID] = STATUS_ICON_ENTRY(status_temp_def_up, DEF_UP_TEMP_STATUS),
+    [ATK_UP_ICON_ID] = STATUS_ICON_ENTRY(status_temp_atk_up, ATK_UP_TEMP_STATUS),
+    [BURN_ICON_ID] = STATUS_ICON_ENTRY(status_icon_burn, BURN_STATUS),
+    [FP_COST_DOWN_ICON_ID] = STATUS_ICON_ENTRY(status_icon_fp_cost_down, FP_COST_STATUS),
+    [CHARGE_ICON_ID] = STATUS_ICON_ENTRY(status_icon_charge, CHARGE_STATUS),
+    [POISON_ICON_ID] = {
+        .beginHudScript = &HES_PoisonedBegin,
+        .endHudScript = &HES_PoisonedEnd,
+        .customStatusid = POISON_STATUS,
+    },
 };
 
 void custom_status_icons_init(CustomHudComplexStatusIcon customIcons[CUSTOM_ICON_AMT]) {
@@ -75,13 +87,25 @@ void custom_icons_update(CustomHudComplexStatusIcon customIcons[CUSTOM_ICON_AMT]
 
 extern CustomHudComplexStatusIcon* get_custom_status_icons(s32 iconID);
 
-void create_custom_status_icon(s32 iconId, s32 customIconId) {
-    CustomHudComplexStatusIcon* icons = get_custom_status_icons(iconId);
+void create_custom_status_icon(Actor* target, s32 customIconId) {
+    CustomHudComplexStatusIcon* icons = get_custom_status_icons(target->hudElementDataIndex);
     CustomHudComplexStatusIcon* icon = &icons[customIconId];
+    s32 customStatusId = gCustomStatusIconTypes[customIconId].customStatusid;
+    StatusInfo* customStatus = &target->customStatuses[customStatusId];
 
     if (!icon->active) {
         icon->active = TRUE;
         icon->activeTask = TRUE;
+    }
+
+    if (gCustomStatusTypes[customStatusId].hasTurnCount &&
+        (gGameStatus.frameCounter % 120 < 60 || customStatus->potency == 1 || customStatus->potency == -1)) {
+        icon->turns = customStatus->turns;
+        icon->palette = MSG_PAL_WHITE;
+    }
+    else {
+        icon->turns = customStatus->potency;
+        icon->palette = MSG_PAL_YELLOW;
     }
 }
 

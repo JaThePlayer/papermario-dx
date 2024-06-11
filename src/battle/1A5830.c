@@ -691,17 +691,9 @@ HitResult calc_enemy_damage_target(Actor* attacker) {
             statusInflicted2 = one;
         }
 
-        if (battleStatus->curAttackCustomStatusId != NONE_CUSTOM_STATUS) {
-            s32 inflicted = try_inflict_custom_status(target,
-                state->goalPos,
-                battleStatus->curAttackCustomStatusId,
-                battleStatus->curAttackCustomStatusTurns,
-                battleStatus->curAttackCustomStatusPotency,
-                battleStatus->curAttackCustomStatusChance);
-            if (inflicted) {
-                statusInflicted = one;
-                statusInflicted2 = one;
-            }
+        if (inflict_next_attack_statuses(target, state->goalPos)) {
+            statusInflicted = one;
+            statusInflicted2 = one;
         }
 
         if (statusInflicted) {
@@ -713,8 +705,6 @@ HitResult calc_enemy_damage_target(Actor* attacker) {
             }
         }
     }
-    // reset custom status now
-    set_next_attack_custom_status(NONE_CUSTOM_STATUS, 0, 0, 0);
 
     // dispatch events and play damage effects
 
@@ -2974,6 +2964,7 @@ API_CALLABLE(EnemyDamageTarget) {
     battleStatus->statusDuration = (battleStatus->curAttackStatus & 0xF00) >> 8;
 
     hitResult = calc_enemy_damage_target(actor);
+    set_next_attack_custom_status(NONE_CUSTOM_STATUS, 0, 0, 0);
     if (hitResult < 0) {
         return ApiStatus_FINISH;
     }
@@ -3012,7 +3003,7 @@ API_CALLABLE(EnemyFollowupAfflictTarget) {
 
     anotherBattleStatus->statusDuration = (anotherBattleStatus->curAttackStatus & 0xF00) >> 8;
     hitResults = calc_enemy_damage_target(actor);
-
+    set_next_attack_custom_status(NONE_CUSTOM_STATUS, 0, 0, 0);
     if (hitResults < 0) {
         return ApiStatus_FINISH;
     }

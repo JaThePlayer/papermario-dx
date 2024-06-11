@@ -993,10 +993,6 @@ typedef struct BattleStatus {
     /* 0x438 */ struct Stage* curStage;
     /* 0x43C */ struct EffectInstance* buffEffect;
     /* 0x440 */ u8 tattleFlags[28];
-    /* 0x45C, new */ s8 curAttackCustomStatusId;
-    /* new */ u8 curAttackCustomStatusPotency;
-    /* new */ u8 curAttackCustomStatusTurns;
-    /* new */ u8 curAttackCustomStatusChance;
     /* new */ s32 turnCounter;
 } BattleStatus; // size = 0x460
 

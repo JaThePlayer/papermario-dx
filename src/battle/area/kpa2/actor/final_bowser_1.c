@@ -1,5 +1,6 @@
 #include "../area.h"
 #include "sprite/npc/BattleBowser.h"
+#include "misc_patches/custom_status.h"
 
 #define NAMESPACE A(final_bowser_1)
 
@@ -1151,11 +1152,13 @@ EvtScript N(EVS_Attack_ClawSwipe) = {
     IfFlag(LVar0, ACTOR_EVENT_FLAG_STAR_ROD_ENCHANTED)
         Set(LVar0, DMG_BOOSTED_CLAW_SWIPE)
         Call(SetDamageSource, DMG_SRC_LAST_SLAP_LEFT)
-        Call(EnemyDamageTarget, ACTOR_SELF, LVarF, 0, 0, DMG_STATUS_KEY(STATUS_FLAG_POISON, 3, 100), LVar0, BS_FLAGS1_TRIGGER_EVENTS)
+        Call(SetNextAttackCustomStatus, POISON_STATUS, 3, 1, 100)
+        Call(EnemyDamageTarget, ACTOR_SELF, LVarF, 0, 0, 0, LVar0, BS_FLAGS1_TRIGGER_EVENTS)
     Else
         Set(LVar0, DMG_CLAW_SWIPE)
         Call(SetDamageSource, DMG_SRC_LAST_SLAP_LEFT)
-        Call(EnemyDamageTarget, ACTOR_SELF, LVarF, 0, 0, DMG_STATUS_KEY(STATUS_FLAG_POISON, 3, 100), LVar0, BS_FLAGS1_TRIGGER_EVENTS)
+        Call(SetNextAttackCustomStatus, POISON_STATUS, 3, 1, 100)
+        Call(EnemyDamageTarget, ACTOR_SELF, LVarF, 0, 0, 0, LVar0, BS_FLAGS1_TRIGGER_EVENTS)
     EndIf
     Switch(LVarF)
         CaseOrEq(HIT_RESULT_HIT)

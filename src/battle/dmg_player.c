@@ -897,17 +897,9 @@ HitResult calc_player_damage_enemy(void) {
 
             #undef INFLICT_STATUS
 
-            if (battleStatus->curAttackCustomStatusId != NONE_CUSTOM_STATUS) {
-                s32 inflicted = try_inflict_custom_status(target,
-                    state->goalPos,
-                    battleStatus->curAttackCustomStatusId,
-                    battleStatus->curAttackCustomStatusTurns,
-                    battleStatus->curAttackCustomStatusPotency,
-                    battleStatus->curAttackCustomStatusChance);
-                if (inflicted) {
-                    wasSpecialHit = TRUE;
-                    wasStatusInflicted = TRUE;
-                }
+            if (inflict_next_attack_statuses(target, state->goalPos)) {
+                wasSpecialHit = TRUE;
+                wasStatusInflicted = TRUE;
             }
 
             if (wasStatusInflicted) {
@@ -921,9 +913,6 @@ HitResult calc_player_damage_enemy(void) {
             }
         }
     } while (0);
-
-    // reset custom status now
-    set_next_attack_custom_status(NONE_CUSTOM_STATUS, 0, 0, 0);
 
     battleStatus->wasStatusInflicted = wasStatusInflicted;
     dispatch_event_actor(target, dispatchEvent);
@@ -1631,6 +1620,7 @@ API_CALLABLE(PlayerDamageEnemy) {
     battleStatus->statusDuration = (battleStatus->curAttackStatus & 0xF00) >> 8;
 
     hitResult = calc_player_damage_enemy();
+    set_next_attack_custom_status(NONE_CUSTOM_STATUS, 0, 0, 0);
     if (hitResult < 0) {
         return ApiStatus_FINISH;
     }
@@ -1702,6 +1692,7 @@ API_CALLABLE(PlayerPowerBounceEnemy) {
     battleStatus->statusDuration = (battleStatus->curAttackStatus & 0xF00) >> 8;
 
     hitResult = calc_player_damage_enemy();
+    set_next_attack_custom_status(NONE_CUSTOM_STATUS, 0, 0, 0);
     if (hitResult < 0) {
         return ApiStatus_FINISH;
     }

@@ -695,7 +695,9 @@ EvtScript N(EVS_Attack_InkBlast) = {
     IfTrue(LVarB)
         Call(SetNextAttackCustomStatus, BURN_STATUS, 3, 1, 100)
     EndIf
-    Call(EnemyDamageTarget, ACTOR_SELF, LVarF, DAMAGE_TYPE_NO_CONTACT, 0, DMG_STATUS_KEY(STATUS_FLAG_POISON, 3, 100), DMG_INK_BLAST, BS_FLAGS1_TRIGGER_EVENTS)
+
+    Call(SetNextAttackCustomStatus, POISON_STATUS, 3, 1, 100)
+    Call(EnemyDamageTarget, ACTOR_SELF, LVarF, DAMAGE_TYPE_NO_CONTACT, 0, 0, DMG_INK_BLAST, BS_FLAGS1_TRIGGER_EVENTS)
     Wait(30)
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Blooper_Anim00)
     Call(SetActorRotation, ACTOR_SELF, 0, 0, 0)

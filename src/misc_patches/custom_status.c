@@ -10,6 +10,7 @@
 #include "statuses/burn.c"
 #include "statuses/fp_cost.c"
 #include "statuses/charge.c"
+#include "statuses/poison.c"
 
 #define STATUS_ENTRY(namespace, _isDebuff, _hasTurnCount, _stacking) { \
         .onApply = &namespace##_on_apply, \
@@ -32,6 +33,7 @@ StatusType gCustomStatusTypes[CUSTOM_STATUS_AMT] = {
     [BURN_STATUS] = STATUS_ENTRY(burn_status, TRUE, TRUE, STATUS_STACKING_OVERRIDE),
     [FP_COST_STATUS] = STATUS_ENTRY(fp_cost_status, FALSE, TRUE, STATUS_STACKING_OVERRIDE),
     [CHARGE_STATUS] = STATUS_ENTRY(charge_status, FALSE, FALSE, STATUS_STACKING_ADD_POTENCY),
+    [POISON_STATUS] = STATUS_ENTRY(poison_status, TRUE, TRUE, STATUS_STACKING_OVERRIDE),
 };
 
 // Gets the potency of the given status for the given actor. 0 if actor doesn't have this status
@@ -123,11 +125,41 @@ s32 try_inflict_custom_status(Actor* actor, Vec3f position, s8 customStatusId, u
     return TRUE;
 }
 
+NextAttackStatus gNextAttackStatuses[CUSTOM_STATUS_AMT];
+s32 gNextAttackStatusCount;
+
 void set_next_attack_custom_status(s8 customStatusId, u8 turns, u8 potency, u8 chance) {
-    gBattleStatus.curAttackCustomStatusId = customStatusId;
-    gBattleStatus.curAttackCustomStatusTurns = turns;
-    gBattleStatus.curAttackCustomStatusPotency = potency;
-    gBattleStatus.curAttackCustomStatusChance = chance;
+    if (customStatusId == NONE_CUSTOM_STATUS) {
+        gNextAttackStatusCount = 0;
+        return;
+    }
+
+    if (gNextAttackStatusCount < ARRAY_COUNT(gNextAttackStatuses)) {
+        gNextAttackStatuses[gNextAttackStatusCount].id = customStatusId;
+        gNextAttackStatuses[gNextAttackStatusCount].turns = turns;
+        gNextAttackStatuses[gNextAttackStatusCount].potency = potency;
+        gNextAttackStatuses[gNextAttackStatusCount].chance = chance;
+
+        gNextAttackStatusCount += 1;
+    }
+}
+
+s32 inflict_next_attack_statuses(Actor* target, Vec3f position) {
+    s32 inflicted = FALSE;
+    while (gNextAttackStatusCount > 0) {
+        NextAttackStatus* st = &gNextAttackStatuses[gNextAttackStatusCount - 1];
+        inflicted |= try_inflict_custom_status(target,
+            position,
+            st->id,
+            st->turns,
+            st->potency,
+            st->chance
+        );
+
+        gNextAttackStatusCount--;
+    }
+
+    return inflicted;
 }
 
 // (id, turns, potency, chance)

@@ -315,7 +315,8 @@ API_CALLABLE(ApplyCustomItemEffects) {
     #define FP_COST(turns, potency) INFLICT(FP_COST_STATUS, turns, turns + 1, potency)
 
     #define ELECTRIFY(turns) inflict_status(actor, STATUS_KEY_STATIC, turns)
-    #define POISON(turns) inflict_status(actor, STATUS_KEY_POISON, turns)
+
+    #define POISON(turns, potency) INFLICT(POISON_STATUS, turns, turns, potency)
 
     #define CHARGE(amt) INFLICT(CHARGE_STATUS, 99, 99, amt)
 
@@ -353,7 +354,7 @@ API_CALLABLE(ApplyCustomItemEffects) {
             break;
         }
         case ITEM_MISTAKE:
-            POISON(3);
+            POISON(3, 1);
             break;
     }
 

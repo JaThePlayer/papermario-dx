@@ -3,6 +3,7 @@
 #include "effects.h"
 #include "battle/battle.h"
 #include "sprite/npc/BattleWatt.h"
+#include "misc_patches/custom_status.h"
 
 enum StandardPalettes {
     STANDARD_PAL_POISON     = 1,
@@ -1035,7 +1036,7 @@ void appendGfx_npc_actor(b32 isPartner, s32 actorIndex) {
             }
             decorChanged = TRUE;
         }
-        if (actor->debuff == STATUS_KEY_POISON) {
+        if (actor->debuff == STATUS_KEY_POISON || custom_status_get_potency(actor, POISON_STATUS) > 0) {
             if (!palChanged) {
                 set_actor_pal_adjustment(actor, ACTOR_PAL_ADJUST_POISON);
             }
@@ -1075,7 +1076,7 @@ void appendGfx_npc_actor(b32 isPartner, s32 actorIndex) {
                         animChanged = TRUE;
                     }
                 } else if (actor->debuff != STATUS_KEY_SHRINK) {
-                    if (actor->debuff == STATUS_KEY_POISON) {
+                    if (actor->debuff == STATUS_KEY_POISON || custom_status_get_potency(actor, POISON_STATUS) > 0) {
                         if (!animChanged) {
                             part->curAnimation = get_npc_anim_for_status(part->idleAnimations, STATUS_KEY_POISON);
                             animChanged = TRUE;
@@ -1656,7 +1657,7 @@ void appendGfx_player_actor(void* arg0) {
                 }
             }
 
-            if (player->debuff != STATUS_KEY_POISON) {
+            if (player->debuff != STATUS_KEY_POISON && custom_status_get_potency(player, POISON_STATUS) == 0) {
                 set_actor_pal_adjustment(player, ACTOR_PAL_ADJUST_PLAYER_DEBUFF);
             } else {
                 set_actor_pal_adjustment(player, ACTOR_PAL_ADJUST_PLAYER_POISON);
@@ -1700,7 +1701,7 @@ void appendGfx_player_actor(void* arg0) {
         }
         palChanged = TRUE;
     }
-    if (player->debuff == STATUS_KEY_POISON) {
+    if (player->debuff == STATUS_KEY_POISON || custom_status_get_potency(player, POISON_STATUS) > 0) {
         if (!palChanged) {
             set_actor_pal_adjustment(player, ACTOR_PAL_ADJUST_POISON);
         }
@@ -1756,7 +1757,7 @@ void appendGfx_player_actor(void* arg0) {
                     animChanged = TRUE;
                 }
             } else if (player->debuff != STATUS_KEY_SHRINK) {
-                if (player->debuff == STATUS_KEY_POISON) {
+                if (player->debuff == STATUS_KEY_POISON || custom_status_get_potency(player, POISON_STATUS) > 0) {
                     if (!animChanged) {
                         playerParts->curAnimation = get_player_anim_for_status(STATUS_KEY_POISON);
                         animChanged = TRUE;

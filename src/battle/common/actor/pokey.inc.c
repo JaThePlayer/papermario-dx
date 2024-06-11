@@ -3,6 +3,7 @@
 #include "battle/battle.h"
 #include "script_api/battle.h"
 #include "sprite/npc/Pokey.h"
+#include "misc_patches/custom_status.h"
 
 #define NAMESPACE A(pokey)
 
@@ -613,7 +614,7 @@ EvtScript N(EVS_Attack_GroundSmash) = {
     EndSwitch
     Call(SetGoalToTarget, ACTOR_SELF)
     Wait(2)
-    Call(EnemyDamageTarget, ACTOR_SELF, LVar0, 0, 0, DMG_STATUS_KEY(STATUS_FLAG_POISON, 3, 0), LVar1, BS_FLAGS1_TRIGGER_EVENTS)
+    Call(EnemyDamageTarget, ACTOR_SELF, LVar0, 0, 0, 0, LVar1, BS_FLAGS1_TRIGGER_EVENTS)
     Switch(LVar0)
         CaseOrEq(HIT_RESULT_HIT)
         CaseOrEq(HIT_RESULT_NO_DAMAGE)
@@ -825,7 +826,8 @@ EvtScript N(EVS_TakeTurn) = {
     Call(SetPartJumpGravity, ACTOR_SELF, PRT_PROJECTILE, Float(0.1))
     Call(SetAnimation, ACTOR_SELF, PRT_PROJECTILE, ANIM_Pokey_Projectile)
     Call(JumpPartTo, ACTOR_SELF, PRT_PROJECTILE, LVar0, LVar1, LVar2, 0, TRUE)
-    Call(EnemyDamageTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_NO_CONTACT, 0, DMG_STATUS_KEY(STATUS_FLAG_POISON, 3, 0), DMG_THROW_PART, BS_FLAGS1_TRIGGER_EVENTS)
+    Call(SetNextAttackCustomStatus, POISON_STATUS, 3, 1, 100)
+    Call(EnemyDamageTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_NO_CONTACT, 0, 0, DMG_THROW_PART, BS_FLAGS1_TRIGGER_EVENTS)
     Call(GetActorVar, ACTOR_SELF, AVAR_Anim_Run, LVar1)
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, LVar1)
     Switch(LVar0)
@@ -1135,7 +1137,8 @@ EvtScript N(EVS_Attack_SinglePartLeap) = {
     EndChildThread
     Call(JumpToGoal, ACTOR_SELF, 18, FALSE, TRUE, FALSE)
     Wait(2)
-    Call(EnemyDamageTarget, ACTOR_SELF, LVar0, 0, 0, DMG_STATUS_KEY(STATUS_FLAG_POISON, 3, 0), DMG_LEAP, BS_FLAGS1_TRIGGER_EVENTS)
+    Call(SetNextAttackCustomStatus, POISON_STATUS, 3, 1, 100)
+    Call(EnemyDamageTarget, ACTOR_SELF, LVar0, 0, 0, 0, DMG_LEAP, BS_FLAGS1_TRIGGER_EVENTS)
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Pokey_Idle1)
     Switch(LVar0)
         CaseOrEq(HIT_RESULT_HIT)

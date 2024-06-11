@@ -844,6 +844,9 @@ void draw_all_status_icons(void* data) {
                 elementId = customIcon->activeElementID;
                 hud_element_set_render_pos(elementId, screenX - 8, screenY - 8);
                 hud_element_draw_next(elementId);
+
+                draw_number(customIcon->turns, screenX + 16, screenY - 14, 1, customIcon->palette, 255, DRAW_NUMBER_STYLE_MONOSPACE_RIGHT);
+
                 iconCounter++;
                 isActiveDrawn = 1;
             }

@@ -359,16 +359,8 @@ HitResult calc_item_damage_enemy(void) {
         INFLICT_STATUS(PARALYZE);
         INFLICT_STATUS(DIZZY);
 
-        if (battleStatus->curAttackCustomStatusId != NONE_CUSTOM_STATUS) {
-            s32 inflicted = try_inflict_custom_status(target,
-                state->goalPos,
-                battleStatus->curAttackCustomStatusId,
-                battleStatus->curAttackCustomStatusTurns,
-                battleStatus->curAttackCustomStatusPotency,
-                battleStatus->curAttackCustomStatusChance);
-            if (inflicted) {
-                wasStatusInflicted = TRUE;
-            }
+        if (inflict_next_attack_statuses(target, state->goalPos)) {
+            wasStatusInflicted = TRUE;
         }
 
         #undef INFLICT_STATUS
@@ -382,9 +374,6 @@ HitResult calc_item_damage_enemy(void) {
             }
         }
     }
-
-    // reset custom status now
-    set_next_attack_custom_status(NONE_CUSTOM_STATUS, 0, 0, 0);
 
     temp = target->actorBlueprint->spookChance;
     temp = (battleStatus->statusChance * temp) / 100;
@@ -603,6 +592,7 @@ API_CALLABLE(ItemDamageEnemy) {
     battleStatus->statusDuration = (battleStatus->curAttackStatus & 0xF00) >> 8;
 
     hitResult = calc_item_damage_enemy();
+    set_next_attack_custom_status(NONE_CUSTOM_STATUS, 0, 0, 0);
     if (hitResult < 0) {
         return ApiStatus_FINISH;
     }
@@ -673,6 +663,7 @@ API_CALLABLE(ItemSpookEnemy) {
     battleStatus->statusDuration = (battleStatus->curAttackStatus & 0xF00) >> 8;
 
     hitResult = calc_item_damage_enemy();
+    set_next_attack_custom_status(NONE_CUSTOM_STATUS, 0, 0, 0);
     if (hitResult < 0) {
         return ApiStatus_FINISH;
     }
@@ -742,6 +733,7 @@ API_CALLABLE(ItemAfflictEnemy) {
     battleStatus->statusDuration = (battleStatus->curAttackStatus & 0xF00) >> 8;
 
     hitResult = calc_item_damage_enemy();
+    set_next_attack_custom_status(NONE_CUSTOM_STATUS, 0, 0, 0);
     if (hitResult < 0) {
         return ApiStatus_FINISH;
     }

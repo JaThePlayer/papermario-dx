@@ -1,6 +1,7 @@
 #include "battle/battle.h"
 #include "script_api/battle.h"
 #include "sprite/npc/Bzzap.h"
+#include "misc_patches/custom_status.h"
 
 #define NAMESPACE A(bzzap)
 
@@ -391,7 +392,8 @@ EvtScript N(EVS_Attack_Sting) = {
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Bzzap_Anim04)
     Wait(6)
     Wait(2)
-    Call(EnemyDamageTarget, ACTOR_SELF, LVar0, 0, 0, DMG_STATUS_KEY(STATUS_FLAG_POISON, 3, 40), DMG_STING, BS_FLAGS1_TRIGGER_EVENTS)
+    Call(SetNextAttackCustomStatus, POISON_STATUS, 3, 1, 40)
+    Call(EnemyDamageTarget, ACTOR_SELF, LVar0, 0, 0, 0, DMG_STING, BS_FLAGS1_TRIGGER_EVENTS)
     Switch(LVar0)
         CaseOrEq(HIT_RESULT_HIT)
         CaseOrEq(HIT_RESULT_NO_DAMAGE)

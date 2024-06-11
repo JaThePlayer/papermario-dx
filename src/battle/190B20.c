@@ -2065,7 +2065,7 @@ s32 get_player_anim_for_status(s32 statusKey) {
         }
 
         // switch to poisoned override animations
-        if (player->debuff == STATUS_KEY_POISON) {
+        if (player->debuff == STATUS_KEY_POISON || custom_status_get_potency(player, POISON_STATUS) > 0) {
             if (statusKey == STATUS_KEY_NORMAL) {
                 statusKey = STATUS_KEY_DANGER;
             }

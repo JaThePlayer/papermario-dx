@@ -1,6 +1,7 @@
 #include "battle/battle.h"
 #include "script_api/battle.h"
 #include "sprite/npc/MBush.h"
+#include "misc_patches/custom_status.h"
 
 #define NAMESPACE A(m_bush)
 
@@ -278,7 +279,8 @@ EvtScript N(EVS_TakeTurn) = {
     Call(JumpToGoal, ACTOR_SELF, 10, FALSE, TRUE, FALSE)
     Call(ResetAllActorSounds, ACTOR_SELF)
     Wait(2)
-    Call(EnemyDamageTarget, ACTOR_SELF, LVar0, 0, 0, DMG_STATUS_KEY(STATUS_FLAG_POISON, 2, 25), DMG_BITE, BS_FLAGS1_TRIGGER_EVENTS)
+    Call(SetNextAttackCustomStatus, POISON_STATUS, 2, 1, 25)
+    Call(EnemyDamageTarget, ACTOR_SELF, LVar0, 0, 0, 0, DMG_BITE, BS_FLAGS1_TRIGGER_EVENTS)
     Switch(LVar0)
         CaseOrEq(HIT_RESULT_HIT)
         CaseOrEq(HIT_RESULT_NO_DAMAGE)

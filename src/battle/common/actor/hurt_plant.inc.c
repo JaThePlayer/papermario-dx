@@ -1,6 +1,7 @@
 #include "battle/battle.h"
 #include "script_api/battle.h"
 #include "sprite/npc/HurtPlant.h"
+#include "misc_patches/custom_status.h"
 
 #define NAMESPACE A(hurt_plant)
 
@@ -337,7 +338,8 @@ EvtScript N(EVS_TakeTurn) = {
     IfFlag(LVar0, STATUS_FLAG_POISON)
         Call(EnemyDamageTarget, ACTOR_SELF, LVar0, 0, 0, 0, DMG_BITE, BS_FLAGS1_TRIGGER_EVENTS)
     Else
-        Call(EnemyDamageTarget, ACTOR_SELF, LVar0, 0, 0, DMG_STATUS_KEY(STATUS_FLAG_POISON, 3, 100), DMG_BITE, BS_FLAGS1_TRIGGER_EVENTS)
+        Call(SetNextAttackCustomStatus, POISON_STATUS, 3, 1, 100)
+        Call(EnemyDamageTarget, ACTOR_SELF, LVar0, 0, 0, 0, DMG_BITE, BS_FLAGS1_TRIGGER_EVENTS)
     EndIf
     Switch(LVar0)
         CaseOrEq(HIT_RESULT_HIT)

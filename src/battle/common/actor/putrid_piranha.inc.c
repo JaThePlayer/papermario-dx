@@ -1,6 +1,7 @@
 #include "battle/battle.h"
 #include "script_api/battle.h"
 #include "sprite/npc/LargePiranha.h"
+#include "misc_patches/custom_status.h"
 
 #define NAMESPACE A(putrid_piranha)
 
@@ -463,7 +464,8 @@ EvtScript N(EVS_Attack_BadBreath) = {
     EndSwitch
     Wait(2)
     Call(SetGoalToTarget, ACTOR_SELF)
-    Call(EnemyDamageTarget, ACTOR_SELF, LVar0, 0, SUPPRESS_EVENT_ALL, DMG_STATUS_KEY(STATUS_FLAG_POISON, 3, 100), DMG_BREATH, BS_FLAGS1_TRIGGER_EVENTS)
+    Call(SetNextAttackCustomStatus, POISON_STATUS, 3, 1, 100)
+    Call(EnemyDamageTarget, ACTOR_SELF, LVar0, 0, SUPPRESS_EVENT_ALL, 0, DMG_BREATH, BS_FLAGS1_TRIGGER_EVENTS)
     Set(LVarF, LVar0)
     Switch(LVarF)
         CaseOrEq(HIT_RESULT_HIT)

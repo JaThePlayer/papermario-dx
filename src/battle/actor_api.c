@@ -2,6 +2,7 @@
 #include "effects.h"
 #include "battle/battle.h"
 #include "enemy_items/api.h"
+#include "misc_patches/custom_status.h"
 
 extern s32 IsGroupHeal;
 extern s8 ApplyingBuff;
@@ -2851,7 +2852,7 @@ API_CALLABLE(GetStatusFlags) {
         if (debuff == STATUS_KEY_FEAR) {
             flags |= STATUS_FLAG_FEAR;
         }
-        if (debuff == STATUS_KEY_POISON) {
+        if (debuff == STATUS_KEY_POISON || custom_status_get_potency(actor, POISON_STATUS) > 0) {
             flags |= STATUS_FLAG_POISON;
         }
         if (debuff == STATUS_KEY_SHRINK) {

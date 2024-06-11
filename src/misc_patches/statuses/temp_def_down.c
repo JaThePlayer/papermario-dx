@@ -25,7 +25,7 @@ void N(on_apply)(Actor* actor, Vec3f position, u8 potency) {
 }
 
 void N(create_icon)(Actor* target) {
-    create_custom_status_icon(target->hudElementDataIndex, DEF_DOWN_ICON_ID);
+    create_custom_status_icon(target, DEF_DOWN_ICON_ID);
 }
 
 void N(remove_icon)(s32 id) {

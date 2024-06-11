@@ -686,17 +686,9 @@ HitResult calc_partner_damage_enemy(void) {
 
             #undef INFLICT_STATUS
 
-            if (battleStatus->curAttackCustomStatusId != NONE_CUSTOM_STATUS) {
-                s32 inflicted = try_inflict_custom_status(target,
-                    state->goalPos,
-                    battleStatus->curAttackCustomStatusId,
-                    battleStatus->curAttackCustomStatusTurns,
-                    battleStatus->curAttackCustomStatusPotency,
-                    battleStatus->curAttackCustomStatusChance);
-                if (inflicted) {
-                    wasSpecialHit = TRUE;
-                    wasStatusInflicted = TRUE;
-                }
+            if (inflict_next_attack_statuses(target, state->goalPos)) {
+                wasSpecialHit = TRUE;
+                wasStatusInflicted = TRUE;
             }
 
             statusChanceOrDefense = target->actorBlueprint->spookChance;
@@ -747,9 +739,6 @@ HitResult calc_partner_damage_enemy(void) {
                 }
             }
         }
-
-        // reset custom status now
-        set_next_attack_custom_status(NONE_CUSTOM_STATUS, 0, 0, 0);
     }
 
     statusChanceOrDefense = target->actorBlueprint->spookChance;
@@ -1056,6 +1045,7 @@ API_CALLABLE(func_8027FC90) {
     battleStatus->flags1 |= BS_FLAGS1_TRIGGER_EVENTS;
 
     hitResult = calc_partner_damage_enemy();
+    set_next_attack_custom_status(NONE_CUSTOM_STATUS, 0, 0, 0);
     show_next_damage_popup(actor->state.goalPos.x, actor->state.goalPos.y, actor->state.goalPos.z, battleStatus->lastAttackDamage,
                       0);
     evt_set_variable(script, outVar, hitResult);
@@ -1151,7 +1141,7 @@ API_CALLABLE(PartnerDamageEnemy) {
     battleStatus->statusDuration = (battleStatus->curAttackStatus & 0xF00) >> 8;
     battleStatus->partnerActor->attackedThisTurn = TRUE;
     damageResult = calc_partner_damage_enemy();
-
+    set_next_attack_custom_status(NONE_CUSTOM_STATUS, 0, 0, 0);
     if (damageResult < 0) {
         return ApiStatus_FINISH;
     }
@@ -1228,7 +1218,7 @@ API_CALLABLE(PartnerAfflictEnemy) {
 
     battleStatus->statusDuration = (battleStatus->curAttackStatus & 0xF00) >> 8;
     damageResult = calc_partner_damage_enemy();
-
+    set_next_attack_custom_status(NONE_CUSTOM_STATUS, 0, 0, 0);
     if (damageResult < 0) {
         return ApiStatus_FINISH;
     }
@@ -1305,7 +1295,7 @@ API_CALLABLE(PartnerPowerBounceEnemy) {
     battleStatus->statusDuration = (battleStatus->curAttackStatus & 0xF00) >> 8;
     battleStatus->partnerActor->attackedThisTurn = TRUE;
     damageResult = calc_partner_damage_enemy();
-
+    set_next_attack_custom_status(NONE_CUSTOM_STATUS, 0, 0, 0);
     if (damageResult < 0) {
         return ApiStatus_FINISH;
     }

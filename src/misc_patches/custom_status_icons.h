@@ -10,22 +10,24 @@
 #define BURN_ICON_ID 4
 #define FP_COST_DOWN_ICON_ID 5
 #define CHARGE_ICON_ID 6
+#define POISON_ICON_ID 7
 
 typedef struct CustomHudComplexStatusIcon {
     /* 0x0 */ s8 active;
     /* 0x1 */ s8 removing;
     /* 0x2 */ s8 activeTask;
     /* 0x3 */ s8 removingTask;
-    /* 0x4 */ s8 unk_04;
+    /* 0x4 */ s8 turns;
     /* 0x5 */ s8 frameCounter;
+              s8 palette;
     /* 0x8 */ s32 activeElementID;
     /* 0xC */ s32 removingElementID;
-} CustomHudComplexStatusIcon; // size = 0x10
+} CustomHudComplexStatusIcon;
 
 void custom_status_icons_init(CustomHudComplexStatusIcon customIcons[CUSTOM_ICON_AMT]);
 void custom_icons_update(CustomHudComplexStatusIcon customIcons[CUSTOM_ICON_AMT]);
 
-void create_custom_status_icon(s32 iconId, s32 customIconId);
+void create_custom_status_icon(Actor* target, s32 customIconId);
 void remove_custom_status_icon(s32 iconId, s32 customIconId);
 
 #define DEFAULT_STATUS_ICON_BEGIN(frame1, frame2) { \

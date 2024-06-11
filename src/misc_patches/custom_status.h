@@ -14,6 +14,7 @@
 #define BURN_STATUS 6
 #define FP_COST_STATUS 7
 #define CHARGE_STATUS 8
+#define POISON_STATUS 9
 
 // A function which gets called when a custom status gets applied
 typedef void(*StatusFxApplyFunc)(Actor* target, Vec3f position, u8 potency);
@@ -40,7 +41,21 @@ typedef struct StatusType {
     s8 stackingBehaviour; /// How stacking the status works. Defaults to STATUS_STACKING_OVERRIDE
 } StatusType;
 
+/// Used by SetNextAttackCustomStatus
+typedef struct NextAttackStatus {
+    s8 id;
+    s8 turns;
+    s8 potency;
+    s8 chance;
+} NextAttackStatus;
+
+extern NextAttackStatus gNextAttackStatuses[CUSTOM_STATUS_AMT];
+extern s32 gNextAttackStatusCount;
+
 extern StatusType gCustomStatusTypes[CUSTOM_STATUS_AMT];
+
+/// To be used internally
+s32 inflict_next_attack_statuses(Actor* target, Vec3f position);
 
 // (id, turns, potency, chance)
 API_CALLABLE(SetNextAttackCustomStatus);
