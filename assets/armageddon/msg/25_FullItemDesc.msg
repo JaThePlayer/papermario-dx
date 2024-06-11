@@ -1483,3 +1483,10 @@
 	Only triggers if food poisoning[BR]
 	doesn't come into play.[End]
 }
+
+#message:25:(ItemFullDesc_PoisonThrow) {
+	Performs a Hammer Throw, but[BR]
+	inflicts 4 turns of poison.[BR]
+	+1 ATK to grounded enemies,[BR]
+	and +2 to airborne targets.[End]
+}

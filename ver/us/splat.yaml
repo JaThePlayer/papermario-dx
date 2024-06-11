@@ -7270,6 +7270,9 @@ segments:
       - [0x754F38, gfx, super_hammer]
       - [0x755028, gfx, ultra_hammer]
       - [0x755118]
+      - [auto, gfx, poison_hammer]
+      - [auto, ci4, poison_hammer, 32, 32]
+      - [auto, palette, poison_hammer]
   - name: battle_move_mega_quake
     dir: battle/move/hammer
     type: code

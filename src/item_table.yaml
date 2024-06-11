@@ -5168,3 +5168,17 @@
     moveID: MOVE_MUSH_POWER
     potencyA: 0
     potencyB: 0
+- PoisonThrow:
+    nameMsg: MSG_ItemName_PoisonThrow
+    fullDescMsg: MSG_ItemFullDesc_PoisonThrow
+    shortDescMsg: MSG_ItemFullDesc_PoisonThrow
+    icon: badge/PoisonThrow
+    itemEntityTemplate: STANDARD
+    hudElementTemplate: ITEM
+    sellValue: 100
+    sortValue: 28
+    targetFlags: []
+    typeFlags: [ ITEM_TYPE_FLAG_BADGE, ITEM_TYPE_FLAG_ENTITY_FULLSIZE ]
+    moveID: MOVE_POISON_THROW
+    potencyA: 0
+    potencyB: 0

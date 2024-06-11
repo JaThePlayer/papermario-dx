@@ -105,3 +105,7 @@
 #message:2A:(PlayerMoveName_PDownDUp) {
 	P-Down & D-Up[End]
 }
+
+#message:2A:(PlayerMoveName_PoisonThrow) {
+	Poison Throw[End]
+}

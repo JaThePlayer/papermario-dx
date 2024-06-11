@@ -98,6 +98,7 @@ BattleMoveEntry gMoveScriptTable[] = {
     [MOVE_SHRINK_STOMP]         BTL_MOVE(shrink_stomp, EVS_UseMove),
     [MOVE_EARTHQUAKE_JUMP]      BTL_MOVE(earthquake_jump, EVS_UseMove),
     [MOVE_CHILL_JUMP]           BTL_MOVE(chill_jump, EVS_UseMove),
+    [MOVE_POISON_THROW]         BTL_MOVE(hammer_throw, EVS_UseMove),
 };
 
 API_CALLABLE(LoadMoveScript) {

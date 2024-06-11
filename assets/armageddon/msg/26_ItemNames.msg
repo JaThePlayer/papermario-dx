@@ -1081,3 +1081,7 @@
 #message:26:(ItemName_MushPower) {
 	Mush Power[End]
 }
+
+#message:26:(ItemName_PoisonThrow) {
+	Poison Throw[End]
+}

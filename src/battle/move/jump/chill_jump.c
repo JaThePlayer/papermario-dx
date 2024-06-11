@@ -7,12 +7,20 @@
 
 #include "battle/common/move/JumpSupport.inc.c"
 
-#define ChillJump_Turns 3
-#define ChillJump_Potency 1
-
 extern EvtScript N(EVS_UseMove_ImplA);
 extern EvtScript N(EVS_UseMove_ImplB);
 extern EvtScript N(EVS_UseMove_ImplC);
+
+API_CALLABLE(N(setup_status)) {
+    switch (gBattleStatus.selectedMoveID)
+    {
+        case MOVE_CHILL_JUMP:
+            set_next_attack_custom_status(ATK_DOWN_TEMP_STATUS, 3, 1, 100);
+            break;
+    }
+
+    return ApiStatus_DONE2;
+}
 
 EvtScript N(EVS_UseMove) = {
     Call(EnablePlayerBlur, ACTOR_BLUR_ENABLE)
@@ -56,7 +64,7 @@ EvtScript N(EVS_UseMove_ImplA) = {
     Switch(LVar0)
         CaseGt(FALSE)
             Call(SetActorSounds, ACTOR_PLAYER, ACTOR_SOUND_HURT, SOUND_ACTOR_JUMPED_1, SOUND_NONE)
-            Call(SetNextAttackCustomStatus, ATK_DOWN_TEMP_STATUS, ChillJump_Turns, ChillJump_Potency, 100)
+            Call(N(setup_status))
             Call(PlayerDamageEnemy, LVar0, DAMAGE_TYPE_JUMP, 0, 0, 2, BS_FLAGS1_INCLUDE_POWER_UPS | BS_FLAGS1_TRIGGER_EVENTS | BS_FLAGS1_NICE_HIT)
         CaseDefault
             Call(SetActorSounds, ACTOR_PLAYER, ACTOR_SOUND_HURT, SOUND_ACTOR_JUMPED_1, SOUND_NONE)
@@ -85,7 +93,7 @@ EvtScript N(EVS_UseMove_ImplB) = {
     Switch(LVar0)
         CaseGt(FALSE)
             Call(SetActorSounds, ACTOR_PLAYER, ACTOR_SOUND_HURT, SOUND_ACTOR_JUMPED_2, SOUND_NONE)
-            Call(SetNextAttackCustomStatus, ATK_DOWN_TEMP_STATUS, ChillJump_Turns, ChillJump_Potency, 100)
+            Call(N(setup_status))
             Call(PlayerDamageEnemy, LVar0, DAMAGE_TYPE_JUMP, 0, 0, 4, BS_FLAGS1_INCLUDE_POWER_UPS | BS_FLAGS1_TRIGGER_EVENTS | BS_FLAGS1_NICE_HIT)
         CaseDefault
             Call(SetActorSounds, ACTOR_PLAYER, ACTOR_SOUND_HURT, SOUND_ACTOR_JUMPED_2, SOUND_NONE)
@@ -114,7 +122,7 @@ EvtScript N(EVS_UseMove_ImplC) = {
     Switch(LVar0)
         CaseGt(FALSE)
             Call(SetActorSounds, ACTOR_PLAYER, ACTOR_SOUND_HURT, SOUND_ACTOR_JUMPED_3, SOUND_NONE)
-            Call(SetNextAttackCustomStatus, ATK_DOWN_TEMP_STATUS, ChillJump_Turns, ChillJump_Potency, 100)
+            Call(N(setup_status))
             Call(PlayerDamageEnemy, LVar0, DAMAGE_TYPE_JUMP, 0, 0, 6, BS_FLAGS1_INCLUDE_POWER_UPS | BS_FLAGS1_TRIGGER_EVENTS | BS_FLAGS1_NICE_HIT)
         CaseDefault
             Call(SetActorSounds, ACTOR_PLAYER, ACTOR_SOUND_HURT, SOUND_ACTOR_JUMPED_3, SOUND_NONE)

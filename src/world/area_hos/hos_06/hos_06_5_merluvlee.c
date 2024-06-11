@@ -27,7 +27,7 @@ typedef struct BadgeHint {
 BadgeHint N(BadgeHintData)[] = {
     { MSG_MerluvleeHint_JumpCharge,       ITEM_JUMP_CHARGE,   STORY_CH3_STAR_SPRIT_DEPARTED },
     { MSG_MerluvleeHint_SuperJumpCharge,  ITEM_S_JUMP_CHG,     STORY_CH6_ARRIVED_AT_FLOWER_FIELDS },
-    { MSG_MerluvleeHint_ShrinkStomp,      ITEM_SHRINK_STOMP,   STORY_CH1_DEFEATED_JR_TROOPA },
+    { MSG_MerluvleeHint_ShrinkStomp,      ITEM_POISON_THROW,   STORY_CH1_DEFEATED_JR_TROOPA },
     { MSG_MerluvleeHint_Multibounce,      ITEM_MULTIBOUNCE,    STORY_CH1_DEFEATED_JR_TROOPA },
     { MSG_MerluvleeHint_SleepStomp,       ITEM_SLEEP_STOMP,    STORY_CH2_STAR_SPRIT_DEPARTED },
     { MSG_MerluvleeHint_DDownJump,        ITEM_D_DOWN_JUMP,    STORY_CH3_SAW_TUBBA_EAT_BOO },

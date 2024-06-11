@@ -388,4 +388,5 @@
     <Icon type="solo" name="anim/sp_small_6"/>
     <Icon type="solo" name="anim/sp_small_7"/>
     <Icon type="pair" name="badge/MushPower"/>
+    <Icon type="pair" name="badge/PoisonThrow"/>
 </Icons>

@@ -124,6 +124,15 @@
     actionTip: BTL_MSG_ACTION_TIP_HOLD_LEFT_TIMED
     costFP: 2
     costBP: 1
+- PoisonThrow:
+    nameMsg: MSG_PlayerMoveName_PoisonThrow
+    fullDescMsg: MSG_ItemFullDesc_PoisonThrow
+    shortDescMsg: MSG_ItemFullDesc_PoisonThrow
+    flags: [ TARGET_FLAG_SELECT_ONE, TARGET_FLAG_2 ]
+    category: MOVE_TYPE_HAMMER
+    actionTip: BTL_MSG_ACTION_TIP_HOLD_LEFT_TIMED
+    costFP: 4
+    costBP: 2
 - MegaQuake:
     nameMsg: MSG_PlayerMoveName_MegaQuake
     fullDescMsg: MSG_ItemFullDesc_MegaQuake
