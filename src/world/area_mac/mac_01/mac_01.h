@@ -135,4 +135,4 @@ extern NpcGroupList N(Chapter4NPCs);
 extern NpcGroupList N(NinjiMeetingNPCs);
 extern NpcGroupList N(DefaultNPCs);
 
-extern ShopItemData N(RowfBadgeInventory)[16];
+extern API_CALLABLE(N(func_80244984_805204));

@@ -1,17 +1,3 @@
-API_CALLABLE(N(func_80244984_805204)) {
-    s32 flagBase = GF_MAC01_RowfBadge_00;
-    s32 count = 0;
-    s32 i;
-
-    for (i = 0; i < ARRAY_COUNT(N(RowfBadgeInventory)); i++) {
-        if (evt_get_variable(NULL, flagBase + i) == 0) {
-            count++;
-        }
-    }
-    script->varTable[0] = count;
-    return ApiStatus_DONE2;
-}
-
 API_CALLABLE(N(RhuffUnravelUpdate)) {
     s32 rugRotAngle = -evt_get_variable(NULL, MV_RowfRugRotateAngle);
     s32 rugRippleAmt = evt_get_variable(NULL, MV_RowfRugRippleAmount);

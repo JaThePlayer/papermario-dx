@@ -1,5 +1,46 @@
 #include "mac_01.h"
 
+typedef struct RowfBadgeOption {
+    u32 itemID;
+    s32 price;
+    s32 story;
+} RowfBadgeOption;
+
+RowfBadgeOption N(RowfBadgeInventory)[] = {
+    { .itemID = ITEM_SPIN_SMASH,     .price =  50, .story = STORY_CH1_STAR_SPRIT_DEPARTED },
+    { .itemID = ITEM_FIRST_ATTACK,   .price = 100, .story = STORY_CH1_STAR_SPRIT_DEPARTED  },
+    { .itemID = ITEM_MONEY_MONEY,    .price = 100, .story = STORY_CH1_STAR_SPRIT_DEPARTED  },
+    { .itemID = ITEM_D_DOWN_POUND,   .price =  75, .story = STORY_CH1_STAR_SPRIT_DEPARTED  },
+
+    { .itemID = ITEM_DODGE_MASTER,   .price = 100, .story = STORY_CH2_STAR_SPRIT_DEPARTED },
+    { .itemID = ITEM_SLEEP_STOMP,    .price =  75, .story = STORY_CH2_STAR_SPRIT_DEPARTED },
+    { .itemID = ITEM_DOUBLE_DIP,     .price = 100, .story = STORY_CH2_STAR_SPRIT_DEPARTED },
+
+    { .itemID = ITEM_JUMP_CHARGE,    .price =  50, .story = STORY_CH3_STAR_SPRIT_DEPARTED },
+//    { .itemID = ITEM_SPIN_SMASH,     .price =  75, .story = STORY_CH3_STAR_SPRIT_DEPARTED },
+    { .itemID = ITEM_GROUP_FOCUS,    .price = 100, .story = STORY_CH3_STAR_SPRIT_DEPARTED },
+
+    { .itemID = ITEM_ALLOR_NOTHING,  .price = 100, .story = STORY_CH4_STAR_SPRIT_DEPARTED },
+    { .itemID = ITEM_HP_PLUS_C,      .price = 150, .story = STORY_CH4_STAR_SPRIT_DEPARTED },
+    { .itemID = ITEM_FP_PLUS_C,      .price = 150, .story = STORY_CH4_STAR_SPRIT_DEPARTED },
+
+    { .itemID = ITEM_S_SMASH_CHG,    .price = 100, .story = STORY_CH5_RETURNED_TO_TOAD_TOWN },
+    { .itemID = ITEM_DAMAGE_DODGE_A, .price = 150, .story = STORY_CH5_RETURNED_TO_TOAD_TOWN },
+    { .itemID = ITEM_MEGA_QUAKE,     .price = 200, .story = STORY_CH5_RETURNED_TO_TOAD_TOWN },
+};
+
+API_CALLABLE(N(func_80244984_805204)) {
+    s32 count = 0;
+
+    for (s32 i = 0; i < ARRAY_COUNT(N(RowfBadgeInventory)); i++) {
+        if (find_item(N(RowfBadgeInventory)[i].itemID) != -1) {
+            count++;
+        }
+    }
+    script->varTable[0] = count;
+    return ApiStatus_DONE2;
+}
+
 API_CALLABLE(N(HideRowfBadge)) {
     s32 itemIndex = evt_get_variable(script, *script->ptrReadPos);
 
@@ -9,17 +50,15 @@ API_CALLABLE(N(HideRowfBadge)) {
 
 API_CALLABLE(N(SetRowfBadgeBought)) {
     s32 itemIndex = evt_get_variable(script, *script->ptrReadPos);
-    s32* buyFlags = (s32*) evt_get_variable(NULL, MV_RowfShopBuyFlags);
 
     set_item_entity_flags(gGameStatusPtr->shopItemEntities[itemIndex].index, ITEM_ENTITY_FLAG_HIDDEN);
-    evt_set_variable(NULL, buyFlags[itemIndex], TRUE);
     return ApiStatus_DONE2;
 }
 
 API_CALLABLE(N(CreateShopInventory)) {
     s32 varBaseUnlocked = GF_MAC01_UnlockedRowfBadge_00;
     s32 varBaseHasBought = GF_MAC01_RowfBadge_00;
-    s32 options[16];
+    s32 options[ARRAY_COUNT(N(RowfBadgeInventory))];
     s32 itemID;
     s32 shopIdx;
     s32 randIdx;
@@ -28,20 +67,18 @@ API_CALLABLE(N(CreateShopInventory)) {
     s32 i;
 
     ShopItemData* inventory = heap_malloc(4 * sizeof(ShopItemData));
-    s32* buyFlags = heap_malloc(3 * sizeof(s32));
-    buyFlags[0] = 0;
-    buyFlags[1] = 0;
-    buyFlags[2] = 0;
     inventory[0].itemID = 0;
     inventory[1].itemID = 0;
     inventory[2].itemID = 0;
     inventory[3].itemID = 0;
 
+    s32 storyProgress = evt_get_variable(NULL, GB_StoryProgress);
     if (!evt_get_variable(script, GF_MAC01_RowfBadgesChosen)) {
         available = 0;
         for (i = 0; i < (u32) ARRAY_COUNT(options); i++) {
-            s32 isUnlocked = evt_get_variable(NULL, varBaseUnlocked + i);
-            s32 hasBought = evt_get_variable(NULL, varBaseHasBought + i);
+            RowfBadgeOption* opt = &N(RowfBadgeInventory)[i];
+            s32 isUnlocked = storyProgress >= opt->story;
+            s32 hasBought = find_item(opt->itemID) != -1;
             if ((isUnlocked == 1) && (hasBought == 0)) {
                 options[available++] = i;
             }
@@ -51,12 +88,11 @@ API_CALLABLE(N(CreateShopInventory)) {
         while (available != 0) {
             randIdx = rand_int(available - 1);
             shopIdx = options[randIdx];
+            RowfBadgeOption* opt = &N(RowfBadgeInventory)[shopIdx];
 
-            itemID = mac_01_RowfBadgeInventory[shopIdx].itemID;
-            inventory[count].itemID = itemID;
-            inventory[count].price = gItemTable[itemID].sellValue;
-            inventory[count].descMsg = mac_01_RowfBadgeInventory[shopIdx].descMsg;
-            buyFlags[count] = varBaseHasBought + shopIdx;
+            inventory[count].itemID = opt->itemID;
+            inventory[count].price = opt->price;
+            inventory[count].descMsg = gItemTable[opt->itemID].fullDescMsg;
 
             evt_set_variable(script, GB_MAC01_Rowf_Badge0 + count, shopIdx);
 
@@ -76,17 +112,15 @@ API_CALLABLE(N(CreateShopInventory)) {
         count = evt_get_variable(script, GB_MAC01_Rowf_NumBadges);
         for (i = 0; i < count; i++) {
             shopIdx = evt_get_variable(script, GB_MAC01_Rowf_Badge0 + i);
-            itemID = mac_01_RowfBadgeInventory[shopIdx].itemID;
-            inventory[i].itemID = itemID;
-            inventory[i].price = gItemTable[itemID].sellValue;
-            inventory[i].descMsg = mac_01_RowfBadgeInventory[shopIdx].descMsg;
-            buyFlags[i] = varBaseHasBought + shopIdx;
+            RowfBadgeOption* opt = &N(RowfBadgeInventory)[shopIdx];
+            inventory[i].itemID = opt->itemID;
+            inventory[i].price = opt->price;
+            inventory[i].descMsg = gItemTable[opt->itemID].fullDescMsg;
         }
         script->varTable[3] = TRUE;
     }
 
     script->varTable[0] = count;
-    script->varTablePtr[1] = buyFlags;
     script->varTablePtr[2] = inventory;
     return ApiStatus_DONE2;
 }
@@ -145,25 +179,6 @@ EvtScript N(EVS_OnBuy) = {
     End
 };
 
-ShopItemData N(RowfBadgeInventory)[] = {
-    { .itemID = ITEM_SPEEDY_SPIN,    .price =  50, .descMsg = MSG_ItemFullDesc_SpeedySpin },
-    { .itemID = ITEM_FIRST_ATTACK,   .price = 100, .descMsg = MSG_ItemFullDesc_FirstAttack },
-    { .itemID = ITEM_MULTIBOUNCE,    .price =  75, .descMsg = MSG_ItemFullDesc_Multibounce },
-    { .itemID = ITEM_D_DOWN_POUND,   .price =  75, .descMsg = MSG_ItemFullDesc_DDownPound },
-    { .itemID = ITEM_DODGE_MASTER,   .price = 100, .descMsg = MSG_ItemFullDesc_DodgeMaster },
-    { .itemID = ITEM_SLEEP_STOMP,    .price =  75, .descMsg = MSG_ItemFullDesc_SleepStomp },
-    { .itemID = ITEM_DOUBLE_DIP,     .price = 100, .descMsg = MSG_ItemFullDesc_DoubleDip },
-    { .itemID = ITEM_JUMP_CHARGE,   .price =  50, .descMsg = MSG_ItemFullDesc_JumpCharge },
-    { .itemID = ITEM_SPIN_SMASH,     .price =  75, .descMsg = MSG_ItemFullDesc_SpinSmash },
-    { .itemID = ITEM_GROUP_FOCUS,    .price = 100, .descMsg = MSG_ItemFullDesc_GroupFocus },
-    { .itemID = ITEM_ALLOR_NOTHING,  .price = 100, .descMsg = MSG_ItemFullDesc_AllorNothing },
-    { .itemID = ITEM_HP_PLUS_C,      .price = 150, .descMsg = MSG_ItemFullDesc_HPPlus },
-    { .itemID = ITEM_FP_PLUS_C,      .price = 150, .descMsg = MSG_ItemFullDesc_FPPlus },
-    { .itemID = ITEM_S_SMASH_CHG,    .price = 100, .descMsg = MSG_ItemFullDesc_SSmashChg },
-    { .itemID = ITEM_DAMAGE_DODGE_A, .price = 150, .descMsg = MSG_ItemFullDesc_DamageDodge },
-    { .itemID = ITEM_MEGA_QUAKE,     .price = 200, .descMsg = MSG_ItemFullDesc_MegaQuake },
-};
-
 ShopItemLocation N(RowfItemPositions)[] = {
     { .posModelID = MODEL_b3, .triggerColliderID = COLLIDER_b3 },
     { .posModelID = MODEL_b2, .triggerColliderID = COLLIDER_b2 },
@@ -179,40 +194,7 @@ ShopOwner N(ShopOwnerRowf) = {
 };
 
 EvtScript N(EVS_SetupBadgeShop) = {
-    IfLt(GB_StoryProgress, STORY_CH2_STAR_SPRIT_DEPARTED)
-        Goto(1)
-    EndIf
-    IfLt(GB_StoryProgress, STORY_CH3_STAR_SPRIT_DEPARTED)
-        Goto(2)
-    EndIf
-    IfLt(GB_StoryProgress, STORY_CH4_STAR_SPRIT_DEPARTED)
-        Goto(3)
-    EndIf
-    IfLt(GB_StoryProgress, STORY_CH5_RETURNED_TO_TOAD_TOWN)
-        Goto(4)
-    EndIf
-    Set(GF_MAC01_UnlockedRowfBadge_0F, TRUE)
-    Set(GF_MAC01_UnlockedRowfBadge_0E, TRUE)
-    Set(GF_MAC01_UnlockedRowfBadge_0D, TRUE)
-    Label(4)
-    Set(GF_MAC01_UnlockedRowfBadge_0C, TRUE)
-    Set(GF_MAC01_UnlockedRowfBadge_0B, TRUE)
-    Set(GF_MAC01_UnlockedRowfBadge_0A, TRUE)
-    Label(3)
-    Set(GF_MAC01_UnlockedRowfBadge_09, TRUE)
-    Set(GF_MAC01_UnlockedRowfBadge_08, TRUE)
-    Set(GF_MAC01_UnlockedRowfBadge_07, TRUE)
-    Label(2)
-    Set(GF_MAC01_UnlockedRowfBadge_06, TRUE)
-    Set(GF_MAC01_UnlockedRowfBadge_05, TRUE)
-    Set(GF_MAC01_UnlockedRowfBadge_04, TRUE)
-    Label(1)
-    Set(GF_MAC01_UnlockedRowfBadge_03, TRUE)
-    Set(GF_MAC01_UnlockedRowfBadge_02, TRUE)
-    Set(GF_MAC01_UnlockedRowfBadge_01, TRUE)
-    Set(GF_MAC01_UnlockedRowfBadge_00, TRUE)
     Call(N(CreateShopInventory))
-    Set(MV_RowfShopBuyFlags, LVar1)
     IfEq(LVar3, 0)
         Set(GF_MAC01_RowfBadgeAvailableA, FALSE)
         Set(GF_MAC01_RowfBadgeAvailableB, FALSE)
