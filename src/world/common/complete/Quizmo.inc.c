@@ -120,8 +120,8 @@ u8 N(Quizmo_Answers)[QuestionCount] = {
 
 QuizRequirement N(Quizmo_Requirements)[] = {
     { STORY_CH0_KAMMY_RETURNED_TO_BOWSER, 0 },
-    { STORY_CH1_BEGAN_PEACH_MISSION, 10 },
-    { STORY_CH2_BEGAN_PEACH_MISSION, 20 },
+    { STORY_CH1_BEGAN_PEACH_MISSION, 5 }, // was 10
+    { STORY_CH2_BEGAN_PEACH_MISSION, 10 }, // was 20
     { STORY_CH3_BEGAN_PEACH_MISSION, 30 },
     { STORY_CH4_BEGAN_PEACH_MISSION, 37 },
     { STORY_CH5_STAR_SPRIT_DEPARTED, 44 },
