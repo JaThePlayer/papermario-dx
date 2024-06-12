@@ -105,7 +105,9 @@ enum {
     QUIZ_COUNT_HOS      = 1,
 };
 
-u8 N(Quizmo_Answers)[64] = {
+#define QuestionCount 64
+
+u8 N(Quizmo_Answers)[QuestionCount] = {
     2, 1, 1, 2, 2, 0, 2, 0,
     2, 1, 0, 2, 1, 1, 0, 2,
     0, 2, 1, 0, 0, 2, 1, 0,
@@ -126,7 +128,6 @@ QuizRequirement N(Quizmo_Requirements)[] = {
     { STORY_CH6_BEGAN_PEACH_MISSION, 52 },
     { STORY_CH7_BEGAN_PEACH_MISSION, 60 },
     { STORY_EPILOGUE, 64 },
-    { 0, 64 }, // end of list
 };
 
 API_CALLABLE(N(Quizmo_HideEntities)) {
@@ -176,8 +177,7 @@ API_CALLABLE(N(Quizmo_ShouldAppear)) {
     numAnswered = evt_get_variable(NULL, GB_CompletedQuizzes);
     progress = evt_get_variable(NULL, GB_StoryProgress);
 
-    // vanilla bug? never checks the final requirement in the list
-    for (i = 0; i < 8; i++) {
+    for (i = 0; i < ARRAY_COUNT(N(Quizmo_Requirements)); i++) {
         if (progress < N(Quizmo_Requirements)[i].requiredStoryProgress) {
             break;
         }
@@ -955,14 +955,30 @@ EvtScript N(EVS_Quizmo_WrongAnswer) = {
     End
 };
 
+API_CALLABLE(N(IsNextQuestionAvailable)) {
+    s32 numAnswered = evt_get_variable(NULL, GB_CompletedQuizzes);
+    s32 progress = evt_get_variable(NULL, GB_StoryProgress);
+    s32 i;
+
+    for (i = 0; i < ARRAY_COUNT(N(Quizmo_Requirements)); i++) {
+        if (progress < N(Quizmo_Requirements)[i].requiredStoryProgress) {
+            break;
+        }
+    }
+
+    evt_set_variable(script, *script->ptrReadPos, numAnswered < N(Quizmo_Requirements)[i].numQuestionsUnlocked);
+    return ApiStatus_DONE2;
+}
+
 EvtScript N(EVS_Quizmo_QuizMain) = {
-    IfGt(GB_CompletedQuizzes, 63)
+    IfGe(GB_CompletedQuizzes, QuestionCount)
         Set(LVar0, 0)
         Return
     EndIf
     Call(GetPlayerPos, QUIZ_ARRAY_ORIGIN_X, QUIZ_ARRAY_ORIGIN_Y, QUIZ_ARRAY_ORIGIN_Z)
     Call(NpcFacePlayer, NPC_SELF, 16)
-    IfEq(GB_CompletedQuizzes, 63)
+    IfEq(GB_CompletedQuizzes, QuestionCount - 1)
+        // last question
         Call(SpeakToPlayer, NPC_SELF, ANIM_ChuckQuizmo_Talk, ANIM_ChuckQuizmo_Idle, 0, MSG_MGM_000A)
     Else
         IfEq(GF_Met_ChuckQuizmo, 1)
@@ -1006,6 +1022,11 @@ EvtScript N(EVS_Quizmo_QuizMain) = {
         Call(SetPlayerPos, LVar0, LVar1, LVar2)
         Wait(2)
     EndLoop
+
+    #define NEXT_QUESTION_LABEL 11
+    #define END_LABEL 12
+    Label(NEXT_QUESTION_LABEL)
+
     Set(LVar0, MSG_QuizQuestion_01)
     Add(LVar0, GB_CompletedQuizzes)
     Call(SpeakToPlayer, NPC_SELF, ANIM_ChuckQuizmo_OpenHat, ANIM_ChuckQuizmo_CloseHat, 0, LVar0)
@@ -1021,7 +1042,7 @@ EvtScript N(EVS_Quizmo_QuizMain) = {
     Call(PlaySound, SOUND_QUIZ_BUZZER)
     Call(N(Quizmo_UnkStageEffectMode), LVar0)
     Set(QUIZ_ARRAY_ANSWER_RESULT, 0)
-    Call(N(Quizmo_CreateWorker))
+    // Call(N(Quizmo_CreateWorker))
     Wait(40)
     Call(N(Quizmo_UpdateRecords))
     Thread
@@ -1072,7 +1093,7 @@ EvtScript N(EVS_Quizmo_QuizMain) = {
         Wait(20)
         ExecGetTID(N(EVS_Quizmo_RightAnswer), LVar1)
         Add(GB_CompletedQuizzes, 1)
-        IfGt(GB_CompletedQuizzes, 63)
+        IfGt(GB_CompletedQuizzes, QuestionCount - 1)
             Call(ContinueSpeech, -1, -1, -1, 0, MSG_MGM_0010)
             Call(SetNpcAnimation, CHUCK_QUIZMO_NPC_ID, ANIM_ChuckQuizmo_CloseHat)
             Loop(0)
@@ -1124,6 +1145,33 @@ EvtScript N(EVS_Quizmo_QuizMain) = {
 #endif
             EndIf
             Call(SpeakToPlayer, NPC_SELF, ANIM_ChuckQuizmo_Talk, ANIM_ChuckQuizmo_Idle, 0, MSG_MGM_000F)
+
+            Wait(10)
+			Call(N(IsNextQuestionAvailable), LVar0)
+			IfEq(LVar0, 0)
+				Call(SpeakToPlayer, NPC_SELF, ANIM_ChuckQuizmo_Talk, ANIM_ChuckQuizmo_Idle, 00000000, MSG_MGM_EndOfCurrentQuestions ) // Looks like that's it for now ...
+				Set(LVar0, 1)
+				Goto(END_LABEL)
+			EndIf
+			Call(SpeakToPlayer, NPC_SELF, ANIM_ChuckQuizmo_Talk, ANIM_ChuckQuizmo_Idle, 00000000, MSG_MGM_AskIfNextQuestion) // But we're not done yet ...
+			Call(ShowChoice, MSG_Choice_000D ) // Yes No
+			IfEq(LVar0, 1)
+				Call(ContinueSpeech, NPC_SELF, ANIM_ChuckQuizmo_Talk, ANIM_ChuckQuizmo_Idle, 00000000, MSG_MGM_NextQuestionDeclined ) // Uh, oh. Not up to it, huh? Maybe another time! Wel ...
+				Set(LVar0, 1)
+				Goto(END_LABEL)
+			EndIf
+
+            Exec(N(EVS_Quizmo_MovePartnerToPodium))
+            ExecGetTID(N(EVS_Quizmo_MovePlayerToPodium), LVarA)
+			Call(ContinueSpeech, NPC_SELF, ANIM_ChuckQuizmo_Talk, ANIM_ChuckQuizmo_Idle, 00000000, MSG_MGM_LetsGoToNextQuestion ) // Then let's go to the question!
+            Loop(0)
+                IsThreadRunning(LVarA, LVar0)
+                IfEq(LVar0, 0)
+                    BreakLoop
+                EndIf
+                Wait(1)
+            EndLoop
+			Goto(NEXT_QUESTION_LABEL)
         EndIf
         Set(LVar0, 1)
     Else
@@ -1145,6 +1193,7 @@ EvtScript N(EVS_Quizmo_QuizMain) = {
         EndLoop
         Set(LVar0, 0)
     EndIf
+    Label(END_LABEL)
     Call(N(Quizmo_UnkStageEffectMode), -1)
     Call(EnablePartnerAI)
     Thread
