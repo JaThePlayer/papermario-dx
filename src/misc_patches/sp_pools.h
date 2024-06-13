@@ -76,4 +76,7 @@ void sp_pool_return_this_battle(void);
 // Needs to be called at the end of each battle
 void sp_pool_end_of_battle(void);
 
+/// Sets up a fake SP pool for the current battle with the provided amount of Star Points in it
+void sp_pool_setup_fake_pool(u8 amt);
+
 #endif

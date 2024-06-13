@@ -3147,6 +3147,7 @@ enum PopupType {
     POPUP_MENU_POST_OFFICE          = 0xD,
     POPUP_MENU_DOUBLE_DIP           = 100,
     POPUP_MENU_TRIPLE_DIP           = 200,
+    POPUP_MENU_TRIAL_SELECT         = 0xE, // new in Armageddon
 };
 
 enum PopupState {

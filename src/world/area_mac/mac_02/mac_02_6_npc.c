@@ -7,6 +7,8 @@
 #include "world/common/npc/Bubulb.inc.c"
 #define CHUCK_QUIZMO_NPC_ID NPC_ChuckQuizmo
 #include "world/common/complete/Quizmo.inc.c"
+#define TRIAL_BOO_NPC_ID NPC_TrialBoo
+#include "world/common/complete/trial_boo.inc.c"
 
 #include "world/common/enemy/ShyGuy.h"
 
@@ -191,6 +193,33 @@ NpcData N(NpcData_TayceT)[] = {
         .drops = NO_DROPS,
         .animations = TOAD_RED_ANIMS,
         .tattle = MSG_NpcTattle_MAC_PetBoaster,
+    },
+    {
+        .id = NPC_TrialBoo,
+        .pos = { -300.0f, 40.0f, -140.0f },
+        .yaw = 263,
+        .settings = &N(NpcSettings_TrialBoo),
+        .flags = ENEMY_FLAG_PASSIVE | ENEMY_FLAG_IGNORE_WORLD_COLLISION | ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING | ENEMY_FLAG_4,
+        .drops = NO_DROPS,
+        .animations = {
+            .idle   = ANIM_Boo_Idle,
+            .walk   = ANIM_Boo_Walk,
+            .run    = ANIM_Boo_Run,
+            .chase  = ANIM_Boo_Run,
+            .anim_4 = ANIM_Boo_Idle,
+            .anim_5 = ANIM_Boo_Idle,
+            .death  = ANIM_Boo_Still,
+            .hit    = ANIM_Boo_Still,
+            .anim_8 = ANIM_Boo_Run,
+            .anim_9 = ANIM_Boo_Run,
+            .anim_A = ANIM_Boo_Run,
+            .anim_B = ANIM_Boo_Run,
+            .anim_C = ANIM_Boo_Run,
+            .anim_D = ANIM_Boo_Run,
+            .anim_E = ANIM_Boo_Run,
+            .anim_F = ANIM_Boo_Run,
+        },
+        .tattle = MSG_NpcTattle_TrialBoo,
     },
 };
 

@@ -25,4 +25,12 @@ EvtScript N(GiveCoinReward) = {
     ExecWait(N(GiveItemReward)) \
     Call(AddStarPieces, 1)
 
+/// Gives 'amt' star pieces. Warning: if 'amt' is an lvar, it gets mutated due to the use of a Loop.
+#define EVT_GIVE_STAR_PIECES(amt) \
+    Loop(amt) \
+        Set(LVar0, ITEM_STAR_PIECE) \
+        ExecWait(N(GiveItemReward)) \
+    EndLoop \
+    Call(AddStarPieces, amt)
+
 #endif

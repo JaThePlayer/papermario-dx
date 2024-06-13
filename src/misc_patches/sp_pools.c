@@ -9,6 +9,10 @@ u8 sp_pool_caps[SP_POOL_COUNT] = {
     [SP_POOL_DISCARD] = 0,
 };
 
+u8 fake_pool_max = 0;
+u8 fake_pool_used = 0;
+b8 has_fake_pool = FALSE;
+
 // stores how much sp was taken from each pool in the current battle
 u8 sp_pool_used_up_this_battle[SP_POOL_COUNT] = { };
 
@@ -22,6 +26,9 @@ u8 sp_pool_is_pooled(u8 id) {
 
 // returns how much sp has been used from the given pool.
 u8 sp_pool_used(u8 id) {
+    if (has_fake_pool)
+        return fake_pool_used;
+
     if (id == SP_POOL_NONE) {
         return 0;
     }
@@ -31,6 +38,9 @@ u8 sp_pool_used(u8 id) {
 
 /// Returns the cap of the given pool
 u8 sp_pool_cap(u8 id) {
+    if (has_fake_pool)
+        return fake_pool_max;
+
     if (id == SP_POOL_NONE) {
         return 0;
     }
@@ -41,7 +51,7 @@ u8 sp_pool_cap(u8 id) {
 // returns how much sp is left in a given pool
 u8 sp_pool_remaining(u8 id) {
     s8 remaining;
-    if (id == SP_POOL_NONE) {
+    if (id == SP_POOL_NONE && !has_fake_pool) {
         return 0;
     }
 
@@ -54,7 +64,7 @@ u8 sp_pool_remaining(u8 id) {
 
 // Uses up at most 'amt' sp from the given pool. Returns how much sp was actually spent.
 u8 sp_pool_use(u8 id, u8 amt) {
-    if (id == SP_POOL_NONE) {
+    if (id == SP_POOL_NONE && !has_fake_pool) {
         return amt;
     }
 
@@ -64,8 +74,12 @@ u8 sp_pool_use(u8 id, u8 amt) {
         amt = remaining;
     }
 
-    gPlayerData.spAreaPools[INDEX_POOL(id)] += amt;
-    sp_pool_used_up_this_battle[INDEX_POOL(id)] += amt;
+    if (has_fake_pool) {
+        fake_pool_used += amt;
+    } else {
+        gPlayerData.spAreaPools[INDEX_POOL(id)] += amt;
+        sp_pool_used_up_this_battle[INDEX_POOL(id)] += amt;
+    }
 
     return amt;
 }
@@ -77,10 +91,24 @@ void sp_pool_return_this_battle() {
         gPlayerData.spAreaPools[i] -= used;
         sp_pool_used_up_this_battle[i] = 0;
     }
+
+    has_fake_pool = FALSE;
+    fake_pool_max = 0;
+    fake_pool_used = 0;
 }
 
 void sp_pool_end_of_battle() {
     for (s32 i = 0; i < SP_POOL_COUNT; i++) {
         sp_pool_used_up_this_battle[i] = 0;
     }
+    has_fake_pool = FALSE;
+    fake_pool_max = 0;
+    fake_pool_used = 0;
+}
+
+/// Sets up a fake SP pool for the current battle with the provided amount of Star Points in it
+void sp_pool_setup_fake_pool(u8 amt) {
+    has_fake_pool = TRUE;
+    fake_pool_max = amt;
+    fake_pool_used = 0;
 }

@@ -55,3 +55,7 @@ API_CALLABLE(TargetPlayerOrPartner) {
 
     return ApiStatus_DONE2;
 }
+
+// Used by Trial Boo, needs to be somewhere global
+void* gCurrentTrial = NULL;
+s32 gCurrentTrialFormationId = 0;

@@ -813,3 +813,83 @@
 	Then let's go to the question![BR]
 	[Wait][End]
 }
+
+
+#message:08:(BooTrial_Intoduction_BeforeCh3) {
+	[Style right]
+	Hello, Mario![BR]
+	Are you interested in testing[BR]
+	your combat skills?[BR]
+	[Wait][Next]
+	Normally, I would be in[BR]
+	Boo's Mansion, but due to[BR]
+	[Wave]certain events[/Wave], we can't accept[BR]
+	strangers there for now...[BR]
+	[Wait][Next]
+	Regardless, I can offer you some[BR]
+	Boo Trials in Toad Town right now.[BR]
+	[Wait][Next]
+	Boo trials are a series of battles[BR]
+	which you have to beat in a row,[BR]
+	sharing a common theme.[BR]
+	[Wait][Next]
+	The first time you beat a trial,[BR]
+	you get a special reward, as well[BR]
+	as some Star Points, regardless[BR]
+	of whether you depleted the[BR]
+	[Wait][Next]
+	Star Point Pool for those enemies[BR]
+	earlier in your adventures.[BR]
+	[Wait][Next]
+	The further you progress, the[BR]
+	more Trials I can offer you.[BR]
+	[Wait][Next]
+	Oh, but this is not for free.[BR]
+	Each Trial has its own coin cost,[BR]
+	though it's never too high.[BR]
+	[Wait][Next]
+	So, are you interested in a Trial?[BR]
+	[Wait][End]
+}
+
+#message:08:(BooTrial_Intoduction_Again) {
+	[Style right]
+	Hello, Mario![BR]
+	Interested in a trial?[BR]
+	[Wait][End]
+}
+
+#message:08:(BooTrial_Intoduction_SwappingFormation) {
+	[Style right]
+	Well done! However, there's[BR]
+	still more fights to go![BR]
+	[Wait][End]
+}
+
+#message:08:(BooTrial_Intoduction_TrialSuccessFirstTime) {
+	[Style right]
+	Congratulations! That was some[BR]
+	wonderful fighting.[BR]
+	[Wait][Next]
+	Since this is the first time you[BR]
+	bested this Trial, here's a reward![BR]
+	[Wait][End]
+}
+
+#message:08:(BooTrial_Intoduction_TrialSuccess) {
+	[Style right]
+	Congratulations! That was some[BR]
+	wonderful fighting.[BR]
+	[Wait][End]
+}
+
+#message:08:(BooTrial_Ch1_Name) {
+	Chapter 1[End]
+}
+
+#message:08:(BooTrial_Ch1_Desc) {
+	A standard showdown against[BR]
+	enemies from Chapter 1.[End]
+}
+
+

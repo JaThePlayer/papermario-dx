@@ -27,6 +27,7 @@ enum {
     NPC_Bootler                 = 9,
     NPC_ShyGuy                  = 11,
     NPC_ChuckQuizmo             = 12,
+    NPC_TrialBoo                = 13,
 };
 
 enum {

@@ -2720,3 +2720,7 @@
 #message:1D:(Menus_Battle_NextWave) {
 	Wave [Var 0]![End]
 }
+
+#message:1D:(Menus_WhichTrial) {
+	Which trial?[End]
+}

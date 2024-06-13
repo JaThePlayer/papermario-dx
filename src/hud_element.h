@@ -135,6 +135,7 @@ typedef struct PopupMenu {
     /* 0x328 */ s32 initialPos;
     /* 0x32C */ s16 result;
     /* 0x32E */ char unk_32E[0x2];
+    /* new   */ void* userData[32];
 #if VERSION_PAL
     /* 0x330 */ s32 unk_330; // message ID
     /* 0x334 */ s32 unk_334; // x offset
