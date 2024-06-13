@@ -5182,3 +5182,17 @@
     moveID: MOVE_POISON_THROW
     potencyA: 0
     potencyB: 0
+- EmberEmblem:
+    nameMsg: MSG_ItemName_EmberEmblem
+    fullDescMsg: MSG_ItemFullDesc_EmberEmblem
+    shortDescMsg: MSG_ItemFullDesc_EmberEmblem
+    icon: badge/EmberEmblem
+    itemEntityTemplate: STANDARD
+    hudElementTemplate: ITEM
+    sellValue: 100
+    sortValue: 11
+    targetFlags: []
+    typeFlags: [ ITEM_TYPE_FLAG_BADGE, ITEM_TYPE_FLAG_ENTITY_FULLSIZE ]
+    moveID: MOVE_EMBER_EMBLEM
+    potencyA: 0
+    potencyB: 0

@@ -1490,3 +1490,13 @@
 	+1 ATK to grounded enemies,[BR]
 	and +2 to airborne targets.[End]
 }
+
+#message:25:(ItemFullDesc_EmberEmblem) {
+	Applying the Burn status on[BR]
+	an already burning enemy[BR]
+	increases the turn count,[BR]
+	but it drops by 2 per turn.[BR]
+	Burn does damage equal to[BR]
+	half of the turn count,[BR]
+	rounded up.[End]
+}

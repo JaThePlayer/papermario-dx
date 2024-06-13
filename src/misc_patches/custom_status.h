@@ -28,6 +28,9 @@ typedef void(*StatusFxOnDecrementFunc)(Actor* target);
 enum StackingBehaviours {
     STATUS_STACKING_OVERRIDE = 0, /// New applications of the status override the previous
     STATUS_STACKING_ADD_POTENCY = 1, /// Adds the potency of the new application on top of the previous potency.
+    STATUS_STACKING_ADD_TURNS = 2, /// Adds the turns of the new application on top of the previous turn count.
+
+    STATUS_STACKING_BURN = 10, /// Specific to burn, handles Ember Emblem
 };
 
 typedef struct StatusType {
@@ -62,6 +65,9 @@ API_CALLABLE(SetNextAttackCustomStatus);
 
 // (actorId, customStatusId, turns, potency, chance)
 API_CALLABLE(InflictCustomStatus);
+
+// Gets the info of the given status for the given actor.
+StatusInfo* custom_status_get_info(Actor* actor, s8 customStatusId);
 
 // Gets the potency of the given status for the given actor. 0 if actor doesn't have this status
 s8 custom_status_get_potency(Actor* actor, s8 customStatusId);

@@ -22,7 +22,13 @@ void N(remove_icon)(s32 id) {
 }
 
 void N(on_decrement)(Actor* target) {
-    s32 dmg = custom_status_get_potency(target, BURN_STATUS);
+    StatusInfo* info = custom_status_get_info(target, BURN_STATUS);
+    s32 dmg = info->potency;
+
+    if (is_badge_equipped(ITEM_EMBER_EMBLEM)) {
+        dmg *= (info->turns + 1) / 2;
+    }
+
     target->state.goalPos = target->curPos;
 
     if (target == gBattleStatus.playerActor) {

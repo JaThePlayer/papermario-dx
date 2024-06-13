@@ -1085,3 +1085,7 @@
 #message:26:(ItemName_PoisonThrow) {
 	Poison Throw[End]
 }
+
+#message:26:(ItemName_EmberEmblem) {
+	Ember Emblem[End]
+}

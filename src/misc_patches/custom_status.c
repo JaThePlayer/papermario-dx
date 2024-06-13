@@ -30,11 +30,15 @@ StatusType gCustomStatusTypes[CUSTOM_STATUS_AMT] = {
     [ATK_UP_TEMP_STATUS] = STATUS_ENTRY(temp_atk_up, FALSE, TRUE, STATUS_STACKING_OVERRIDE),
     [DEF_UP_TEMP_STATUS] = STATUS_ENTRY(temp_def_up, FALSE, TRUE, STATUS_STACKING_OVERRIDE),
     [CLOSE_CALL_STATUS] = STATUS_ENTRY(close_call, FALSE, TRUE, STATUS_STACKING_OVERRIDE),
-    [BURN_STATUS] = STATUS_ENTRY(burn_status, TRUE, TRUE, STATUS_STACKING_OVERRIDE),
+    [BURN_STATUS] = STATUS_ENTRY(burn_status, TRUE, TRUE, STATUS_STACKING_BURN),
     [FP_COST_STATUS] = STATUS_ENTRY(fp_cost_status, FALSE, TRUE, STATUS_STACKING_OVERRIDE),
     [CHARGE_STATUS] = STATUS_ENTRY(charge_status, FALSE, FALSE, STATUS_STACKING_ADD_POTENCY),
     [POISON_STATUS] = STATUS_ENTRY(poison_status, TRUE, TRUE, STATUS_STACKING_OVERRIDE),
 };
+
+StatusInfo* custom_status_get_info(Actor* actor, s8 customStatusId) {
+    return &actor->customStatuses[customStatusId];
+}
 
 // Gets the potency of the given status for the given actor. 0 if actor doesn't have this status
 s8 custom_status_get_potency(Actor* actor, s8 customStatusId) {
@@ -68,7 +72,16 @@ static void custom_status_decrement_impl(Actor* actor, s8 isLate) {
         StatusType* statusType = &gCustomStatusTypes[i];
 
         if (statusType->hasTurnCount && statusType->decrementLate == isLate && status->turns > 0) {
-            custom_status_decrease_turn_count_impl(actor, status->turns - 1, status, statusType);
+            s32 decrement = 1;
+
+            if (i == BURN_STATUS && is_badge_equipped(ITEM_EMBER_EMBLEM)) {
+                decrement = 2;
+            }
+
+            if (status->turns < decrement)
+                decrement = status->turns;
+
+            custom_status_decrease_turn_count_impl(actor, status->turns - decrement, status, statusType);
         }
     }
 }
@@ -96,7 +109,16 @@ s32 try_inflict_custom_status(Actor* actor, Vec3f position, s8 customStatusId, u
     StatusType* statusType = &gCustomStatusTypes[customStatusId];
     // todo: resistance
 
-    switch (statusType->stackingBehaviour)
+    s8 stackBehaviour = statusType->stackingBehaviour;
+
+    // Handle stack behaviours that toggle different behaviours based on some condition (like badges)
+    switch (stackBehaviour) {
+        case STATUS_STACKING_BURN:
+            stackBehaviour = is_badge_equipped(ITEM_EMBER_EMBLEM) ? STATUS_STACKING_ADD_TURNS : STATUS_STACKING_OVERRIDE;
+            break;
+    }
+
+    switch (stackBehaviour)
     {
         case STATUS_STACKING_OVERRIDE:
             status->turns = turns;
@@ -109,6 +131,14 @@ s32 try_inflict_custom_status(Actor* actor, Vec3f position, s8 customStatusId, u
                 status->potency = 99;
             }
             break;
+        case STATUS_STACKING_ADD_TURNS:
+            if (status->potency == potency) {
+                status->turns += turns;
+            }
+            if (status->potency < potency) {
+                status->turns = turns;
+                status->potency = potency;
+            }
     }
 
 

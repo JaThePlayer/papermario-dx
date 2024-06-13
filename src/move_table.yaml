@@ -852,7 +852,7 @@
     category: MOVE_TYPE_NONE
     actionTip: NONE
     costFP: 0
-    costBP: 7
+    costBP: 2
 - ChillOutBadge:
     nameMsg: MSG_ItemName_ChillOut
     fullDescMsg: MSG_ItemFullDesc_ChillOut
@@ -1690,3 +1690,12 @@
     actionTip: NONE
     costFP: 0
     costBP: 3
+- EmberEmblem:
+    nameMsg: MSG_ItemName_EmberEmblem
+    fullDescMsg: MSG_ItemFullDesc_EmberEmblem
+    shortDescMsg: MSG_ItemFullDesc_EmberEmblem
+    flags: []
+    category: MOVE_TYPE_DEFENSE_UP
+    actionTip: NONE
+    costFP: 0
+    costBP: 5
