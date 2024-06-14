@@ -25,7 +25,7 @@ void N(on_decrement)(Actor* target) {
     StatusInfo* info = custom_status_get_info(target, BURN_STATUS);
     s32 dmg = info->potency;
 
-    if (is_badge_equipped(ITEM_EMBER_EMBLEM)) {
+    if (badge_count_by_move_id_in_opposing_team(target, MOVE_EMBER_EMBLEM) > 0) {
         dmg *= (info->turns + 1) / 2;
     }
 

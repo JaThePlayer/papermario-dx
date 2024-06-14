@@ -74,6 +74,10 @@ s32 enemy_items_count_items_with_id(Actor* actor, s32 itemID);
 // counts the amount of items with a given moveID
 s32 enemy_items_count_items_with_move_id(Actor* actor, s32 moveID);
 
+// counts badges with given move id either for the player or enemies
+s32 badge_count_by_move_id(Actor* actor, s32 moveId);
+s32 badge_count_by_move_id_in_opposing_team(Actor* actor, s32 moveId);
+
 // Script, which handles the usage of a healing item by an enemy.
 extern EvtScript EnemyItems_UseHealingItem;
 

@@ -275,17 +275,42 @@ static void RecoverFpFromCustomItemEffect(Actor* actor, s32 amt) {
 
 }
 
+s32 _player_count_badges_with_move_id(s32 moveId) {
+    s32 sum = 0;
+    for (s32 idx = 0; idx < ARRAY_COUNT(gPlayerData.equippedBadges); idx++) {
+        s32 badgeMoveID = gItemTable[gPlayerData.equippedBadges[idx]].moveID;
+        if (badgeMoveID == moveId) {
+            sum += 1;
+        }
+    }
+    return sum;
+}
+
+s32 enemy_items_count_items_with_move_id_in_all(s32 moveId) {
+    s32 sum = 0;
+
+    for (s32 i = 0; i < ARRAY_COUNT(gBattleStatus.enemyActors); i++) {
+        Actor* enemy = gBattleStatus.enemyActors[i];
+        if (enemy != NULL)
+            sum += enemy_items_count_items_with_move_id(enemy, moveId);
+    }
+
+    return sum;
+}
+
+
+s32 badge_count_by_move_id_in_opposing_team(Actor* actor, s32 moveId) {
+    if (actor == gBattleStatus.playerActor) {
+        return enemy_items_count_items_with_move_id_in_all(moveId);
+    }
+
+    return _player_count_badges_with_move_id(moveId);
+}
+
 // counts badges with given move id either for the player or enemies
 s32 badge_count_by_move_id(Actor* actor, s32 moveId) {
     if (actor == gBattleStatus.playerActor) {
-        s32 sum = 0;
-        for (s32 idx = 0; idx < ARRAY_COUNT(gPlayerData.equippedBadges); idx++) {
-            s32 badgeMoveID = gItemTable[gPlayerData.equippedBadges[idx]].moveID;
-            if (badgeMoveID == moveId) {
-                sum += 1;
-            }
-        }
-        return sum;
+        return _player_count_badges_with_move_id(moveId);
     }
 
     return enemy_items_count_items_with_move_id(actor, moveId);

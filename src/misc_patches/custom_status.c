@@ -74,7 +74,7 @@ static void custom_status_decrement_impl(Actor* actor, s8 isLate) {
         if (statusType->hasTurnCount && statusType->decrementLate == isLate && status->turns > 0) {
             s32 decrement = 1;
 
-            if (i == BURN_STATUS && is_badge_equipped(ITEM_EMBER_EMBLEM)) {
+            if (i == BURN_STATUS && badge_count_by_move_id_in_opposing_team(actor, MOVE_EMBER_EMBLEM) > 0) {
                 decrement = 2;
             }
 
@@ -114,7 +114,7 @@ s32 try_inflict_custom_status(Actor* actor, Vec3f position, s8 customStatusId, u
     // Handle stack behaviours that toggle different behaviours based on some condition (like badges)
     switch (stackBehaviour) {
         case STATUS_STACKING_BURN:
-            stackBehaviour = is_badge_equipped(ITEM_EMBER_EMBLEM) ? STATUS_STACKING_ADD_TURNS : STATUS_STACKING_OVERRIDE;
+            stackBehaviour = badge_count_by_move_id_in_opposing_team(actor, MOVE_EMBER_EMBLEM) > 0 ? STATUS_STACKING_ADD_TURNS : STATUS_STACKING_OVERRIDE;
             break;
     }
 
