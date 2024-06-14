@@ -21,7 +21,7 @@ u8 sp_pool_used_up_this_battle[SP_POOL_COUNT] = { };
 
 // Whether the given pool id actually corresponds to a pool
 u8 sp_pool_is_pooled(u8 id) {
-    return id > SP_POOL_NONE;
+    return has_fake_pool || id > SP_POOL_NONE;
 }
 
 // returns how much sp has been used from the given pool.
