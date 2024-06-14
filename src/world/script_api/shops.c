@@ -367,7 +367,8 @@ API_CALLABLE(ShowShopPurchaseDialog) {
 
 void create_shop_popup_menu(PopupMenu* popup);
 
-void shop_open_item_select_popup(s32 mode) {
+/// Fills in the popup menu for the shop, without actually opening it.
+void shop_fill_item_select_popup(s32 mode) {
     PopupMenu* menu = &gGameStatusPtr->mapShop->itemSelectMenu;
     s32 numItemSlots;
     s32 popupType;
@@ -425,6 +426,11 @@ void shop_open_item_select_popup(s32 mode) {
     menu->popupType = popupType;
     menu->numEntries = numEntries;
     menu->initialPos = 0;
+}
+
+void shop_open_item_select_popup(s32 mode) {
+    PopupMenu* menu = &gGameStatusPtr->mapShop->itemSelectMenu;
+    shop_fill_item_select_popup(mode);
     create_shop_popup_menu(menu);
     status_bar_ignore_changes();
     status_bar_always_show_on();
@@ -440,7 +446,8 @@ s32 shop_update_item_select_popup(s32* selectedIndex) {
         return 0;
     }
 
-    hide_popup_menu();
+    // Because all options no longer close the popup, this needs to be removed
+    // hide_popup_menu();
 
     if (menuResult == POPUP_RESULT_CANCEL) {
         *selectedIndex = -1;
@@ -472,6 +479,8 @@ s32 shop_get_sell_price(s32 itemID) {
 
     return gItemTable[itemID].sellValue;
 }
+
+extern s32 gPopupState;
 
 API_CALLABLE(ShowShopOwnerDialog) {
     Shop* shop = gGameStatus.mapShop;
@@ -505,6 +514,8 @@ API_CALLABLE(ShowShopOwnerDialog) {
         DIALOG_STATE_HANDLE_CLAIM_CHOICE        = 71,
         DIALOG_STATE_INIT_CLAIM_MORE_CHOICE     = 72,
         DIALOG_STATE_AWAIT_CLAIM_MORE_CHOICE    = 73,
+
+        DIALOG_STATE_REMOVE_SELL_POPUP          = 801,
     };
 
     if (isInitialCall) {
@@ -574,15 +585,45 @@ API_CALLABLE(ShowShopOwnerDialog) {
         case DIALOG_STATE_INIT_SELL_CHOICE:
             if (!does_script_exist(script->functionTemp[1])) {
                 shop_open_item_select_popup(0);
+                show_coin_counter();
                 script->functionTemp[0] = DIALOG_STATE_AWAIT_SELL_CHOICE;
             }
             break;
         case DIALOG_STATE_AWAIT_SELL_CHOICE:
             if (shop_update_item_select_popup(&shop->selectedStoreItemSlot) == 1) {
-                script->functionTemp[0] = DIALOG_STATE_INIT_SELL_CONFIRM;
+                //script->functionTemp[0] = DIALOG_STATE_INIT_SELL_CONFIRM;
+                //script->functionTemp[1] = 15;
+
+                if (shop->selectedStoreItemSlot >= 0) {
+                    add_coins(shop_get_sell_price(gPlayerData.invItems[shop->selectedStoreItemSlot]));
+                    gPlayerData.invItems[shop->selectedStoreItemSlot] = ITEM_NONE;
+                    if (get_consumables_count() != 0) {
+                        // Sell another item
+                        shop->itemSelectMenu.result = POPUP_RESULT_CHOOSING;
+                        gPopupState = POPUP_STATE_CHOOSING;
+                        shop_fill_item_select_popup(0);
+                        break;
+                    }
+                }
+
+                hide_popup_menu();
+                hide_coin_counter();
                 script->functionTemp[1] = 15;
+                script->functionTemp[0] = DIALOG_STATE_REMOVE_SELL_POPUP;
             }
             break;
+        case DIALOG_STATE_REMOVE_SELL_POPUP:
+            // There needs to be a 15 frame delay between hide_popup_menu and shop_close_item_select_popup,
+            // this state handles that.
+            if (script->functionTemp[1] > 0) {
+                script->functionTemp[1]--;
+                break;
+            }
+            shop_close_item_select_popup();
+            script->functionTemp[1] = shop_owner_begin_speech(SHOP_MSG_FAREWELL);
+            script->functionTemp[0] = DIALOG_STATE_CLOSED_SUBMENU;
+            break;
+
         case DIALOG_STATE_INIT_SELL_CONFIRM:
             if (script->functionTemp[1] > 0) {
                 script->functionTemp[1]--;
@@ -654,8 +695,26 @@ API_CALLABLE(ShowShopOwnerDialog) {
             break;
         case DIALOG_STATE_AWAIT_CHECK_CHOICE:
             if (shop_update_item_select_popup(&shop->selectedStoreItemSlot) == 1) {
-                script->functionTemp[0] = DIALOG_STATE_HANDLE_CHECK_CHOICE;
+                // script->functionTemp[0] = DIALOG_STATE_HANDLE_CHECK_CHOICE;
+                // script->functionTemp[1] = 15;
+
+                if (shop->selectedStoreItemSlot >= 0) {
+                    if (store_item(gPlayerData.invItems[shop->selectedStoreItemSlot]) >= 0) {
+                        gPlayerData.invItems[shop->selectedStoreItemSlot] = ITEM_NONE;
+                    }
+
+                    if ((get_consumables_count() != 0) && (get_stored_empty() != 0)) {
+                        // Pick another item
+                        shop->itemSelectMenu.result = POPUP_RESULT_CHOOSING;
+                        gPopupState = POPUP_STATE_CHOOSING;
+                        shop_fill_item_select_popup(1);
+                        break;
+                    }
+                }
+
+                hide_popup_menu();
                 script->functionTemp[1] = 15;
+                script->functionTemp[0] = DIALOG_STATE_REMOVE_SELL_POPUP;
             }
             break;
         case DIALOG_STATE_HANDLE_CHECK_CHOICE:
@@ -707,8 +766,26 @@ API_CALLABLE(ShowShopOwnerDialog) {
             break;
         case DIALOG_STATE_AWAIT_CLAIM_CHOICE:
             if (shop_update_item_select_popup(&shop->selectedStoreItemSlot) == 1) {
-                script->functionTemp[0] = DIALOG_STATE_HANDLE_CLAIM_CHOICE;
+                // script->functionTemp[0] = DIALOG_STATE_HANDLE_CLAIM_CHOICE;
+                // script->functionTemp[1] = 15;
+
+                if (shop->selectedStoreItemSlot >= 0) {
+                    if (add_item(gPlayerData.storedItems[shop->selectedStoreItemSlot]) >= 0) {
+                        gPlayerData.storedItems[shop->selectedStoreItemSlot] = ITEM_NONE;
+                    }
+
+                    if (get_consumables_empty() != 0 && get_stored_count() != 0) {
+                        // Pick another item
+                        shop->itemSelectMenu.result = POPUP_RESULT_CHOOSING;
+                        gPopupState = POPUP_STATE_CHOOSING;
+                        shop_fill_item_select_popup(2);
+                        break;
+                    }
+                }
+
+                hide_popup_menu();
                 script->functionTemp[1] = 15;
+                script->functionTemp[0] = DIALOG_STATE_REMOVE_SELL_POPUP;
             }
             break;
         case DIALOG_STATE_HANDLE_CLAIM_CHOICE:
