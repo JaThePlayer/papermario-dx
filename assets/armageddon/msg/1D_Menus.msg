@@ -2724,3 +2724,7 @@
 #message:1D:(Menus_WhichTrial) {
 	Which trial?[End]
 }
+
+#message:1D:(Menus_BuyWhichOne) {
+	Buy which one?[End]
+}

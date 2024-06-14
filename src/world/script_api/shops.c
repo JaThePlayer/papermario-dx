@@ -369,6 +369,7 @@ void create_shop_popup_menu(PopupMenu* popup);
 
 /// Fills in the popup menu for the shop, without actually opening it.
 void shop_fill_item_select_popup(s32 mode) {
+    Shop* shop = gGameStatusPtr->mapShop;
     PopupMenu* menu = &gGameStatusPtr->mapShop->itemSelectMenu;
     s32 numItemSlots;
     s32 popupType;
@@ -380,10 +381,17 @@ void shop_fill_item_select_popup(s32 mode) {
         case 0:
             popupType = POPUP_MENU_SELL_ITEM;
             numItemSlots = ARRAY_COUNT(gPlayerData.invItems);
+            // In Armageddon, menu->userData[0] is used by POPUP_MENU_SELL_ITEM to change the "Sell which one?" message
+            menu->userData[0] = NULL;
             break;
         case 1:
             popupType = POPUP_MENU_CHECK_ITEM;
             numItemSlots = ARRAY_COUNT(gPlayerData.invItems);
+            break;
+        case 3:
+            popupType = POPUP_MENU_SELL_ITEM;
+            numItemSlots = shop->numItems;
+            menu->userData[0] = MSG_Menus_BuyWhichOne;
             break;
         default:
             popupType = POPUP_MENU_CLAIM_ITEM;
@@ -395,6 +403,7 @@ void shop_fill_item_select_popup(s32 mode) {
 
     for (i = 0; i < numItemSlots; i++) {
         ItemData* itemData;
+        b8 isEnabled = TRUE;
 
         switch (mode) {
             case 0:
@@ -403,6 +412,14 @@ void shop_fill_item_select_popup(s32 mode) {
                 if (itemID == ITEM_NONE) {
                     continue;
                 }
+                itemData = &gItemTable[itemID];
+                break;
+            case 3:
+                itemID = shop->staticInventory[i].itemID;
+                if (itemID == ITEM_NONE) {
+                    continue;
+                }
+                isEnabled = gPlayerData.coins >= shop->staticInventory[i].price;
                 itemData = &gItemTable[itemID];
                 break;
             default:
@@ -419,7 +436,8 @@ void shop_fill_item_select_popup(s32 mode) {
         menu->enabled[numEntries] = TRUE;
         menu->nameMsg[numEntries] = itemData->nameMsg;
         menu->descMsg[numEntries] = itemData->fullDescMsg;
-        menu->value[numEntries] = shop_get_sell_price(itemID);
+        menu->value[numEntries] = mode == 3 ? shop->staticInventory[i].price : shop_get_sell_price(itemID);
+        menu->enabled[numEntries] = isEnabled;
         numEntries++;
     }
 
@@ -515,6 +533,11 @@ API_CALLABLE(ShowShopOwnerDialog) {
         DIALOG_STATE_INIT_CLAIM_MORE_CHOICE     = 72,
         DIALOG_STATE_AWAIT_CLAIM_MORE_CHOICE    = 73,
 
+        // buying - new
+        DIALOG_STATE_INIT_BUY_CHOICE          = 802,
+        DIALOG_STATE_AWAIT_BUY_CHOICE         = 803,
+
+        // shared
         DIALOG_STATE_REMOVE_SELL_POPUP          = 801,
     };
 
@@ -535,8 +558,16 @@ API_CALLABLE(ShowShopOwnerDialog) {
             if (script->functionTemp[2] == 1) {
                 switch (ShopOwnerPrintState->curOption) {
                     case 0:
-                        script->functionTemp[1] = shop_owner_continue_speech(SHOP_MSG_INSTRUCTIONS);
-                        script->functionTemp[0] = DIALOG_STATE_DONE_INSTRUCTIONS;
+                        //script->functionTemp[1] = shop_owner_continue_speech(SHOP_MSG_INSTRUCTIONS);
+                        //script->functionTemp[0] = DIALOG_STATE_DONE_INSTRUCTIONS;
+                        if (get_consumables_empty() == 0) {
+                            script->functionTemp[1] = shop_owner_continue_speech(SHOP_MSG_NOT_ENOUGH_ROOM);
+                            script->functionTemp[0] = DIALOG_STATE_CLOSED_SUBMENU;
+                            break;
+                        }
+
+                        script->functionTemp[1] = shop_owner_end_speech();
+                        script->functionTemp[0] = DIALOG_STATE_INIT_BUY_CHOICE;
                         break;
                     case 1:
                         if (get_consumables_count() == 0) {
@@ -829,6 +860,41 @@ API_CALLABLE(ShowShopOwnerDialog) {
                 }
             }
             break;
+        // NEW: Buying
+        case DIALOG_STATE_INIT_BUY_CHOICE:
+            if (!does_script_exist(script->functionTemp[1])) {
+                shop_open_item_select_popup(3);
+                show_coin_counter();
+                script->functionTemp[0] = DIALOG_STATE_AWAIT_BUY_CHOICE;
+            }
+            break;
+        case DIALOG_STATE_AWAIT_BUY_CHOICE:
+            if (shop_update_item_select_popup(&shop->selectedStoreItemSlot) == 1) {
+                if (shop->selectedStoreItemSlot >= 0) {
+                    ShopItemData* item = &shop->staticInventory[shop->selectedStoreItemSlot];
+
+                    gPlayerData.coins -= item->price;
+                    add_item(item->itemID);
+                    if (item_is_badge(item->itemID)) {
+                        evt_set_variable(NULL, GF_MAC01_BoughtBadgeFromRowf, TRUE);
+                    }
+
+                    if (get_consumables_empty() != 0) {
+                        // Pick another item
+                        shop->itemSelectMenu.result = POPUP_RESULT_CHOOSING;
+                        gPopupState = POPUP_STATE_CHOOSING;
+                        shop_fill_item_select_popup(3);
+                        break;
+                    }
+                }
+
+                hide_popup_menu();
+                hide_coin_counter();
+                script->functionTemp[1] = 15;
+                script->functionTemp[0] = DIALOG_STATE_REMOVE_SELL_POPUP;
+            }
+            break;
+
         case DIALOG_STATE_DONE_INSTRUCTIONS:
         case DIALOG_STATE_CLOSED_SUBMENU:
         case DIALOG_STATE_CLOSED_MAIN_MENU:

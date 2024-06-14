@@ -2121,11 +2121,15 @@ void func_800F4944(s32* userData, s32 baseX, s32 baseY, s32 width, s32 height, s
                 baseX += 68 - (msgWidth / 2);
                 draw_msg(MSG_Menus_006A, baseX, baseY - 4, 255, MSG_PAL_0F, 0);
                 break;
-            case POPUP_MENU_SELL_ITEM:
-                msgWidth = get_msg_width(MSG_Menus_0065, 0);
+            case POPUP_MENU_SELL_ITEM: {
+                s32 msgId = MSG_Menus_0065;
+                if (gPopupMenu->userData[0] != NULL)
+                    msgId = gPopupMenu->userData[0];
+                msgWidth = get_msg_width(msgId, 0);
                 baseX += 60 - (msgWidth / 2);
-                draw_msg(MSG_Menus_0065, baseX, baseY, 255, MSG_PAL_0F, 0);
+                draw_msg(msgId, baseX, baseY, 255, MSG_PAL_0F, 0);
                 break;
+            }
             case POPUP_MENU_TRIAL_SELECT:
                 //msgWidth = get_msg_width(MSG_Menus_WhichTrial, 0);
                 //baseX += 60 - (msgWidth / 2);
