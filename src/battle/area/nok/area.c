@@ -27,11 +27,6 @@ Roles
 - Filler: Goomba
 */
 
-Formation A(Formation_00) = { // unused
-    ACTOR_BY_IDX(A(goomba), BTL_POS_GROUND_B, 10),
-    ACTOR_BY_IDX(A(goomba), BTL_POS_GROUND_C, 9),
-};
-
 Formation A(Formation_01) = { // nok_12 (2nd, with bridge)
     ACTOR_BY_IDX(A(goomba), BTL_POS_GROUND_B, 10),
     ACTOR_BY_IDX(A(spiked_goomba), BTL_POS_GROUND_C, 9),
@@ -148,21 +143,11 @@ Formation A(Formation_12) = { // unused
     ACTOR_BY_IDX(A(koopa_troopa), BTL_POS_GROUND_C, 9),
 };
 
-Formation A(Formation_13) = { // unused
-    ACTOR_BY_IDX(A(paratroopa), BTL_POS_AIR_A, 10),
-    ACTOR_BY_IDX(A(koopa_troopa), BTL_POS_GROUND_B, 9),
-    ACTOR_BY_IDX(A(spiked_goomba), BTL_POS_GROUND_C, 8),
-};
-
 Formation A(Formation_14) = { // nok_15 (final)
     ACTOR_BY_IDX(A(paratroopa), BTL_POS_AIR_A, 10),
     ACTOR_BY_IDX(A(koopa_troopa), BTL_POS_GROUND_B, 9),
     ACTOR_BY_IDX(A(spiked_goomba), BTL_POS_GROUND_C, 8),
     ACTOR_BY_IDX_ITEM(A(paragoomba), BTL_POS_AIR_D, 7, ITEM_SPICY_SOUP),
-};
-
-Formation A(Formation_15) = { // unused
-    ACTOR_BY_IDX(A(fuzzy), BTL_POS_GROUND_B, 10),
 };
 
 Formation A(Formation_16) = { // nok_03 (room with HP Plus)
@@ -179,6 +164,30 @@ Formation A(Formation_17) = { // nok_04 (miniboss)
 
 Formation A(Formation_18) = {
     ACTOR_BY_IDX(A(kent_c_koopa), BTL_POS_GROUND_B, 10),
+};
+
+
+// BOO TRIAL - CHAPTER 1
+
+Formation A(Formation_00) = { // Boo Trial - ch1, part 1
+    ACTOR_BY_IDX(A(goomba), BTL_POS_GROUND_A, 10),
+    ACTOR_BY_IDX(A(fuzzy), BTL_POS_GROUND_B, 9),
+    ACTOR_BY_IDX_ITEM(A(goomba), BTL_POS_GROUND_C, 8, ITEM_HOT_SHROOM),
+    ACTOR_BY_IDX(A(spiked_paragoomba), BTL_POS_AIR_C, 7),
+};
+
+Formation A(Formation_15) = { // Boo Trial - ch1, part 2
+    ACTOR_BY_IDX(A(fuzzy), BTL_POS_GROUND_A, 10),
+    ACTOR_BY_IDX_ARG(A(koopa_troopa), BTL_POS_GROUND_B, 9, TRUE),
+    ACTOR_BY_IDX_ITEM(A(fuzzy), BTL_POS_GROUND_C, 9, ITEM_HP_PLUS_A),
+};
+
+Formation A(Formation_13) = { // Boo Trial - ch1, part 3
+    ACTOR_BY_IDX(A(koopa_troopa), BTL_POS_GROUND_A, 10),
+    ACTOR_BY_IDX_ITEM(A(paratroopa), BTL_POS_AIR_B, 9, ITEM_MUSHROOM),
+    ACTOR_BY_IDX_ITEM(A(spiked_goomba), BTL_POS_GROUND_C, 8, ITEM_HP_PLUS_A),
+    ACTOR_BY_IDX(A(spiked_paragoomba), BTL_POS_AIR_D, 7, ITEM_THUNDER_BOLT),
+    ACTOR_BY_IDX(A(fuzzy), BTL_POS_GROUND_D, 6),
 };
 
 BattleList A(Formations) = {

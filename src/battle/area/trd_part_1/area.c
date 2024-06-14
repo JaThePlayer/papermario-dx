@@ -210,14 +210,6 @@ Formation A(Formation_0E) = {
     ACTOR_BY_IDX(A(bob_omb), BTL_POS_GROUND_D, 8),
 };
 
-
-Formation A(Formation_12) = {
-    ACTOR_BY_IDX(A(bob_omb), BTL_POS_GROUND_A, 10),
-    ACTOR_BY_IDX(A(bob_omb), BTL_POS_GROUND_B, 9),
-    ACTOR_BY_IDX(A(bob_omb), BTL_POS_GROUND_C, 8),
-    ACTOR_BY_IDX(A(bob_omb), BTL_POS_GROUND_D, 7),
-};
-
 Formation A(Formation_13) = {
     ACTOR_BY_IDX(A(bob_omb), BTL_POS_GROUND_B, 10),
     ACTOR_BY_IDX(A(koopa_troopa), BTL_POS_GROUND_C, 9),
@@ -229,19 +221,41 @@ Formation A(Formation_14) = {
     ACTOR_BY_IDX(A(koopa_troopa), BTL_POS_GROUND_C, 8),
 };
 
-Formation A(Formation_15) = {
+// BOO TRIAL - CHAPTER 1
+
+Formation A(Formation_19) = { // Boo Trial - ch1 - part 4
+    ACTOR_BY_IDX(A(bullet_bill), BTL_POS_AIR_A, 10),
+    ACTOR_BY_IDX(A(bullet_bill), BTL_POS_AIR_B, 9),
+    ACTOR_BY_IDX(A(bullet_bill), BTL_POS_AIR_C, 8),
+    ACTOR_BY_IDX(A(bullet_bill), BTL_POS_AIR_D, 7),
+};
+
+s16 A(Formation_18_GoombaItems)[] = {
+    ITEM_HP_PLUS_A, ITEM_HP_PLUS_A, ITEM_FIRE_FLOWER
+};
+
+s16 A(Formation_18_FireBrosItems)[] = {
+    ITEM_HP_PLUS_A, ITEM_EMBER_EMBLEM
+};
+
+Formation A(Formation_18) = { // Boo Trial - ch1 - part 5
     ACTOR_BY_IDX(A(bob_omb), BTL_POS_GROUND_A, 10),
-    ACTOR_BY_IDX(A(koopa_troopa), BTL_POS_GROUND_B, 9),
-    ACTOR_BY_IDX(A(koopa_troopa), BTL_POS_GROUND_C, 8),
+    ACTOR_BY_IDX(A(fire_bros), BTL_POS_GROUND_B, 9),
+    ACTOR_BY_IDX_ITEMS(A(fire_bros), BTL_POS_GROUND_C, 8, A(Formation_18_FireBrosItems)),
+    ACTOR_BY_IDX_ITEMS(A(goomba), BTL_POS_GROUND_D, 7, A(Formation_18_GoombaItems)),
 };
 
-Formation A(Formation_18) = {
-    ACTOR_BY_IDX(A(bullet_bill), BTL_POS_GROUND_B, 10),
-    ACTOR_BY_IDX(A(bullet_bill), BTL_POS_GROUND_C, 9),
+Formation A(Formation_12) = { // Boo Trial - ch1 - part 6
+    ACTOR_BY_IDX_ARG(A(bob_omb), BTL_POS_GROUND_A, 10, 2),
+    ACTOR_BY_IDX_ARG(A(bob_omb), BTL_POS_GROUND_B, 9, 2),
+    ACTOR_BY_IDX_ARG(A(koopa_troopa), BTL_POS_GROUND_C, 8, TRUE),
+    ACTOR_BY_IDX_ARG(A(koopa_troopa), BTL_POS_GROUND_D, 7, TRUE),
 };
 
-Formation A(Formation_19) = {
-    ACTOR_BY_IDX(A(bullet_bill), BTL_POS_GROUND_B, 10),
+Formation A(Formation_15) = { // Boo Trial - ch1 - part 7
+    ACTOR_BY_POS(A(bill_blaster), A(BlasterPos1), 10),
+    ACTOR_BY_POS(A(bill_blaster), A(BlasterPos2), 9),
+    ACTOR_BY_POS(A(bill_blaster), A(BlasterPos3), 8),
 };
 
 BattleList A(Formations) = {

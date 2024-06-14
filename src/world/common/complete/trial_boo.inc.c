@@ -29,7 +29,10 @@ typedef struct Trial {
 extern void* gCurrentTrial;
 extern s32 gCurrentTrialFormationId;
 
-s16 N(Ch1Formations)[] = { BTL_NOK_FORMATION_00, BTL_NOK_FORMATION_00, 0 };
+s16 N(Ch1Formations)[] = {
+    BTL_NOK_FORMATION_00, BTL_NOK_FORMATION_15, BTL_NOK_FORMATION_13,
+    BTL_TRD_1_FORMATION_19, BTL_TRD_1_FORMATION_18, BTL_TRD_1_FORMATION_12, BTL_TRD_1_FORMATION_15,
+    0 };
 
 Trial N(BooTrials)[] = {
     {
@@ -40,21 +43,9 @@ Trial N(BooTrials)[] = {
         .previewItemId = ITEM_MUSHROOM,
         .storyProgress = STORY_CH1_STAR_SPRIT_DEPARTED,
         .coinCost = 10,
-        .rewardItemId = ITEM_ATTACK_FX_C,
+        .rewardItemId = ITEM_BLAND_MEAL,
         .rewardStarPieces = 1,
-        .rewardSp = 20,
-    },
-    {
-        .gameFlag = GF_BooTrial_Ch1,
-        .formations = &N(Ch1Formations),
-        .nameMsg = MSG_BooTrial_Ch1_Name,
-        .descMsg = MSG_BooTrial_Ch1_Desc,
-        .previewItemId = ITEM_MUSHROOM,
-        .storyProgress = STORY_CH1_STAR_SPRIT_DEPARTED,
-        .coinCost = 333,
-        .rewardItemId = ITEM_ATTACK_FX_C,
-        .rewardStarPieces = 1,
-        .rewardSp = 20,
+        .rewardSp = 25,
     }
 };
 

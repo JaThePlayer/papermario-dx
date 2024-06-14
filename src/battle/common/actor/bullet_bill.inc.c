@@ -291,7 +291,7 @@ EvtScript N(EVS_TakeTurn) = {
     ExecWait(N(EVS_MakeExplosionFX))
     Call(SetGoalToTarget, ACTOR_SELF)
     Wait(2)
-    Call(EnemyDamageTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_IGNORE_DEFENSE, 0, 0, DMG_IMPACT, BS_FLAGS1_TRIGGER_EVENTS)
+    Call(EnemyDamageTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_BLAST, 0, 0, DMG_IMPACT, BS_FLAGS1_TRIGGER_EVENTS)
     Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
     Call(YieldTurn)
     SetConst(LVar0, PRT_MAIN)
