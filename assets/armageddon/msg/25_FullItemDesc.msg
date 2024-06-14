@@ -826,8 +826,15 @@
 }
 
 #message:25:(ItemFullDesc_SlowGo) {
-	Makes Mario unable to run. His[BR]
-	pace becomes very slow.[End]
+	Poisoned enemies and Mario[BR]
+	spread their poison to their[BR]
+	[Wait][Next]
+	targets after any attack that[BR]
+	makes contact.[BR]
+	[Wait][Next]
+	Successful guards prevent this.[BR]
+	Increases poison damage by 1.[BR]
+	[End]
 }
 
 #message:25:(ItemFullDesc_IcePower) {
@@ -1499,4 +1506,19 @@
 	Burn does damage equal to[BR]
 	half of the turn count,[BR]
 	rounded up.[End]
+}
+
+#message:25:(ItemFullDesc_FlowerFanatic) {
+	During battle, saves 2 FP every[BR]
+	time you attack. [End]
+}
+
+#message:25:(ItemFullDesc_CrazyHeart) {
+	Restores HP automatically during[BR]
+	battle at a faster rate.[End]
+}
+
+#message:25:(ItemFullDesc_Berserker) {
+	Raises Mario's attack power by 2,[BR]
+	but makes him uncontrollable.[End]
 }

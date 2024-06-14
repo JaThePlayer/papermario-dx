@@ -359,7 +359,7 @@ HitResult calc_item_damage_enemy(void) {
         INFLICT_STATUS(PARALYZE);
         INFLICT_STATUS(DIZZY);
 
-        if (inflict_next_attack_statuses(target, state->goalPos)) {
+        if (inflict_next_attack_statuses(NULL, target, state->goalPos)) {
             wasStatusInflicted = TRUE;
         }
 

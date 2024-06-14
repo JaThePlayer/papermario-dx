@@ -62,9 +62,9 @@
     costFP: 0
     costBP: 0
 - BerserkerHammer:
-    nameMsg: MSG_MoveName_Berserker
+    nameMsg: MSG_ItemName_Berserker
     fullDescMsg: MSG_ItemFullDesc_Berserker
-    shortDescMsg: MSG_ItemShortDesc_Berserker
+    shortDescMsg: MSG_ItemFullDesc_Berserker
     flags: [ TARGET_FLAG_SELECT_ONE, TARGET_FLAG_GROUND, TARGET_FLAG_SMASH_LIKE, TARGET_FLAG_NOT_BEHIND, TARGET_FLAG_ALLOW_TARGET_ONLY ]
     category: MOVE_TYPE_HAMMER
     actionTip: BTL_MSG_ACTION_TIP_HOLD_LEFT_TIMED
@@ -280,7 +280,7 @@
 - BerserkerJump:
     nameMsg: MSG_Menus_Jump
     fullDescMsg: MSG_ItemFullDesc_Berserker
-    shortDescMsg: MSG_ItemShortDesc_Berserker
+    shortDescMsg: MSG_ItemFullDesc_Berserker
     flags: [ TARGET_FLAG_SELECT_ONE, TARGET_FLAG_80, TARGET_FLAG_JUMP_LIKE, TARGET_FLAG_NOT_BELOW, TARGET_FLAG_ALLOW_TARGET_ONLY, TARGET_FLAG_NO_CEILING ]
     category: MOVE_TYPE_JUMP
     actionTip: BTL_MSG_ACTION_TIP_PRESS_BEFORE_LANDING
@@ -726,7 +726,7 @@
     category: MOVE_TYPE_9
     actionTip: NONE
     costFP: 0
-    costBP: 0
+    costBP: 3
 - RightOn:
     nameMsg: MSG_ItemName_RightOn
     fullDescMsg: MSG_ItemFullDesc_RightOn
@@ -883,12 +883,12 @@
 - Berserker:
     nameMsg: MSG_ItemName_Berserker
     fullDescMsg: MSG_ItemFullDesc_Berserker
-    shortDescMsg: MSG_ItemShortDesc_Berserker
+    shortDescMsg: MSG_ItemFullDesc_Berserker
     flags: [ TARGET_FLAG_2 ]
     category: MOVE_TYPE_NONE
     actionTip: NONE
     costFP: 0
-    costBP: 8
+    costBP: 0
 - RunawayPay:
     nameMsg: MSG_ItemName_RunawayPay
     fullDescMsg: MSG_ItemFullDesc_RunawayPay
@@ -926,27 +926,27 @@
     costFP: 0
     costBP: 1
 - CrazyHeart:
-    nameMsg: MSG_MoveName_CrazyHeart
+    nameMsg: MSG_ItemName_CrazyHeart
     fullDescMsg: MSG_ItemFullDesc_CrazyHeart
-    shortDescMsg: MSG_ItemShortDesc_CrazyHeart
+    shortDescMsg: MSG_ItemFullDesc_CrazyHeart
     flags: [ TARGET_FLAG_2 ]
     category: MOVE_TYPE_NONE
     actionTip: NONE
     costFP: 0
     costBP: 10
 - MegaHPDrain:
-    nameMsg: MSG_MoveName_MegaHPDrain
+    nameMsg: MSG_ItemName_MegaHPDrain
     fullDescMsg: MSG_ItemFullDesc_MegaHPDrain
-    shortDescMsg: MSG_ItemShortDesc_MegaHPDrain
+    shortDescMsg: MSG_ItemFullDesc_MegaHPDrain
     flags: [ TARGET_FLAG_2 ]
     category: MOVE_TYPE_NONE
     actionTip: NONE
     costFP: 0
     costBP: 10
 - FlowerFanatic:
-    nameMsg: MSG_MoveName_FlowerFanatic
+    nameMsg: MSG_ItemName_FlowerFanatic
     fullDescMsg: MSG_ItemFullDesc_FlowerFanatic
-    shortDescMsg: MSG_ItemShortDesc_FlowerFanatic
+    shortDescMsg: MSG_ItemFullDesc_FlowerFanatic
     flags: [ TARGET_FLAG_2 ]
     category: MOVE_TYPE_NONE
     actionTip: NONE

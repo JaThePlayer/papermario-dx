@@ -897,7 +897,7 @@ HitResult calc_player_damage_enemy(void) {
 
             #undef INFLICT_STATUS
 
-            if (inflict_next_attack_statuses(target, state->goalPos)) {
+            if (inflict_next_attack_statuses(player, target, state->goalPos)) {
                 wasSpecialHit = TRUE;
                 wasStatusInflicted = TRUE;
             }

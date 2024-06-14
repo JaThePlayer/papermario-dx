@@ -174,7 +174,7 @@ void set_next_attack_custom_status(s8 customStatusId, u8 turns, u8 potency, u8 c
     }
 }
 
-s32 inflict_next_attack_statuses(Actor* target, Vec3f position) {
+s32 inflict_next_attack_statuses(Actor* attacker, Actor* target, Vec3f position) {
     s32 inflicted = FALSE;
     while (gNextAttackStatusCount > 0) {
         NextAttackStatus* st = &gNextAttackStatuses[gNextAttackStatusCount - 1];
@@ -187,6 +187,16 @@ s32 inflict_next_attack_statuses(Actor* target, Vec3f position) {
         );
 
         gNextAttackStatusCount--;
+    }
+
+    if (attacker != NULL) {
+        // Koopa Curse - poison spreading
+        if (badge_count_by_move_id_in_both_teams(MOVE_SLOW_GO) > 0 && !(gBattleStatus.curAttackElement & DAMAGE_TYPE_NO_CONTACT)) {
+            StatusInfo* attackerPoison = custom_status_get_info(attacker, POISON_STATUS);
+            if (attackerPoison->potency > 0) {
+                try_inflict_custom_status(target, position, POISON_STATUS, attackerPoison->turns, attackerPoison->potency, 100);
+            }
+        }
     }
 
     return inflicted;

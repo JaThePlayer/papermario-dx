@@ -591,7 +591,7 @@
 }
 
 #message:26:(ItemName_SlowGo) {
-	Slow Go[End]
+	Koopa Curse[End]
 }
 
 #message:26:(ItemName_IcePower) {
@@ -1088,4 +1088,16 @@
 
 #message:26:(ItemName_EmberEmblem) {
 	Ember Emblem[End]
+}
+
+#message:26:(ItemName_FlowerFanatic) {
+	Flower Fanatic[End]
+}
+
+#message:26:(ItemName_CrazyHeart) {
+	Crazy Heart[End]
+}
+
+#message:26:(ItemName_Berserker) {
+	Berserker[End]
 }

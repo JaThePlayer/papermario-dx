@@ -58,7 +58,7 @@ extern s32 gNextAttackStatusCount;
 extern StatusType gCustomStatusTypes[CUSTOM_STATUS_AMT];
 
 /// To be used internally
-s32 inflict_next_attack_statuses(Actor* target, Vec3f position);
+s32 inflict_next_attack_statuses(Actor* attacker, Actor* target, Vec3f position);
 
 // (id, turns, potency, chance)
 API_CALLABLE(SetNextAttackCustomStatus);

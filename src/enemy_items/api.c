@@ -307,6 +307,10 @@ s32 badge_count_by_move_id_in_opposing_team(Actor* actor, s32 moveId) {
     return _player_count_badges_with_move_id(moveId);
 }
 
+s32 badge_count_by_move_id_in_both_teams(s32 moveId) {
+    return enemy_items_count_items_with_move_id_in_all(moveId) + _player_count_badges_with_move_id(moveId);
+}
+
 // counts badges with given move id either for the player or enemies
 s32 badge_count_by_move_id(Actor* actor, s32 moveId) {
     if (actor == gBattleStatus.playerActor) {

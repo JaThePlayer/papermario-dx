@@ -97,11 +97,9 @@ void action_update_walk(void) {
         }
     }
 
-    if (!is_ability_active(ABILITY_SLOW_GO)) {
-        if (SQ(playerStatus->stickAxis[0]) + SQ(playerStatus->stickAxis[1]) > SQ(55)) {
-            set_action_state(ACTION_STATE_RUN);
-            return;
-        }
+    if (SQ(playerStatus->stickAxis[0]) + SQ(playerStatus->stickAxis[1]) > SQ(55)) {
+        set_action_state(ACTION_STATE_RUN);
+        return;
     }
 
     try_player_footstep_sounds(8);
@@ -186,7 +184,7 @@ void action_update_run(void) {
         }
     }
 
-    if (!is_ability_active(ABILITY_SLOW_GO)) {
+    if (TRUE) {
         if (sqrtf(SQ(playerStatus->stickAxis[0]) + SQ(playerStatus->stickAxis[1])) <= 55.0f) {
             set_action_state(ACTION_STATE_WALK);
             return;

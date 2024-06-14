@@ -686,7 +686,7 @@ HitResult calc_partner_damage_enemy(void) {
 
             #undef INFLICT_STATUS
 
-            if (inflict_next_attack_statuses(target, state->goalPos)) {
+            if (inflict_next_attack_statuses(gBattleStatus.partnerActor, target, state->goalPos)) {
                 wasSpecialHit = TRUE;
                 wasStatusInflicted = TRUE;
             }

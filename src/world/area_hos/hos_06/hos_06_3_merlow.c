@@ -49,14 +49,14 @@ EvtScript N(EVS_NpcInteract_Merluvlee_Passthrough) = {
     End
 };
 
-// Star Pieces: =vanilla-25-3-5+16+8-20
+// Star Pieces: =vanilla-5+16+8-25+16
+// Obtainable: =vanilla + 1(Boo Trial)
 ShopItemData N(MerlowBadgeInventory)[MERLOW_BADGE_COUNT] = {
     { .itemID = ITEM_ATTACK_FX_A,    .price =  1 },
     { .itemID = ITEM_PAY_OFF,        .price =  1 },
     { .itemID = ITEM_PEEKABOO,       .price =  2 }, // was 10 -> -8
-    //{ .itemID = ITEM_CHILL_OUT,      .price =  3 },
+    { .itemID = ITEM_BERSERKER,      .price =  3 },
     { .itemID = ITEM_PRETTY_LUCKY,   .price =  5 },
-    //{ .itemID = ITEM_FEELING_FINE,   .price =  5 },
     { .itemID = ITEM_SHRINK_STOMP,   .price =  8 }, // new 8
 
     { .itemID = ITEM_HAPPY_HEART_A,  .price =  8 },
@@ -68,9 +68,9 @@ ShopItemData N(MerlowBadgeInventory)[MERLOW_BADGE_COUNT] = {
 
     { .itemID = ITEM_HP_DRAIN,       .price = 15 },
     { .itemID = ITEM_EMBER_EMBLEM,   .price = 16 }, // new 16
-    //{ .itemID = ITEM_MONEY_MONEY,    .price = 20 },
-    { .itemID = ITEM_FLOWER_SAVER_A, .price = 25 },
-    //{ .itemID = ITEM_POWER_PLUS_A,   .price = 25 },
+    { .itemID = ITEM_FLOWER_SAVER_A, .price = 16 }, // was 25
+    { .itemID = ITEM_CRAZY_HEART,    .price = 20 },
+    { .itemID = ITEM_FLOWER_FANATIC, .price = 25 },
 };
 
 API_CALLABLE(N(Merlow_GetPlayerStarPieces)) {

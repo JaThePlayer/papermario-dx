@@ -282,7 +282,7 @@ void set_action_state(s32 actionState) {
 void update_locomotion_state(void) {
     PlayerStatus* playerStatus = &gPlayerStatus;
 
-    if (!is_ability_active(ABILITY_SLOW_GO) &&
+    if (/*!is_ability_active(ABILITY_SLOW_GO) &&*/
         SQ(playerStatus->stickAxis[0]) + SQ(playerStatus->stickAxis[1]) > SQ(55))
     {
         set_action_state(ACTION_STATE_RUN);
@@ -391,8 +391,7 @@ void check_input_spin(void) {
 
     if (!((playerStatus->flags & (PS_FLAG_NO_STATIC_COLLISION | PS_FLAG_CUTSCENE_MOVEMENT)) ||
           (playerStatus->animFlags & PA_FLAG_USING_WATT) ||
-          (playerStatus->curButtons & BUTTON_C_DOWN) ||
-          is_ability_active(ABILITY_SLOW_GO))) {
+          (playerStatus->curButtons & BUTTON_C_DOWN))) {
 
         s32 actionState = playerStatus->actionState;
         s32 btnPressed = playerStatus->pressedButtons & Z_TRIG;

@@ -3610,7 +3610,7 @@
 - Berserker:
     nameMsg: MSG_ItemName_Berserker
     fullDescMsg: MSG_ItemFullDesc_Berserker
-    shortDescMsg: MSG_ItemShortDesc_Berserker
+    shortDescMsg: MSG_ItemFullDesc_Berserker
     icon: badge/Berserker
     itemEntityTemplate: STANDARD
     hudElementTemplate: ITEM
@@ -3820,7 +3820,7 @@
 - CrazyHeart:
     nameMsg: MSG_ItemName_CrazyHeart
     fullDescMsg: MSG_ItemFullDesc_CrazyHeart
-    shortDescMsg: MSG_ItemShortDesc_CrazyHeart
+    shortDescMsg: MSG_ItemFullDesc_CrazyHeart
     icon: badge/CrazyHeart
     itemEntityTemplate: STANDARD
     hudElementTemplate: ITEM
@@ -3904,7 +3904,7 @@
 - PDownDUp:
     nameMsg: MSG_ItemName_PDownDUp
     fullDescMsg: MSG_ItemFullDesc_PDownDUp
-    shortDescMsg: MSG_ItemShortDesc_PDownDUp
+    shortDescMsg: MSG_ItemFullDesc_PDownDUp
     icon: badge/PDownDUp
     itemEntityTemplate: STANDARD
     hudElementTemplate: ITEM
@@ -3918,7 +3918,7 @@
 - PowerQuake:
     nameMsg: MSG_ItemName_PowerQuake
     fullDescMsg: MSG_ItemFullDesc_PowerQuake
-    shortDescMsg: MSG_ItemShortDesc_PowerQuake
+    shortDescMsg: MSG_ItemFullDesc_PowerQuake
     icon: badge/PowerQuake
     itemEntityTemplate: STANDARD
     hudElementTemplate: ITEM
@@ -3932,7 +3932,7 @@
 - AutoMultibounce:
     nameMsg: MSG_ItemName_AutoMultibounce
     fullDescMsg: MSG_ItemFullDesc_AutoMultibounce
-    shortDescMsg: MSG_ItemShortDesc_AutoMultibounce
+    shortDescMsg: MSG_ItemFullDesc_AutoMultibounce
     icon: badge/AutoMultibounce
     itemEntityTemplate: STANDARD
     hudElementTemplate: ITEM
@@ -3946,7 +3946,7 @@
 - FlowerFanatic:
     nameMsg: MSG_ItemName_FlowerFanatic
     fullDescMsg: MSG_ItemFullDesc_FlowerFanatic
-    shortDescMsg: MSG_ItemShortDesc_FlowerFanatic
+    shortDescMsg: MSG_ItemFullDesc_FlowerFanatic
     icon: badge/FlowerFanatic
     itemEntityTemplate: STANDARD
     hudElementTemplate: ITEM

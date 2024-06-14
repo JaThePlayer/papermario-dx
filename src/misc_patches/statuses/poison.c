@@ -32,6 +32,7 @@ void N(remove_icon)(s32 id) {
 
 void N(on_decrement)(Actor* target) {
     s32 dmg = custom_status_get_potency(target, POISON_STATUS);
+    dmg += badge_count_by_move_id_in_both_teams(MOVE_SLOW_GO);
     target->state.goalPos = target->curPos;
 
     if (target == gBattleStatus.playerActor) {

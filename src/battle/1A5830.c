@@ -691,7 +691,7 @@ HitResult calc_enemy_damage_target(Actor* attacker) {
             statusInflicted2 = one;
         }
 
-        if (inflict_next_attack_statuses(target, state->goalPos)) {
+        if (inflict_next_attack_statuses(attacker, target, state->goalPos)) {
             statusInflicted = one;
             statusInflicted2 = one;
         }
