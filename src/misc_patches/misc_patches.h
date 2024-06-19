@@ -19,4 +19,10 @@ API_CALLABLE(GetPartnerKoDuration);
 /// actor, chanceToTargetPlayer(in percent), out isPlayer
 API_CALLABLE(TargetPlayerOrPartner);
 
+/// Called when an actor gets constructed, used to zero-initialize new fields.
+void _onActorCtor(Actor* actor);
+
+/// (Actor, s8 level)
+API_CALLABLE(OverrideActorLevel);
+
 #endif

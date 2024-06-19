@@ -1457,9 +1457,7 @@ void load_player_actor(void) {
         player->staticDuration = 127;
     }
 
-    enemy_items_zero_initialize(player);
-    custom_status_zero_initialize(player);
-    player->attackedThisTurn = FALSE;
+    _onActorCtor(player);
 }
 
 void load_partner_actor(void) {
@@ -1714,9 +1712,7 @@ void load_partner_actor(void) {
         partnerActor->takeTurnScriptID = takeTurnScript->id;
         takeTurnScript->owner1.actorID = ACTOR_PARTNER;
 
-        enemy_items_zero_initialize(partnerActor);
-        custom_status_zero_initialize(partnerActor);
-        partnerActor->attackedThisTurn = FALSE;
+        _onActorCtor(partnerActor);
     }
 }
 
@@ -1985,9 +1981,7 @@ Actor* create_actor(Formation formation) {
     actor->disableEffect = fx_disable_x(0, -142.0f, 34.0f, 1.0f, 0);
     actor->icePillarEffect = NULL;
     actor->hudElementDataIndex = create_status_icon_set();
-    enemy_items_zero_initialize(actor);
-    custom_status_zero_initialize(actor);
-    actor->attackedThisTurn = FALSE;
+    _onActorCtor(actor);
 
     if (formation->item != ITEM_NONE) {
         float ox, oy, oz;

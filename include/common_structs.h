@@ -1964,6 +1964,7 @@ typedef struct Actor {
     /* new   */ ActorHeldItem heldItems[MAX_ENEMY_ITEMS];
     /* new   */ StatusInfo customStatuses[CUSTOM_STATUS_AMT];
     /* new   */ u8 attackedThisTurn;
+    /* new   */ s8 overridenLevel; // set to -1 by default, when > 0, overrides the `level` in the Blueprint for star point dropping purposes.
 } Actor; // size = 0x444
 
 typedef struct BackgroundHeader {

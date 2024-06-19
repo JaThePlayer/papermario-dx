@@ -59,3 +59,27 @@ API_CALLABLE(TargetPlayerOrPartner) {
 // Used by Trial Boo, needs to be somewhere global
 void* gCurrentTrial = NULL;
 s32 gCurrentTrialFormationId = 0;
+
+void _onActorCtor(Actor* actor) {
+    enemy_items_zero_initialize(actor);
+    custom_status_zero_initialize(actor);
+    actor->attackedThisTurn = FALSE;
+    actor->overridenLevel = -1;
+}
+
+API_CALLABLE(OverrideActorLevel) {
+    Bytecode* args = script->ptrReadPos;
+    Actor* actor;
+
+    s32 actorID = evt_get_variable(script, *args++);
+    if (actorID == ACTOR_SELF) {
+        actorID = script->owner1.actorID;
+    }
+    actor = get_actor(actorID);
+
+    s32 level = evt_get_variable(script, *args++);
+
+    actor->overridenLevel = level;
+
+    return ApiStatus_DONE2;
+}
