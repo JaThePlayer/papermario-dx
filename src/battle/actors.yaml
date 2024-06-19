@@ -2380,3 +2380,14 @@
     stepDelay: [ 30, 30 ]
     tattleCamOffset: [ 0, 226, 0 ]
     shadowOffset: 0
+- Rokitu:
+    level: 4
+    nameMsg: MSG_EnemyName_Rokitu
+    tattleMsg: MSG_EnemyTattle_Rokitu
+    walkSound: [ SOUND_FLIGHT, SOUND_FLIGHT ]
+    flySound: [ SOUND_FLIGHT, SOUND_FLIGHT ]
+    jumpSound: SOUND_ACTOR_JUMP
+    hurtSound: SOUND_ACTOR_HURT
+    stepDelay: [ -5, -5 ]
+    tattleCamOffset: [ 0, 0, 0 ]
+    shadowOffset: 0

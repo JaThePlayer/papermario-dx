@@ -2702,3 +2702,28 @@
 	these guys around![BR]
 	[Wait][End]
 }
+
+#message:1C:(EnemyTattle_Rokitu) {
+	[Style right]
+	This is a Rokitu.[BR]
+	[Pause 10]Rokitus are strange Koopas[BR]
+	that can ride clouds.[BR]
+	[Wait][Next]
+	They toss down pipes,[BR]
+	[Pause 5].[Pause 5].[Pause 5].[Pause 10] wait, not [Wave]PIPES![/Wave][BR]
+	[Wait][Next]
+	They toss down [Wave]rocks[/Wave],[BR]
+	and these sometimes turn[BR]
+	into Clefts.[BR]
+	[Wait][Next]
+	Well, that was embarrasing...[BR]
+	I bet nobody has made that[BR]
+	mistake before...[BR]
+	[Wait][Next]
+	[Wave]Anyway...[/Wave][BR]
+	[Wait][Next]
+	We'd better deal with them[BR]
+	quickly or else we'll be[BR]
+	surrounded by Clefts.[BR]
+	[Wait][End]
+}

@@ -533,3 +533,7 @@
 #message:29:(EnemyName_FireBros) {
 	Fire Bros.[End]
 }
+
+#message:29:(EnemyName_Rokitu) {
+	Rokitu[End]
+}
