@@ -22,7 +22,7 @@ enum N(ActorVars) {
 };
 
 enum N(ActorParams) {
-    DMG_TACKLE      = 2,
+    DMG_TACKLE      = 4,
 };
 
 s32 N(UprightDefenseTable)[] = {
@@ -82,7 +82,7 @@ ActorBlueprint NAMESPACE = {
     .flags = 0,
     .type = ACTOR_TYPE_CLEFT,
     .level = ACTOR_LEVEL_CLEFT,
-    .maxHP = 2,
+    .maxHP = 3,
     .partCount = ARRAY_COUNT(N(ActorParts)),
     .partsData = N(ActorParts),
     .initScript = &N(EVS_Init),

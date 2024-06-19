@@ -4,6 +4,8 @@
 
 #define NAMESPACE A(monty_mole)
 
+#include "common/TeamAttacks.inc.c"
+
 extern s32 N(DefaultAnims)[];
 extern s32 N(RockAnims)[];
 extern EvtScript N(EVS_Init);
@@ -15,6 +17,7 @@ enum N(ActorPartIDs) {
     PRT_MAIN        = 1,
     PRT_TARGET      = 2,
     PRT_ROCK        = 3,
+    PRT_ROCK_2      = 4,
 };
 
 enum N(ActorVars) {
@@ -83,6 +86,18 @@ ActorPartBlueprint N(ActorParts)[] = {
     {
         .flags = ACTOR_PART_FLAG_INVISIBLE | ACTOR_PART_FLAG_NO_TARGET | ACTOR_PART_FLAG_USE_ABSOLUTE_POSITION,
         .index = PRT_ROCK,
+        .posOffset = { 0, 0, 0 },
+        .targetOffset = { 0, 0 },
+        .opacity = 255,
+        .idleAnimations = N(RockAnims),
+        .defenseTable = N(DefenseTable),
+        .eventFlags = ACTOR_EVENT_FLAGS_NONE,
+        .elementImmunityFlags = 0,
+        .projectileTargetOffset = { 0, 0 },
+    },
+    {
+        .flags = ACTOR_PART_FLAG_INVISIBLE | ACTOR_PART_FLAG_NO_TARGET | ACTOR_PART_FLAG_USE_ABSOLUTE_POSITION,
+        .index = PRT_ROCK_2,
         .posOffset = { 0, 0, 0 },
         .targetOffset = { 0, 0 },
         .opacity = 255,
@@ -360,36 +375,21 @@ EvtScript N(EVS_HandleEvent) = {
     End
 };
 
-EvtScript N(EVS_TakeTurn) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
-    Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
-    Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
-    Call(SetGoalToTarget, ACTOR_SELF)
-    Call(GetBattlePhase, LVar0)
-    IfEq(LVar0, PHASE_FIRST_STRIKE)
-        Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
-        Call(MoveBattleCamOver, 1)
-    EndIf
-    ChildThread
-        Call(PlaySoundAtActor, ACTOR_SELF, SOUND_BURROW_DIG)
-        Wait(20)
-        Call(PlaySoundAtActor, ACTOR_SELF, SOUND_BURROW_SURFACE)
-    EndChildThread
-    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_MontyMole_Anim04)
-    Wait(37)
+// in: LVar9 - part
+EvtScript N(ThrowRock) = {
     Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
     Add(LVar1, 20)
-    Call(SetPartPos, ACTOR_SELF, PRT_ROCK, LVar0, LVar1, LVar2)
+    Call(SetPartPos, ACTOR_SELF, LVar9, LVar0, LVar1, LVar2)
     Wait(1)
-    Call(SetPartFlagBits, ACTOR_SELF, PRT_ROCK, ACTOR_PART_FLAG_INVISIBLE, FALSE)
+    Call(SetPartFlagBits, ACTOR_SELF, LVar9, ACTOR_PART_FLAG_INVISIBLE, FALSE)
     Call(GetStatusFlags, ACTOR_SELF, LVar0)
     IfFlag(LVar0, STATUS_FLAG_SHRINK)
-        Call(SetPartScale, ACTOR_SELF, PRT_ROCK, Float(0.4), Float(0.4), Float(0.4))
+        Call(SetPartScale, ACTOR_SELF, LVar9, Float(0.4), Float(0.4), Float(0.4))
     Else
-        Call(SetPartScale, ACTOR_SELF, PRT_ROCK, Float(1.0), Float(1.0), Float(1.0))
+        Call(SetPartScale, ACTOR_SELF, LVar9, Float(1.0), Float(1.0), Float(1.0))
     EndIf
-    Call(PlaySoundAtPart, ACTOR_SELF, PRT_ROCK, SOUND_MOLE_THROW)
-    Call(SetPartSounds, ACTOR_SELF, PRT_ROCK, ACTOR_SOUND_FLY, SOUND_NONE, SOUND_NONE)
+    Call(PlaySoundAtPart, ACTOR_SELF, LVar9, SOUND_MOLE_THROW)
+    Call(SetPartSounds, ACTOR_SELF, LVar9, ACTOR_SOUND_FLY, SOUND_NONE, SOUND_NONE)
     Call(EnemyTestTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_NO_CONTACT, 0, 2, BS_FLAGS1_TRIGGER_EVENTS)
     Switch(LVar0)
         CaseOrEq(HIT_RESULT_MISS)
@@ -400,15 +400,14 @@ EvtScript N(EVS_TakeTurn) = {
             Call(GetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
             Sub(LVar0, 100)
             Set(LVar1, -5)
-            Call(SetPartMoveSpeed, ACTOR_SELF, PRT_ROCK, Float(12.0))
-            Call(SetPartJumpGravity, ACTOR_SELF, PRT_ROCK, Float(0.1))
-            Call(SetAnimation, ACTOR_SELF, PRT_ROCK, ANIM_MontyMole_Anim0F)
-            Call(FlyPartTo, ACTOR_SELF, PRT_ROCK, LVar0, LVar1, LVar2, 0, 30, EASING_LINEAR)
-            Call(SetPartFlagBits, ACTOR_SELF, PRT_ROCK, ACTOR_PART_FLAG_INVISIBLE, TRUE)
+            Call(SetPartMoveSpeed, ACTOR_SELF, LVar9, Float(12.0))
+            Call(SetPartJumpGravity, ACTOR_SELF, LVar9, Float(0.1))
+            Call(SetAnimation, ACTOR_SELF, LVar9, ANIM_MontyMole_Anim0F)
+            Call(FlyPartTo, ACTOR_SELF, LVar9, LVar0, LVar1, LVar2, 0, 30, EASING_LINEAR)
+            Call(SetPartFlagBits, ACTOR_SELF, LVar9, ACTOR_PART_FLAG_INVISIBLE, TRUE)
             IfEq(LVarA, HIT_RESULT_LUCKY)
                 Call(EnemyTestTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_TRIGGER_LUCKY, 0, 0, 0)
             EndIf
-            Call(YieldTurn)
             Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
             Call(UseIdleAnimation, ACTOR_SELF, TRUE)
             Return
@@ -417,10 +416,10 @@ EvtScript N(EVS_TakeTurn) = {
     Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
     Call(SetGoalToTarget, ACTOR_SELF)
     Call(GetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-    Call(SetPartMoveSpeed, ACTOR_SELF, PRT_ROCK, Float(12.0))
-    Call(SetPartJumpGravity, ACTOR_SELF, PRT_ROCK, Float(0.1))
-    Call(SetAnimation, ACTOR_SELF, PRT_ROCK, ANIM_MontyMole_Anim0F)
-    Call(FlyPartTo, ACTOR_SELF, PRT_ROCK, LVar0, LVar1, LVar2, 0, 20, EASING_LINEAR)
+    Call(SetPartMoveSpeed, ACTOR_SELF, LVar9, Float(12.0))
+    Call(SetPartJumpGravity, ACTOR_SELF, LVar9, Float(0.1))
+    Call(SetAnimation, ACTOR_SELF, LVar9, ANIM_MontyMole_Anim0F)
+    Call(FlyPartTo, ACTOR_SELF, LVar9, LVar0, LVar1, LVar2, 0, 20, EASING_LINEAR)
     Wait(2)
     Call(EnemyDamageTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_NO_CONTACT, 0, 0, DMG_TOSS, BS_FLAGS1_TRIGGER_EVENTS)
     Switch(LVar0)
@@ -429,15 +428,61 @@ EvtScript N(EVS_TakeTurn) = {
             Call(GetActorPos, ACTOR_PLAYER, LVar0, LVar1, LVar2)
             Sub(LVar0, 55)
             Set(LVar1, 0)
-            Call(SetPartMoveSpeed, ACTOR_SELF, PRT_ROCK, Float(6.0))
-            Call(SetPartJumpGravity, ACTOR_SELF, PRT_ROCK, Float(0.1))
-            Call(FlyPartTo, ACTOR_SELF, PRT_ROCK, LVar0, LVar1, LVar2, 0, 25, EASING_LINEAR)
-            Call(SetPartMoveSpeed, ACTOR_SELF, PRT_ROCK, Float(4.0))
+            Call(SetPartMoveSpeed, ACTOR_SELF, LVar9, Float(6.0))
+            Call(SetPartJumpGravity, ACTOR_SELF, LVar9, Float(0.1))
+            Call(FlyPartTo, ACTOR_SELF, LVar9, LVar0, LVar1, LVar2, 0, 25, EASING_LINEAR)
+            Call(SetPartMoveSpeed, ACTOR_SELF, LVar9, Float(4.0))
             Sub(LVar0, 20)
-            Call(FlyPartTo, ACTOR_SELF, PRT_ROCK, LVar0, LVar1, LVar2, 0, 21, EASING_LINEAR)
-            Call(SetPartFlagBits, ACTOR_SELF, PRT_ROCK, ACTOR_PART_FLAG_INVISIBLE, TRUE)
+            Call(FlyPartTo, ACTOR_SELF, LVar9, LVar0, LVar1, LVar2, 0, 21, EASING_LINEAR)
+            Call(SetPartFlagBits, ACTOR_SELF, LVar9, ACTOR_PART_FLAG_INVISIBLE, TRUE)
         EndCaseGroup
     EndSwitch
+    Return
+    End
+};
+
+s32 N(MoleTypes)[] = {
+    ACTOR_TYPE_MONTY_MOLE,
+    ACTOR_TYPE_MONTY_MOLE_BOSS,
+    0,
+};
+
+EvtScript N(EVS_TakeTurn) = {
+    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
+    Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
+    Call(SetGoalToTarget, ACTOR_SELF)
+
+    Call(GetBattlePhase, LVar0)
+    IfEq(LVar0, PHASE_FIRST_STRIKE)
+        Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
+        Call(MoveBattleCamOver, 1)
+    EndIf
+    ChildThread
+        Call(PlaySoundAtActor, ACTOR_SELF, SOUND_BURROW_DIG)
+        Wait(20)
+        Call(PlaySoundAtActor, ACTOR_SELF, SOUND_BURROW_SURFACE)
+    EndChildThread
+
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_MontyMole_Anim04)
+    Wait(37 - 16)
+    Set(LVar9, PRT_ROCK)
+    Exec(N(ThrowRock))
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_MontyMole_Anim01)
+    Wait(2)
+
+    // Check for team-attack
+    Call(N(NextEnemyIfTypeIsOneOf), Ref(N(MoleTypes)), LVarF)
+    IfNe(LVarF, NULL)
+        Call(YieldTurn)
+    EndIf
+
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_MontyMole_AnimSecondThrow)
+    Wait(7)
+    Set(LVar9, PRT_ROCK_2)
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_MontyMole_Anim01)
+    ExecWait(N(ThrowRock))
+
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
     Call(UseIdleAnimation, ACTOR_SELF, TRUE)
     Return
