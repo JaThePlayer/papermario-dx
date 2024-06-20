@@ -1101,3 +1101,19 @@
 #message:26:(ItemName_Berserker) {
 	Berserker[End]
 }
+
+#message:26:(ItemName_AsceticNote) {
+	Ascetic Note[End]
+}
+
+#message:26:(ItemName_MidasStone) {
+	Midas' Stone[End]
+}
+
+#message:26:(ItemName_OrbOfLug) {
+	Orb of Lug'[End]
+}
+
+#message:26:(ItemName_LoneIdol) {
+	Lone Idol[End]
+}

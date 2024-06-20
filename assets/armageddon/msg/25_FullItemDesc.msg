@@ -1522,3 +1522,34 @@
 	Raises Mario's attack power by 2,[BR]
 	but makes him uncontrollable.[End]
 }
+
+#message:25:(ItemFullDesc_AsceticNote) {
+	You may not obtain Coins or Star[BR]
+	Pieces in any way.[BR]
+	Certain things become free, for[BR]
+	the sake of 100% runs.[BR]
+	Below is a spoiler for something[BR]
+	post-Chapter 1:[BR]
+	Boo Trials become free.[End]
+}
+
+#message:25:(ItemFullDesc_MidasStone) {
+	Coins are infinite, though[BR]
+	all field items turn into[BR]
+	solid gold. Items received[BR]
+	from NPCs, shops, etc.[BR]
+	are safe from this effect.[End]
+}
+
+#message:25:(ItemFullDesc_LoneIdol) {
+	Partners cannot act in battle,[BR]
+	but raises Hammer damage by 2,[BR]
+	Jump damage by 1, and Item[BR]
+	damage by 2.[End]
+}
+
+#message:25:(ItemFullDesc_OrbOfLug) {
+	You obtain no Star Points, but[BR]
+	can equip up to 24 badges for[BR]
+	free.[End]
+}

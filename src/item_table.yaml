@@ -742,10 +742,10 @@
     moveID: MOVE_NONE
     potencyA: 0
     potencyB: 0
-- UnusedLetter_1:
-    nameMsg: MSG_ItemName_UnusedLetter
-    fullDescMsg: MSG_ItemFullDesc_UnusedLetter
-    shortDescMsg: MSG_ItemShortDesc_UnusedLetter
+- AsceticNote:
+    nameMsg: MSG_ItemName_AsceticNote
+    fullDescMsg: MSG_ItemFullDesc_AsceticNote
+    shortDescMsg: MSG_ItemFullDesc_AsceticNote
     icon: key/Letter
     itemEntityTemplate: STANDARD
     hudElementTemplate: ITEM
@@ -882,10 +882,10 @@
     moveID: MOVE_NONE
     potencyA: 0
     potencyB: 0
-- UnusedLetter_2:
-    nameMsg: MSG_ItemName_UnusedLetter02
-    fullDescMsg: MSG_ItemFullDesc_UnusedLetter02
-    shortDescMsg: MSG_ItemShortDesc_UnusedLetter02
+- MidasStone:
+    nameMsg: MSG_ItemName_MidasStone
+    fullDescMsg: MSG_ItemFullDesc_MidasStone
+    shortDescMsg: MSG_ItemFullDesc_MidasStone
     icon: key/Letter
     itemEntityTemplate: STANDARD
     hudElementTemplate: ITEM
@@ -924,10 +924,10 @@
     moveID: MOVE_NONE
     potencyA: 0
     potencyB: 0
-- UnusedLetter_3:
-    nameMsg: MSG_ItemName_UnusedLetter03
-    fullDescMsg: MSG_ItemFullDesc_UnusedLetter03
-    shortDescMsg: MSG_ItemShortDesc_UnusedLetter03
+- OrbOfLug:
+    nameMsg: MSG_ItemName_OrbOfLug
+    fullDescMsg: MSG_ItemFullDesc_OrbOfLug
+    shortDescMsg: MSG_ItemFullDesc_OrbOfLug
     icon: key/Letter
     itemEntityTemplate: STANDARD
     hudElementTemplate: ITEM
@@ -938,10 +938,10 @@
     moveID: MOVE_NONE
     potencyA: 0
     potencyB: 0
-- UnusedLetter_4:
-    nameMsg: MSG_ItemName_UnusedLetter04
-    fullDescMsg: MSG_ItemFullDesc_UnusedLetter04
-    shortDescMsg: MSG_ItemShortDesc_UnusedLetter04
+- LoneIdol:
+    nameMsg: MSG_ItemName_LoneIdol
+    fullDescMsg: MSG_ItemFullDesc_LoneIdol
+    shortDescMsg: MSG_ItemFullDesc_LoneIdol
     icon: key/Letter
     itemEntityTemplate: STANDARD
     hudElementTemplate: ITEM

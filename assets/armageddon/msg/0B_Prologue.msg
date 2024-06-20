@@ -2550,4 +2550,75 @@
 }
 
 
+#message:0B:(CH0_ChallengeIntroduction) {
+	[Style right]
+	Hmmm, you do seem like[BR]
+	a hero type...[BR]
+	[Wait][Next]
+	I've some unique artifacts[BR]
+	with me. Legends say they[BR]
+	harness unbelievable powers.[BR]
+	[Wait][Next]
+	Although, other legends warn[BR]
+	about the cursed nature of[BR]
+	these items.[BR]
+	[Wait][Next]
+	Common between all stories[BR]
+	is the fact that they only[BR]
+	impact true heroes.[BR]
+	[Wait][Next]
+	As such, they don't have any[BR]
+	material value, and so they[BR]
+	are useless to me.[BR]
+	[Wait][Next]
+	If you're willing to take the[BR]
+	risk, then these can be yours[BR]
+	at no cost![BR]
+	[Wait][End]
+}
 
+#message:0B:(CH0_ChallengeRejected) {
+	[Style right]
+	Oh well, maybe another hero[BR]
+	will be more... adventurous.[BR]
+	[Wait][End]
+}
+
+#message:0B:(CH0_ChallengeAccepted) {
+	[Style right]
+	Well, I wish you the best of[BR]
+	luck! No takebacks![BR]
+	[Wait][End]
+}
+
+#message:0B:(CH0_ChallengeMoreThanOne) {
+	[Style right]
+	Oh, oh, oh! More than one?[BR]
+	You must be very brave...[BR]
+	[Wait][Next]
+	Let's hope you know what[BR]
+	you're doing...[BR]
+	[Wait][End]
+}
+
+#message:0B:(CH0_ChallengeIntroductionAgainHasAny) {
+	[Style right]
+	Oh, you want more artifacts?[BR]
+	Go on, then.[BR]
+	[Wait][End]
+}
+
+
+#message:0B:(CH0_ChallengeIntroductionAgainWithoutAny) {
+	[Style right]
+	Oh, you changed your mind?[BR]
+	Go on, then.[BR]
+	[Wait][End]
+}
+
+#message:0B:(CH0_ChallengeIntroductionAgainHasAll) {
+	[Style right]
+	I'm afraid I don't have any[BR]
+	more artifacts to give you.[BR]
+	[Wait][End]
+}

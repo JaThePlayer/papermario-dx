@@ -200,10 +200,10 @@ API_CALLABLE(N(EnableActionCommands)) {
 
 EvtScript N(EVS_Scene_BeginGame) = {
     Call(N(EnableActionCommands))
-    Call(GotoMap, Ref("kmr_00"), kmr_00_ENTRY_0)
-    Return
-    End
-/*
+    //Call(GotoMap, Ref("kmr_00"), kmr_00_ENTRY_0)
+    //Return
+    //End
+
     Call(DisablePlayerInput, TRUE)
     Thread
         Wait(5 * DT)
@@ -402,7 +402,6 @@ EvtScript N(EVS_Scene_BeginGame) = {
     Wait(100 * DT)
     Return
     End
-    */
 };
 
 EvtScript N(EVS_Scene_SettingOff) = {
