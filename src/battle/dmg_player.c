@@ -508,6 +508,13 @@ HitResult calc_player_damage_enemy(void) {
 
         currentAttackDamage += getDamageChangeFromStatus(player);
 
+        if (is_lone_idol()) {
+            if (battleStatus->curAttackElement & DAMAGE_TYPE_JUMP)
+                currentAttackDamage += 1;
+            else
+                currentAttackDamage += 2;
+        }
+
         if (player_team_is_ability_active(player, ABILITY_HP_DRAIN)) {
             battleStatus->hpDrainCount++;
             currentAttackDamage--;

@@ -78,6 +78,9 @@ API_CALLABLE(N(BooTrials_TrialSelectorPopup)) {
 
                 menu->enabled[menuPos] = TRUE;
                 s32 cost = is_trial_completed(trial) ? 0 : trial->coinCost;
+                if (is_ascetic_note())
+                    cost = 0;
+
                 if (playerData->coins < cost) {
                     menu->ptrIcon[menuPos] = itemHudScripts->disabled;
                     menu->enabled[menuPos] = FALSE;

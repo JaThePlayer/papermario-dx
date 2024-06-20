@@ -19,10 +19,23 @@ API_CALLABLE(GetPartnerKoDuration);
 /// actor, chanceToTargetPlayer(in percent), out isPlayer
 API_CALLABLE(TargetPlayerOrPartner);
 
+/// (Actor, s8 level)
+API_CALLABLE(OverrideActorLevel);
+
+// Challenge Runs
+b32 is_midas_stone();
+b32 is_ascetic_note();
+b32 is_lone_idol();
+b32 is_orb_of_lug();
+
+s32 get_bp_cost_of_move(s32 moveId);
+
+// EVENTS
+
 /// Called when an actor gets constructed, used to zero-initialize new fields.
 void _onActorCtor(Actor* actor);
 
-/// (Actor, s8 level)
-API_CALLABLE(OverrideActorLevel);
+/// Called each frame
+void _onFrame();
 
 #endif

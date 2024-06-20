@@ -83,3 +83,58 @@ API_CALLABLE(OverrideActorLevel) {
 
     return ApiStatus_DONE2;
 }
+
+// Challenge Runs
+
+b32 is_midas_stone() {
+    return find_item(ITEM_MIDAS_STONE) != -1;
+}
+
+b32 is_ascetic_note() {
+    return find_item(ITEM_ASCETIC_NOTE) != -1;
+}
+
+b32 is_lone_idol() {
+    return find_item(ITEM_LONE_IDOL) != -1;
+}
+
+b32 is_orb_of_lug() {
+    return find_item(ITEM_ORB_OF_LUG) != -1;
+}
+
+s32 get_bp_cost_of_move(s32 moveId) {
+    s32 bp = gMoveTable[moveId].costBP;
+    if (is_orb_of_lug()) {
+        if (bp > 1)
+            bp = 1;
+        else if (bp < -1)
+            bp = -1;
+    }
+    return bp;
+}
+
+void _onFrame() {
+    draw_item_gc();
+
+    if (is_midas_stone()) {
+        // Intentionally put this before ascetic note.
+        gPlayerData.coins = 999;
+    }
+
+    if (is_ascetic_note()) {
+        gPlayerData.coins = 0;
+        gPlayerData.starPieces = 0;
+    }
+
+    if (is_orb_of_lug()) {
+        gPlayerData.maxBP = 24;
+        gPlayerData.starPoints = 0;
+    }
+
+    if (is_lone_idol() && gBattleStatus.partnerActor != NULL
+        && gPlayerData.curPartner != PARTNER_GOOMPA
+        && gPlayerData.curPartner != PARTNER_GOOMBARIA
+        && gPlayerData.curPartner != PARTNER_TWINK) {
+        gBattleStatus.flags2 |= BS_FLAGS2_PARTNER_TURN_USED;
+    }
+}

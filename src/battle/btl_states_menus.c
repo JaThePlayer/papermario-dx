@@ -2761,7 +2761,7 @@ void btl_state_update_player_menu(void) {
                     }
 
                     battle_menu_moveOptionDisplayCosts[i] = moveData->costFP;
-                    battle_menu_moveOptionBPCosts[i] = moveData->costBP;
+                    battle_menu_moveOptionBPCosts[i] = get_bp_cost_of_move(battleStatus->submenuMoves[i]);
                     BattleMenu_Moves_OptionSortPriority[i] = 0;
                     battle_menu_moveOptionDisplayCostReductions[i] = 0;
                     battle_menu_moveOptionDisplayCostReductionColors[i] = 0;
@@ -3167,7 +3167,7 @@ void btl_state_update_player_menu(void) {
                     battle_menu_moveOptionIconScripts[i] = battle_menu_StarPowerMovesHudScripts[2 * STAR_POWER_INDEX(battleStatus->submenuMoves[i]) + 1];
                 }
                 battle_menu_moveOptionDisplayCosts[i] = moveData->costFP;
-                battle_menu_moveOptionBPCosts[i] = moveData->costBP;
+                battle_menu_moveOptionBPCosts[i] = get_bp_cost_of_move(battleStatus->submenuMoves[i]);
                 BattleMenu_Moves_OptionSortPriority[i] = 0;
                 BattleMenu_Moves_OptionIndices[i] = i;
                 BattleMenu_Moves_OptionEnabled[i] = battleStatus->submenuStatus[i];
@@ -3955,7 +3955,7 @@ void btl_state_update_partner_menu(void) {
             battle_menu_moveOptionNames[i] = moveData->nameMsg;
             BattleMenu_Moves_OptionDescMessages[i] = moveData->fullDescMsg;
             battle_menu_moveOptionDisplayCosts[i] = moveData->costFP;
-            battle_menu_moveOptionBPCosts[i] = moveData->costBP;
+            battle_menu_moveOptionBPCosts[i] = get_bp_cost_of_move(battleStatus->submenuMoves[i]);
             BattleMenu_Moves_OptionSortPriority[i] = i;
 
             battle_menu_moveOptionDisplayCostReductions[i] = 0;
@@ -4209,7 +4209,7 @@ void btl_state_update_partner_menu(void) {
                 battle_menu_moveOptionIconScripts[i] = battle_menu_StarPowerMovesHudScripts[2 * STAR_POWER_INDEX(battleStatus->submenuMoves[i]) + 1];
             }
             battle_menu_moveOptionDisplayCosts[i] = moveData->costFP;
-            battle_menu_moveOptionBPCosts[i] = moveData->costBP;
+            battle_menu_moveOptionBPCosts[i] = get_bp_cost_of_move(battleStatus->submenuMoves[i]);
             BattleMenu_Moves_OptionIndices[i] = i;
             BattleMenu_Moves_OptionSortPriority[i] = i;
             BattleMenu_Moves_OptionEnabled[i] = battleStatus->submenuStatus[i];

@@ -281,7 +281,7 @@ void gfx_draw_frame(void) {
     gCurrentDisplayContextIndex = gCurrentDisplayContextIndex ^ 1;
     crash_screen_set_draw_info(nuGfxCfb_ptr, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    draw_item_gc();
+    _onFrame();
 }
 
 void load_engine_data(void) {

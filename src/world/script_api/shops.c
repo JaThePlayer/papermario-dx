@@ -271,7 +271,7 @@ API_CALLABLE(ShowShopPurchaseDialog) {
         wShopBuyResult = SHOP_BUY_RESULT_NOT_ENOUGH_COINS;
         bpCost = -1;
         if (shopItem->typeFlags & ITEM_TYPE_FLAG_BADGE) {
-            bpCost = gMoveTable[shopItem->moveID].costBP;
+            bpCost = get_bp_cost_of_move(shopItem->moveID);
         }
         script->functionTemp[1] = shop_owner_buy_dialog(SHOP_MSG_BUY_CONFIRM, shopItem->nameMsg, shopInventory->price, bpCost);
         script->functionTemp[0] = PURCHASE_DIALOG_STATE_INIT;

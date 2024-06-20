@@ -836,7 +836,7 @@ s32 pause_get_total_equipped_bp_cost(void) {
         if (itemID != ITEM_NONE) {
             s32 moveID = gItemTable[itemID].moveID;
 
-            totalCost += gMoveTable[moveID].costBP;
+            totalCost += get_bp_cost_of_move(moveID);
         }
     }
     return totalCost;

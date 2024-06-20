@@ -2767,6 +2767,9 @@ API_CALLABLE(DropStarPoints) {
 
     poolId = dropper->actorBlueprint->spPool;
     enemyLevel = dropper->overridenLevel >= 0 ? dropper->overridenLevel : dropper->actorBlueprint->level;
+    if (is_orb_of_lug()) {
+        enemyLevel = 0;
+    }
 
     playerLevel = playerData->level;
 

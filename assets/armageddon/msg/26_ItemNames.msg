@@ -1117,3 +1117,7 @@
 #message:26:(ItemName_LoneIdol) {
 	Lone Idol[End]
 }
+
+#message:26:(ItemName_GoldBar) {
+	Gold Bar[End]
+}

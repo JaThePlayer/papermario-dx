@@ -1553,3 +1553,8 @@
 	can equip up to 24 badges for[BR]
 	free.[End]
 }
+
+#message:25:(ItemFullDesc_GoldBar) {
+	A bar of solid gold.[BR]
+	Worth a lot of coins.[End]
+}

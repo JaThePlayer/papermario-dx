@@ -126,7 +126,7 @@ s32 N(get_total_equipped_bp_cost)(void) {
         s16 badge = gPlayerData.equippedBadges[i];
 
         if (badge != 0) {
-            bpCost += gMoveTable[itemTable[badge].moveID].costBP;
+            bpCost += get_bp_cost_of_move(itemTable[badge].moveID);
         }
     }
     return bpCost;

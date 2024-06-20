@@ -5196,3 +5196,17 @@
     moveID: MOVE_EMBER_EMBLEM
     potencyA: 0
     potencyB: 0
+- GoldBar:
+    nameMsg: MSG_ItemName_GoldBar
+    fullDescMsg: MSG_ItemFullDesc_GoldBar
+    shortDescMsg: MSG_ItemFullDesc_GoldBar
+    icon: gold_bar
+    itemEntityTemplate: STANDARD
+    hudElementTemplate: ITEM
+    sellValue: 100
+    sortValue: 0
+    targetFlags: [ TARGET_FLAG_2, TARGET_FLAG_PRIMARY_ONLY ]
+    typeFlags: [ ITEM_TYPE_FLAG_CONSUMABLE, ITEM_TYPE_FLAG_ENTITY_FULLSIZE ]
+    moveID: MOVE_NONE
+    potencyA: 0
+    potencyB: 0

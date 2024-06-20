@@ -148,6 +148,10 @@ HitResult calc_item_damage_enemy(void) {
     }
 
     attackDamage = battleStatus->curAttackDamage;
+    if (is_lone_idol()) {
+        attackDamage += 2;
+    }
+
     if (attackDamage > 99) {
         attackDamage = 99;
     }

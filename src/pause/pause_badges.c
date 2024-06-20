@@ -226,7 +226,7 @@ s32 pause_badges_try_remove(s16 badgeID) {
     }
 
     // handle negative bp cost badges
-    bpCost = gMoveTable[gItemTable[badgeID].moveID].costBP;
+    bpCost = get_bp_cost_of_move(gItemTable[badgeID].moveID);
     if (bpCost < 0 && gPlayerData.maxBP < pause_get_total_equipped_bp_cost() - bpCost) {
         return TRY_REMOVE_NOT_ENOUGH_BP_RESULT;
     }
@@ -283,7 +283,7 @@ s32 pause_badges_try_equip(s16 badgeID) {
     totalEquippedBP = pause_get_total_equipped_bp_cost();
     if (badgeID != 0) {
         u8 moveID = gItemTable[badgeID].moveID;
-        s32 requiredBP = totalEquippedBP + gMoveTable[moveID].costBP;
+        s32 requiredBP = totalEquippedBP + get_bp_cost_of_move(moveID);
 
         if (playerData->maxBP < requiredBP) {
             return EQUIP_RESULT_NOT_ENOUGH_BP;
@@ -444,14 +444,14 @@ void pause_badges_draw_contents(MenuPanel* menu, s32 baseX, s32 baseY, s32 width
                     itemID = badgeID;
                     isSelected = TRUE;
                     if (!isNone) {
-                        costBP = gMoveTable[gItemTable[itemID].moveID].costBP;
+                        costBP = get_bp_cost_of_move(gItemTable[itemID].moveID);
                         if (!isEquipped && bpAvailable >= costBP) {
                             canBeEquipped = TRUE;
                         }
                     }
                 }
 
-                if (!isNone && bpAvailable < gMoveTable[gItemTable[badgeID].moveID].costBP) {
+                if (!isNone && bpAvailable < get_bp_cost_of_move(gItemTable[badgeID].moveID)) {
                     cannotBeEquipped = TRUE;
                 }
 
@@ -493,7 +493,7 @@ void pause_badges_draw_contents(MenuPanel* menu, s32 baseX, s32 baseY, s32 width
                                         badgeListY + pause_badges_scroll_offset_y(posY) + badgeEntryOffsetY, 255, palette, style);
                             }
                         }
-                        draw_number(gMoveTable[gItemTable[badgeID].moveID].costBP, baseX + 235 + pause_badges_scroll_offset_x(posX),
+                        draw_number(get_bp_cost_of_move(gItemTable[badgeID].moveID), baseX + 235 + pause_badges_scroll_offset_x(posX),
                                     baseY + 17 + pause_badges_scroll_offset_y(posY), DRAW_NUMBER_CHARSET_THIN, palette, 255, DRAW_NUMBER_STYLE_ALIGN_RIGHT | DRAW_NUMBER_STYLE_MONOSPACE);
                     }
                 }
@@ -531,7 +531,7 @@ void pause_badges_draw_contents(MenuPanel* menu, s32 baseX, s32 baseY, s32 width
                 }
 
                 if (i == 2 && !isNone) {
-                    numOrbs = gMoveTable[gItemTable[badgeID].moveID].costBP;
+                    numOrbs = get_bp_cost_of_move(gItemTable[badgeID].moveID);
                     orbOffsetY = 1;
                     if (numOrbs < 11) {
                         orbOffsetY = 4;

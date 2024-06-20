@@ -394,6 +394,10 @@ s32 make_item_entity(s32 itemID, f32 x, f32 y, f32 z, s32 itemSpawnMode, s32 pic
     f32 hitDepth;
     Shadow* shadow;
 
+    if (is_midas_stone() && itemSpawnMode != ITEM_SPAWN_MODE_DECORATION && item_is_consumable(itemID)) {
+        itemID = ITEM_GOLD_BAR;
+    }
+
     if (pickupFlagIndex <= EVT_GAME_FLAG_CUTOFF) {
         pickupFlagIndex = EVT_INDEX_OF_GAME_FLAG(pickupFlagIndex);
     }
