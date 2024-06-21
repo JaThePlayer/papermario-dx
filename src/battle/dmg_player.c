@@ -156,7 +156,7 @@ void dispatch_event_player(s32 eventType) {
         kill_script_by_ID(oldOnHitID);
     }
 
-    status_rework_on_dispatch_event_actor(player, eventType);
+    _on_dispatch_event_actor(player, eventType);
 }
 
 void dispatch_event_player_continue_turn(s32 eventType) {

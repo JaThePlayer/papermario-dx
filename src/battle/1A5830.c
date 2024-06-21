@@ -139,7 +139,7 @@ void dispatch_event_actor(Actor* actor, s32 event) {
         kill_script_by_ID(onHitID);
     }
 
-    status_rework_on_dispatch_event_actor(actor, event);
+    _on_dispatch_event_actor(actor, event);
 }
 
 HitResult calc_enemy_test_target(Actor* actor) {

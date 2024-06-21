@@ -22,6 +22,10 @@ API_CALLABLE(TargetPlayerOrPartner);
 /// (Actor, s8 level)
 API_CALLABLE(OverrideActorLevel);
 
+/// (ActorId, ref EvtScript)
+/// Binds a script which will be ran each time any enemy in the formation gets damaged.
+API_CALLABLE(BindOnEnemyDamaged);
+
 // Challenge Runs
 b32 is_midas_stone();
 b32 is_ascetic_note();
@@ -37,5 +41,7 @@ void _onActorCtor(Actor* actor);
 
 /// Called each frame
 void _onFrame();
+
+void _on_dispatch_event_actor(Actor* actor, s32 event);
 
 #endif

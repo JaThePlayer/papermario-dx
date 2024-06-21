@@ -1965,6 +1965,7 @@ typedef struct Actor {
     /* new   */ StatusInfo customStatuses[CUSTOM_STATUS_AMT];
     /* new   */ u8 attackedThisTurn;
     /* new   */ s8 overridenLevel; // set to -1 by default, when > 0, overrides the `level` in the Blueprint for star point dropping purposes.
+    /* new   */ struct EvtScript* onEnemyDamagedScript; // Invoked when any damage in the battle got damaged.
 } Actor; // size = 0x444
 
 typedef struct BackgroundHeader {

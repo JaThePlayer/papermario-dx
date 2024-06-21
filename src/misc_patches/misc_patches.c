@@ -65,6 +65,7 @@ void _onActorCtor(Actor* actor) {
     custom_status_zero_initialize(actor);
     actor->attackedThisTurn = FALSE;
     actor->overridenLevel = -1;
+    actor->onEnemyDamagedScript = NULL;
 }
 
 API_CALLABLE(OverrideActorLevel) {
@@ -136,5 +137,53 @@ void _onFrame() {
         && gPlayerData.curPartner != PARTNER_GOOMBARIA
         && gPlayerData.curPartner != PARTNER_TWINK) {
         gBattleStatus.flags2 |= BS_FLAGS2_PARTNER_TURN_USED;
+    }
+}
+
+API_CALLABLE(BindOnEnemyDamaged) {
+    Bytecode* args = script->ptrReadPos;
+    s32 actorID = evt_get_variable(script, *args++);
+    EvtScript* takeTurnScript;
+
+    if (actorID == ACTOR_SELF) {
+        actorID = script->owner1.actorID;
+    }
+
+    get_actor(actorID)->onEnemyDamagedScript = (EvtScript*) evt_get_variable(script, *args++);
+    return ApiStatus_DONE2;
+}
+
+void _on_dispatch_event_actor(Actor* actor, s32 event) {
+    status_rework_on_dispatch_event_actor(actor, event);
+
+    switch (event)
+    {
+        case EVENT_HIT:
+        case EVENT_DEATH:
+        case EVENT_BURN_HIT:
+        case EVENT_BURN_DEATH:
+        case EVENT_POWER_BOUNCE_HIT:
+        case EVENT_POWER_BOUNCE_DEATH:
+        case EVENT_SHOCK_HIT:
+        case EVENT_SHOCK_DEATH:
+        case EVENT_SPIN_SMASH_HIT:
+        case EVENT_SPIN_SMASH_DEATH:
+        case EVENT_SPIN_SMASH_LAUNCH_HIT:
+        case EVENT_SPIN_SMASH_LAUNCH_DEATH:
+        case EVENT_HIT_COMBO:
+        case EVENT_FLIP_TRIGGER:
+        case EVENT_FALL_TRIGGER:
+            if (gBattleStatus.lastAttackDamage > 0
+                && actor != gBattleStatus.playerActor
+                && actor != gBattleStatus.partnerActor)
+                for (s32 i = 0; i < ARRAY_COUNT(gBattleStatus.enemyActors); i++)
+                {
+                    Actor* actor = gBattleStatus.enemyActors[i];
+                    if (actor != NULL && actor->onEnemyDamagedScript != NULL) {
+                        Evt* script = start_script(actor->onEnemyDamagedScript, EVT_PRIORITY_A, EVT_FLAG_RUN_IMMEDIATELY);
+                        script->owner1.actorID = actor->actorID;
+                    }
+                }
+            break;
     }
 }

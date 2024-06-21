@@ -29,7 +29,7 @@ void dispatch_event_partner(s32 lastEventType) {
         kill_script_by_ID(onHitID);
     }
 
-    status_rework_on_dispatch_event_actor(partnerActor, lastEventType);
+    _on_dispatch_event_actor(partnerActor, lastEventType);
 }
 
 void dispatch_event_partner_continue_turn(s8 lastEventType) {
