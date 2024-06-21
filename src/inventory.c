@@ -47,6 +47,11 @@ extern HudScript* SlashHudScript;
 void status_bar_start_blinking_coins(void);
 void status_bar_stop_blinking_coins(void);
 
+s32 get_max_items() {
+    // TODO: Strange sack
+    return 10;
+}
+
 void clear_player_data(void) {
     PlayerData* playerData = &gPlayerData;
     s32 i;
@@ -184,13 +189,13 @@ s32 add_item(s32 itemID) {
     // handle consumables
     sort_consumables();
 
-    for (idx = 0; idx < ARRAY_COUNT(gPlayerData.invItems); idx++) {
-        if (gPlayerData.invItems[idx] == ITEM_NONE) {
+    for (idx = 0; idx < get_max_items(); idx++) {
+        if (gPlayerData.invItems[ARRAY_COUNT(gPlayerData.invItems) - 1 - idx] == ITEM_NONE) {
             break;
         }
     }
 
-    if (idx == ARRAY_COUNT(gPlayerData.invItems)) {
+    if (idx == get_max_items()) {
         return -1;
     }
 
@@ -437,7 +442,7 @@ s32 get_consumables_count(void) {
 }
 
 s32 get_consumables_empty(void) {
-    return ARRAY_COUNT(gPlayerData.invItems) - get_consumables_count();
+    return get_max_items() - get_consumables_count();
 }
 
 s32 get_stored_count(void) {

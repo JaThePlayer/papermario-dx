@@ -2160,46 +2160,10 @@ void update_item_entity_pickup(ItemEntity* item) {
             item->state = ITEM_PICKUP_STATE_SHOW_GOT_ITEM;
 
             if (!(item->flags & ITEM_ENTITY_FLAG_2000000)) {
-                if (gItemTable[item->itemID].typeFlags & ITEM_TYPE_FLAG_CONSUMABLE) {
-                    for (i = 0; i < ARRAY_COUNT(playerData->invItems); i++) {
-                        if (playerData->invItems[i] == ITEM_NONE) {
-                            break;
-                        }
-                    }
-
-                    if (i < ARRAY_COUNT(playerData->invItems)) {
-                        playerData->invItems[i] = item->itemID;
-                    } else {
-                        item->state = ITEM_PICKUP_STATE_SHOW_TOO_MANY;
-                        goto block_47; // TODO required to match
-                    }
-                }
-
-                if (gItemTable[item->itemID].typeFlags & ITEM_TYPE_FLAG_KEY) {
-                    for (i = 0; i < ARRAY_COUNT(playerData->keyItems); i++) {
-                        if (playerData->keyItems[i] == ITEM_NONE) {
-                            break;
-                        }
-                    }
-
-                    if (i < ARRAY_COUNT(playerData->keyItems)) {
-                        playerData->keyItems[i] = item->itemID;
-                    } else {
-                        item->state = ITEM_PICKUP_STATE_SHOW_TOO_MANY;
-                        goto block_47; // TODO required to match
-                    }
-                }
-
-                if (gItemTable[item->itemID].typeFlags & ITEM_TYPE_FLAG_BADGE) {
-                    for (i = 0; i < ARRAY_COUNT(playerData->badges); i++) {
-                        if (playerData->badges[i] == ITEM_NONE) {
-                            break;
-                        }
-                    }
-
-                    if (i < ARRAY_COUNT(playerData->badges)) {
-                        playerData->badges[i] = item->itemID;
-                    } else {
+                if ((gItemTable[item->itemID].typeFlags & ITEM_TYPE_FLAG_CONSUMABLE)
+                ||  (gItemTable[item->itemID].typeFlags & ITEM_TYPE_FLAG_KEY)
+                ||  (gItemTable[item->itemID].typeFlags & ITEM_TYPE_FLAG_BADGE)) {
+                    if (add_item(item->itemID) == -1) {
                         item->state = ITEM_PICKUP_STATE_SHOW_TOO_MANY;
                         goto block_47; // TODO required to match
                     }
