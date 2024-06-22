@@ -9,11 +9,13 @@
 }
 
 #message:28:(PartnerDesc_Goombario_Battle_Headbonk) {
-	Headbonk an enemy.[End]
+	Headbonk an enemy.[BR]
+	ATK: 1*2 / 2*2 / 3*2[End]
 }
 
 #message:28:(PartnerDesc_Goombario_Battle_Tattle) {
-	NOOP[End]
+	See enemy description and make[BR]
+	HP visible. (No turn cost)[End]
 }
 
 #message:28:(PartnerDesc_Goombario_Battle_Charge) {
@@ -35,36 +37,6 @@
 	[End]
 }
 
-#message:28:(PartnerDesc_Goombario_Pause_Headbonk1) {
-	Headbonk an enemy.[End]
-}
-
-#message:28:(PartnerDesc_Goombario_Pause_Headbonk2) {
-	Headbonk an enemy.[End]
-}
-
-#message:28:(PartnerDesc_Goombario_Pause_Headbonk3) {
-	Headbonk an enemy.[End]
-}
-
-#message:28:(PartnerDesc_Goombario_Pause_Tattle) {
-	See enemy description and make[BR]
-	HP visible. (No turn cost)[End]
-}
-
-#message:28:(PartnerDesc_Goombario_Pause_Charge) {
-	Charge to raise attack power[BR]
-	by 2.[BR]
-	You can charge unlimited times,[BR]
-	but power fades after attack.[BR]
-	[End]
-}
-
-#message:28:(PartnerDesc_Goombario_Pause_Multibonk) {
-	Headbonk continuously until[BR]
-	you miss the action command.[End]
-}
-
 #message:28:(PartnerDesc_Kooper_World) {
 	Press [C-DOWN] to reach an item[BR]
 	a short distance away.[End]
@@ -77,12 +49,14 @@
 
 #message:28:(PartnerDesc_Kooper_Battle_ShellToss) {
 	Throw a shell at an enemy.[BR]
-	+1 FP if it dealt any damage.[End]
+	+1 FP if it dealt any damage.[BR]
+	ATK: 2 / 3 / 5[End]
 }
 
 #message:28:(PartnerDesc_Kooper_Battle_PowerShell) {
 	Throw a shell at all enemies[BR]
-	on the ground.[End]
+	on the ground.[BR]
+	ATK: 2 / 3 / 4[End]
 }
 
 #message:28:(PartnerDesc_Kooper_Battle_DizzyShell) {
@@ -104,36 +78,6 @@
 	reach items at a short distance.[BR]
 	His specialty is attacking[BR]
 	enemies on the ground.[End]
-}
-
-#message:28:(PartnerDesc_Kooper_Pause_ShellToss1) {
-	Throw a shell at an enemy.[BR]
-	+1 FP if it dealt any damage.[End]
-}
-
-#message:28:(PartnerDesc_Kooper_Pause_ShellToss2) {
-	Throw a shell at an enemy.[BR]
-	+1 FP if it dealt any damage.[End]
-}
-
-#message:28:(PartnerDesc_Kooper_Pause_ShellToss3) {
-	Throw a shell at an enemy.[BR]
-	+1 FP if it dealt any damage.[End]
-}
-
-#message:28:(PartnerDesc_Kooper_Pause_PowerShell) {
-	Throw a shell at all enemies[BR]
-	on the ground.[End]
-}
-
-#message:28:(PartnerDesc_Kooper_Pause_DizzyShell) {
-	Daze and paralyze all enemies[BR]
-	on the ground.[End]
-}
-
-#message:28:(PartnerDesc_Kooper_Pause_FireShell) {
-	Attack all enemies on the ground[BR]
-	with a flaming shell.[End]
 }
 
 #message:28:(PartnerDesc_Bombette_World) {
@@ -182,32 +126,6 @@
 	[End]
 }
 
-#message:28:(PartnerDesc_Bombette_Pause_BodySlam1) {
-	Body Slam an enemy.[End]
-}
-
-#message:28:(PartnerDesc_Bombette_Pause_BodySlam2) {
-	Body Slam an enemy.[End]
-}
-
-#message:28:(PartnerDesc_Bombette_Pause_BodySlam3) {
-	Body Slam an enemy.[End]
-}
-
-#message:28:(PartnerDesc_Bombette_Pause_Bomb) {
-	Explode and destroy an enemy[BR]
-	on the ground.[End]
-}
-
-#message:28:(PartnerDesc_Bombette_Pause_PowerBomb) {
-	Explode and destroy all enemies[BR]
-	on the ground.[End]
-}
-
-#message:28:(PartnerDesc_Bombette_Pause_MegaBomb) {
-	Explode and destroy all enemies.[End]
-}
-
 #message:28:(PartnerDesc_Parakarry_World) {
 	He delivers mail and can fly Mario[BR]
 	over short gaps (press [C-DOWN]).[End]
@@ -219,12 +137,14 @@
 }
 
 #message:28:(PartnerDesc_Parakarry_Battle_SkyDive) {
-	Kick an enemy.[End]
+	Kick an enemy.[BR]
+	ATK: 2 / 3 / 4[End]
 }
 
 #message:28:(PartnerDesc_Parakarry_Battle_ShellShot) {
 	Attack an enemy in the air[BR]
-	by bumping into it.[End]
+	by bumping into it.[BR]
+	ATK: 5 / 6 / 7[End]
 }
 
 #message:28:(PartnerDesc_Parakarry_Battle_AirLift) {
@@ -248,35 +168,6 @@
 	recipients all over the world.[BR]
 	His specialty is attacking[BR]
 	airborne enemies.[End]
-}
-
-#message:28:(PartnerDesc_Parakarry_Pause_SkyDive1) {
-	Kick an enemy.[End]
-}
-
-#message:28:(PartnerDesc_Parakarry_Pause_SkyDive2) {
-	Kick an enemy.[End]
-}
-
-#message:28:(PartnerDesc_Parakarry_Pause_SkyDive3) {
-	Kick an enemy.[End]
-}
-
-#message:28:(PartnerDesc_Parakarry_Pause_ShellShot) {
-	Attack an enemy in the air[BR]
-	by bumping into it.[End]
-}
-
-#message:28:(PartnerDesc_Parakarry_Pause_AirLift) {
-	Carry an enemy away from[BR]
-	the battle.[BR]
-	Weaker enemies are more easily[BR]
-	carried away.[End]
-}
-
-#message:28:(PartnerDesc_Parakarry_Pause_AirRaid) {
-	Fly around like crazy, attacking[BR]
-	all enemies.[End]
 }
 
 #message:28:(PartnerDesc_Bow_World) {

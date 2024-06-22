@@ -1197,7 +1197,7 @@
     costBP: 0
 - Headbonk1:
     nameMsg: MSG_PartnerMoveName_Headbonk1
-    fullDescMsg: MSG_PartnerDesc_Goombario_Pause_Headbonk1
+    fullDescMsg: MSG_PartnerDesc_Goombario_Battle_Headbonk
     shortDescMsg: MSG_PartnerDesc_Goombario_Battle_Headbonk
     flags: [ TARGET_FLAG_SELECT_ONE, TARGET_FLAG_80, TARGET_FLAG_JUMP_LIKE, TARGET_FLAG_NOT_BELOW, TARGET_FLAG_ALLOW_TARGET_ONLY, TARGET_FLAG_NO_CEILING ]
     category: MOVE_TYPE_PARTNER
@@ -1206,7 +1206,7 @@
     costBP: 0
 - Headbonk2:
     nameMsg: MSG_PartnerMoveName_Headbonk2
-    fullDescMsg: MSG_PartnerDesc_Goombario_Pause_Headbonk2
+    fullDescMsg: MSG_PartnerDesc_Goombario_Battle_Headbonk
     shortDescMsg: MSG_PartnerDesc_Goombario_Battle_Headbonk
     flags: [ TARGET_FLAG_SELECT_ONE, TARGET_FLAG_80, TARGET_FLAG_JUMP_LIKE, TARGET_FLAG_NOT_BELOW, TARGET_FLAG_ALLOW_TARGET_ONLY, TARGET_FLAG_NO_CEILING ]
     category: MOVE_TYPE_PARTNER
@@ -1215,7 +1215,7 @@
     costBP: 0
 - Headbonk3:
     nameMsg: MSG_PartnerMoveName_Headbonk3
-    fullDescMsg: MSG_PartnerDesc_Goombario_Pause_Headbonk3
+    fullDescMsg: MSG_PartnerDesc_Goombario_Battle_Headbonk
     shortDescMsg: MSG_PartnerDesc_Goombario_Battle_Headbonk
     flags: [ TARGET_FLAG_SELECT_ONE, TARGET_FLAG_80, TARGET_FLAG_JUMP_LIKE, TARGET_FLAG_NOT_BELOW, TARGET_FLAG_ALLOW_TARGET_ONLY, TARGET_FLAG_NO_CEILING ]
     category: MOVE_TYPE_PARTNER
@@ -1224,7 +1224,7 @@
     costBP: 0
 - Tattle:
     nameMsg: MSG_PartnerMoveName_Tattle
-    fullDescMsg: MSG_PartnerDesc_Goombario_Pause_Tattle
+    fullDescMsg: MSG_PartnerDesc_Goombario_Battle_Tattle
     shortDescMsg: MSG_PartnerDesc_Goombario_Battle_Tattle
     flags: [ TARGET_FLAG_SELECT_ONE, TARGET_FLAG_2, TARGET_FLAG_PRIMARY_ONLY, TARGET_FLAG_ALLOW_TARGET_ONLY, TARGET_FLAG_TATTLE ]
     category: MOVE_TYPE_PARTNER
@@ -1233,7 +1233,7 @@
     costBP: 0
 - Charge:
     nameMsg: MSG_PartnerMoveName_Charge
-    fullDescMsg: MSG_PartnerDesc_Goombario_Pause_Charge
+    fullDescMsg: MSG_PartnerDesc_Goombario_Battle_Charge
     shortDescMsg: MSG_PartnerDesc_Goombario_Battle_Charge
     flags: [ TARGET_FLAG_PARTNER ]
     category: MOVE_TYPE_PARTNER
@@ -1242,7 +1242,7 @@
     costBP: 0
 - Multibonk:
     nameMsg: MSG_PartnerMoveName_Multibonk
-    fullDescMsg: MSG_PartnerDesc_Goombario_Pause_Multibonk
+    fullDescMsg: MSG_PartnerDesc_Goombario_Battle_Multibonk
     shortDescMsg: MSG_PartnerDesc_Goombario_Battle_Multibonk
     flags: [ TARGET_FLAG_SELECT_ONE, TARGET_FLAG_80, TARGET_FLAG_JUMP_LIKE, TARGET_FLAG_NOT_BELOW, TARGET_FLAG_ALLOW_TARGET_ONLY, TARGET_FLAG_NO_CEILING ]
     category: MOVE_TYPE_PARTNER
@@ -1287,7 +1287,7 @@
     costBP: 0
 - DizzyShell:
     nameMsg: MSG_PartnerMoveName_DizzyShell
-    fullDescMsg: MSG_PartnerDesc_Kooper_Pause_DizzyShell
+    fullDescMsg: MSG_PartnerDesc_Kooper_Battle_DizzyShell
     shortDescMsg: MSG_PartnerDesc_Kooper_Battle_DizzyShell
     flags: [ TARGET_FLAG_GROUND, TARGET_FLAG_PRIMARY_ONLY ]
     category: MOVE_TYPE_PARTNER
@@ -1296,7 +1296,7 @@
     costBP: 0
 - FireShell:
     nameMsg: MSG_PartnerMoveName_FireShell
-    fullDescMsg: MSG_PartnerDesc_Kooper_Pause_FireShell
+    fullDescMsg: MSG_PartnerDesc_Kooper_Battle_FireShell
     shortDescMsg: MSG_PartnerDesc_Kooper_Battle_FireShell
     flags: [ TARGET_FLAG_GROUND, TARGET_FLAG_PRIMARY_ONLY ]
     category: MOVE_TYPE_PARTNER
@@ -1359,7 +1359,7 @@
     costBP: 0
 - SkyDive1:
     nameMsg: MSG_PartnerMoveName_SkyDive1
-    fullDescMsg: MSG_PartnerDesc_Parakarry_Pause_SkyDive1
+    fullDescMsg: MSG_PartnerDesc_Parakarry_Battle_SkyDive
     shortDescMsg: MSG_PartnerDesc_Parakarry_Battle_SkyDive
     flags: [ TARGET_FLAG_SELECT_ONE, TARGET_FLAG_2, TARGET_FLAG_ALLOW_TARGET_ONLY ]
     category: MOVE_TYPE_PARTNER
@@ -1368,7 +1368,7 @@
     costBP: 0
 - SkyDive2:
     nameMsg: MSG_PartnerMoveName_SkyDive2
-    fullDescMsg: MSG_PartnerDesc_Parakarry_Pause_SkyDive2
+    fullDescMsg: MSG_PartnerDesc_Parakarry_Battle_SkyDive
     shortDescMsg: MSG_PartnerDesc_Parakarry_Battle_SkyDive
     flags: [ TARGET_FLAG_SELECT_ONE, TARGET_FLAG_2, TARGET_FLAG_ALLOW_TARGET_ONLY ]
     category: MOVE_TYPE_PARTNER
@@ -1377,7 +1377,7 @@
     costBP: 0
 - SkyDive3:
     nameMsg: MSG_PartnerMoveName_SkyDive3
-    fullDescMsg: MSG_PartnerDesc_Parakarry_Pause_SkyDive3
+    fullDescMsg: MSG_PartnerDesc_Parakarry_Battle_SkyDive
     shortDescMsg: MSG_PartnerDesc_Parakarry_Battle_SkyDive
     flags: [ TARGET_FLAG_SELECT_ONE, TARGET_FLAG_2, TARGET_FLAG_ALLOW_TARGET_ONLY ]
     category: MOVE_TYPE_PARTNER
@@ -1386,16 +1386,16 @@
     costBP: 0
 - ShellShot:
     nameMsg: MSG_PartnerMoveName_ShellShot
-    fullDescMsg: MSG_PartnerDesc_Parakarry_Pause_ShellShot
+    fullDescMsg: MSG_PartnerDesc_Parakarry_Battle_ShellShot
     shortDescMsg: MSG_PartnerDesc_Parakarry_Battle_ShellShot
     flags: [ TARGET_FLAG_SELECT_ONE, TARGET_FLAG_2, TARGET_FLAG_ALLOW_TARGET_ONLY ]
     category: MOVE_TYPE_PARTNER
     actionTip: BTL_MSG_ACTION_TIP_HOLD_LEFT_AIM
-    costFP: 3
+    costFP: 4
     costBP: 0
 - AirLift:
     nameMsg: MSG_PartnerMoveName_AirLift
-    fullDescMsg: MSG_PartnerDesc_Parakarry_Pause_AirLift
+    fullDescMsg: MSG_PartnerDesc_Parakarry_Battle_AirLift
     shortDescMsg: MSG_PartnerDesc_Parakarry_Battle_AirLift
     flags: [ TARGET_FLAG_SELECT_ONE, TARGET_FLAG_2, TARGET_FLAG_AIRLIFT, TARGET_FLAG_PRIMARY_ONLY ]
     category: MOVE_TYPE_PARTNER
@@ -1404,7 +1404,7 @@
     costBP: 0
 - AirRaid:
     nameMsg: MSG_PartnerMoveName_AirRaid
-    fullDescMsg: MSG_PartnerDesc_Parakarry_Pause_AirRaid
+    fullDescMsg: MSG_PartnerDesc_Parakarry_Battle_AirRaid
     shortDescMsg: MSG_PartnerDesc_Parakarry_Battle_AirRaid
     flags: [ TARGET_FLAG_2, TARGET_FLAG_PRIMARY_ONLY ]
     category: MOVE_TYPE_PARTNER
