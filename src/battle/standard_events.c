@@ -1850,6 +1850,19 @@ EvtScript EVS_Enemy_ScareAway = {
     End
 };
 
+API_CALLABLE(ClearChargesOn) {
+    Bytecode* args = script->ptrReadPos;
+    s32 actorID = evt_get_variable(script, *args++);
+
+    if (actorID == ACTOR_SELF) {
+        actorID = script->owner1.actorID;
+    }
+
+    clearChargesFrom(get_actor(actorID));
+
+    return ApiStatus_DONE2;
+}
+
 EvtScript EVS_Enemy_SpinSmash_HitNext = {
     Call(CreateCurrentPosTargetList, TARGET_FLAG_GROUND | TARGET_FLAG_ALLOW_TARGET_ONLY)
     Call(InitTargetIterator)
@@ -1894,7 +1907,8 @@ EvtScript EVS_Enemy_SpinSmash_HitNext = {
                 Goto(1)
             EndCaseGroup
         EndSwitch
-        Call(EnemyDamageTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_IGNORE_DEFENSE | DAMAGE_TYPE_MULTIPLE_POPUPS, SUPPRESS_EVENT_ALL, 0, 1, BS_FLAGS1_TRIGGER_EVENTS)
+        Call(EnemyDamageTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_IGNORE_DEFENSE | DAMAGE_TYPE_MULTIPLE_POPUPS, SUPPRESS_EVENT_ALL, 0, 2, BS_FLAGS1_TRIGGER_EVENTS)
+        Call(ClearChargesOn, ACTOR_SELF)
         Goto(1)
     // done
     Label(10)
