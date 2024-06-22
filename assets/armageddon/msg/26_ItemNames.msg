@@ -1121,3 +1121,7 @@
 #message:26:(ItemName_GoldBar) {
 	Gold Bar[End]
 }
+
+#message:26:(ItemName_HustleDrink) {
+	Hustle Drink[End]
+}

@@ -1558,3 +1558,8 @@
 	A bar of solid gold.[BR]
 	Worth a lot of coins.[End]
 }
+
+#message:26:(ItemFullDesc_HustleDrink) {
+	Allows Mario to take an extra[BR]
+	action next turn.[End]
+}

@@ -2037,7 +2037,7 @@
 - HustleDrink:
     nameMsg: MSG_ItemName_HustleDrink
     fullDescMsg: MSG_ItemFullDesc_HustleDrink
-    shortDescMsg: MSG_ItemShortDesc_HustleDrink
+    shortDescMsg: MSG_ItemFullDesc_HustleDrink
     icon: battle/HustleDrink
     itemEntityTemplate: STANDARD
     hudElementTemplate: ITEM

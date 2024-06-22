@@ -11,7 +11,6 @@
 #define MSG_ItemFullDesc_EarthquakeJump 0
 #define MSG_ItemFullDesc_ForestPass 0
 #define MSG_ItemFullDesc_HealthyHealthy 0
-#define MSG_ItemFullDesc_HustleDrink 0
 #define MSG_ItemFullDesc_InsecticideHerb 0
 #define MSG_ItemFullDesc_JumpCharge0 0
 #define MSG_ItemFullDesc_Kaiden 0
@@ -48,7 +47,6 @@
 #define MSG_ItemName_EarthquakeJump 0
 #define MSG_ItemName_ForestPass 0
 #define MSG_ItemName_HealthyHealthy 0
-#define MSG_ItemName_HustleDrink 0
 #define MSG_ItemName_InsecticideHerb 0
 #define MSG_ItemName_JumpCharge0 0
 #define MSG_ItemName_Kaiden 0
@@ -77,7 +75,6 @@
 #define MSG_ItemShortDesc_EarthquakeJump 0
 #define MSG_ItemShortDesc_ForestPass 0
 #define MSG_ItemShortDesc_HealthyHealthy 0
-#define MSG_ItemShortDesc_HustleDrink 0
 #define MSG_ItemShortDesc_InsecticideHerb 0
 #define MSG_ItemShortDesc_JumpCharge0 0
 #define MSG_ItemShortDesc_Kaiden 0
