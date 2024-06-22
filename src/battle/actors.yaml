@@ -1,7 +1,7 @@
 - RedGoomba:
-    level: 3
+    level: 2
     nameMsg: MSG_EnemyName_RedGoomba
-    tattleMsg: MSG_NONE
+    tattleMsg: MSG_EnemyTattle_RedGoomba
     walkSound: [ SOUND_GOOMBA_STEP, SOUND_GOOMBA_STEP ]
     flySound: [ SOUND_GOOMBA_STEP, SOUND_GOOMBA_STEP ]
     jumpSound: SOUND_ACTOR_JUMP
@@ -10,9 +10,9 @@
     tattleCamOffset: [ 0, 0, 0 ]
     shadowOffset: 0
 - RedParagoomba:
-    level: 3
+    level: 2
     nameMsg: MSG_EnemyName_RedParagoomba
-    tattleMsg: MSG_NONE
+    tattleMsg: MSG_EnemyTattle_RedParagoomba
     walkSound: [ SOUND_PARAGOOMBA_FLY, SOUND_PARAGOOMBA_FLY ]
     flySound: [ SOUND_PARAGOOMBA_FLY, SOUND_PARAGOOMBA_FLY ]
     jumpSound: SOUND_ACTOR_JUMP
@@ -186,7 +186,7 @@
     tattleCamOffset: [ 0, 6, 0 ]
     shadowOffset: 0
 - Cleft:
-    level: 3
+    level: 2
     nameMsg: MSG_EnemyName_Cleft
     tattleMsg: MSG_EnemyTattle_Cleft
     walkSound: [ SOUND_CLEFT_STEP, SOUND_CLEFT_STEP ]
@@ -2381,7 +2381,7 @@
     tattleCamOffset: [ 0, 226, 0 ]
     shadowOffset: 0
 - Rokitu:
-    level: 4
+    level: 3
     nameMsg: MSG_EnemyName_Rokitu
     tattleMsg: MSG_EnemyTattle_Rokitu
     walkSound: [ SOUND_FLIGHT, SOUND_FLIGHT ]

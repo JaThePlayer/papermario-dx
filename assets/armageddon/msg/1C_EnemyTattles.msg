@@ -2727,3 +2727,37 @@
 	surrounded by Clefts.[BR]
 	[Wait][End]
 }
+
+#message:1C:(EnemyTattle_RedGoomba) {
+	[Style right]
+	This is a Red Goomba.[BR]
+	[Pause 10]They hit twice, but their[BR]
+	stats are otherwise low.[BR]
+	[Wait][Next]
+	The main threat is their ability[BR]
+	to charge their next move by[BR]
+	1 ATK every time ANY enemy[BR]
+	takes damage.[BR]
+	[Wait][Next]
+	We need to take them out[BR]
+	quickly, but they also seem[BR]
+	so weak...[BR]
+	[Wait][End]
+}
+
+#message:1C:(EnemyTattle_RedParagoomba) {
+	[Style right]
+	This is a Red Paragoomba.[BR]
+	[Pause 10]They deal 2 damage, but their[BR]
+	stats are otherwise low.[BR]
+	[Wait][Next]
+	The main threat is their ability[BR]
+	to charge their next move by[BR]
+	1 ATK every time ANY enemy[BR]
+	takes damage.[BR]
+	[Wait][Next]
+	We need to take them out[BR]
+	quickly, but they also seem[BR]
+	so weak...[BR]
+	[Wait][End]
+}
