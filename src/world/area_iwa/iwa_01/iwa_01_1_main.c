@@ -59,7 +59,13 @@ EvtScript N(EVS_Main) = {
     Call(SetSpriteShading, SHADING_NONE)
     Call(N(SetupSlidingCheck))
     EVT_SETUP_CAMERA_DEFAULT(0, 0, 0)
-    Call(MakeNpcs, TRUE, Ref(N(DefaultNPCs)))
+
+    IfFalse(GF_IWA_01_SlideAmbush)
+        Call(MakeNpcs, TRUE, Ref(N(DefaultNPCs)))
+    Else
+        Call(MakeNpcs, TRUE, Ref(N(NPCs_NoAmbush)))
+    EndIf
+
     ExecWait(N(EVS_MakeEntities))
     Exec(N(EVS_StartTexPanners))
     ExecWait(N(EVS_MakeSplashes))

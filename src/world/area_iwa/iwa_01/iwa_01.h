@@ -19,6 +19,7 @@ enum {
     NPC_MontyMole_04            = 6,
     NPC_MontyMole_04_Stone      = 7,
     NPC_Cleft                   = 8,
+    NPC_Cleft_2                 = 9,
 };
 
 enum {
@@ -33,3 +34,4 @@ extern EvtScript N(EVS_BindSlideTriggers1);
 extern EvtScript N(EVS_BindSlideTriggers2);
 extern EvtScript N(EVS_MakeEntities);
 extern NpcGroupList N(DefaultNPCs);
+extern NpcGroupList N(NPCs_NoAmbush);

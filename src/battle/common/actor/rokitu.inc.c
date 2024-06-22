@@ -15,8 +15,9 @@ extern EvtScript N(EVS_Idle);
 extern EvtScript N(EVS_TakeTurn);
 extern EvtScript N(EVS_HandleEvent);
 
+#define PRT_MAIN 1
 enum N(ActorPartIDs) {
-    PRT_MAIN        = 1,
+//  PRT_MAIN        = 1,
     PRT_SPINY_BALL  = 2,
     PRT_SPINY       = 3,
 };
@@ -129,7 +130,7 @@ ActorBlueprint NAMESPACE = {
     .flags = ACTOR_FLAG_FLYING,
     .type = ACTOR_TYPE_ROKITU,
     .level = ACTOR_LEVEL_ROKITU,
-    .maxHP = 10,
+    .maxHP = 7,
     .partCount = ARRAY_COUNT(N(ActorParts)),
     .partsData = N(ActorParts),
     .initScript = &N(EVS_Init),
@@ -633,3 +634,5 @@ EvtScript N(EVS_TakeTurn) = {
     Return
     End
 };
+
+#undef PRT_MAIN

@@ -691,7 +691,7 @@ enum GameFlags {
     GF_IWA02_Item_StarPiece                     = GameFlag(0x2AF),
     GF_IWA03_Item_StarPiece                     = GameFlag(0x2B0),
     GF_IWA03_Chest_DamageDodgeB                 = GameFlag(0x2B1),
-    GF_Unused_IWA_04                            = GameFlag(0x2B2),
+    GF_IWA_01_SlideAmbush                       = GameFlag(0x2B2), // new in Armageddon
     GF_IWA00_Item_CoinA                         = GameFlag(0x2B3),
     GF_IWA00_Item_CoinB                         = GameFlag(0x2B4),
     GF_IWA00_Item_CoinC                         = GameFlag(0x2B5),

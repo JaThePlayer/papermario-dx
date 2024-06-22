@@ -6,6 +6,8 @@ u8 sp_pool_caps[SP_POOL_COUNT] = {
     [SP_POOL_PLEASANT_PATH] = 125,
     [SP_POOL_KOOPA_BROS_FORT] = 90,
 
+    [SP_POOL_MT_RUGGED] = 100,
+
     [SP_POOL_DISCARD] = 0,
 };
 

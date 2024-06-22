@@ -132,7 +132,7 @@ NpcData N(NpcData_MontyMole_StoneThrower_03)[] = {
 
 NpcData N(NpcData_Cleft) = {
     .id = NPC_Cleft,
-    .pos = { -657.0f, 163.0f, 155.0f },
+    .pos = { -657.0f, 163.0f, 38.0f },
     .yaw = 0,
     .territory = {
         .wander = {
@@ -153,11 +153,45 @@ NpcData N(NpcData_Cleft) = {
     .aiDetectFlags = AI_DETECT_SIGHT,
 };
 
+NpcData N(NpcData_Cleft_QuakeAmbush) = {
+    .id = NPC_Cleft_2,
+    .pos = { 160, 125, 125 },
+    .yaw = 0,
+    .territory = {
+        .wander = {
+            .isFlying = TRUE,
+            .moveSpeedOverride = NO_OVERRIDE_MOVEMENT_SPEED,
+            .wanderShape = SHAPE_CYLINDER,
+            .centerPos  = { 160, 125, 125 },
+            .wanderSize = { 0 },
+            .detectShape = SHAPE_RECT,
+            .detectPos  = { 160, 125, 125 },
+            .detectSize = { 32 },
+        }
+    },
+    .settings = &N(NpcSettings_Cleft),
+    .flags = ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING,
+    .drops = CLEFT_DROPS,
+    .animations = CLEFT_ANIMS,
+    .aiDetectFlags = AI_DETECT_SIGHT,
+};
+
+#define INVARIANT_NPCS() \
+    NPC_GROUP(N(NpcData_MontyMole_WallAmbush), BTL_IWA_FORMATION_10+1, BTL_IWA_STAGE_01), \
+    NPC_GROUP(N(NpcData_MontyMole_StoneThrower_01), BTL_IWA_FORMATION_0E, BTL_IWA_STAGE_01), \
+    NPC_GROUP(N(NpcData_MontyMole_StoneThrower_02), BTL_IWA_FORMATION_0F, BTL_IWA_STAGE_01), \
+    NPC_GROUP(N(NpcData_MontyMole_StoneThrower_03), BTL_IWA_FORMATION_10, BTL_IWA_STAGE_01), \
+    NPC_GROUP(N(NpcData_Cleft_QuakeAmbush), BTL_IWA_FORMATION_10+2, BTL_IWA_STAGE_01)
+
 NpcGroupList N(DefaultNPCs) = {
-    NPC_GROUP(N(NpcData_MontyMole_WallAmbush), BTL_IWA_FORMATION_06, BTL_IWA_STAGE_01),
-    NPC_GROUP(N(NpcData_MontyMole_StoneThrower_01), BTL_IWA_FORMATION_07, BTL_IWA_STAGE_01),
-    NPC_GROUP(N(NpcData_MontyMole_StoneThrower_02), BTL_IWA_FORMATION_06, BTL_IWA_STAGE_01),
-    NPC_GROUP(N(NpcData_MontyMole_StoneThrower_03), BTL_IWA_FORMATION_07, BTL_IWA_STAGE_01),
+    INVARIANT_NPCS(),
     NPC_GROUP(N(NpcData_Cleft), BTL_IWA_FORMATION_04, BTL_IWA_STAGE_01),
     {}
 };
+
+NpcGroupList N(NPCs_NoAmbush) = {
+    INVARIANT_NPCS(),
+    {}
+};
+
+#undef INVARIANT_NPCS

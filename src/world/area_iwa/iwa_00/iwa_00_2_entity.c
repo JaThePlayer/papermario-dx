@@ -15,7 +15,7 @@ EvtScript N(EVS_MakeEntities) = {
     Call(MakeItemEntity, ITEM_COIN, 405, 25, 25, ITEM_SPAWN_MODE_FIXED_NEVER_VANISH, GF_IWA00_Item_CoinA)
     Call(MakeItemEntity, ITEM_COIN, 465, 53, 25, ITEM_SPAWN_MODE_FIXED_NEVER_VANISH, GF_IWA00_Item_CoinB)
     Call(MakeItemEntity, ITEM_COIN, 515, 92, 25, ITEM_SPAWN_MODE_FIXED_NEVER_VANISH, GF_IWA00_Item_CoinC)
-    Call(MakeEntity, Ref(Entity_YellowBlock), 1260, 30, 140, 0, ITEM_SLEEPY_SHEEP, MAKE_ENTITY_END)
+    Call(MakeEntity, Ref(Entity_YellowBlock), 1260, 30, 140, 0, ITEM_HUSTLE_DRINK, MAKE_ENTITY_END)
     Call(AssignBlockFlag, GF_IWA00_ItemBlock_SleepySheep)
     Call(MakeEntity, Ref(Entity_ArrowSign), 58, -5, -73, -30, 90, MAKE_ENTITY_END)
     Call(MakeEntity, Ref(Entity_ArrowSign), 926, 70, -45, 22, 90, MAKE_ENTITY_END)

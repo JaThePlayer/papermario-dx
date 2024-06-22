@@ -335,7 +335,7 @@ NpcData N(NpcData_Buzzar) = {
 };
 
 NpcGroupList N(DefaultNPCs) = {
-    NPC_GROUP(N(NpcData_Cleft), BTL_IWA_FORMATION_01, BTL_IWA_STAGE_01),
+    NPC_GROUP(N(NpcData_Cleft), BTL_IWA_FORMATION_0A, BTL_IWA_STAGE_01),
     NPC_GROUP(N(NpcData_Buzzar), BTL_IWA_FORMATION_0C, BTL_IWA_STAGE_02),
     {}
 };

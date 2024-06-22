@@ -59,7 +59,20 @@ EvtScript N(EVS_UseSlide) = {
     End
 };
 
+b32 N(should_player_be_sliding)(void) {
+    Shadow* shadow = get_shadow_by_index(gPlayerStatus.shadowID);
+    f32 angle = shadow->rot.z + 180.0;
+
+    return (angle != 0.0f) && (fabsf(angle) >= 20.0f);
+}
+
+API_CALLABLE(N(SetupSlidingCheck)) {
+    phys_set_player_sliding_check(N(should_player_be_sliding));
+    return ApiStatus_DONE2;
+}
+
 EvtScript N(EVS_BindSlideTriggers) = {
+    Call(N(SetupSlidingCheck))
     BindTrigger(Ref(N(EVS_UseSlide)), TRIGGER_WALL_PRESS_A, COLLIDER_st1, 1, 0)
     BindTrigger(Ref(N(EVS_UpdateSliding)), TRIGGER_FLOOR_TOUCH, COLLIDER_suberi0, 1, 0)
     Call(ModifyColliderFlags, MODIFY_COLLIDER_FLAGS_SET_SURFACE, COLLIDER_suberi0, SURFACE_TYPE_SLIDE)
