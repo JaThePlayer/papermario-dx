@@ -56,6 +56,12 @@ API_CALLABLE(TargetPlayerOrPartner) {
     return ApiStatus_DONE2;
 }
 
+s32 get_focus_cap() {
+    s32 cap = 1;
+    cap += is_ability_active(ABILITY_DEEP_FOCUS);
+    return cap;
+}
+
 // Used by Trial Boo, needs to be somewhere global
 void* gCurrentTrial = NULL;
 s32 gCurrentTrialFormationId = 0;

@@ -2606,7 +2606,7 @@ void btl_state_update_player_menu(void) {
                 case BTL_MENU_TYPE_STAR_POWERS:
                     battleStatus->submenuMoves[0] = MOVE_FOCUS;
                     battleStatus->submenuIcons[0] = ITEM_PARTNER_ATTACK;
-                    battleStatus->submenuStatus[0] = 1;
+                    battleStatus->submenuStatus[0] = gBattleStatus.focusUses >= get_focus_cap() ? -1 : 1;
                     entryIdx = 1;
                     initialPos = 8;
                     for (i = 0; i < playerData->maxStarPower; i++) {
@@ -3803,7 +3803,7 @@ void btl_state_update_partner_menu(void) {
                 battle_menu_isMessageDisabled[entryIdx] = 0;
                 BattleMenu_HudScripts[entryIdx] = battle_menu_StarPowerHudScripts.enabled;
                 BattleMenu_TitleMessages[entryIdx] = BattleMenu_CenteredMessages[BTL_MENU_TYPE_PARTNER_FOCUS];
-                if (!(battleStatus->enabledMenusFlags & BTL_MENU_ENABLED_PARTNER_FOCUS)) {
+                if (!(battleStatus->enabledMenusFlags & BTL_MENU_ENABLED_PARTNER_FOCUS) || gBattleStatus.focusUses >= get_focus_cap()) {
                     BattleMenu_OptionEnabled[entryIdx] = FALSE;
                     battle_menu_isMessageDisabled[entryIdx] = BTL_MSG_CANT_SELECT_NOW;
                     BattleMenu_HudScripts[entryIdx] = battle_menu_StarPowerHudScripts.disabled;
@@ -4201,7 +4201,7 @@ void btl_state_update_partner_menu(void) {
         battleStatus->submenuMoves[0] = MOVE_FOCUS;
         battleStatus->submenuMoveCount = entryIdx;
         battleStatus->submenuIcons[0] = ITEM_PARTNER_ATTACK;
-        battleStatus->submenuStatus[0] = 1;
+        battleStatus->submenuStatus[0] = gBattleStatus.focusUses >= get_focus_cap() ? -1 : 1;
         for (i = 0; i < battleStatus->submenuMoveCount; i++) {
             moveData = &gMoveTable[battleStatus->submenuMoves[i]];
             battle_menu_moveOptionIconScripts[i] = battle_menu_StarPowerMovesHudScripts[2 * STAR_POWER_INDEX(battleStatus->submenuMoves[i]) + 0];

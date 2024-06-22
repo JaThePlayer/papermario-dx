@@ -993,7 +993,8 @@ typedef struct BattleStatus {
     /* 0x438 */ struct Stage* curStage;
     /* 0x43C */ struct EffectInstance* buffEffect;
     /* 0x440 */ u8 tattleFlags[28];
-    /* new */ s32 turnCounter;
+    /* new   */ s32 turnCounter;
+    /* new   */ u8 focusUses; // How many times Focus was used this fight.
 } BattleStatus; // size = 0x460
 
 typedef struct TextureHeader {

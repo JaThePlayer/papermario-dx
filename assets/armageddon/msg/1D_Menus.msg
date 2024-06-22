@@ -167,7 +167,10 @@
 }
 
 #message:1D:(Menus_StarPowerDesc_Focus) {
-	Charge Star Energy.[End]
+	Charge Star Energy.[BR]
+	Can be used once per battle.[BR]
+	SE recharges passively[BR]
+	3 times per battle.[End]
 }
 
 #message:1D:(Menus_StarPowerDesc_Refresh) {

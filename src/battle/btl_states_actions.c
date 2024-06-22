@@ -326,6 +326,7 @@ void btl_state_update_normal_start(void) {
             battleStatus->camMovementScriptID = script->id;
             gBattleSubState = BTL_SUBSTATE_NORMAL_START_CREATE_ENEMIES;
             battleStatus->turnCounter = 0;
+            battleStatus->focusUses = 0;
             break;
         case BTL_SUBSTATE_NORMAL_START_CREATE_ENEMIES:
             statusBar = &gStatusBar;
@@ -1695,9 +1696,12 @@ void btl_state_update_end_turn(void) {
 
         btl_set_player_idle_anims();
         gBattleStatus.flags1 &= ~BS_FLAGS1_PLAYER_DEFENDING;
-        playerData->starPower += SP_PER_SEG;
-        if (playerData->starPower > playerData->maxStarPower * SP_PER_BAR) {
-            playerData->starPower = playerData->maxStarPower * SP_PER_BAR;
+        // New in armageddon: Passive SP regen 3 times per battle. TODO: Make a badge to remove this.
+        if (gBattleStatus.turnCounter <= 3) {
+            playerData->starPower += SP_PER_SEG;
+            if (playerData->starPower > playerData->maxStarPower * SP_PER_BAR) {
+                playerData->starPower = playerData->maxStarPower * SP_PER_BAR;
+            }
         }
 
         for (i = 0; i < ARRAY_COUNT(battleStatus->enemyActors); i++) {

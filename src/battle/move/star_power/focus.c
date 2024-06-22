@@ -19,7 +19,10 @@ API_CALLABLE(N(RestoreStarPowerFromPlayer)) {
 
     script->varTable[0] = RESTORE_NOT_FULL;
 
-    if (playerData->starPower >= playerData->maxStarPower * SP_PER_BAR) {
+    gBattleStatus.focusUses++;
+
+    if (playerData->starPower >= playerData->maxStarPower * SP_PER_BAR
+        || gBattleStatus.focusUses > get_focus_cap()) {
         script->varTable[0] = RESTORE_ALREADY_FULL;
         return ApiStatus_DONE2;
     }

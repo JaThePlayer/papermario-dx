@@ -34,6 +34,9 @@ b32 is_orb_of_lug();
 
 s32 get_bp_cost_of_move(s32 moveId);
 
+/// Returns the cap of how many times Focus can be used in one battle
+s32 get_focus_cap();
+
 // EVENTS
 
 /// Called when an actor gets constructed, used to zero-initialize new fields.
