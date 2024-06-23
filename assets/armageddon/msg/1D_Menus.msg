@@ -167,9 +167,9 @@
 }
 
 #message:1D:(Menus_StarPowerDesc_Focus) {
-	Charge Star Energy.[BR]
+	Charge Star Energy by 4/8 SE.[BR]
 	Can be used once per battle.[BR]
-	SE recharges passively[BR]
+	SE recharges passively by 1/8[BR]
 	3 times per battle.[End]
 }
 
@@ -2730,4 +2730,9 @@
 
 #message:1D:(Menus_BuyWhichOne) {
 	Buy which one?[End]
+}
+
+#message:1D:(Menus_Buzzar_Phase2) {
+	The air is burning! Burn[BR]
+	damage increased by 2.[End]
 }

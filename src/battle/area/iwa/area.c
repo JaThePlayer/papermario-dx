@@ -13,6 +13,8 @@ extern Stage A(iwa_01);
 extern Stage A(iwa_01b);
 extern Stage A(iwa_02);
 
+Vec3i A(vector3D_8021853C) = { 90, 70, 0 };
+
 Formation A(Formation_07) = { // iwa_00
     ACTOR_BY_IDX(A(monty_mole), BTL_POS_GROUND_B, 10),
     ACTOR_BY_IDX(A(rokitu), BTL_POS_AIR_C, 9),
@@ -63,8 +65,7 @@ Formation A(Formation_12) = { // iwa_01, quake ambush
     ACTOR_BY_IDX(A(red_paragoomba), BTL_POS_AIR_D, 5),
 };
 
-
-s32 A(Formation_05_Items)[] = { ITEM_HP_PLUS_A, ITEM_POWER_PLUS_A };
+s16 A(Formation_05_Items)[] = { ITEM_HP_PLUS_A, ITEM_POWER_PLUS_A };
 
 Formation A(Formation_05) = { // iwa_02
     ACTOR_BY_IDX_ITEMS(A(monty_mole), BTL_POS_GROUND_B, 10, A(Formation_05_Items)),
@@ -122,8 +123,6 @@ Formation A(Formation_0A) = { // iwa_04
     ACTOR_BY_IDX(A(rokitu), BTL_POS_AIR_B, 9),
     ACTOR_BY_IDX(A(monty_mole), BTL_POS_GROUND_B, 8),
 };
-
-Vec3i A(vector3D_8021853C) = { 90, 70, 0 };
 
 Formation A(Formation_0C) = {
     ACTOR_BY_POS(A(buzzar), A(vector3D_8021853C), 10),

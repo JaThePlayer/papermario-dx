@@ -327,6 +327,7 @@ void btl_state_update_normal_start(void) {
             gBattleSubState = BTL_SUBSTATE_NORMAL_START_CREATE_ENEMIES;
             battleStatus->turnCounter = 0;
             battleStatus->focusUses = 0;
+            battleStatus->extraBurnDamage = 0;
             break;
         case BTL_SUBSTATE_NORMAL_START_CREATE_ENEMIES:
             statusBar = &gStatusBar;

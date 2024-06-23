@@ -16,6 +16,13 @@
 #define CHARGE_STATUS 8
 #define POISON_STATUS 9
 
+#define STATUS_KEY_CUSTOM(status) (0x100 + status)
+#define STATUS_TURN_MOD_CUSTOM(status) (0x200 + status)
+
+#define STATUS_TABLE_CUSTOM_ENTRY(status, chance, turnMod) \
+    STATUS_KEY_CUSTOM(status), chance, \
+    STATUS_TURN_MOD_CUSTOM(status), turnMod
+
 // A function which gets called when a custom status gets applied
 typedef void(*StatusFxApplyFunc)(Actor* target, Vec3f position, u8 potency);
 
@@ -78,7 +85,7 @@ void custom_status_decrement(Actor* actor);
 // Decrements all custom statuses for the given actor. For enemies, this is called after they attack.
 void custom_status_decrement_late(Actor* actor);
 
-s32 try_inflict_custom_status(Actor* actor, Vec3f position, s8 customStatusId, u8 turns, u8 potency, u8 chance);
+s32 try_inflict_custom_status(Actor* actor, Vec3f position, s8 customStatusId, u8 turns, u8 potency, s32 chance);
 
 void set_next_attack_custom_status(s8 customStatusId, u8 turns, u8 potency, u8 chance);
 

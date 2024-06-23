@@ -49,8 +49,9 @@ s8 custom_status_get_potency(Actor* actor, s8 customStatusId) {
     return 0;
 }
 
-static void custom_status_decrease_turn_count_impl(Actor* actor, u8 newTurns, StatusInfo* status, StatusType* statusType) {
-    if (statusType->onDecrement) {
+static void custom_status_decrease_turn_count_impl(Actor* actor, u8 newTurns, StatusInfo* status, StatusType* statusType,
+                                                   b32 callOnDecrement) {
+    if (callOnDecrement && statusType->onDecrement) {
         statusType->onDecrement(actor);
     }
 
@@ -81,7 +82,7 @@ static void custom_status_decrement_impl(Actor* actor, s8 isLate) {
             if (status->turns < decrement)
                 decrement = status->turns;
 
-            custom_status_decrease_turn_count_impl(actor, status->turns - decrement, status, statusType);
+            custom_status_decrease_turn_count_impl(actor, status->turns - decrement, status, statusType, TRUE);
         }
     }
 }
@@ -104,10 +105,35 @@ void custom_status_zero_initialize(Actor* actor) {
     }
 }
 
-s32 try_inflict_custom_status(Actor* actor, Vec3f position, s8 customStatusId, u8 turns, u8 potency, u8 chance) {
+s32 try_inflict_custom_status(Actor* actor, Vec3f position, s8 customStatusId, u8 turns, u8 potency, s32 chance) {
     StatusInfo* status = &actor->customStatuses[customStatusId];
     StatusType* statusType = &gCustomStatusTypes[customStatusId];
-    // todo: resistance
+
+    // Read status table
+    s32 actorChance = 100;
+    s32 actorTurnMod = 0;
+    s32* statusTable = actor->statusTable;
+
+    if (chance <= 100) { // allow passing >100 chance to prevent status table from doing anything (like for copying status)
+        while (statusTable[DICTIONARY_KEY] != STATUS_END) {
+            if (statusTable[DICTIONARY_KEY] == STATUS_KEY_CUSTOM(customStatusId)) {
+                actorChance = statusTable[DICTIONARY_VALUE];
+            }
+
+            if (statusTable[DICTIONARY_KEY] == STATUS_TURN_MOD_CUSTOM(customStatusId)) {
+                actorTurnMod = statusTable[DICTIONARY_VALUE];
+            }
+            statusTable += DICTIONARY_SIZE;
+        }
+    }
+
+    chance = (chance * actorChance) / 100;
+
+    if (chance <= 0 || chance < rand_int(100)) {
+        return FALSE;
+    }
+
+    turns += actorTurnMod;
 
     s8 stackBehaviour = statusType->stackingBehaviour;
 
@@ -291,7 +317,7 @@ void custom_status_clear(Actor* actor, s8 customStatusId) {
     StatusType* statusType = &gCustomStatusTypes[customStatusId];
 
     if (status->turns > 0)
-        custom_status_decrease_turn_count_impl(actor, 0, status, statusType);
+        custom_status_decrease_turn_count_impl(actor, 0, status, statusType, FALSE);
 }
 
 s32 custom_status_clear_debuffs(Actor* actor) {
@@ -304,7 +330,7 @@ s32 custom_status_clear_debuffs(Actor* actor) {
 
         if (status->turns > 0 && statusType->isDebuff) {
             amt += 1;
-            custom_status_decrease_turn_count_impl(actor, 0, status, statusType);
+            custom_status_decrease_turn_count_impl(actor, 0, status, statusType, FALSE);
         }
     }
 

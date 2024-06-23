@@ -29,6 +29,8 @@ void N(on_decrement)(Actor* target) {
         dmg *= (info->turns + 1) / 2;
     }
 
+    dmg += gBattleStatus.extraBurnDamage;
+
     target->state.goalPos = target->curPos;
 
     if (target == gBattleStatus.playerActor) {

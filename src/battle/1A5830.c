@@ -3495,7 +3495,7 @@ API_CALLABLE(CopyStatusEffects) {
     {
         StatusInfo* status = &actorFrom->customStatuses[i];
         if (status->turns > 0) {
-            try_inflict_custom_status(actorTo, actorTo->curPos, i, status->turns, status->potency, 100);
+            try_inflict_custom_status(actorTo, actorTo->curPos, i, status->turns, status->potency, 255);
         }
     }
 

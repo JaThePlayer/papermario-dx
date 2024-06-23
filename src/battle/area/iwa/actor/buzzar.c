@@ -3,6 +3,8 @@
 #include "battle/action_cmd/break_free.h"
 #include "battle/action_cmd/whirlwind.h"
 #include "sprite/player.h"
+#include "misc_patches/custom_status.h"
+#include "misc_patches/misc_patches.h"
 
 #define NAMESPACE A(buzzar)
 
@@ -37,15 +39,16 @@ enum N(ActorVars) {
     AVAL_Move_GrappleThenFling  = 3,
     AVAL_Move_FlingFeather      = 4,
     AVAL_Move_GrappleThenWind   = 5,
-    AVAR_Unused_1               = 1,
+
+    AVAR_FireEffect             = 1,
     AVAR_Unused_2               = 2,
     AVAR_Unused_3               = 3,
 };
 
 enum N(ActorParams) {
     DMG_FEATHER     = 2,
-    DMG_SWIPE       = 3,
-    DMG_DROP        = 4,
+    DMG_SWIPE       = 5,
+    DMG_DROP        = 6,
 };
 
 s32 N(DefaultAnims)[] = {
@@ -80,18 +83,19 @@ s32 N(StatusTable)[] = {
     STATUS_KEY_FEAR,                0,
     STATUS_KEY_STATIC,              0,
     STATUS_KEY_PARALYZE,           70,
-    STATUS_KEY_SHRINK,             75,
+    STATUS_KEY_SHRINK,              0,
     STATUS_KEY_STOP,               70,
     STATUS_TURN_MOD_DEFAULT,        0,
     STATUS_TURN_MOD_SLEEP,         -1,
     STATUS_TURN_MOD_POISON,         0,
     STATUS_TURN_MOD_FROZEN,         0,
-    STATUS_TURN_MOD_DIZZY,          1,
+    STATUS_TURN_MOD_DIZZY,         -1,
     STATUS_TURN_MOD_FEAR,           0,
     STATUS_TURN_MOD_STATIC,         0,
     STATUS_TURN_MOD_PARALYZE,      -1,
     STATUS_TURN_MOD_SHRINK,        -1,
     STATUS_TURN_MOD_STOP,          -1,
+    STATUS_TABLE_CUSTOM_ENTRY(BURN_STATUS, 0, 0),
     STATUS_END,
 };
 
@@ -162,7 +166,7 @@ ActorBlueprint NAMESPACE = {
     .flags = ACTOR_FLAG_FLYING,
     .type = ACTOR_TYPE_BUZZAR,
     .level = ACTOR_LEVEL_BUZZAR,
-    .maxHP = 40,
+    .maxHP = 50,
     .partCount = ARRAY_COUNT(N(ActorParts)),
     .partsData = N(ActorParts),
     .initScript = &N(EVS_Init),
@@ -181,8 +185,133 @@ ActorBlueprint NAMESPACE = {
     .statusTextOffset = { 1, 58 },
 };
 
+#define FLING(partId) \
+    Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2) \
+    Add(LVar0, -30) \
+    Add(LVar1, 25) \
+    Call(SetPartPos, ACTOR_SELF, partId, LVar0, LVar1, LVar2) \
+    Wait(15) \
+    Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2) \
+    Add(LVar0, 24) \
+    Add(LVar1, 24) \
+    PlayEffect(EFFECT_SHINY_FLARE, 0, LVar0, LVar1, LVar2, Float(0.6), 0, 0) \
+    Call(PlaySoundAtActor, ACTOR_SELF, SOUND_SMALL_LENS_FLARE) \
+    Wait(10) \
+    Call(SetPartSounds, ACTOR_SELF, partId, ACTOR_SOUND_FLY, SOUND_NONE, SOUND_NONE) \
+    Call(UseBattleCamPreset, BTL_CAM_DEFAULT) \
+    Call(MoveBattleCamOver, 20) \
+    Thread \
+        Wait(20) \
+        Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Buzzar_Anim01) \
+    EndThread \
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Buzzar_Anim10) \
+    Call(SetPartRotation, ACTOR_SELF, partId, 0, 0, -45) \
+    Wait(10) \
+    Call(SetAnimation, ACTOR_SELF, partId, ANIM_Buzzar_Anim14) \
+    Call(SetPartFlagBits, ACTOR_SELF, partId, ACTOR_PART_FLAG_INVISIBLE, FALSE) \
+    Call(SetPartMoveSpeed, ACTOR_SELF, partId, Float(6.0)) \
+    Call(SetPartJumpGravity, ACTOR_SELF, partId, Float(0.1)) \
+    Call(PlaySoundAtActor, ACTOR_SELF, SOUND_BUZZAR_THROW) \
+    Call(EnemyTestTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_NO_CONTACT, 0, 2, BS_FLAGS1_INCLUDE_POWER_UPS) \
+    Switch(LVar0) \
+        CaseOrEq(HIT_RESULT_MISS) \
+        CaseOrEq(HIT_RESULT_LUCKY) \
+            Set(LVarA, LVar0) \
+            Call(SetGoalToTarget, ACTOR_SELF) \
+            Call(GetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2) \
+            Sub(LVar0, 30) \
+            Call(FlyPartTo, ACTOR_SELF, partId, LVar0, 5, LVar2, 9, 0, EASING_LINEAR) \
+            Call(SetAnimation, ACTOR_SELF, partId, ANIM_Buzzar_Anim15) \
+            Thread \
+                Wait(10) \
+                Call(SetAnimation, ACTOR_SELF, partId, ANIM_Buzzar_Anim14) \
+                Wait(20) \
+                Call(SetPartFlagBits, ACTOR_SELF, partId, ACTOR_PART_FLAG_INVISIBLE, TRUE) \
+            EndThread \
+            Wait(10) \
+            Call(func_8024ECF8, BTL_CAM_MODEY_0, BTL_CAM_MODEX_1, FALSE) \
+            Wait(10) \
+            IfEq(LVarA, HIT_RESULT_LUCKY) \
+                Call(EnemyTestTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_TRIGGER_LUCKY, 0, 0, 0) \
+            EndIf \
+            Return \
+        EndCaseGroup \
+        CaseDefault \
+    EndSwitch \
+    Call(func_8024ECF8, BTL_CAM_MODEY_0, BTL_CAM_MODEX_1, FALSE) \
+    Call(SetGoalToTarget, ACTOR_SELF) \
+    Call(GetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2) \
+    Call(FlyPartTo, ACTOR_SELF, partId, LVar0, LVar1, LVar2, 6, 0, EASING_LINEAR) \
+    Wait(2) \
+    Call(SetNextAttackCustomStatus, POISON_STATUS, 3, 1, 100) \
+    Call(EnemyDamageTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_NO_CONTACT, 0, 0, DMG_FEATHER, BS_FLAGS1_TRIGGER_EVENTS) \
+    Set(LVarF, LVar0) \
+    Switch(LVarF) \
+        CaseDefault \
+            Thread \
+                Call(SetPartRotation, ACTOR_SELF, partId, 0, 45, -90) \
+                Call(GetPartOffset, ACTOR_SELF, partId, LVar0, LVar1, LVar2) \
+                Sub(LVar0, 5) \
+                Set(LVar1, 4) \
+                Call(SetPartJumpGravity, ACTOR_SELF, partId, Float(1.5)) \
+                Call(JumpPartTo, ACTOR_SELF, partId, LVar0, LVar1, LVar2, 10, TRUE) \
+                Call(SetPartRotation, ACTOR_SELF, partId, 0, 90, -90) \
+                Wait(8) \
+                Loop(15) \
+                    Call(SetPartFlagBits, ACTOR_SELF, partId, ACTOR_PART_FLAG_INVISIBLE, FALSE) \
+                    Wait(1) \
+                    Call(SetPartFlagBits, ACTOR_SELF, partId, ACTOR_PART_FLAG_INVISIBLE, TRUE) \
+                    Wait(1) \
+                EndLoop \
+            EndThread \
+            Wait(30) \
+    EndSwitch \
+    Return \
+    End \
+
+EvtScript N(EVS_Attack_FeatherFling_Fling1) = { FLING(PRT_FEATHER_1) };
+EvtScript N(EVS_Attack_FeatherFling_Fling2) = { FLING(PRT_FEATHER_2) };
+EvtScript N(EVS_Attack_FeatherFling_Fling3) = { FLING(PRT_FEATHER_3) };
+
+API_CALLABLE(N(update_flame_pos_thread)) {
+    s32 actorId = script->owner1.actorID;
+    Actor* actor = get_actor(actorId);
+
+    EffectInstance* fx = (EffectInstance*)actor->state.varTable[AVAR_FireEffect];
+
+    if (fx == NULL)
+        return ApiStatus_BLOCK;
+
+    FlameFXData* data = fx->data.flame;
+    data->pos.x = actor->curPos.x;
+    data->pos.y = actor->curPos.y;
+
+    return ApiStatus_BLOCK;
+}
+
+API_CALLABLE(N(handle_firewall)) {
+    fx_underwater(1, -50.0f, 20.0f, 0.0f, 1.0f, 120);
+    return ApiStatus_DONE2;
+}
+
+EvtScript N(EVS_Firewall) = {
+    Call(N(handle_firewall))
+    Return
+    End
+};
+
+API_CALLABLE(N(SetFlameSize)) {
+    Bytecode* args = script->ptrReadPos;
+    FlameFXData* data = ((EffectInstance*) evt_get_variable(script, *args++))->data.flame;
+    f32 scale = evt_get_float_variable(script, *args++);
+
+    data->scaleH = scale;
+    data->scaleW = scale;
+    return ApiStatus_DONE2;
+}
+
 EvtScript N(EVS_Init) = {
-    Call(SetActorVar, ACTOR_SELF, AVAR_Unused_1, 0)
+    Call(SetActorVar, ACTOR_SELF, AVAR_FireEffect, 0)
     Call(SetActorVar, ACTOR_SELF, AVAR_NextMove, AVAL_Move_WindBlast)
     Call(SetActorVar, ACTOR_SELF, AVAR_Unused_2, 0)
     Call(SetActorVar, ACTOR_SELF, AVAR_Unused_3, 0)
@@ -210,6 +339,30 @@ EvtScript N(EVS_Idle) = {
     End
 };
 
+#define FLAME_LERP_MAX 60
+
+EvtScript N(EVS_OnDeath) = {
+    GET_ACTOR_VAR(AVAR_FireEffect, LVarA)
+    IfNe(LVarA, NULL)
+        SET_ACTOR_VAR(AVAR_FireEffect, NULL)
+        Call(MakeLerp, FLAME_LERP_MAX, 10, 20, EASING_QUADRATIC_IN)
+        Loop(0)
+            Call(UpdateLerp)
+            MulF(LVar0, Float(0.01))
+            Call(N(SetFlameSize), LVarA, LVar0)
+            Wait(1)
+            IfEq(LVar1, 0)
+                BreakLoop
+            EndIf
+        EndLoop
+        Wait(1)
+        Call(RemoveEffect, LVarA)
+    EndIf
+
+    Return
+    End
+};
+
 EvtScript N(EVS_HandleEvent) = {
     Call(UseIdleAnimation, ACTOR_SELF, FALSE)
     Call(GetLastEvent, ACTOR_SELF, LVar0)
@@ -233,6 +386,7 @@ EvtScript N(EVS_HandleEvent) = {
             SetConst(LVar1, ANIM_Buzzar_Anim0B)
             SetConst(LVar2, -1)
             ExecWait(EVS_Enemy_BurnHit)
+            ExecWait(N(EVS_OnDeath))
             SetConst(LVar0, PRT_MAIN)
             SetConst(LVar1, ANIM_Buzzar_Anim0B)
             ExecWait(EVS_Enemy_Death)
@@ -249,6 +403,7 @@ EvtScript N(EVS_HandleEvent) = {
             SetConst(LVar0, PRT_MAIN)
             SetConst(LVar1, ANIM_Buzzar_Anim0B)
             ExecWait(EVS_Enemy_ShockHit)
+            ExecWait(N(EVS_OnDeath))
             SetConst(LVar0, PRT_MAIN)
             SetConst(LVar1, ANIM_Buzzar_Anim0B)
             ExecWait(EVS_Enemy_Death)
@@ -265,6 +420,7 @@ EvtScript N(EVS_HandleEvent) = {
             SetConst(LVar1, ANIM_Buzzar_Anim0B)
             ExecWait(EVS_Enemy_Hit)
             Wait(10)
+            ExecWait(N(EVS_OnDeath))
             SetConst(LVar0, PRT_MAIN)
             SetConst(LVar1, ANIM_Buzzar_Anim0B)
             ExecWait(EVS_Enemy_Death)
@@ -280,13 +436,223 @@ EvtScript N(EVS_HandleEvent) = {
     End
 };
 
-EvtScript N(EVS_TakeTurn) = {
+API_CALLABLE(N(enable_fog)) {
+    set_world_fog_dist(980, 1000);
+    set_world_fog_color(255, 110, 10, 255);
+    enable_world_fog();
+
+    return ApiStatus_DONE2;
+}
+
+extern s32 BattleMessages[];
+
+API_CALLABLE(N(show_phase_2_popup)) {
+    BattleMessages[BTL_MSG_CUSTOM] = MSG_Menus_Buzzar_Phase2;
+    btl_show_battle_message(BTL_MSG_CUSTOM, 90);
+
+    gBattleStatus.extraBurnDamage = 2;
+
+    return ApiStatus_DONE2;
+}
+
+EvtScript N(EVS_BeginPhaseTwo) = {
     Call(UseIdleAnimation, ACTOR_SELF, FALSE)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
-    Call(GetStatusFlags, ACTOR_SELF, LVar0)
-    IfFlag(LVar0, STATUS_FLAG_SHRINK)
-        Call(SetActorVar, ACTOR_SELF, AVAR_NextMove, AVAL_Move_ClawSwipe)
+
+    Call(SetActorVar, ACTOR_SELF, AVAR_NextMove, AVAL_Move_WindBlast)
+
+    Call(N(handle_firewall))
+    Call(N(enable_fog))
+
+    Call(PlaySoundAtActor, ACTOR_SELF, SOUND_ROARING_FIRE)
+    Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
+    Sub(LVar2, 4)
+    PlayEffect(EFFECT_FLAME, FX_FLAME_RED, LVar0, LVar1, LVar2, Float(1), LVarA, 0)
+
+    Call(MakeLerp, 10, FLAME_LERP_MAX, 60, EASING_QUADRATIC_IN)
+    Loop(0)
+        Call(UpdateLerp)
+        MulF(LVar0, Float(0.01))
+        Call(N(SetFlameSize), LVarA, LVar0)
+        Wait(1)
+        IfEq(LVar1, 0)
+            BreakLoop
+        EndIf
+    EndLoop
+
+    SET_ACTOR_VAR(AVAR_FireEffect, LVarA)
+
+    Wait(40)
+    Call(N(show_phase_2_popup))
+    Call(WaitForMessageBoxDone)
+
+    Return
+    End
+};
+
+EvtScript N(EVS_Attack_ClawSwipeIntoFling) = {
+    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
+    Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
+    Call(SetGoalToTarget, ACTOR_SELF)
+    Call(UseBattleCamPreset, BTL_CAM_ENEMY_APPROACH)
+    Call(SetBattleCamZoom, 240)
+    Call(BattleCamTargetActor, ACTOR_SELF)
+    Call(func_8024ECF8, BTL_CAM_MODEY_MINUS_1, BTL_CAM_MODEX_1, FALSE)
+    Call(SetActorSpeed, ACTOR_SELF, Float(4.0))
+    Call(SetGoalToTarget, ACTOR_SELF)
+    Call(AddGoalPos, ACTOR_SELF, 60, 15, 0)
+    Call(GetAnimation, ACTOR_SELF, PRT_MAIN, LVar0)
+    Switch(LVar0)
+        CaseOrEq(ANIM_Buzzar_Anim01)
+        CaseOrEq(ANIM_Buzzar_Anim02)
+        CaseOrEq(ANIM_Buzzar_Anim0D)
+        CaseOrEq(ANIM_Buzzar_Anim16)
+        CaseOrEq(ANIM_Buzzar_Anim17)
+            Loop(0)
+                Call(GetPartAnimNotify, ACTOR_SELF, PRT_MAIN, LVar0)
+                IfEq(LVar0, 1)
+                    BreakLoop
+                EndIf
+                Wait(1)
+            EndLoop
+        EndCaseGroup
+    EndSwitch
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Buzzar_Anim02)
+    Call(FlyToGoal, ACTOR_SELF, 0, -15, EASING_COS_IN_OUT)
+    Call(EnemyTestTarget, ACTOR_SELF, LVar0, 0, 0, 3, BS_FLAGS1_INCLUDE_POWER_UPS)
+    Switch(LVar0)
+        CaseOrEq(HIT_RESULT_MISS)
+        CaseOrEq(HIT_RESULT_LUCKY)
+            Set(LVarA, LVar0)
+            Wait(10)
+            Call(PlaySoundAtActor, ACTOR_SELF, SOUND_BUZZAR_WINDUP)
+            Call(SetActorSpeed, ACTOR_SELF, Float(5.0))
+            Call(SetActorJumpGravity, ACTOR_SELF, Float(1.8))
+            Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
+            Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
+            Call(JumpToGoal, ACTOR_SELF, 10, FALSE, TRUE, FALSE)
+            Call(PlaySoundAtActor, ACTOR_SELF, SOUND_BUZZAR_DIVE)
+            Call(SetActorSounds, ACTOR_SELF, ACTOR_SOUND_FLY, SOUND_NONE, SOUND_NONE)
+            Call(SetGoalToTarget, ACTOR_SELF)
+            Call(AddGoalPos, ACTOR_SELF, -45, -20, 0)
+            Call(SetActorSpeed, ACTOR_SELF, Float(6.0))
+            Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Buzzar_Anim18)
+            Call(FlyToGoal, ACTOR_SELF, 12, -12, EASING_LINEAR)
+            Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Buzzar_Anim01)
+            Wait(10)
+            Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
+            IfEq(LVarA, HIT_RESULT_LUCKY)
+                Call(EnemyTestTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_TRIGGER_LUCKY, 0, 0, 0)
+            EndIf
+            ExecWait(N(EVS_FlyToHome))
+            Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
+            Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+            Return
+        EndCaseGroup
+    EndSwitch
+    Wait(10)
+    Call(PlaySoundAtActor, ACTOR_SELF, SOUND_BUZZAR_WINDUP)
+    Call(SetActorSpeed, ACTOR_SELF, Float(5.0))
+    Call(SetActorJumpGravity, ACTOR_SELF, Float(1.8))
+    Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
+    Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
+    Call(JumpToGoal, ACTOR_SELF, 10, FALSE, TRUE, FALSE)
+    Call(PlaySoundAtActor, ACTOR_SELF, SOUND_BUZZAR_DIVE)
+    Call(SetActorSounds, ACTOR_SELF, ACTOR_SOUND_FLY, SOUND_NONE, SOUND_NONE)
+    Call(SetGoalToTarget, ACTOR_SELF)
+    Call(AddGoalPos, ACTOR_SELF, -5, -10, 0)
+    Call(SetActorSpeed, ACTOR_SELF, Float(6.0))
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Buzzar_Anim18)
+    Call(FlyToGoal, ACTOR_SELF, 8, 0, EASING_LINEAR)
+    Wait(2)
+    Call(EnemyDamageTarget, ACTOR_SELF, LVar0, 0, 0, 0, DMG_SWIPE, BS_FLAGS1_TRIGGER_EVENTS)
+    Set(LVarF, LVar0)
+    Switch(LVarF)
+        CaseOrEq(HIT_RESULT_HIT)
+        CaseOrEq(HIT_RESULT_NO_DAMAGE)
+            Call(GetAnimation, ACTOR_SELF, PRT_MAIN, LVar0)
+            Switch(LVar0)
+                CaseOrEq(ANIM_Buzzar_Anim01)
+                CaseOrEq(ANIM_Buzzar_Anim02)
+                CaseOrEq(ANIM_Buzzar_Anim0D)
+                CaseOrEq(ANIM_Buzzar_Anim16)
+                CaseOrEq(ANIM_Buzzar_Anim17)
+                    Loop(0)
+                        Call(GetPartAnimNotify, ACTOR_SELF, PRT_MAIN, LVar0)
+                        IfEq(LVar0, 1)
+                            BreakLoop
+                        EndIf
+                        Wait(1)
+                    EndLoop
+                EndCaseGroup
+            EndSwitch
+            Call(ResetActorSounds, ACTOR_SELF, ACTOR_SOUND_FLY)
+            Call(SetActorSounds, ACTOR_SELF, ACTOR_SOUND_FLY_INCREMENT, -14, 0)
+            Call(SetGoalToTarget, ACTOR_SELF)
+            Call(AddGoalPos, ACTOR_SELF, 50, 10, 0)
+            Call(SetActorSpeed, ACTOR_SELF, Float(6.0))
+            Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Buzzar_Anim02)
+            Call(FlyToGoal, ACTOR_SELF, 0, 0, EASING_LINEAR)
+            Wait(10)
+
+            // Feather fling
+            Exec(N(EVS_Attack_FeatherFling_Fling1))
+            Wait(25)
+            Exec(N(EVS_Attack_FeatherFling_Fling2))
+            Wait(25)
+            ExecWait(N(EVS_Attack_FeatherFling_Fling3))
+
+            Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
+            ExecWait(N(EVS_FlyToHome))
+        EndCaseGroup
+    EndSwitch
+    Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
+    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Return
+    End
+};
+
+EvtScript N(EVS_TakeTurn) = {
+    ChildThread
+        Call(N(update_flame_pos_thread))
+    EndChildThread
+
+    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
+
+    GET_ACTOR_VAR(AVAR_FireEffect, LVar0)
+    IfEq(LVar0, NULL)
+        // See if we're eligible for phase 2
+        Call(GetActorHP, ACTOR_SELF, LVar0)
+        IfLt(LVar0, 30)
+            ExecWait(N(EVS_BeginPhaseTwo))
+        EndIf
     EndIf
+
+    GET_ACTOR_VAR(AVAR_FireEffect, LVar0)
+    IfNe(LVar0, NULL)
+        // Phase 2
+        // Simpler AI which focuses more on feather fling and fire wind
+        Call(GetActorVar, ACTOR_SELF, AVAR_NextMove, LVar0)
+        Switch(LVar0)
+            CaseEq(AVAL_Move_WindBlast) // t0
+                Call(SetActorVar, ACTOR_SELF, AVAR_NextMove, AVAL_Move_FlingFeather)
+                ExecWait(N(EVS_Attack_WindBlast))
+            CaseEq(AVAL_Move_FlingFeather) // t1
+                Call(SetActorVar, ACTOR_SELF, AVAR_NextMove, AVAL_Move_ClawSwipe)
+                ExecWait(N(EVS_Attack_FeatherFling))
+            CaseEq(AVAL_Move_ClawSwipe) // t2
+                Call(SetActorVar, ACTOR_SELF, AVAR_NextMove, AVAL_Move_WindBlast)
+                ExecWait(N(EVS_Attack_ClawSwipeIntoFling))
+        EndSwitch
+
+        Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
+        Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+        Return
+    EndIf
+
+    // Phase 1
     Call(GetActorVar, ACTOR_SELF, AVAR_NextMove, LVar0)
     Switch(LVar0)
         CaseEq(AVAL_Move_WindBlast)
@@ -357,6 +723,7 @@ EvtScript N(EVS_Attack_WindBlast) = {
                     Wait(15)
                     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Buzzar_Anim13)
                     Wait(6)
+                    ExecWait(N(EVS_Firewall))
                     Call(PlaySoundAtActor, ACTOR_SELF, SOUND_BUZZAR_WHIRLWIND)
                     Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
                     Call(MoveBattleCamOver, 50)
@@ -393,6 +760,7 @@ EvtScript N(EVS_Attack_WindBlast) = {
                     Wait(15)
                     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Buzzar_Anim13)
                     Wait(6)
+                    ExecWait(N(EVS_Firewall))
                     Call(PlaySoundAtActor, ACTOR_SELF, SOUND_BUZZAR_WHIRLWIND)
                     Call(SetBattleFlagBits, BS_FLAGS1_4000, FALSE)
                     Call(action_command_whirlwind_start, 0, 88 * DT, 3)
@@ -458,6 +826,7 @@ EvtScript N(EVS_Attack_WindBlast) = {
     Wait(15)
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Buzzar_Anim13)
     Wait(6)
+    ExecWait(N(EVS_Firewall))
     Call(PlaySoundAtActor, ACTOR_SELF, SOUND_BUZZAR_WHIRLWIND)
     Call(SetBattleFlagBits, BS_FLAGS1_4000, FALSE)
     Call(action_command_whirlwind_start, 0, 88 * DT, 3)
@@ -515,14 +884,17 @@ EvtScript N(EVS_Attack_WindBlast) = {
     Call(GetActionQuality, LVar1)
     Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
     Call(SetGoalToTarget, ACTOR_SELF)
-    Call(EnemyDamageTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_UNBLOCKABLE | DAMAGE_TYPE_MULTIPLE_POPUPS, SUPPRESS_EVENT_ALL, 0, LVar1, BS_FLAGS1_TRIGGER_EVENTS)
+    Call(SetNextAttackCustomStatus, BURN_STATUS, 4, 1, 100)
+    Set(LVar2, LVar1)
+    Mul(LVar2, 2)
+    Call(EnemyDamageTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_UNBLOCKABLE | DAMAGE_TYPE_MULTIPLE_POPUPS | DAMAGE_TYPE_FIRE, SUPPRESS_EVENT_ALL, 0, LVar2, BS_FLAGS1_TRIGGER_EVENTS)
     Call(ActorExists, ACTOR_PARTNER, LVar0)
     IfEq(LVar0, TRUE)
         Wait(3)
         Call(UseIdleAnimation, ACTOR_PARTNER, TRUE)
         Call(SetTargetActor, ACTOR_SELF, ACTOR_PARTNER)
         Call(SetGoalToTarget, ACTOR_SELF)
-        Call(EnemyDamageTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_UNBLOCKABLE | DAMAGE_TYPE_MULTIPLE_POPUPS, SUPPRESS_EVENT_ALL, 0, LVar1, BS_FLAGS1_TRIGGER_EVENTS)
+        Call(EnemyDamageTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_UNBLOCKABLE | DAMAGE_TYPE_MULTIPLE_POPUPS | DAMAGE_TYPE_FIRE, SUPPRESS_EVENT_ALL, 0, LVar1, BS_FLAGS1_TRIGGER_EVENTS)
     EndIf
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Buzzar_Anim01)
     Wait(25)
@@ -565,177 +937,14 @@ EvtScript N(EVS_Attack_FeatherFling) = {
     EndSwitch
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Buzzar_Anim02)
     Call(FlyToGoal, ACTOR_SELF, 0, -15, EASING_COS_IN_OUT)
-    Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-    Add(LVar0, -30)
-    Add(LVar1, 25)
-    Call(SetPartPos, ACTOR_SELF, PRT_FEATHER_1, LVar0, LVar1, LVar2)
-    Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-    Add(LVar0, -30)
-    Add(LVar1, 35)
-    Call(SetPartPos, ACTOR_SELF, PRT_FEATHER_2, LVar0, LVar1, LVar2)
-    Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-    Add(LVar0, -20)
-    Add(LVar1, 25)
-    Call(SetPartPos, ACTOR_SELF, PRT_FEATHER_3, LVar0, LVar1, LVar2)
-    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Buzzar_Anim0E)
-    Wait(15)
-    Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-    Add(LVar0, 24)
-    Add(LVar1, 24)
-    PlayEffect(EFFECT_SHINY_FLARE, 0, LVar0, LVar1, LVar2, Float(0.6), 0, 0)
-    Call(PlaySoundAtActor, ACTOR_SELF, SOUND_SMALL_LENS_FLARE)
-    Wait(10)
-    Call(SetPartSounds, ACTOR_SELF, PRT_FEATHER_1, ACTOR_SOUND_FLY, SOUND_NONE, SOUND_NONE)
-    Call(SetPartSounds, ACTOR_SELF, PRT_FEATHER_2, ACTOR_SOUND_FLY, SOUND_NONE, SOUND_NONE)
-    Call(SetPartSounds, ACTOR_SELF, PRT_FEATHER_3, ACTOR_SOUND_FLY, SOUND_NONE, SOUND_NONE)
-    Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
-    Call(MoveBattleCamOver, 20)
-    Thread
-        Wait(20)
-        Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Buzzar_Anim01)
-    EndThread
-    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Buzzar_Anim10)
-    Call(SetPartRotation, ACTOR_SELF, PRT_FEATHER_1, 0, 0, -45)
-    Call(SetPartRotation, ACTOR_SELF, PRT_FEATHER_2, 0, 0, -45)
-    Call(SetPartRotation, ACTOR_SELF, PRT_FEATHER_3, 0, 0, -45)
-    Wait(10)
-    Call(SetAnimation, ACTOR_SELF, PRT_FEATHER_1, ANIM_Buzzar_Anim14)
-    Call(SetAnimation, ACTOR_SELF, PRT_FEATHER_2, ANIM_Buzzar_Anim14)
-    Call(SetAnimation, ACTOR_SELF, PRT_FEATHER_3, ANIM_Buzzar_Anim14)
-    Call(SetPartFlagBits, ACTOR_SELF, PRT_FEATHER_1, ACTOR_PART_FLAG_INVISIBLE, FALSE)
-    Call(SetPartFlagBits, ACTOR_SELF, PRT_FEATHER_2, ACTOR_PART_FLAG_INVISIBLE, FALSE)
-    Call(SetPartFlagBits, ACTOR_SELF, PRT_FEATHER_3, ACTOR_PART_FLAG_INVISIBLE, FALSE)
-    Call(SetPartMoveSpeed, ACTOR_SELF, PRT_FEATHER_1, Float(6.0))
-    Call(SetPartJumpGravity, ACTOR_SELF, PRT_FEATHER_1, Float(0.1))
-    Call(SetPartMoveSpeed, ACTOR_SELF, PRT_FEATHER_2, Float(6.0))
-    Call(SetPartJumpGravity, ACTOR_SELF, PRT_FEATHER_2, Float(0.1))
-    Call(SetPartMoveSpeed, ACTOR_SELF, PRT_FEATHER_3, Float(6.0))
-    Call(SetPartJumpGravity, ACTOR_SELF, PRT_FEATHER_3, Float(0.1))
-    Call(PlaySoundAtActor, ACTOR_SELF, SOUND_BUZZAR_THROW)
-    Call(EnemyTestTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_NO_CONTACT, 0, 2, BS_FLAGS1_INCLUDE_POWER_UPS)
-    Switch(LVar0)
-        CaseOrEq(HIT_RESULT_MISS)
-        CaseOrEq(HIT_RESULT_LUCKY)
-            Set(LVarA, LVar0)
-            Call(SetGoalToTarget, ACTOR_SELF)
-            Thread
-                Call(GetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-                Call(RandInt, 10, LVar3)
-                Sub(LVar3, 30)
-                Add(LVar0, LVar3)
-                Call(FlyPartTo, ACTOR_SELF, PRT_FEATHER_2, LVar0, 5, LVar2, 9, 0, EASING_LINEAR)
-                Call(SetAnimation, ACTOR_SELF, PRT_FEATHER_2, ANIM_Buzzar_Anim15)
-            EndThread
-            Thread
-                Call(GetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-                Call(RandInt, 10, LVar3)
-                Sub(LVar3, 40)
-                Add(LVar0, LVar3)
-                Call(FlyPartTo, ACTOR_SELF, PRT_FEATHER_3, LVar0, 5, LVar2, 9, 0, EASING_LINEAR)
-                Call(SetAnimation, ACTOR_SELF, PRT_FEATHER_3, ANIM_Buzzar_Anim15)
-            EndThread
-            Call(GetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Sub(LVar0, 30)
-            Call(FlyPartTo, ACTOR_SELF, PRT_FEATHER_1, LVar0, 5, LVar2, 9, 0, EASING_LINEAR)
-            Call(SetAnimation, ACTOR_SELF, PRT_FEATHER_1, ANIM_Buzzar_Anim15)
-            Thread
-                Wait(10)
-                Call(SetAnimation, ACTOR_SELF, PRT_FEATHER_1, ANIM_Buzzar_Anim14)
-                Call(SetAnimation, ACTOR_SELF, PRT_FEATHER_2, ANIM_Buzzar_Anim14)
-                Call(SetAnimation, ACTOR_SELF, PRT_FEATHER_3, ANIM_Buzzar_Anim14)
-                Wait(20)
-                Call(SetPartFlagBits, ACTOR_SELF, PRT_FEATHER_1, ACTOR_PART_FLAG_INVISIBLE, TRUE)
-                Call(SetPartFlagBits, ACTOR_SELF, PRT_FEATHER_2, ACTOR_PART_FLAG_INVISIBLE, TRUE)
-                Call(SetPartFlagBits, ACTOR_SELF, PRT_FEATHER_3, ACTOR_PART_FLAG_INVISIBLE, TRUE)
-            EndThread
-            Wait(10)
-            Call(func_8024ECF8, BTL_CAM_MODEY_0, BTL_CAM_MODEX_1, FALSE)
-            Wait(10)
-            IfEq(LVarA, HIT_RESULT_LUCKY)
-                Call(EnemyTestTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_TRIGGER_LUCKY, 0, 0, 0)
-            EndIf
-            ExecWait(N(EVS_FlyToHome))
-            Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-            Call(UseIdleAnimation, ACTOR_SELF, TRUE)
-            Return
-        EndCaseGroup
-        CaseDefault
-    EndSwitch
-    Call(func_8024ECF8, BTL_CAM_MODEY_0, BTL_CAM_MODEX_1, FALSE)
-    Call(SetGoalToTarget, ACTOR_SELF)
-    Thread
-        Call(GetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-        Call(RandInt, 10, LVar3)
-        Sub(LVar3, 10)
-        Add(LVar1, LVar3)
-        Call(FlyPartTo, ACTOR_SELF, PRT_FEATHER_2, LVar0, LVar1, LVar2, 6, 0, EASING_LINEAR)
-    EndThread
-    Thread
-        Call(GetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-        Call(RandInt, 10, LVar3)
-        Add(LVar3, 10)
-        Add(LVar1, LVar3)
-        Call(FlyPartTo, ACTOR_SELF, PRT_FEATHER_3, LVar0, LVar1, LVar2, 6, 0, EASING_LINEAR)
-    EndThread
-    Call(GetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-    Call(FlyPartTo, ACTOR_SELF, PRT_FEATHER_1, LVar0, LVar1, LVar2, 6, 0, EASING_LINEAR)
-    Wait(2)
-    Call(EnemyDamageTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_NO_CONTACT, 0, 0, DMG_FEATHER, BS_FLAGS1_TRIGGER_EVENTS)
-    Set(LVarF, LVar0)
-    Switch(LVarF)
-        CaseDefault
-            Thread
-                Call(SetPartRotation, ACTOR_SELF, PRT_FEATHER_2, 0, 45, 90)
-                Call(GetPartOffset, ACTOR_SELF, PRT_FEATHER_2, LVar0, LVar1, LVar2)
-                Sub(LVar0, 40)
-                Set(LVar1, 2)
-                Call(SetPartJumpGravity, ACTOR_SELF, PRT_FEATHER_2, Float(1.5))
-                Call(JumpPartTo, ACTOR_SELF, PRT_FEATHER_2, LVar0, LVar1, LVar2, 10, TRUE)
-                Call(SetPartRotation, ACTOR_SELF, PRT_FEATHER_2, 0, 80, 90)
-                Wait(8)
-                Loop(15)
-                    Call(SetPartFlagBits, ACTOR_SELF, PRT_FEATHER_2, ACTOR_PART_FLAG_INVISIBLE, FALSE)
-                    Wait(1)
-                    Call(SetPartFlagBits, ACTOR_SELF, PRT_FEATHER_2, ACTOR_PART_FLAG_INVISIBLE, TRUE)
-                    Wait(1)
-                EndLoop
-            EndThread
-            Thread
-                Call(SetPartRotation, ACTOR_SELF, PRT_FEATHER_3, 0, 45, -90)
-                Call(GetPartOffset, ACTOR_SELF, PRT_FEATHER_3, LVar0, LVar1, LVar2)
-                Add(LVar0, 20)
-                Set(LVar1, 4)
-                Call(SetPartJumpGravity, ACTOR_SELF, PRT_FEATHER_3, Float(1.5))
-                Call(JumpPartTo, ACTOR_SELF, PRT_FEATHER_3, LVar0, LVar1, LVar2, 10, TRUE)
-                Call(SetPartRotation, ACTOR_SELF, PRT_FEATHER_3, 0, 90, -90)
-                Wait(8)
-                Loop(15)
-                    Call(SetPartFlagBits, ACTOR_SELF, PRT_FEATHER_3, ACTOR_PART_FLAG_INVISIBLE, FALSE)
-                    Wait(1)
-                    Call(SetPartFlagBits, ACTOR_SELF, PRT_FEATHER_3, ACTOR_PART_FLAG_INVISIBLE, TRUE)
-                    Wait(1)
-                EndLoop
-            EndThread
-            Thread
-                Call(SetPartRotation, ACTOR_SELF, PRT_FEATHER_1, 0, 45, -90)
-                Call(GetPartOffset, ACTOR_SELF, PRT_FEATHER_1, LVar0, LVar1, LVar2)
-                Sub(LVar0, 5)
-                Set(LVar1, 4)
-                Call(SetPartJumpGravity, ACTOR_SELF, PRT_FEATHER_1, Float(1.5))
-                Call(JumpPartTo, ACTOR_SELF, PRT_FEATHER_1, LVar0, LVar1, LVar2, 10, TRUE)
-                Call(SetPartRotation, ACTOR_SELF, PRT_FEATHER_1, 0, 90, -90)
-                Wait(8)
-                Loop(15)
-                    Call(SetPartFlagBits, ACTOR_SELF, PRT_FEATHER_1, ACTOR_PART_FLAG_INVISIBLE, FALSE)
-                    Wait(1)
-                    Call(SetPartFlagBits, ACTOR_SELF, PRT_FEATHER_1, ACTOR_PART_FLAG_INVISIBLE, TRUE)
-                    Wait(1)
-                EndLoop
-            EndThread
-            Wait(30)
-            Call(YieldTurn)
-            ExecWait(N(EVS_FlyToHome))
-    EndSwitch
+
+    Exec(N(EVS_Attack_FeatherFling_Fling1))
+    Wait(25)
+    Exec(N(EVS_Attack_FeatherFling_Fling2))
+    Wait(25)
+    ExecWait(N(EVS_Attack_FeatherFling_Fling3))
+
+    ExecWait(N(EVS_FlyToHome))
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
     Call(UseIdleAnimation, ACTOR_SELF, TRUE)
     Return

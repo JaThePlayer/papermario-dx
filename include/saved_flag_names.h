@@ -713,7 +713,7 @@ enum GameFlags {
     GF_IWA10_Bush1_Coin                         = GameFlag(0x2C5),
     GF_IWA10_Bush2_Coin                         = GameFlag(0x2C6),
     GF_IWA10_Bush3_Coin                         = GameFlag(0x2C7),
-    GF_Unused_IWA_1A                            = GameFlag(0x2C8),
+    GF_IWA04_Item_EmberEmblem                   = GameFlag(0x2C8), // new
     GF_Unused_IWA_1B                            = GameFlag(0x2C9),
     GF_Unused_IWA_1C                            = GameFlag(0x2CA),
     GF_IWA00_ItemBlock_SleepySheep              = GameFlag(0x2CB),

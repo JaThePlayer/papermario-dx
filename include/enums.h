@@ -4142,6 +4142,7 @@ enum BattleMessages {
     BTL_MSG_CANT_SELECT_NOW_ALT                     = 0x54,
     BTL_MSG_NEXT_WAVE                               = 0x55, // new
     BTL_MSG_WAVE_BATTLE                             = 0x56, // new
+    BTL_MSG_CUSTOM                                  = 0x57, // new. Set gCustomBtlMsgId before using this!
 };
 
 // states after INIT are different for each type of battle message

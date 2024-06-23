@@ -10,6 +10,13 @@ EvtScript N(EVS_BindExitTriggers) = {
     End
 };
 
+API_CALLABLE(N(has_ember_emblem)) {
+    Bytecode* args = script->ptrReadPos;
+
+    evt_set_variable(script, *args++, find_item(ITEM_EMBER_EMBLEM) != -1);
+    return ApiStatus_DONE2;
+};
+
 EvtScript N(EVS_Main) = {
     Set(GB_WorldLocation, LOCATION_MT_RUGGED)
     Call(SetSpriteShading, SHADING_NONE)
@@ -27,6 +34,15 @@ EvtScript N(EVS_Main) = {
     Call(ParentColliderToModel, COLLIDER_o985, MODEL_o985)
     Call(ParentColliderToModel, COLLIDER_o992, MODEL_o992)
     Call(ParentColliderToModel, COLLIDER_o993, MODEL_o993)
+
+    IfEq(GF_IWA04_Defeated_Buzzar, TRUE)
+        // NEW: Drop Ember Emblem
+        Call(N(has_ember_emblem), LVar0)
+        IfFalse(LVar0)
+            Call(MakeItemEntity, ITEM_EMBER_EMBLEM, 530, 15, -20, ITEM_SPAWN_MODE_FALL_NEVER_VANISH, 0)
+        EndIf
+    EndIf
+
     Set(LVar0, Ref(N(EVS_BindExitTriggers)))
     Exec(EnterWalk)
     Wait(1)

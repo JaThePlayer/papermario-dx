@@ -250,6 +250,8 @@ EvtScript N(EVS_NpcDefeat_Buzzar) = {
             Call(AdjustCam, CAM_DEFAULT, Float(90.0), 50, 350, Float(15.0), Float(-12.0))
             Wait(10 * DT)
             Call(SpeakToPlayer, NPC_SELF, -1, -1, 0, MSG_CH2_0036)
+            // NEW: Drop Ember Emblem
+            Call(DropItemEntity, ITEM_EMBER_EMBLEM, 530, 15, -20, ITEM_SPAWN_MODE_FALL_NEVER_VANISH, GF_IWA04_Item_EmberEmblem)
             Thread
                 Call(GetNpcYaw, NPC_SELF, LVar0)
                 Loop(55)

@@ -43,12 +43,22 @@ EffectInstance* underwater_main(s32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4
     data->unk_08 = arg2;
     data->unk_0C = arg3;
     data->unk_18 = arg4;
-    data->waterColor.r = 10;
-    data->waterColor.g = 110;
-    data->waterColor.b = 255;
+
     data->unk_20.r = 190;
     data->unk_20.g = 220;
     data->unk_20.b = 255;
+    switch(arg0) {
+        case 0: // Tidal Wave
+            data->waterColor.r = 10;
+            data->waterColor.g = 110;
+            data->waterColor.b = 255;
+            break;
+        case 1: // Buzzar fire wall
+            data->waterColor.r = 255;
+            data->waterColor.g = 110;
+            data->waterColor.b = 10;
+            break;
+    }
 
     for (i = 0; i < ARRAY_COUNT(data->unk_23); i++) {
         for (j = 0; j < ARRAY_COUNT(data->unk_23[0]); j++) {
