@@ -2020,7 +2020,7 @@ enum GameFlags {
     GF_Unused_7E0                               = GameFlag(0x7E0),
     GF_BooTrial_IntroductionInToadTown          = GameFlag(0x7E1),
     GF_BooTrial_Ch1                             = GameFlag(0x7E2),
-    GF_Unused_7E3                               = GameFlag(0x7E3),
+    GF_PortableItemNetworkIntro                 = GameFlag(0x7E3),
     GF_Unused_7E4                               = GameFlag(0x7E4),
     GF_Unused_7E5                               = GameFlag(0x7E5),
     GF_Unused_7E6                               = GameFlag(0x7E6),

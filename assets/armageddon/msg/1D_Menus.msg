@@ -2736,3 +2736,13 @@
 	The air is burning! Burn[BR]
 	damage increased by 2.[End]
 }
+
+#message:1E:(Menus_Choice_ShopNoBuy) {
+	[Style choice pos=105,60 size=100,62]
+	[DelayOff]
+	[Cursor 0][Option 0]To sell[BR]
+	[Cursor 1][Option 1]To check[BR]
+	[Cursor 2][Option 2]To claim[BR]
+	[Option 255][DelayOn]
+	[SetCancel 3][EndChoice 3][End]
+}

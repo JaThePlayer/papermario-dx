@@ -1,4 +1,5 @@
 #include "sbk_99.h"
+#include "world/common/complete/portable_item_network_boo.inc.c"
 
 extern EvtScript N(EVS_Main);
 extern EvtScript N(EVS_MakeEntities);
@@ -39,9 +40,17 @@ EvtScript N(EVS_EnterMap) = {
     End
 };
 
+NpcGroupList N(NpcGroup) = {
+    NPC_GROUP(N(NpcData_PINBoo)),
+    {}
+};
+
 EvtScript N(EVS_Main) = {
     Set(GB_WorldLocation, LOCATION_DRY_DRY_DESERT)
     Call(SetSpriteShading, SHADING_NONE)
+    Call(MakeNpcs, FALSE, Ref(N(NpcGroup)))
+    ExecWait(N(EVS_SetupPortableItemNetworkBoo))
+
     EVT_SETUP_CAMERA_NO_LEAD(0, 0, 0)
     Set(GF_MAP_DryDryDesert, TRUE)
     ExecWait(N(EVS_MakeEntities))

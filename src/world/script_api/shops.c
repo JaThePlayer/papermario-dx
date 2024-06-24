@@ -551,12 +551,12 @@ API_CALLABLE(ShowShopOwnerDialog) {
             if (!does_script_exist(script->functionTemp[1])) {
                 script->functionTemp[0] = DIALOG_STATE_AWAIT_MAIN_MENU;
                 script->functionTemp[2] = 0;
-                ShopOwnerPrintState = msg_get_printer_for_msg(MSG_Choice_0003, &script->functionTemp[2]);
+                ShopOwnerPrintState = msg_get_printer_for_msg(shop->numItems == 0 ? MSG_Menus_Choice_ShopNoBuy : MSG_Choice_0003, &script->functionTemp[2]);
             }
             break;
         case DIALOG_STATE_AWAIT_MAIN_MENU:
             if (script->functionTemp[2] == 1) {
-                switch (ShopOwnerPrintState->curOption) {
+                switch (ShopOwnerPrintState->curOption + (shop->numItems == 0 ? 1 : 0)) {
                     case 0:
                         //script->functionTemp[1] = shop_owner_continue_speech(SHOP_MSG_INSTRUCTIONS);
                         //script->functionTemp[0] = DIALOG_STATE_DONE_INSTRUCTIONS;
