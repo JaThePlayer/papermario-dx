@@ -146,6 +146,11 @@ s32 N(DefeatedAnims)[] = {
     STATUS_END,
 };
 
+API_CALLABLE(N(IsOrbOfLugIntoLVar0)) {
+    script->varTable[0] = is_orb_of_lug();
+    return ApiStatus_DONE2;
+}
+
 EvtScript N(EVS_JrTroopa_Death) = {
     Set(LVarA, LVar0)
     Call(HideHealthBar, ACTOR_SELF)
@@ -197,31 +202,34 @@ EvtScript N(EVS_JrTroopa_Death) = {
     Wait(15)
     Call(UseIdleAnimation, ACTOR_PLAYER, FALSE)
     Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_Mario1_Idle)
-    Call(SetActorYaw, ACTOR_PLAYER, 30)
-    Wait(1)
-    Call(SetActorYaw, ACTOR_PLAYER, 60)
-    Wait(1)
-    Call(SetActorYaw, ACTOR_PLAYER, 90)
-    Wait(1)
-    Call(SetActorYaw, ACTOR_PLAYER, 120)
-    Wait(1)
-    Call(SetActorYaw, ACTOR_PLAYER, 150)
-    Wait(1)
-    Call(SetActorYaw, ACTOR_PLAYER, 180)
-    Wait(5)
-    Call(ActorSpeak, MSG_CH0_00B4, ACTOR_PARTNER, 0, ANIM_Goompa_Talk, ANIM_Goompa_Idle)
-    Call(SetActorYaw, ACTOR_PLAYER, 150)
-    Wait(1)
-    Call(SetActorYaw, ACTOR_PLAYER, 120)
-    Wait(1)
-    Call(SetActorYaw, ACTOR_PLAYER, 90)
-    Wait(1)
-    Call(SetActorYaw, ACTOR_PLAYER, 60)
-    Wait(1)
-    Call(SetActorYaw, ACTOR_PLAYER, 30)
-    Wait(1)
-    Call(SetActorYaw, ACTOR_PLAYER, 0)
-    Wait(5)
+    Call(N(IsOrbOfLugIntoLVar0))
+    IfFalse(LVar0)
+        Call(SetActorYaw, ACTOR_PLAYER, 30)
+        Wait(1)
+        Call(SetActorYaw, ACTOR_PLAYER, 60)
+        Wait(1)
+        Call(SetActorYaw, ACTOR_PLAYER, 90)
+        Wait(1)
+        Call(SetActorYaw, ACTOR_PLAYER, 120)
+        Wait(1)
+        Call(SetActorYaw, ACTOR_PLAYER, 150)
+        Wait(1)
+        Call(SetActorYaw, ACTOR_PLAYER, 180)
+        Wait(5)
+        Call(ActorSpeak, MSG_CH0_00B4, ACTOR_PARTNER, 0, ANIM_Goompa_Talk, ANIM_Goompa_Idle)
+        Call(SetActorYaw, ACTOR_PLAYER, 150)
+        Wait(1)
+        Call(SetActorYaw, ACTOR_PLAYER, 120)
+        Wait(1)
+        Call(SetActorYaw, ACTOR_PLAYER, 90)
+        Wait(1)
+        Call(SetActorYaw, ACTOR_PLAYER, 60)
+        Wait(1)
+        Call(SetActorYaw, ACTOR_PLAYER, 30)
+        Wait(1)
+        Call(SetActorYaw, ACTOR_PLAYER, 0)
+        Wait(5)
+    EndIf
     Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_NO_DMG_APPLY, TRUE)
     Return
     End
