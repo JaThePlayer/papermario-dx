@@ -2347,7 +2347,7 @@ block_47: // TODO required to match
                 // add new item to menu
                 itemData = &gItemTable[item->itemID];
                 menu->ptrIcon[numEntries] = gItemHudScripts[itemData->hudElemID].enabled;
-                menu->userIndex[numEntries] = item->itemID;
+                menu->userIndex[numEntries] = -1;
                 menu->enabled[numEntries] = TRUE;
                 menu->nameMsg[numEntries] = itemData->nameMsg;
                 menu->descMsg[numEntries] = itemData->fullDescMsg;
@@ -2357,7 +2357,7 @@ block_47: // TODO required to match
                     if (playerData->invItems[i] != ITEM_NONE) {
                         itemData = &gItemTable[playerData->invItems[i]];
                         menu->ptrIcon[numEntries] = gItemHudScripts[itemData->hudElemID].enabled;
-                        menu->userIndex[numEntries] = playerData->invItems[i];
+                        menu->userIndex[numEntries] = i;
                         menu->enabled[numEntries] = TRUE;
                         menu->nameMsg[numEntries] = itemData->nameMsg;
                         menu->descMsg[numEntries] = itemData->fullDescMsg;
@@ -2396,7 +2396,9 @@ block_47: // TODO required to match
                 if (ThrowAwayMenuIdx == 255) {
                     ThrowAwayMenuIdx = 1;
                 }
-                ThrowAwayItemID = menu->userIndex[ThrowAwayMenuIdx - 1];
+                ThrowAwayItemID = ThrowAwayMenuIdx == 1
+                    ? item->itemID
+                    : playerData->invItems[menu->userIndex[ThrowAwayMenuIdx - 1]];
                 hud_element_set_script(ItemPickupIconID, menu->ptrIcon[ThrowAwayMenuIdx - 1]);
 
                 get_item_entity(
@@ -2409,7 +2411,8 @@ block_47: // TODO required to match
                 )->renderGroup = -1;
 
                 if (ThrowAwayMenuIdx >= 2) {
-                    playerData->invItems[ThrowAwayMenuIdx - 2] = ITEM_NONE;
+                    s32 throwawayPlayerInventoryIdx = menu->userIndex[ThrowAwayMenuIdx - 1];
+                    playerData->invItems[throwawayPlayerInventoryIdx] = ITEM_NONE;
                     sort_consumables();
                     add_item(item->itemID);
                 }

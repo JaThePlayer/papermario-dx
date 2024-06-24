@@ -189,18 +189,14 @@ s32 add_item(s32 itemID) {
     // handle consumables
     sort_consumables();
 
-    for (idx = 0; idx < get_max_items(); idx++) {
-        if (gPlayerData.invItems[ARRAY_COUNT(gPlayerData.invItems) - 1 - idx] == ITEM_NONE) {
-            break;
+    for (idx = ARRAY_COUNT(gPlayerData.invItems) - get_max_items(); idx < ARRAY_COUNT(gPlayerData.invItems); idx++) {
+        if (gPlayerData.invItems[idx] == ITEM_NONE) {
+            gPlayerData.invItems[idx] = itemID;
+            return idx;
         }
     }
 
-    if (idx == get_max_items()) {
-        return -1;
-    }
-
-    gPlayerData.invItems[idx] = itemID;
-    return idx;
+    return -1;
 }
 
 s32 remove_item(s32 itemID) {
