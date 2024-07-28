@@ -10,10 +10,10 @@ EvtScript N(EVS_OnHitInertBlock) = {
                 Call(PlaySound, SOUND_CHIME_SOLVED_PUZZLE)
                 Call(PlaySoundAt, SOUND_SPAWN_BLOCK, SOUND_SPACE_DEFAULT, -80, 60, -200)
                 PlayEffect(EFFECT_SPARKLES, 0, -80, 73, -200, 10)
-                Call(MakeEntity, Ref(Entity_YellowBlock), -80, 60, -200, 0, ITEM_MUSHROOM, MAKE_ENTITY_END)
+                Call(MakeEntity, Ref(Entity_YellowBlock), -80, 60, -200, 0, ITEM_VOLT_SHROOM, MAKE_ENTITY_END)
                 Call(AssignBlockFlag, GF_SBK20_ItemBlock_Mushroom)
             EndIf
-        CaseEq(10)
+        CaseEq(2)
             IfEq(GF_SBK20_ItemBlock_SuperShroom, FALSE)
                 Call(PlaySound, SOUND_CHIME_SOLVED_PUZZLE)
                 Call(PlaySoundAt, SOUND_SPAWN_BLOCK, SOUND_SPACE_DEFAULT, -180, 60, -200)
@@ -21,7 +21,7 @@ EvtScript N(EVS_OnHitInertBlock) = {
                 Call(MakeEntity, Ref(Entity_YellowBlock), -180, 60, -200, 0, ITEM_SUPER_SHROOM, MAKE_ENTITY_END)
                 Call(AssignBlockFlag, GF_SBK20_ItemBlock_SuperShroom)
             EndIf
-        CaseEq(100)
+        CaseEq(3)
             IfEq(GF_SBK20_ItemBlock_UltraShroom, FALSE)
                 Call(PlaySound, SOUND_CHIME_SOLVED_PUZZLE)
                 Call(PlaySoundAt, SOUND_SPAWN_BLOCK, SOUND_SPACE_DEFAULT, -130, 60, -150)

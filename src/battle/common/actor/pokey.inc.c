@@ -37,10 +37,10 @@ enum N(ActorVars) {
 };
 
 enum N(ActorParams) {
-    DMG_SMASH_LARGE        = 2,
-    DMG_SMASH_MEDIUM       = 2,
+    DMG_SMASH_LARGE        = 5,
+    DMG_SMASH_MEDIUM       = 4,
     DMG_SMASH_SMALL        = 2,
-    DMG_THROW_PART         = 2, // throw a body part at the player
+    DMG_THROW_PART         = 3, // throw a body part at the player. -1 damage for each thrown part
     DMG_LEAP               = 2, // jump onto the player, used when no more parts can be thrown
 };
 
@@ -61,6 +61,7 @@ extern EvtScript N(EVS_Pokey_ScareAway);
 
 s32 N(DefenseTable)[] = {
     ELEMENT_NORMAL,   0,
+    ELEMENT_FIRE,    -1,
     ELEMENT_END,
 };
 
@@ -68,11 +69,11 @@ s32 N(StatusTable)[] = {
     STATUS_KEY_NORMAL,              0,
     STATUS_KEY_DEFAULT,             0,
     STATUS_KEY_SLEEP,              90,
-    STATUS_KEY_POISON,              0,
+    STATUS_KEY_POISON,            100,
     STATUS_KEY_FROZEN,              0,
     STATUS_KEY_DIZZY,              90,
     STATUS_KEY_FEAR,                0,
-    STATUS_KEY_STATIC,              0,
+    STATUS_KEY_STATIC,             90,
     STATUS_KEY_PARALYZE,          100,
     STATUS_KEY_SHRINK,             90,
     STATUS_KEY_STOP,              100,
@@ -168,7 +169,7 @@ ActorBlueprint NAMESPACE = {
     .flags = 0,
     .type = ACTOR_TYPE_POKEY,
     .level = ACTOR_LEVEL_POKEY,
-    .maxHP = 4,
+    .maxHP = 6,
     .partCount = ARRAY_COUNT(N(ActorParts)),
     .partsData = N(ActorParts),
     .initScript = &N(EVS_Init),
@@ -602,7 +603,7 @@ EvtScript N(EVS_Attack_GroundSmash) = {
             Call(UseIdleAnimation, ACTOR_SELF, TRUE)
             Return
     EndSwitch
-    // damage *could* depend on size of the Pokey, but all DMG values are the same, so it doesn't
+    // damage depends on size of the Pokey
     Call(GetActorVar, ACTOR_SELF, AVAR_PartsThrown, LVar0)
     Switch(LVar0)
         CaseEq(0)
@@ -687,6 +688,8 @@ EvtScript N(EVS_CountSummonerPokeys) = {
 };
 
 EvtScript N(EVS_TakeTurn) = {
+    STANDARD_ITEM_USE_AI()
+
     #define LBL_NO_SUMMON 123
     Call(GetActorVar, ACTOR_SELF, AVAR_PartsThrown, LVarA)
     IfEq(LVarA, 3)

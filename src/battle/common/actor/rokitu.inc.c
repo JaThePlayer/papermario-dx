@@ -598,6 +598,7 @@ EvtScript N(EVS_CountActiveSummoners) = {
 };
 
 EvtScript N(EVS_TakeTurn) = {
+    STANDARD_ITEM_USE_AI()
     Call(GetActorVar, ACTOR_SELF, AVAR_SummonCount, LVar0)
     IfGe(LVar0, MAX_SUMMONS)
         ExecWait(N(EVS_Attack_SpinyToss))

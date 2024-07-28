@@ -73,7 +73,7 @@ NpcData N(NpcData_Pokey_03) = {
 
 NpcGroupList N(DefaultNPCs) = {
     NPC_GROUP(N(NpcData_Pokey_01), BTL_SBK_FORMATION_01, BTL_SBK_STAGE_00),
-    NPC_GROUP(N(NpcData_Pokey_02), BTL_SBK_FORMATION_01, BTL_SBK_STAGE_00),
+    NPC_GROUP(N(NpcData_Pokey_02), BTL_SBK_FORMATION_0F, BTL_SBK_STAGE_00),
     NPC_GROUP(N(NpcData_Pokey_03), BTL_SBK_FORMATION_02, BTL_SBK_STAGE_00),
     {}
 };

@@ -555,6 +555,7 @@ EvtScript N(EVS_TakeTurn) = {
     IfEq(LVar0, TRUE)
         ExecWait(N(EVS_TryGettingUp))
     Else
+        STANDARD_ITEM_USE_AI()
         ExecWait(N(EVS_Attack_Tackle))
     EndIf
     Return
