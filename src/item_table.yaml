@@ -5210,3 +5210,17 @@
     moveID: MOVE_NONE
     potencyA: 0
     potencyB: 0
+- PoisonShroom:
+    nameMsg: MSG_ItemName_PoisonShroom
+    fullDescMsg: MSG_ItemFullDesc_PoisonShroom
+    shortDescMsg: MSG_ItemFullDesc_PoisonShroom
+    icon: item/PoisonShroom
+    itemEntityTemplate: STANDARD
+    hudElementTemplate: ITEM
+    sellValue: 3
+    sortValue: 0
+    targetFlags: [ TARGET_FLAG_SELECT_ONE, TARGET_FLAG_PLAYER ]
+    typeFlags: [ ITEM_TYPE_FLAG_WORLD_USABLE, ITEM_TYPE_FLAG_BATTLE_USABLE, ITEM_TYPE_FLAG_CONSUMABLE, ITEM_TYPE_FLAG_FOOD_OR_DRINK, ITEM_TYPE_FLAG_ENTITY_FULLSIZE ]
+    moveID: MOVE_NONE
+    potencyA: 0
+    potencyB: 6

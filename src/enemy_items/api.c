@@ -382,6 +382,12 @@ API_CALLABLE(ApplyCustomItemEffects) {
             RECOVER_FP(amt * 5);
             break;
         }
+        case ITEM_DRIED_FRUIT:
+            FP_COST(2, +2)
+            break;
+        case ITEM_POISON_SHROOM:
+            POISON(4, 1);
+            break;
         case ITEM_MISTAKE:
             POISON(3, 1);
             break;

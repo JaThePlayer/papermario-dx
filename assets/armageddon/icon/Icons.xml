@@ -391,4 +391,5 @@
     <Icon type="pair" name="badge/PoisonThrow"/>
     <Icon type="pair" name="badge/EmberEmblem"/>
     <Icon type="pair" name="gold_bar"/>
+    <Icon type="pair" name="item/PoisonShroom"/>
 </Icons>

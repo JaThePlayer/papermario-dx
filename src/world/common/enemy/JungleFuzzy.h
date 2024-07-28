@@ -7,7 +7,7 @@
     .itemDropChance = 10, \
     .itemDrops = { \
         { ITEM_DIZZY_DIAL, 5, 0 }, \
-        { ITEM_VOLT_SHROOM, 5, 0 }, \
+        { ITEM_POISON_SHROOM, 5, 0 }, \
     }, \
     .heartDrops  = STANDARD_HEART_DROPS(2), \
     .flowerDrops = STANDARD_FLOWER_DROPS(2), \

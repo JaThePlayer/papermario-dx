@@ -1125,3 +1125,7 @@
 #message:26:(ItemName_HustleDrink) {
 	Hustle Drink[End]
 }
+
+#message:26:(ItemName_PoisonShroom) {
+	Poison Shroom[End]
+}

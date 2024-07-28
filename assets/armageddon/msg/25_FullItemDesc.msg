@@ -157,7 +157,9 @@
 
 #message:25:(ItemFullDesc_DriedFruit) {
 	A fruit found deep within Dry[BR]
-	Dry Desert. Restores 15 HP.[End]
+	Dry Desert. Restores 15 HP, but[BR]
+	increases FP costs by 2 for[BR]
+	2 turns.[End]
 }
 
 #message:25:(ItemFullDesc_StrangeLeaf) {
@@ -1562,4 +1564,11 @@
 #message:26:(ItemFullDesc_HustleDrink) {
 	Allows Mario to take an extra[BR]
 	action next turn.[End]
+}
+
+#message:26:(ItemFullDesc_PoisonShroom) {
+	A poisonous mushroom...[BR]
+	Why would you eat this?[BR]
+	Poisons you for 4 turns,[BR]
+	but recovers 6 FP[End]
 }
