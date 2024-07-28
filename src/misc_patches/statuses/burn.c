@@ -21,6 +21,19 @@ void N(remove_icon)(s32 id) {
     remove_custom_status_icon(id, BURN_ICON_ID);
 }
 
+extern ActorPart* get_actor_part_for_def(Actor* actor);
+
+s32 lookup_fire_defense(s32* defenseTable) {
+    while (defenseTable[DICTIONARY_KEY] != ELEMENT_END) {
+        if (defenseTable[DICTIONARY_KEY] == ELEMENT_FIRE) {
+            return defenseTable[DICTIONARY_VALUE];
+        }
+        defenseTable += DICTIONARY_SIZE;
+    }
+
+    return 0;
+}
+
 void N(on_decrement)(Actor* target) {
     StatusInfo* info = custom_status_get_info(target, BURN_STATUS);
     s32 dmg = info->potency;
@@ -30,6 +43,8 @@ void N(on_decrement)(Actor* target) {
     }
 
     dmg += gBattleStatus.extraBurnDamage;
+
+    dmg -= lookup_fire_defense(get_actor_part_for_def(target)->defenseTable);
 
     target->state.goalPos = target->curPos;
 
