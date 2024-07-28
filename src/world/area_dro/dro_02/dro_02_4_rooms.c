@@ -1,4 +1,6 @@
 #include "dro_02.h"
+#include "sprite/npc/Moustafa.h"
+#include "sprite/npc/Bandit.h"
 
 EvtScript N(EVS_SwingToadHouseSign) = {
     Label(9)
@@ -100,6 +102,11 @@ EvtScript N(EVS_RoomListener_ToadHouse) = {
     End
 };
 
+EvtScript N(EVS_BanditAmbush) = {
+    Return
+    End
+};
+
 EvtScript N(EVS_RoomListener_Hideout) = {
     Switch(LVar0)
         CaseEq(ROOM_UPDATE_ENTER_BEGIN)
@@ -119,10 +126,23 @@ EvtScript N(EVS_RoomListener_Hideout) = {
             Call(SetCamDistance, CAM_DEFAULT, 400)
             Call(SetCamSpeed, CAM_DEFAULT, Float(4.0))
             Call(WaitForCam, CAM_DEFAULT, Float(1.0))
+
+            IfGe(GB_StoryProgress, STORY_CH2_GOT_PULSE_STONE)
+            IfEq(GF_DRO02_BanditAmbush, FALSE)
+                Call(SetNpcVar, NPC_Bandit, 0, 1)
+            EndIf
+            EndIf
         CaseEq(ROOM_UPDATE_EXIT_END)
             Call(SetGroupVisibility, MODEL_ie5_naka, MODEL_GROUP_HIDDEN)
             Call(PanToTarget, CAM_DEFAULT, 0, 0)
             Call(SetCamSpeed, CAM_DEFAULT, Float(1.334))
+
+            IfGe(GB_StoryProgress, STORY_CH2_GOT_PULSE_STONE)
+            IfEq(GF_DRO02_BanditAmbush, FALSE)
+                Set(GF_DRO02_BanditAmbush, TRUE)
+                Call(SetNpcVar, NPC_Bandit, 0, 2)
+            EndIf
+            EndIf
     EndSwitch
     Return
     End

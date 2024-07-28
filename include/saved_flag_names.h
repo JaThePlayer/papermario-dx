@@ -753,7 +753,7 @@ enum GameFlags {
     GF_DRO02_Sheek_AskedAboutMoustafa           = GameFlag(0x2ED),
     GF_DRO02_Moustafa_UnusedDialogOverride      = GameFlag(0x2EE),
     GF_DRO02_Moustafa_HeardAboutDryDryRuins     = GameFlag(0x2EF),
-    GF_Unused_DRO_06                            = GameFlag(0x2F0),
+    GF_DRO02_BanditAmbush                       = GameFlag(0x2F0),
     GF_Unused_DRO_07                            = GameFlag(0x2F1),
     GF_DRO01_Gift_Melody                        = GameFlag(0x2F2),
     GF_DRO01_Gift_ToldComposerAboutMelody       = GameFlag(0x2F3),

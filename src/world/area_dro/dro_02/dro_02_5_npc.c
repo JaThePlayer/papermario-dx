@@ -546,7 +546,67 @@ NpcData N(PassiveNPCs)[] = {
     },
 };
 
+#include "world/common/enemy/Bandit.h"
+
+NpcSettings N(NpcSettings_Bandit) = {
+    .defaultAnim = ANIM_Bandit_Leader_Idle,
+    .height = 35,
+    .radius = 28,
+    .flags = ENEMY_FLAG_PASSIVE | ENEMY_FLAG_IGNORE_WORLD_COLLISION | ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING,
+    .level = ACTOR_LEVEL_NONE,
+};
+
+EvtScript N(EVS_Idle_Bandit) = {
+    // wait for Mario to start exiting the door
+    Loop(0)
+        Call(GetSelfVar, 0, LVar0)
+        IfEq(LVar0, 1)
+            BreakLoop
+        EndIf
+        Wait(1)
+    EndLoop
+    Call(DisablePlayerInput, TRUE)
+    Call(SetNpcPos, NPC_Bandit, -460, 140, -145)
+
+    // wait for Mario to end exiting the door
+    Loop(0)
+        Call(GetSelfVar, 0, LVar0)
+        IfEq(LVar0, 2)
+            BreakLoop
+        EndIf
+        Wait(1)
+    EndLoop
+
+    Call(SpeakToPlayer, NPC_Bandit, ANIM_Bandit_Leader_Laugh, ANIM_Bandit_Leader_Idle, 0, MSG_CH2_BanditAmbush)
+
+    Call(DisablePlayerInput, FALSE)
+    Call(StartBossBattle, SONG_SPECIAL_BATTLE)
+    Return
+    End
+};
+
+EvtScript N(EVS_NpcInit_Bandit) = {
+    Call(SetSelfVar, 0, FALSE)
+
+    Call(BindNpcIdle, NPC_SELF, Ref(N(EVS_Idle_Bandit)))
+    Return
+    End
+};
+
+NpcData N(BanditAmbushNPCs) = {
+    .id = NPC_Bandit,
+    .pos = { NPC_DISPOSE_LOCATION },
+    .yaw = 90,
+    .init = &N(EVS_NpcInit_Bandit),
+    .settings = &N(NpcSettings_Bandit),
+    .flags = COMMON_PASSIVE_FLAGS,
+    .drops = NO_DROPS,
+    .animations = BANDIT_LEADER_ANIMS,
+    .aiDetectFlags = AI_DETECT_SIGHT,
+};
+
 NpcGroupList N(DefaultNPCs) = {
     NPC_GROUP(N(PassiveNPCs)),
+    NPC_GROUP(N(BanditAmbushNPCs), BTL_SBK_FORMATION_11, BTL_SBK_STAGE_00),
     {},
 };

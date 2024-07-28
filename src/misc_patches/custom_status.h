@@ -73,6 +73,12 @@ API_CALLABLE(SetNextAttackCustomStatus);
 // (actorId, customStatusId, turns, potency, chance)
 API_CALLABLE(InflictCustomStatus);
 
+// (actorId, customStatusId, out var ret)
+API_CALLABLE(GetCustomStatusTurns);
+
+// (actorId, customStatusId, out var ret)
+API_CALLABLE(GetCustomStatusPotency);
+
 // Gets the info of the given status for the given actor.
 StatusInfo* custom_status_get_info(Actor* actor, s8 customStatusId);
 

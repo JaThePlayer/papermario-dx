@@ -26,7 +26,7 @@ enum N(ActorVars) {
 };
 
 enum N(ActorParams) {
-    DMG_TACKLE          = 2,
+    DMG_TACKLE          = 3,
 };
 
 s32 N(DefaultAnims)[] = {
@@ -501,6 +501,7 @@ EvtScript N(EVS_HandleEvent) = {
 };
 
 EvtScript N(EVS_TakeTurn) = {
+    STANDARD_ITEM_USE_AI()
     Call(UseIdleAnimation, ACTOR_SELF, FALSE)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)

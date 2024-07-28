@@ -32,6 +32,7 @@ enum {
     NPC_Mouser_03               = 9,
     NPC_ChuckQuizmo             = 10,
     NPC_Dryite_03               = 11,
+    NPC_Bandit                  = 12,
 };
 
 enum {

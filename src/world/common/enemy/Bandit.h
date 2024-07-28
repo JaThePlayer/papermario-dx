@@ -33,3 +33,23 @@
     .anim_E = ANIM_Bandit_Still, \
     .anim_F = ANIM_Bandit_Still, \
 }
+
+#define BANDIT_LEADER_ANIMS \
+{ \
+    .idle   = ANIM_Bandit_Leader_Idle, \
+    .walk   = ANIM_Bandit_Leader_Walk, \
+    .run    = ANIM_Bandit_Leader_Run, \
+    .chase  = ANIM_Bandit_Leader_Run, \
+    .anim_4 = ANIM_Bandit_Leader_Idle, \
+    .anim_5 = ANIM_Bandit_Leader_Idle, \
+    .death  = ANIM_Bandit_Leader_Hurt, \
+    .hit    = ANIM_Bandit_Leader_Hurt, \
+    .anim_8 = ANIM_Bandit_Leader_Still, \
+    .anim_9 = ANIM_Bandit_Leader_Still, \
+    .anim_A = ANIM_Bandit_Leader_Still, \
+    .anim_B = ANIM_Bandit_Leader_Still, \
+    .anim_C = ANIM_Bandit_Leader_Still, \
+    .anim_D = ANIM_Bandit_Leader_Still, \
+    .anim_E = ANIM_Bandit_Leader_Still, \
+    .anim_F = ANIM_Bandit_Leader_Still, \
+}

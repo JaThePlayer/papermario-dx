@@ -265,6 +265,40 @@ API_CALLABLE(InflictCustomStatus) {
     return ApiStatus_DONE2;
 }
 
+// (actorId, customStatusId, out var ret)
+API_CALLABLE(GetCustomStatusTurns) {
+    Bytecode* args = script->ptrReadPos;
+    Actor* actor;
+
+    s32 actorID = evt_get_variable(script, *args++);
+    s32 id = evt_get_variable(script, *args++);
+
+    if (actorID == ACTOR_SELF) {
+        actorID = script->owner1.actorID;
+    }
+    actor = get_actor(actorID);
+
+    evt_set_variable(script, *args++, custom_status_get_info(actor, id)->turns);
+    return ApiStatus_DONE2;
+}
+
+// (actorId, customStatusId, out var ret)
+API_CALLABLE(GetCustomStatusPotency) {
+    Bytecode* args = script->ptrReadPos;
+    Actor* actor;
+
+    s32 actorID = evt_get_variable(script, *args++);
+    s32 id = evt_get_variable(script, *args++);
+
+    if (actorID == ACTOR_SELF) {
+        actorID = script->owner1.actorID;
+    }
+    actor = get_actor(actorID);
+
+    evt_set_variable(script, *args++, custom_status_get_potency(actor, id));
+    return ApiStatus_DONE2;
+}
+
 void custom_status_render_all_icons(Actor* actor) {
     for (s32 i = 0; i < ARRAY_COUNT(actor->customStatuses); i++)
     {

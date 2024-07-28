@@ -101,7 +101,7 @@ EvtScript N(EVS_Main) = {
     EVT_SETUP_CAMERA_NO_LEAD(0, 0, 0)
     Set(GF_MAP_DryDryOutpost, TRUE)
     IfLt(GB_StoryProgress, STORY_CH2_ARRIVED_AT_DRY_DRY_OUTPOST)
-        Set(GB_StoryProgress, STORY_CH2_ARRIVED_AT_DRY_DRY_OUTPOST)
+        Set(GB_StoryProgress, STORY_CH2_BOUGHT_SECRET_ITEMS)
     EndIf
     Switch(GB_StoryProgress)
         CaseRange(STORY_CH2_STAR_SPRIT_DEPARTED, STORY_CH4_BEGAN_PEACH_MISSION)

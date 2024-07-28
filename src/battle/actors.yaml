@@ -2391,3 +2391,25 @@
     stepDelay: [ -5, -5 ]
     tattleCamOffset: [ 0, 0, 0 ]
     shadowOffset: 0
+- DryBubble:
+    level: 2
+    nameMsg: MSG_EnemyName_DryBubble
+    tattleMsg: MSG_EnemyTattle_DryBubble
+    walkSound: [ SOUND_NONE, SOUND_NONE ]
+    flySound: [ SOUND_NONE, SOUND_NONE ]
+    jumpSound: SOUND_ACTOR_JUMP
+    hurtSound: SOUND_ACTOR_HURT
+    stepDelay: [ 30, 30 ]
+    tattleCamOffset: [ 0, 0, 0 ]
+    shadowOffset: 0
+- BanditLeader:
+    level: 15
+    nameMsg: MSG_EnemyName_BanditLeader
+    tattleMsg: MSG_EnemyTattle_BanditLeader
+    walkSound: [ SOUND_SMALL_NPC_STEP, SOUND_SMALL_NPC_STEP ]
+    flySound: [ SOUND_SMALL_NPC_STEP, SOUND_SMALL_NPC_STEP ]
+    jumpSound: SOUND_ACTOR_JUMP
+    hurtSound: SOUND_ACTOR_HURT
+    stepDelay: [ 30, 30 ]
+    tattleCamOffset: [ 0, 5, 0 ]
+    shadowOffset: 0

@@ -537,3 +537,11 @@
 #message:29:(EnemyName_Rokitu) {
 	Rokitu[End]
 }
+
+#message:29:(EnemyName_DryBubble) {
+	Dry Bubble[End]
+}
+
+#message:29:(EnemyName_BanditLeader) {
+	Bandit Leader[End]
+}
