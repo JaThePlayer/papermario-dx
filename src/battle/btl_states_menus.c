@@ -159,6 +159,12 @@ HudScript* battle_menu_StarPowerMovesHudScripts[] = {
     &HES_MenuStarPower, &HES_MenuStarPowerDisabled,
 };
 
+s32 fixed_star_power_index(s32 moveId) {
+    if (moveId == MOVE_THREAT_FOCUS)
+        moveId = MOVE_FOCUS;
+    return STAR_POWER_INDEX(moveId);
+}
+
 HudScript* battle_menu_PartnerHudScripts[] = {
     &HES_Partner0, &HES_Goombario, &HES_Kooper, &HES_Bombette,
     &HES_Parakarry, &HES_Partner0, &HES_Watt, &HES_Sushie,
@@ -2604,8 +2610,8 @@ void btl_state_update_player_menu(void) {
                     }
                     break;
                 case BTL_MENU_TYPE_STAR_POWERS:
-                    battleStatus->submenuMoves[0] = MOVE_FOCUS;
-                    battleStatus->submenuIcons[0] = ITEM_PARTNER_ATTACK;
+                    battleStatus->submenuMoves[0] = get_focus_move_id();
+                    battleStatus->submenuIcons[0] = 0;
                     battleStatus->submenuStatus[0] = gBattleStatus.focusUses >= get_focus_cap() ? -1 : 1;
                     entryIdx = 1;
                     initialPos = 8;
@@ -3162,9 +3168,9 @@ void btl_state_update_player_menu(void) {
                     BattleMenu_Moves_OptionCantUseMessages[i] = BTL_MSG_CANT_SELECT_NOW;
                 }
 
-                battle_menu_moveOptionIconScripts[i] = battle_menu_StarPowerMovesHudScripts[2 * STAR_POWER_INDEX(battleStatus->submenuMoves[i]) + 0];
+                battle_menu_moveOptionIconScripts[i] = battle_menu_StarPowerMovesHudScripts[2 * fixed_star_power_index(battleStatus->submenuMoves[i]) + 0];
                 if (battleStatus->submenuStatus[i] == 0) {
-                    battle_menu_moveOptionIconScripts[i] = battle_menu_StarPowerMovesHudScripts[2 * STAR_POWER_INDEX(battleStatus->submenuMoves[i]) + 1];
+                    battle_menu_moveOptionIconScripts[i] = battle_menu_StarPowerMovesHudScripts[2 * fixed_star_power_index(battleStatus->submenuMoves[i]) + 1];
                 }
                 battle_menu_moveOptionDisplayCosts[i] = moveData->costFP;
                 battle_menu_moveOptionBPCosts[i] = get_bp_cost_of_move(battleStatus->submenuMoves[i]);
@@ -3891,9 +3897,9 @@ void btl_state_update_partner_menu(void) {
         }
         if (entryIdx != 0) {
             battleStatus->moveCategory = BTL_MENU_TYPE_STAR_POWERS;
-            battleStatus->selectedMoveID = MOVE_FOCUS;
+            battleStatus->selectedMoveID = get_focus_move_id();
             battleStatus->moveArgument = 0;
-            battleStatus->curTargetListFlags = gMoveTable[MOVE_FOCUS].flags;
+            battleStatus->curTargetListFlags = gMoveTable[get_focus_move_id()].flags;
             btl_set_state(BATTLE_STATE_SELECT_TARGET);
             return;
         }
@@ -4198,15 +4204,15 @@ void btl_state_update_partner_menu(void) {
         break;
     case BTL_SUBSTATE_PARTNER_MENU_FOCUS_1:
         entryIdx = 1;
-        battleStatus->submenuMoves[0] = MOVE_FOCUS;
+        battleStatus->submenuMoves[0] = get_focus_move_id();
         battleStatus->submenuMoveCount = entryIdx;
-        battleStatus->submenuIcons[0] = ITEM_PARTNER_ATTACK;
+        battleStatus->submenuIcons[0] = 0;
         battleStatus->submenuStatus[0] = gBattleStatus.focusUses >= get_focus_cap() ? -1 : 1;
         for (i = 0; i < battleStatus->submenuMoveCount; i++) {
             moveData = &gMoveTable[battleStatus->submenuMoves[i]];
-            battle_menu_moveOptionIconScripts[i] = battle_menu_StarPowerMovesHudScripts[2 * STAR_POWER_INDEX(battleStatus->submenuMoves[i]) + 0];
+            battle_menu_moveOptionIconScripts[i] = battle_menu_StarPowerMovesHudScripts[2 * fixed_star_power_index(battleStatus->submenuMoves[i]) + 0];
             if (battleStatus->submenuStatus[i] == 0) {
-                battle_menu_moveOptionIconScripts[i] = battle_menu_StarPowerMovesHudScripts[2 * STAR_POWER_INDEX(battleStatus->submenuMoves[i]) + 1];
+                battle_menu_moveOptionIconScripts[i] = battle_menu_StarPowerMovesHudScripts[2 * fixed_star_power_index(battleStatus->submenuMoves[i]) + 1];
             }
             battle_menu_moveOptionDisplayCosts[i] = moveData->costFP;
             battle_menu_moveOptionBPCosts[i] = get_bp_cost_of_move(battleStatus->submenuMoves[i]);

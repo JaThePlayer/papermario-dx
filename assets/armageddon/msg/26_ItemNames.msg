@@ -1129,3 +1129,7 @@
 #message:26:(ItemName_PoisonShroom) {
 	Poison Shroom[End]
 }
+
+#message:26:(ItemName_ThreatFocus) {
+	Threat Focus[End]
+}

@@ -173,6 +173,15 @@
 	3 times per battle.[End]
 }
 
+#message:1D:(Menus_StarPowerDesc_ThreatFocus) {
+	Charge Star Energy by 2/8 SE[BR]
+	per enemy currently in battle.[BR]
+	Can be used once per battle.[BR]
+	[BR]
+	SE recharges passively by 1/8[BR]
+	3 times per battle.[End]
+}
+
 #message:1D:(Menus_StarPowerDesc_Refresh) {
 	Recover HP & FP by 7.[End]
 }

@@ -193,3 +193,10 @@ void _on_dispatch_event_actor(Actor* actor, s32 event) {
             break;
     }
 }
+
+s32 get_focus_move_id() {
+    if (_player_count_badges_with_move_id(MOVE_THREAT_FOCUS))
+        return MOVE_THREAT_FOCUS;
+
+    return MOVE_FOCUS;
+}

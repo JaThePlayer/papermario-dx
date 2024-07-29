@@ -1,6 +1,7 @@
 #include "common.h"
 #include "script_api/battle.h"
 #include "sprite/player.h"
+#include "misc_patches/misc_patches.h"
 
 #define NAMESPACE battle_move_focus
 
@@ -12,10 +13,42 @@ enum {
     RESTORE_NOW_FULL        = 2,
 };
 
-API_CALLABLE(N(RestoreStarPowerFromPlayer)) {
+s32 count_enemies() {
+    BattleStatus* battleStatus = &gBattleStatus;
+    s32 i;
+    s32 count = 0;
+
+    for (i = 0; i < ARRAY_COUNT(battleStatus->enemyActors); i++) {
+        Actor* targetActor = battleStatus->enemyActors[i];
+        if (targetActor == NULL)
+            continue;
+        if ((targetActor->flags & (ACTOR_FLAG_NO_DMG_APPLY | ACTOR_FLAG_TARGET_ONLY)))
+            continue;
+
+        count++;
+    }
+
+    return count;
+}
+
+s32 get_base_sp_recovery() {
+    s32 sp = 0;
+    switch (get_focus_move_id())
+    {
+        case MOVE_THREAT_FOCUS:
+            sp += count_enemies() * SP_PER_SEG * 2;
+            break;
+        default:
+            sp += SP_PER_SEG * 4;
+            break;
+    }
+
+    return sp;
+}
+
+ApiStatus RestoreStarPowerImpl(Evt* script, s32 isInitialCall, b32 isPartner) {
     PlayerData* playerData = &gPlayerData;
-    s32 deepFocusSP;
-    s32 superFocusSP;
+    s32 sp;
 
     script->varTable[0] = RESTORE_NOT_FULL;
 
@@ -27,10 +60,13 @@ API_CALLABLE(N(RestoreStarPowerFromPlayer)) {
         return ApiStatus_DONE2;
     }
 
-    deepFocusSP = is_ability_active(ABILITY_DEEP_FOCUS) * SP_PER_SEG * 2;
-    superFocusSP = is_ability_active(ABILITY_SUPER_FOCUS) * SP_PER_SEG * 4;
+    sp = get_base_sp_recovery();
+    if (!isPartner) {
+        sp += is_ability_active(ABILITY_DEEP_FOCUS) * SP_PER_SEG * 2;
+        sp += is_ability_active(ABILITY_SUPER_FOCUS) * SP_PER_SEG * 4;
+    }
 
-    add_star_power(deepFocusSP + superFocusSP + SP_PER_SEG * 4);
+    add_star_power(sp);
 
     if (playerData->starPower == playerData->maxStarPower * SP_PER_BAR) {
         script->varTable[0] = RESTORE_NOW_FULL;
@@ -39,23 +75,12 @@ API_CALLABLE(N(RestoreStarPowerFromPlayer)) {
     return ApiStatus_DONE2;
 }
 
+API_CALLABLE(N(RestoreStarPowerFromPlayer)) {
+    return RestoreStarPowerImpl(script, isInitialCall, FALSE);
+}
+
 API_CALLABLE(N(RestoreStarPowerFromPartner)) {
-    PlayerData* playerData = &gPlayerData;
-
-    script->varTable[0] = RESTORE_NOT_FULL;
-
-    if (playerData->starPower >= playerData->maxStarPower * SP_PER_BAR) {
-        script->varTable[0] = RESTORE_ALREADY_FULL;
-        return ApiStatus_DONE2;
-    }
-
-    add_star_power(SP_PER_SEG * 4);
-
-    if (playerData->starPower == playerData->maxStarPower * SP_PER_BAR) {
-        script->varTable[0] = RESTORE_NOW_FULL;
-    }
-
-    return ApiStatus_DONE2;
+    return RestoreStarPowerImpl(script, isInitialCall, TRUE);
 }
 
 EvtScript N(EVS_UsePower) = {

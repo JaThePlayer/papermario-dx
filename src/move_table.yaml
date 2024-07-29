@@ -1699,3 +1699,12 @@
     actionTip: NONE
     costFP: 0
     costBP: 5
+- ThreatFocus:
+    nameMsg: MSG_ItemName_ThreatFocus
+    fullDescMsg: MSG_Menus_StarPowerDesc_ThreatFocus
+    shortDescMsg: MSG_Menus_StarPowerDesc_ThreatFocus
+    flags: [ TARGET_FLAG_OVERRIDE ]
+    category: MOVE_TYPE_STAR_POWER
+    actionTip: NONE
+    costFP: 0
+    costBP: 2

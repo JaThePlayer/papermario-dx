@@ -47,4 +47,6 @@ void _onFrame();
 
 void _on_dispatch_event_actor(Actor* actor, s32 event);
 
+s32 get_focus_move_id();
+
 #endif

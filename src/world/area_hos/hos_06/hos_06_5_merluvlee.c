@@ -71,7 +71,7 @@ BadgeHint N(BadgeHintData)[] = {
     { MSG_MerluvleeHint_ZapTap,           ITEM_ZAP_TAP,        BADGE_REQ_MERLOW_SHOP },
     { MSG_MerluvleeHint_IcePower,         ITEM_ICE_POWER,      STORY_CH4_FOUND_HIDDEN_DOOR },
     { MSG_MerluvleeHint_FireShield,       ITEM_FIRE_SHIELD,    STORY_CH5_ENTERED_MT_LAVA_LAVA },
-    { MSG_MerluvleeHint_SpikeShield,      ITEM_SPIKE_SHIELD,   STORY_CH2_UNCOVERED_DRY_DRY_RUINS },
+    { MSG_MerluvleeHint_SpikeShield,      ITEM_THREAT_FOCUS,   STORY_CH2_UNCOVERED_DRY_DRY_RUINS }, // todo: dialog
     { MSG_MerluvleeHint_CloseCall,        ITEM_CLOSE_CALL,     STORY_REQ_ANY_TIME },
     { MSG_MerluvleeHint_LastStand,        ITEM_LAST_STAND,     STORY_CH3_STAR_SPRIT_DEPARTED },
     { MSG_MerluvleeHint_PowerRush,        ITEM_POWER_RUSH,     STORY_CH2_STAR_SPRIT_DEPARTED },

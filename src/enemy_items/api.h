@@ -74,6 +74,8 @@ s32 enemy_items_count_items_with_id(Actor* actor, s32 itemID);
 // counts the amount of items with a given moveID
 s32 enemy_items_count_items_with_move_id(Actor* actor, s32 moveID);
 
+s32 _player_count_badges_with_move_id(s32 moveId);
+
 // counts badges with given move id either for the player or enemies
 s32 badge_count_by_move_id(Actor* actor, s32 moveId);
 s32 badge_count_by_move_id_in_opposing_team(Actor* actor, s32 moveId);

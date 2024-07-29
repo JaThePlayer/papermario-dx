@@ -1570,5 +1570,17 @@
 	A poisonous mushroom...[BR]
 	Why would you eat this?[BR]
 	Poisons you for 4 turns,[BR]
-	but recovers 6 FP[End]
+	but recovers 6 FP.[End]
+}
+
+#message:26:(ItemFullDesc_ThreatFocus) {
+	- Alt Focus Mode -[BR]
+	Replaces the Focus move.[BR]
+	Recover 2/8 SE per enemy[BR]
+	currently in-battle.[BR]
+	All badges related to Focus[BR]
+	apply to this move as well,[BR]
+	but only one Alt Focus Mode[BR]
+	can take effect at once.[BR]
+	[End]
 }

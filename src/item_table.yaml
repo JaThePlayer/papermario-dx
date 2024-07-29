@@ -5224,3 +5224,17 @@
     moveID: MOVE_NONE
     potencyA: 0
     potencyB: 6
+- ThreatFocus:
+    nameMsg: MSG_ItemName_ThreatFocus
+    fullDescMsg: MSG_ItemFullDesc_ThreatFocus
+    shortDescMsg: MSG_ItemFullDesc_ThreatFocus
+    icon: badge/ThreatFocus
+    itemEntityTemplate: STANDARD
+    hudElementTemplate: ITEM
+    sellValue: 100
+    sortValue: 52
+    targetFlags: []
+    typeFlags: [ ITEM_TYPE_FLAG_BADGE, ITEM_TYPE_FLAG_ENTITY_FULLSIZE ]
+    moveID: MOVE_THREAT_FOCUS
+    potencyA: 0
+    potencyB: 0
