@@ -46,6 +46,9 @@ void N(on_decrement)(Actor* target) {
 
     dmg -= lookup_fire_defense(get_actor_part_for_def(target)->defenseTable);
 
+    if (dmg < 0)
+        dmg = 0;
+
     target->state.goalPos = target->curPos;
 
     if (target == gBattleStatus.playerActor) {
