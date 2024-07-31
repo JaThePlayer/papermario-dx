@@ -7,28 +7,15 @@
 
 #define NAMESPACE A(pokey_mummy)
 
-extern s32 N(FourPartAnims)[];
-extern s32 N(ThrownPartAnims)[];
-extern EvtScript N(EVS_Init);
-extern EvtScript N(EVS_TakeTurn);
-extern EvtScript N(EVS_Idle);
-extern EvtScript N(EVS_HandleEvent);
-extern EvtScript N(EVS_KnockPartAway);
-extern EvtScript N(EVS_Attack_SinglePartLeap);
-extern EvtScript N(EVS_Pokey_SpinSmashHit);
-extern EvtScript N(EVS_DecrementSize);
-extern EvtScript N(EVS_Pokey_Hit);
-extern EvtScript N(EVS_Pokey_ScareAway);
-
 // while these parts seem set up to manage Pokeys changing size, its actually all handled via animations
 // and the PRT_BODY* are always invisible
 enum N(ActorPartIDs) {
-    PRT_MAIN        = 1, // top part of a 4-part Pokey
-    PRT_BODY3       = 2, // bottom part of a 4-part Pokey
-    PRT_BODY2       = 3,
-    PRT_BODY1       = 4,
-    PRT_SINGLE      = 5, // single-part Pokey
-    PRT_PROJECTILE  = 6, // part which is thrown
+    PRT_MAIN            = 1, // top part of a 4-part Pokey
+    PRT_BODY3           = 2, // bottom part of a 4-part Pokey
+    PRT_BODY2           = 3,
+    PRT_BODY1           = 4,
+    PRT_SINGLE          = 5, // single-part Pokey
+    PRT_PROJECTILE      = 6, // part which is thrown
 };
 
 enum N(ActorVars) {
@@ -42,20 +29,30 @@ enum N(ActorVars) {
     AVAR_Anim_BurnHurt      = 6,
     AVAR_Anim_BurnStill     = 7,
     AVAR_CantSummon         = 9,
-    AVAR_Generation         = 10,
-
-    AVAL_Generation_First   = 0,
-    AVAL_Generation_Second  = 1,
-    AVAL_Generation_Last    = 2,
 };
 
 enum N(ActorParams) {
-    DMG_THROW_PART         = 2, // throw a body part at the player
-    DMG_LEAP               = 2, // jump onto the player, used when no more parts can be thrown
+    DMG_THROW_PART         = 3, // throw a body part at the player.
+    DMG_LEAP               = 3, // jump onto the player, used when no more parts can be thrown
 };
+
+extern s32 N(FourPartAnims)[];
+extern s32 N(ThrownPartAnims)[];
+extern EvtScript N(EVS_Init);
+extern EvtScript N(EVS_Idle);
+extern EvtScript N(EVS_HandleEvent);
+extern EvtScript N(EVS_TakeTurn);
+extern EvtScript N(EVS_FindValidSummonPosition);
+extern EvtScript N(EVS_Attack_SinglePartLeap);
+extern EvtScript N(EVS_Pokey_SpinSmashHit);
+extern EvtScript N(EVS_DecrementSize);
+extern EvtScript N(EVS_KnockPartAway);
+extern EvtScript N(EVS_Pokey_Hit);
+extern EvtScript N(EVS_Pokey_ScareAway);
 
 s32 N(DefenseTable)[] = {
     ELEMENT_NORMAL,   0,
+    ELEMENT_FIRE,    -1,
     ELEMENT_END,
 };
 
@@ -70,7 +67,7 @@ s32 N(StatusTable)[] = {
     STATUS_KEY_STATIC,              0,
     STATUS_KEY_PARALYZE,          100,
     STATUS_KEY_SHRINK,             90,
-    STATUS_KEY_STOP,               90,
+    STATUS_KEY_STOP,              100,
     STATUS_TURN_MOD_DEFAULT,        0,
     STATUS_TURN_MOD_SLEEP,          0,
     STATUS_TURN_MOD_POISON,         0,
@@ -163,7 +160,7 @@ ActorBlueprint NAMESPACE = {
     .flags = 0,
     .type = ACTOR_TYPE_POKEY_MUMMY,
     .level = ACTOR_LEVEL_POKEY_MUMMY,
-    .maxHP = 4,
+    .maxHP = 6,
     .partCount = ARRAY_COUNT(N(ActorParts)),
     .partsData = N(ActorParts),
     .initScript = &N(EVS_Init),
@@ -232,13 +229,10 @@ s32 N(ThrownPartAnims)[] = {
     STATUS_END,
 };
 
-#include "common/battle/SetAbsoluteStatusOffsets.inc.c"
-
 EvtScript N(EVS_Init) = {
     Call(BindTakeTurn, ACTOR_SELF, Ref(N(EVS_TakeTurn)))
     Call(BindIdle, ACTOR_SELF, Ref(N(EVS_Idle)))
     Call(BindHandleEvent, ACTOR_SELF, Ref(N(EVS_HandleEvent)))
-    Call(SetActorVar, ACTOR_SELF, AVAR_Generation, AVAL_Generation_First)
     // copy input var from Formation
     Call(GetActorVar, ACTOR_SELF, AVAR_IN_CantSummon, LVar0)
     Call(SetActorVar, ACTOR_SELF, AVAR_CantSummon, LVar0)
@@ -443,7 +437,7 @@ EvtScript N(EVS_HandleEvent) = {
         CaseEq(EVENT_SPIKE_TAUNT)
             Call(GetBattleFlags, LVar0)
             IfNotFlag(LVar0, BS_FLAGS1_PARTNER_ACTING)
-                Call(AfflictActor, ACTOR_PLAYER, STATUS_KEY_POISON, 3)
+                Call(InflictCustomStatus, ACTOR_PLAYER, POISON_STATUS, 3, 1, 100)
             EndIf
             Call(GetActorVar, ACTOR_SELF, AVAR_PartsThrown, LVar0)
             Switch(LVar0)
@@ -494,11 +488,13 @@ EvtScript N(EVS_HandleEvent) = {
 };
 
 EvtScript N(EVS_TakeTurn) = {
+    STANDARD_ITEM_USE_AI()
     Call(GetActorVar, ACTOR_SELF, AVAR_PartsThrown, LVarA)
     IfEq(LVarA, 3)
         ExecWait(N(EVS_Attack_SinglePartLeap))
         Return
     EndIf
+
     Call(UseIdleAnimation, ACTOR_SELF, FALSE)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(GetBattlePhase, LVar0)
@@ -560,7 +556,7 @@ EvtScript N(EVS_TakeTurn) = {
     Wait(3)
     ExecWait(N(EVS_DecrementSize))
     Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
-    Call(EnemyTestTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_NO_CONTACT, 0, 2, BS_FLAGS1_TRIGGER_EVENTS)
+    Call(EnemyTestTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_NO_CONTACT, 0, DMG_THROW_PART, BS_FLAGS1_TRIGGER_EVENTS)
     Switch(LVar0)
         CaseOrEq(HIT_RESULT_MISS)
         CaseOrEq(HIT_RESULT_LUCKY)
@@ -592,7 +588,7 @@ EvtScript N(EVS_TakeTurn) = {
     Call(SetPartJumpGravity, ACTOR_SELF, PRT_PROJECTILE, Float(0.1))
     Call(SetAnimation, ACTOR_SELF, PRT_PROJECTILE, ANIM_Pokey_Mummy_Projectile)
     Call(JumpPartTo, ACTOR_SELF, PRT_PROJECTILE, LVar0, LVar1, LVar2, 0, TRUE)
-    Call(SetNextAttackCustomStatus, POISON_STATUS, 3, 1, 40)
+    Call(SetNextAttackCustomStatus, POISON_STATUS, 3, 1, 100)
     Call(EnemyDamageTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_NO_CONTACT, 0, 0, DMG_THROW_PART, BS_FLAGS1_TRIGGER_EVENTS)
     Call(GetActorVar, ACTOR_SELF, AVAR_Anim_Run, LVar1)
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, LVar1)
@@ -646,7 +642,7 @@ EvtScript N(EVS_Attack_SinglePartLeap) = {
     Wait(4)
     Call(SetActorDispOffset, ACTOR_SELF, 0, 0, 0)
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Pokey_Mummy_Run1)
-    Call(EnemyTestTarget, ACTOR_SELF, LVar0, 0, 0, 2, BS_FLAGS1_INCLUDE_POWER_UPS)
+    Call(EnemyTestTarget, ACTOR_SELF, LVar0, 0, 0, DMG_LEAP, BS_FLAGS1_INCLUDE_POWER_UPS)
     Switch(LVar0)
         CaseOrEq(HIT_RESULT_MISS)
         CaseOrEq(HIT_RESULT_LUCKY)
@@ -781,6 +777,9 @@ EvtScript N(EVS_Pokey_SpinSmashHit) = {
     End
 };
 
+#include "common/battle/SetAbsoluteStatusOffsets.inc.c"
+
+// set actor vars for new size one unit smaller than previous
 EvtScript N(EVS_DecrementSize) = {
     Call(GetActorVar, ACTOR_SELF, AVAR_PartsThrown, LVarA)
     Switch(LVarA)
@@ -958,7 +957,7 @@ EvtScript N(EVS_Pokey_Hit) = {
     Switch(LVar1)
         CaseOrEq(EVENT_BURN_HIT)
         CaseOrEq(EVENT_BURN_DEATH)
-            Call(SetAnimation, ACTOR_SELF, PRT_PROJECTILE, ANIM_Pokey_BurnedProjectile)
+            Call(SetAnimation, ACTOR_SELF, PRT_PROJECTILE, ANIM_Pokey_Mummy_BurnedProjectile)
             Call(GetActorVar, ACTOR_SELF, AVAR_Anim_BurnHurt, LVar1)
         EndCaseGroup
         CaseDefault
@@ -1032,9 +1031,33 @@ EvtScript N(EVS_Pokey_ScareAway) = {
     Wait(20)
     Call(SetActorYaw, ACTOR_SELF, 180)
     Wait(5)
-    Call(SetActorSpeed, ACTOR_SELF, Float(4.0))
-    Call(SetGoalPos, ACTOR_SELF, 200, 0, 0)
-    Call(RunToGoal, ACTOR_SELF, 0, FALSE)
+    Call(SetActorVar, ACTOR_SELF, AVAR_PartsThrown, LVar2)
+    Switch(LVar2)
+        CaseEq(0)
+            Set(LVar2, 96)
+            Set(LVar6, 4)
+        CaseEq(1)
+            Set(LVar2, 72)
+            Set(LVar6, 3)
+        CaseEq(2)
+            Set(LVar2, 48)
+            Set(LVar6, 2)
+        CaseDefault
+            Set(LVar2, 24)
+            Set(LVar6, 1)
+    EndSwitch
+    ChildThread
+        Call(GetActorPos, ACTOR_SELF, LVarA, LVarB, LVarC)
+        Loop(LVar6)
+            PlayEffect(EFFECT_SHOCKWAVE, 2, LVarA, 0, LVarC, 0)
+            Wait(10)
+        EndLoop
+    EndChildThread
+    Call(SetActorSpeed, ACTOR_SELF, Float(2.0))
+    Call(GetActorPos, ACTOR_SELF, LVar3, LVar4, LVar5)
+    Sub(LVar4, LVar2)
+    Call(SetGoalPos, ACTOR_SELF, LVar3, LVar4, LVar5)
+    Call(FlyToGoal, ACTOR_SELF, 0, 0, EASING_LINEAR)
     Wait(8)
     Call(HideHealthBar, ACTOR_SELF)
     Call(UseIdleAnimation, ACTOR_SELF, FALSE)

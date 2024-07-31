@@ -35,11 +35,14 @@ EvtScript N(EVS_FlipStairsCW) = {
     End
 };
 
+// was 30 in vanilla
+#define FlipStairsTime 10
+
 EvtScript N(EVS_FlipStairsCCW_BottomBlue) = {
     Set(LVar2, MODEL_g321)
     Set(LVar3, COLLIDER_o2031)
     Set(LVar4, COLLIDER_o2032)
-    Set(LVar5, 30)
+    Set(LVar5, FlipStairsTime)
     ExecWait(N(EVS_FlipStairsCCW))
     Return
     End
@@ -49,7 +52,7 @@ EvtScript N(EVS_FlipStairsCW_BottomBlue) = {
     Set(LVar2, MODEL_g321)
     Set(LVar3, COLLIDER_o2031)
     Set(LVar4, COLLIDER_o2032)
-    Set(LVar5, 30)
+    Set(LVar5, FlipStairsTime)
     ExecWait(N(EVS_FlipStairsCW))
     Return
     End
@@ -59,7 +62,7 @@ EvtScript N(EVS_FlipStairsCCW_TopBlue) = {
     Set(LVar2, MODEL_g327)
     Set(LVar3, COLLIDER_o2034)
     Set(LVar4, COLLIDER_o2033)
-    Set(LVar5, 30)
+    Set(LVar5, FlipStairsTime)
     ExecWait(N(EVS_FlipStairsCCW))
     Return
     End
@@ -69,7 +72,7 @@ EvtScript N(EVS_FlipStairsCW_TopBlue) = {
     Set(LVar2, MODEL_g327)
     Set(LVar3, COLLIDER_o2034)
     Set(LVar4, COLLIDER_o2033)
-    Set(LVar5, 30)
+    Set(LVar5, FlipStairsTime)
     ExecWait(N(EVS_FlipStairsCW))
     Return
     End
@@ -79,7 +82,7 @@ EvtScript N(EVS_FlipStairsCCW_BottomRed) = {
     Set(LVar2, MODEL_g328)
     Set(LVar3, COLLIDER_o2036)
     Set(LVar4, COLLIDER_o2035)
-    Set(LVar5, 30)
+    Set(LVar5, FlipStairsTime)
     ExecWait(N(EVS_FlipStairsCCW))
     Return
     End
@@ -89,7 +92,7 @@ EvtScript N(EVS_FlipStairsCW_BottomRed) = {
     Set(LVar2, MODEL_g328)
     Set(LVar3, COLLIDER_o2036)
     Set(LVar4, COLLIDER_o2035)
-    Set(LVar5, 30)
+    Set(LVar5, FlipStairsTime)
     ExecWait(N(EVS_FlipStairsCW))
     Return
     End
@@ -99,7 +102,7 @@ EvtScript N(EVS_FlipStairsCCW_TopRed) = {
     Set(LVar2, MODEL_g329)
     Set(LVar3, COLLIDER_o2037)
     Set(LVar4, COLLIDER_o2038)
-    Set(LVar5, 30)
+    Set(LVar5, FlipStairsTime)
     ExecWait(N(EVS_FlipStairsCCW))
     Return
     End
@@ -109,15 +112,17 @@ EvtScript N(EVS_FlipStairsCW_TopRed) = {
     Set(LVar2, MODEL_g329)
     Set(LVar3, COLLIDER_o2037)
     Set(LVar4, COLLIDER_o2038)
-    Set(LVar5, 30)
+    Set(LVar5, FlipStairsTime)
     ExecWait(N(EVS_FlipStairsCW))
     Return
     End
 };
 
+#define PanCamSpeed Float(4.0)
+
 EvtScript N(EVS_BlueStairs_FlipCCW) = {
     Call(DisablePlayerInput, TRUE)
-    Call(SetCamSpeed, CAM_DEFAULT, Float(1.0))
+    Call(SetCamSpeed, CAM_DEFAULT, PanCamSpeed)
     Call(UseSettingsFrom, CAM_DEFAULT, -522, -310, -95)
     Call(SetPanTarget, CAM_DEFAULT, -522, -377, -92)
     Wait(1)
@@ -140,7 +145,7 @@ EvtScript N(EVS_BlueStairs_FlipCCW) = {
 
 EvtScript N(EVS_BlueStairs_FlipCW) = {
     Call(DisablePlayerInput, TRUE)
-    Call(SetCamSpeed, CAM_DEFAULT, Float(1.0))
+    Call(SetCamSpeed, CAM_DEFAULT, PanCamSpeed)
     Call(UseSettingsFrom, CAM_DEFAULT, -522, -310, -95)
     Call(SetPanTarget, CAM_DEFAULT, -522, -377, -92)
     Wait(1)
@@ -163,7 +168,7 @@ EvtScript N(EVS_BlueStairs_FlipCW) = {
 
 EvtScript N(EVS_RedStairs_FlipCCW) = {
     Call(DisablePlayerInput, TRUE)
-    Call(SetCamSpeed, CAM_DEFAULT, Float(1.0))
+    Call(SetCamSpeed, CAM_DEFAULT, PanCamSpeed)
     Call(UseSettingsFrom, CAM_DEFAULT, -408, -310, -347)
     Call(SetPanTarget, CAM_DEFAULT, -408, -377, -347)
     Wait(1)
@@ -186,7 +191,7 @@ EvtScript N(EVS_RedStairs_FlipCCW) = {
 
 EvtScript N(EVS_RedStairs_FlipCW) = {
     Call(DisablePlayerInput, TRUE)
-    Call(SetCamSpeed, CAM_DEFAULT, Float(1.0))
+    Call(SetCamSpeed, CAM_DEFAULT, PanCamSpeed)
     Call(UseSettingsFrom, CAM_DEFAULT, -408, -310, -347)
     Call(SetPanTarget, CAM_DEFAULT, -408, -377, -347)
     Wait(1)

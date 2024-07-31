@@ -12,6 +12,10 @@ s32 getDamageChangeFromStatus(Actor* actor);
 
 void clearChargesFrom(Actor* actor);
 
+void markActorAsNotAttackedThisTurn(Actor* actor);
+
+API_CALLABLE(MarkActorAsNotAttackedThisTurn);
+
 // out koDuration
 API_CALLABLE(GetPartnerKoDuration);
 

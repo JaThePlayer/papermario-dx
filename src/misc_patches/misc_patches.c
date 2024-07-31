@@ -22,6 +22,24 @@ s32 getDamageChangeFromStatus(Actor* actor) {
     return change;
 }
 
+void markActorAsNotAttackedThisTurn(Actor* actor) {
+    actor->attackedThisTurn = FALSE;
+}
+
+API_CALLABLE(MarkActorAsNotAttackedThisTurn) {
+    Bytecode* args = script->ptrReadPos;
+    Actor* actor;
+
+    s32 actorID = evt_get_variable(script, *args++);
+    if (actorID == ACTOR_SELF) {
+        actorID = script->owner1.actorID;
+    }
+    actor = get_actor(actorID);
+
+    markActorAsNotAttackedThisTurn(actor);
+    return ApiStatus_DONE2;
+}
+
 void clearChargesFrom(Actor* actor) {
     custom_status_clear(actor, CHARGE_STATUS);
 }

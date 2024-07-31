@@ -19,6 +19,7 @@ enum N(ActorPartIDs) {
 };
 
 enum N(ActorVars) {
+    // Used by Swoopers by number!
     AVAR_IsCeiling      = 0,
     AVAR_ToppleState    = 8,
     AVAL_State_Ceiling  = 0,
@@ -28,12 +29,12 @@ enum N(ActorVars) {
 };
 
 enum N(ActorParams) {
-    DMG_SHELL_TOSS      = 2,
-    DMG_CEILING_DROP    = 3,
+    DMG_SHELL_TOSS      = 4,
+    DMG_CEILING_DROP    = 6,
 };
 
 s32 N(UprightDefense)[] = {
-    ELEMENT_NORMAL,   2,
+    ELEMENT_NORMAL,  10,
     ELEMENT_FIRE,    99,
     ELEMENT_BLAST,   99,
     ELEMENT_END,
@@ -48,7 +49,7 @@ s32 N(StatusTable)[] = {
     STATUS_KEY_NORMAL,              0,
     STATUS_KEY_DEFAULT,             0,
     STATUS_KEY_SLEEP,              90,
-    STATUS_KEY_POISON,             50,
+    STATUS_KEY_POISON,            100,
     STATUS_KEY_FROZEN,              0,
     STATUS_KEY_DIZZY,              75,
     STATUS_KEY_FEAR,                0,
@@ -391,7 +392,7 @@ EvtScript N(EVS_HandleEvent_Ground) = {
             Call(SetActorVar, ACTOR_SELF, AVAR_ToppleState, AVAL_State_Toppled)
             Call(SetTargetOffset, ACTOR_SELF, PRT_MAIN, 0, 16)
             Call(SetProjectileTargetOffset, ACTOR_SELF, PRT_MAIN, -1, -9)
-            Call(SetActorVar, ACTOR_SELF, AVAR_ToppleTurns, 1)
+            Call(SetActorVar, ACTOR_SELF, AVAR_ToppleTurns, 2) // was 1
             Call(SetDefenseTable, ACTOR_SELF, PRT_MAIN, Ref(N(ToppledDefense)))
             Call(SetIdleAnimations, ACTOR_SELF, PRT_MAIN, Ref(N(ToppledAnims)))
             Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_FLIPPED, TRUE)
@@ -716,6 +717,9 @@ EvtScript N(EVS_TakeTurn_Ground) = {
             Wait(30)
             Call(RemoveActorDecoration, ACTOR_SELF, PRT_MAIN, 0)
             Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
+            Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
+            Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+            Return
         Else
             Call(AddActorDecoration, ACTOR_SELF, PRT_MAIN, 0, ACTOR_DECORATION_SWEAT)
             Wait(20)
@@ -733,9 +737,6 @@ EvtScript N(EVS_TakeTurn_Ground) = {
             Call(BindIdle, ACTOR_SELF, Ref(N(EVS_Idle)))
             Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_FLIPPED, FALSE)
         EndIf
-        Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-        Call(UseIdleAnimation, ACTOR_SELF, TRUE)
-        Return
     EndIf
     Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
     Call(UseBattleCamPreset, BTL_CAM_ENEMY_APPROACH)

@@ -230,7 +230,7 @@
     tattleCamOffset: [ 0, 0, 0 ]
     shadowOffset: 0
 - PokeyMummy:
-    level: 3
+    level: 2
     nameMsg: MSG_EnemyName_PokeyMummy
     tattleMsg: MSG_EnemyTattle_PokeyMummy
     walkSound: [ SOUND_POKEY_WALK, SOUND_NONE ]
@@ -241,7 +241,7 @@
     tattleCamOffset: [ 0, 0, 0 ]
     shadowOffset: 0
 - Swooper:
-    level: 3
+    level: 2
     nameMsg: MSG_EnemyName_Swooper
     tattleMsg: MSG_EnemyTattle_Swooper
     walkSound: [ SOUND_ACTOR_FLIGHT, SOUND_ACTOR_FLIGHT ]
@@ -252,7 +252,7 @@
     tattleCamOffset: [ 0, 0, 0 ]
     shadowOffset: 0
 - BuzzyBeetle:
-    level: 3
+    level: 2
     nameMsg: MSG_EnemyName_BuzzyBeetle
     tattleMsg: MSG_EnemyTattle_BuzzyBeetle
     walkSound: [ SOUND_GOOMBA_STEP, SOUND_GOOMBA_STEP ]
@@ -263,7 +263,7 @@
     tattleCamOffset: [ 0, 10, 0 ]
     shadowOffset: 0
 - StoneChomp:
-    level: 8
+    level: 4
     nameMsg: MSG_EnemyName_StoneChomp
     tattleMsg: MSG_EnemyTattle_StoneChomp
     walkSound: [ SOUND_NONE, SOUND_NONE ]
@@ -274,7 +274,7 @@
     tattleCamOffset: [ 0, 0, 0 ]
     shadowOffset: 0
 - PiranhaPlant:
-    level: 3
+    level: 2
     nameMsg: MSG_EnemyName_PiranhaPlant
     tattleMsg: MSG_EnemyTattle_PiranhaPlant
     walkSound: [ SOUND_ACTOR_STEP_A, SOUND_ACTOR_STEP_B ]
@@ -285,7 +285,7 @@
     tattleCamOffset: [ 0, 0, 0 ]
     shadowOffset: 0
 - ForestFuzzy:
-    level: 3
+    level: 2
     nameMsg: MSG_EnemyName_ForestFuzzy
     tattleMsg: MSG_EnemyTattle_ForestFuzzy
     walkSound: [ SOUND_FUZZY_HOP_A, SOUND_FUZZY_HOP_A ]
@@ -296,7 +296,7 @@
     tattleCamOffset: [ 0, 5, 0 ]
     shadowOffset: 0
 - HyperGoomba:
-    level: 3
+    level: 2
     nameMsg: MSG_EnemyName_HyperGoomba
     tattleMsg: MSG_EnemyTattle_HyperGoomba
     walkSound: [ SOUND_GOOMBA_STEP, SOUND_GOOMBA_STEP ]
@@ -307,7 +307,7 @@
     tattleCamOffset: [ 0, 5, 0 ]
     shadowOffset: 0
 - HyperParagoomba:
-    level: 3
+    level: 2
     nameMsg: MSG_EnemyName_HyperParagoomba
     tattleMsg: MSG_EnemyTattle_HyperParagoomba
     walkSound: [ SOUND_PARAGOOMBA_FLY, SOUND_PARAGOOMBA_FLY ]
@@ -318,7 +318,7 @@
     tattleCamOffset: [ 0, 4, 0 ]
     shadowOffset: 0
 - HyperCleft:
-    level: 3
+    level: 2
     nameMsg: MSG_EnemyName_HyperCleft
     tattleMsg: MSG_EnemyTattle_HyperCleft
     walkSound: [ SOUND_CLEFT_STEP, SOUND_CLEFT_STEP ]
@@ -329,7 +329,7 @@
     tattleCamOffset: [ 0, 254, 241 ]
     shadowOffset: 0
 - Clubba:
-    level: 3
+    level: 2
     nameMsg: MSG_EnemyName_Clubba
     tattleMsg: MSG_EnemyTattle_Clubba
     walkSound: [ SOUND_CLUBBA_STEP, SOUND_CLUBBA_STEP ]
@@ -351,7 +351,7 @@
     tattleCamOffset: [ 0, 5, 0 ]
     shadowOffset: 0
 - GrooveGuy:
-    level: 3
+    level: 2
     nameMsg: MSG_EnemyName_GrooveGuy
     tattleMsg: MSG_EnemyTattle_GrooveGuy
     walkSound: [ SOUND_ACTOR_STEP_A, SOUND_ACTOR_STEP_B ]
@@ -362,7 +362,7 @@
     tattleCamOffset: [ 0, 4, 0 ]
     shadowOffset: 0
 - SkyGuy:
-    level: 3
+    level: 2
     nameMsg: MSG_EnemyName_SkyGuy
     tattleMsg: MSG_EnemyTattle_SkyGuy
     walkSound: [ SOUND_ACTOR_STEP_A, SOUND_ACTOR_STEP_B ]
@@ -373,7 +373,7 @@
     tattleCamOffset: [ 0, 15, 23 ]
     shadowOffset: 0
 - MediGuy:
-    level: 3
+    level: 2
     nameMsg: MSG_EnemyName_MediGuy
     tattleMsg: MSG_EnemyTattle_MediGuy
     walkSound: [ SOUND_NONE, SOUND_NONE ]
@@ -384,7 +384,7 @@
     tattleCamOffset: [ 0, 0, 0 ]
     shadowOffset: 0
 - PyroGuy:
-    level: 3
+    level: 2
     nameMsg: MSG_EnemyName_PyroGuy
     tattleMsg: MSG_EnemyTattle_PyroGuy
     walkSound: [ SOUND_ACTOR_STEP_A, SOUND_ACTOR_STEP_B ]
@@ -395,7 +395,7 @@
     tattleCamOffset: [ 0, 0, 0 ]
     shadowOffset: 0
 - SpyGuy:
-    level: 3
+    level: 2
     nameMsg: MSG_EnemyName_SpyGuy
     tattleMsg: MSG_EnemyTattle_SpyGuy
     walkSound: [ SOUND_ACTOR_STEP_A, SOUND_ACTOR_STEP_B ]
@@ -417,7 +417,7 @@
     tattleCamOffset: [ 0, 0, 0 ]
     shadowOffset: 0
 - HurtPlant:
-    level: 3
+    level: 2
     nameMsg: MSG_EnemyName_HurtPlant
     tattleMsg: MSG_EnemyTattle_HurtPlant
     walkSound: [ SOUND_ACTOR_STEP_A, SOUND_ACTOR_STEP_B ]
@@ -428,7 +428,7 @@
     tattleCamOffset: [ 0, 6, 0 ]
     shadowOffset: 0
 - MBush:
-    level: 3
+    level: 2
     nameMsg: MSG_EnemyName_MBush
     tattleMsg: MSG_EnemyTattle_MBush
     walkSound: [ SOUND_MBUSH_STEP, SOUND_MBUSH_STEP ]
@@ -439,7 +439,7 @@
     tattleCamOffset: [ 0, 7, 0 ]
     shadowOffset: 0
 - AquaFuzzy:
-    level: 4
+    level: 3
     nameMsg: MSG_EnemyName_AquaFuzzy
     tattleMsg: MSG_NONE
     walkSound: [ SOUND_FUZZY_HOP_A, SOUND_FUZZY_HOP_A ]
@@ -450,7 +450,7 @@
     tattleCamOffset: [ 0, 5, 0 ]
     shadowOffset: 0
 - JungleFuzzy:
-    level: 3
+    level: 2
     nameMsg: MSG_EnemyName_JungleFuzzy
     tattleMsg: MSG_EnemyTattle_JungleFuzzy
     walkSound: [ SOUND_FUZZY_HOP_A, SOUND_FUZZY_HOP_A ]
@@ -461,7 +461,7 @@
     tattleCamOffset: [ 0, 5, 0 ]
     shadowOffset: 0
 - SpearGuy:
-    level: 3
+    level: 2
     nameMsg: MSG_EnemyName_SpearGuy
     tattleMsg: MSG_EnemyTattle_SpearGuy
     walkSound: [ SOUND_ACTOR_STEP_A, SOUND_ACTOR_STEP_B ]
@@ -472,7 +472,7 @@
     tattleCamOffset: [ 0, 6, 0 ]
     shadowOffset: 0
 - LavaBubble:
-    level: 3
+    level: 2
     nameMsg: MSG_EnemyName_LavaBubble
     tattleMsg: MSG_EnemyTattle_LavaBubble
     walkSound: [ SOUND_NONE, SOUND_NONE ]
@@ -483,7 +483,7 @@
     tattleCamOffset: [ 0, 0, 0 ]
     shadowOffset: 0
 - SpikeTop:
-    level: 3
+    level: 2
     nameMsg: MSG_EnemyName_SpikeTop
     tattleMsg: MSG_EnemyTattle_SpikeTop
     walkSound: [ SOUND_GOOMBA_STEP, SOUND_GOOMBA_STEP ]
@@ -494,7 +494,7 @@
     tattleCamOffset: [ 0, 6, 0 ]
     shadowOffset: 0
 - PutridPiranha:
-    level: 3
+    level: 2
     nameMsg: MSG_EnemyName_PutridPiranha
     tattleMsg: MSG_EnemyTattle_PutridPiranha
     walkSound: [ SOUND_PIRANHA_STEP, SOUND_PIRANHA_STEP ]
@@ -505,7 +505,7 @@
     tattleCamOffset: [ 0, 0, 0 ]
     shadowOffset: 0
 - Lakitu:
-    level: 5
+    level: 3
     nameMsg: MSG_EnemyName_Lakitu
     tattleMsg: MSG_EnemyTattle_Lakitu
     walkSound: [ SOUND_FLIGHT, SOUND_FLIGHT ]
@@ -516,7 +516,7 @@
     tattleCamOffset: [ 0, 0, 0 ]
     shadowOffset: 0
 - Spiny:
-    level: 3
+    level: 2
     nameMsg: MSG_EnemyName_Spiny
     tattleMsg: MSG_EnemyTattle_Spiny
     walkSound: [ SOUND_NONE, SOUND_NONE ]
@@ -538,7 +538,7 @@
     tattleCamOffset: [ 0, 14, 0 ]
     shadowOffset: 0
 - Bzzap:
-    level: 5
+    level: 3
     nameMsg: MSG_EnemyName_Bzzap
     tattleMsg: MSG_EnemyTattle_Bzzap
     walkSound: [ SOUND_BZZAP_BUZZ, SOUND_NONE ]
@@ -593,7 +593,7 @@
     tattleCamOffset: [ 0, 0, 0 ]
     shadowOffset: 0
 - Gulpit:
-    level: 3
+    level: 2
     nameMsg: MSG_EnemyName_Gulpit
     tattleMsg: MSG_EnemyTattle_Gulpit
     walkSound: [ SOUND_CLUBBA_STEP, SOUND_CLUBBA_STEP ]
@@ -615,7 +615,7 @@
     tattleCamOffset: [ 0, 0, 0 ]
     shadowOffset: 0
 - WhiteClubba:
-    level: 3
+    level: 2
     nameMsg: MSG_EnemyName_WhiteClubba
     tattleMsg: MSG_EnemyTattle_WhiteClubba
     walkSound: [ SOUND_CLUBBA_STEP, SOUND_CLUBBA_STEP ]
@@ -626,7 +626,7 @@
     tattleCamOffset: [ 0, 0, 0 ]
     shadowOffset: 0
 - FrostPiranha:
-    level: 3
+    level: 2
     nameMsg: MSG_EnemyName_FrostPiranha
     tattleMsg: MSG_EnemyTattle_FrostPiranha
     walkSound: [ SOUND_PIRANHA_STEP, SOUND_PIRANHA_STEP ]
@@ -637,7 +637,7 @@
     tattleCamOffset: [ 0, 0, 0 ]
     shadowOffset: 0
 - Swoopula:
-    level: 3
+    level: 2
     nameMsg: MSG_EnemyName_Swoopula
     tattleMsg: MSG_EnemyTattle_Swoopula
     walkSound: [ SOUND_ACTOR_FLIGHT, SOUND_ACTOR_FLIGHT ]
@@ -769,7 +769,7 @@
     tattleCamOffset: [ 0, 0, 0 ]
     shadowOffset: 0
 - BonyBeetle:
-    level: 3
+    level: 2
     nameMsg: MSG_EnemyName_BonyBeetle
     tattleMsg: MSG_EnemyTattle_BonyBeetle
     walkSound: [ SOUND_BONY_BEETLE_STEP, SOUND_BONY_BEETLE_STEP ]
@@ -780,7 +780,7 @@
     tattleCamOffset: [ 0, 6, 0 ]
     shadowOffset: 0
 - DryBones:
-    level: 3
+    level: 2
     nameMsg: MSG_EnemyName_DryBones
     tattleMsg: MSG_EnemyTattle_DryBones
     walkSound: [ SOUND_ACTOR_STEP_A, SOUND_ACTOR_STEP_B ]
@@ -791,7 +791,7 @@
     tattleCamOffset: [ 0, 3, 0 ]
     shadowOffset: 0
 - DryBones2:
-    level: 3
+    level: 2
     nameMsg: MSG_EnemyName_DryBones
     tattleMsg: MSG_EnemyTattle_DryBones
     walkSound: [ SOUND_ACTOR_STEP_A, SOUND_ACTOR_STEP_B ]
@@ -813,7 +813,7 @@
     tattleCamOffset: [ 0, 6, 0 ]
     shadowOffset: 0
 - BombshellBill:
-    level: 1
+    level: 0
     nameMsg: MSG_EnemyName_BombshellBill
     tattleMsg: MSG_EnemyTattle_BombshellBill
     walkSound: [ SOUND_BULLET_BILL_MOTION, SOUND_BULLET_BILL_MOTION ]

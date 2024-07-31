@@ -1,6 +1,8 @@
 #include "battle/battle.h"
 #include "script_api/battle.h"
 #include "sprite/npc/StoneChomp.h"
+#include "misc_patches/custom_status.h"
+#include "misc_patches/misc_patches.h"
 
 #define NAMESPACE A(stone_chomp)
 
@@ -82,7 +84,7 @@ s32 N(ChainAnims)[] = {
 };
 
 s32 N(DefenseTable)[] = {
-    ELEMENT_NORMAL,   1,
+    ELEMENT_NORMAL,   2,
     ELEMENT_END,
 };
 
@@ -92,7 +94,7 @@ s32 N(StatusTable)[] = {
     STATUS_KEY_SLEEP,               0,
     STATUS_KEY_POISON,              0,
     STATUS_KEY_FROZEN,              0,
-    STATUS_KEY_DIZZY,              75,
+    STATUS_KEY_DIZZY,              25,
     STATUS_KEY_FEAR,                0,
     STATUS_KEY_STATIC,              0,
     STATUS_KEY_PARALYZE,           50,
@@ -238,16 +240,16 @@ ActorBlueprint NAMESPACE = {
     .flags = 0,
     .type = ACTOR_TYPE_STONE_CHOMP,
     .level = ACTOR_LEVEL_STONE_CHOMP,
-    .maxHP = 4,
+    .maxHP = 8,
     .partCount = ARRAY_COUNT(N(ActorParts)),
     .partsData = N(ActorParts),
     .initScript = &N(EVS_Init),
     .statusTable = N(StatusTable),
     .escapeChance = 0,
-    .airLiftChance = 25,
-    .hurricaneChance = 25,
+    .airLiftChance = 0,
+    .hurricaneChance = 0,
     .spookChance = 0,
-    .upAndAwayChance = 95,
+    .upAndAwayChance = 0,
     .spinSmashReq = 0,
     .powerBounceChance = 85,
     .coinReward = 5,
@@ -641,6 +643,8 @@ EvtScript N(EVS_HandleEvent) = {
     End
 };
 
+extern API_CALLABLE(ClearChargesOn);
+
 EvtScript N(EVS_TakeTurn) = {
     Call(UseIdleAnimation, ACTOR_SELF, FALSE)
     Call(SetActorVar, ACTOR_SELF, AVAR_EnableChainSounds, TRUE)
@@ -723,6 +727,15 @@ EvtScript N(EVS_TakeTurn) = {
     Call(SetPartPos, ACTOR_SELF, PRT_TARGET, LVar0, LVar1, LVar2)
     Wait(2)
     Call(EnemyDamageTarget, ACTOR_SELF, LVar0, 0, 0, 0, DMG_CHOMP_BITE, BS_FLAGS1_TRIGGER_EVENTS)
+
+    // gain ((dmg+1)/2) charge
+    Call(GetLastDamage, ACTOR_PLAYER, LVarF)
+    Add(LVarF, 1)
+    Div(LVarF, 2)
+    Call(ClearChargesOn, ACTOR_SELF)
+    Call(MarkActorAsNotAttackedThisTurn, ACTOR_SELF)
+    Call(InflictCustomStatus, ACTOR_SELF, CHARGE_STATUS, 99, LVarF, 100)
+
     Switch(LVar0)
         CaseOrEq(HIT_RESULT_HIT)
         CaseOrEq(HIT_RESULT_NO_DAMAGE)

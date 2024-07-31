@@ -1,5 +1,7 @@
 #include "area.h"
 
+#include "battle/common/actor/red_paragoomba.inc.c"
+
 extern ActorBlueprint A(pokey_mummy);
 extern ActorBlueprint A(swooper);
 extern ActorBlueprint A(stone_chomp);
@@ -29,30 +31,114 @@ Vec3i A(vector3D_802240AC) = { 55, 112, -25 };
 Vec3i A(vector3D_802240B8) = { 95, 112, -25 };
 Vec3i A(vector3D_802240C4) = { 135, 112, -25 };
 
-Formation A(Formation_00) = {
-    ACTOR_BY_IDX(A(pokey_mummy), BTL_POS_GROUND_B, 10),
-    ACTOR_BY_IDX(A(pokey_mummy), BTL_POS_GROUND_C, 9),
-};
-
-Formation A(Formation_01) = {
-    ACTOR_BY_IDX(A(pokey_mummy), BTL_POS_GROUND_A, 10),
-    ACTOR_BY_IDX(A(pokey_mummy), BTL_POS_GROUND_B, 9),
-    ACTOR_BY_IDX(A(pokey_mummy), BTL_POS_GROUND_C, 8),
-};
-
-Formation A(Formation_02) = {
-    ACTOR_BY_IDX(A(pokey_mummy), BTL_POS_GROUND_B, 9),
-    ACTOR_BY_POS(A(swooper), A(vector3D_80224088), 8),
-};
-
-Formation A(Formation_03) = {
-    ACTOR_BY_IDX(A(pokey_mummy), BTL_POS_GROUND_A, 10),
-    ACTOR_BY_IDX(A(pokey_mummy), BTL_POS_GROUND_B, 9),
-    ACTOR_BY_POS(A(swooper), A(vector3D_80224088), 8),
-};
-
 Vec3i A(vector3D_802241E8) = { 80, 133, -25 };
 Vec3i A(vector3D_802241F4) = { 115, 133, -25 };
+
+Vec3i A(vector3D_8022460C) = { 0, 112, -25 };
+Vec3i A(vector3D_80224618) = { 40, 112, -25 };
+Vec3i A(vector3D_80224624) = { 80, 112, -25 };
+Vec3i A(vector3D_80224630) = { 120, 112, -25 };
+
+// Notable:
+// isk_07 - 3 fight pit
+// isk_02 - first room
+
+Formation A(Formation_00) = { // isk_02
+    ACTOR_BY_IDX(A(pokey_mummy), BTL_POS_GROUND_B, 10),
+    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_C, 9),
+    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_D, 8),
+};
+
+Formation A(Formation_0B) = { // isk_02
+    ACTOR_BY_IDX(A(pokey_mummy), BTL_POS_GROUND_A, 10),
+    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_B, 9),
+    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_C, 8, TRUE),
+};
+
+Formation A(Formation_01) = { // isk_02
+    ACTOR_BY_IDX(A(pokey_mummy), BTL_POS_GROUND_A, 10),
+    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_B, 9),
+    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_B, 8, TRUE),
+    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_C, 7, TRUE),
+};
+
+
+Formation A(Formation_09) = { // isk_04
+    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_A, 10),
+    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_B, 9),
+    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_C, 8),
+    ACTOR_BY_IDX_ITEM(A(red_paragoomba), BTL_POS_AIR_D, 7, ITEM_HP_PLUS_A),
+};
+
+Formation A(Formation_0D) = { // isk_04
+    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_B, 10),
+    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_B, 9, TRUE),
+    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_C, 8),
+    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_C, 7, TRUE),
+};
+
+
+// 3-fight pit
+Formation A(Formation_02) = { // isk_07
+    ACTOR_BY_IDX(A(pokey_mummy), BTL_POS_GROUND_B, 9),
+    ACTOR_BY_POS(A(swooper), A(vector3D_80224088), 8),
+    ACTOR_BY_POS(A(buzzy_beetle), A(vector3D_80224094), 7, 1),
+    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_D, 6, TRUE),
+};
+
+Formation A(Formation_03) = { // isk_07
+    ACTOR_BY_IDX(A(pokey_mummy), BTL_POS_GROUND_A, 10),
+    ACTOR_BY_IDX(A(pokey_mummy), BTL_POS_GROUND_B, 9),
+    ACTOR_BY_POS(A(swooper), A(vector3D_80224088), 8),
+    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_D, 7),
+};
+
+Formation A(Formation_06) = { // isk_07
+    ACTOR_BY_IDX(A(pokey_mummy), BTL_POS_GROUND_A, 10),
+    ACTOR_BY_IDX(A(pokey_mummy), BTL_POS_GROUND_B, 9),
+    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_C, 8),
+    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_C, 7, TRUE),
+    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_D, 6, TRUE),
+};
+
+
+Formation A(Formation_0A) = { // isk_08
+    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_A, 10),
+    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_B, 9),
+    ACTOR_BY_IDX_ITEM(A(buzzy_beetle), BTL_POS_GROUND_C, 8, ITEM_FIRE_FLOWER),
+    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_C, 7, TRUE),
+};
+
+
+Formation A(Formation_0C) = { // isk_18
+    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_B, 10),
+    ACTOR_BY_POS(A(swooper), A(vector3D_802240B8), 9),
+};
+
+Formation A(Formation_0F) = { // isk_18
+    ACTOR_BY_POS(A(buzzy_beetle), A(vector3D_802240AC), 10, 1),
+    ACTOR_BY_POS(A(buzzy_beetle), A(vector3D_802240B8), 9, 1),
+    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_D, 8, TRUE),
+};
+
+Formation A(Formation_13) = { // isk_18
+    ACTOR_BY_POS(A(buzzy_beetle), A(vector3D_802240A0), 10, 1),
+    ACTOR_BY_POS(A(buzzy_beetle), A(vector3D_802240AC), 9, 1),
+    ACTOR_BY_POS(A(swooper), A(vector3D_802240B8), 8),
+};
+
+
+Formation A(Formation_07) = { // isk_05, isk_13, isk_14
+    ACTOR_BY_IDX(A(stone_chomp), BTL_POS_GROUND_B, 10),
+    ACTOR_BY_IDX(A(stone_chomp), BTL_POS_GROUND_C, 9),
+};
+
+Formation A(Formation_08) = {
+    ACTOR_BY_IDX(A(stone_chomp), BTL_POS_GROUND_A, 10),
+    ACTOR_BY_IDX(A(stone_chomp), BTL_POS_GROUND_B, 9),
+    ACTOR_BY_IDX(A(stone_chomp), BTL_POS_GROUND_C, 8),
+};
+
 
 Formation A(Formation_04) = {
     ACTOR_BY_IDX(A(pokey_mummy), BTL_POS_GROUND_A, 10),
@@ -66,58 +152,8 @@ Formation A(Formation_05) = {
     ACTOR_BY_POS(A(swooper), A(vector3D_80224088), 9),
 };
 
-Formation A(Formation_06) = {
-    ACTOR_BY_POS(A(swooper), A(vector3D_80224070), 10),
-    ACTOR_BY_POS(A(swooper), A(vector3D_8022407C), 9),
-    ACTOR_BY_POS(A(swooper), A(vector3D_80224088), 8),
-};
-
-Formation A(Formation_07) = {
-    ACTOR_BY_IDX(A(stone_chomp), BTL_POS_GROUND_B, 10),
-    ACTOR_BY_IDX(A(stone_chomp), BTL_POS_GROUND_C, 9),
-};
-
-Formation A(Formation_08) = {
-    ACTOR_BY_IDX(A(stone_chomp), BTL_POS_GROUND_A, 10),
-    ACTOR_BY_IDX(A(stone_chomp), BTL_POS_GROUND_B, 9),
-    ACTOR_BY_IDX(A(stone_chomp), BTL_POS_GROUND_C, 8),
-};
-
-Formation A(Formation_09) = {
-    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_B, 10),
-    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_C, 9),
-};
-
-Formation A(Formation_0A) = {
-    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_A, 10),
-    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_B, 9),
-    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_C, 8),
-    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_D, 7),
-};
-
-Formation A(Formation_0B) = {
-    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_A, 10),
-    ACTOR_BY_POS(A(buzzy_beetle), A(vector3D_802240AC), 9, 1),
-    ACTOR_BY_POS(A(swooper), A(vector3D_802240B8), 8),
-};
-
-Formation A(Formation_0C) = {
-    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_B, 10),
-    ACTOR_BY_POS(A(swooper), A(vector3D_802240B8), 9),
-};
-
-Formation A(Formation_0D) = {
-    ACTOR_BY_POS(A(buzzy_beetle), A(vector3D_802240AC), 10, 1),
-    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_C, 9),
-};
-
 Formation A(Formation_0E) = {
     ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_B, 10),
-    ACTOR_BY_POS(A(buzzy_beetle), A(vector3D_802240B8), 9, 1),
-};
-
-Formation A(Formation_0F) = {
-    ACTOR_BY_POS(A(buzzy_beetle), A(vector3D_802240AC), 10, 1),
     ACTOR_BY_POS(A(buzzy_beetle), A(vector3D_802240B8), 9, 1),
 };
 
@@ -133,25 +169,11 @@ Formation A(Formation_11) = {
     ACTOR_BY_POS(A(buzzy_beetle), A(vector3D_802240B8), 8, 1),
 };
 
-Vec3i A(vector3D_8022460C) = { 0, 112, -25 };
-
-Vec3i A(vector3D_80224618) = { 40, 112, -25 };
-
-Vec3i A(vector3D_80224624) = { 80, 112, -25 };
-
-Vec3i A(vector3D_80224630) = { 120, 112, -25 };
-
 Formation A(Formation_12) = {
     ACTOR_BY_POS(A(buzzy_beetle), A(vector3D_8022460C), 10, 1),
     ACTOR_BY_POS(A(buzzy_beetle), A(vector3D_80224618), 9, 1),
     ACTOR_BY_POS(A(buzzy_beetle), A(vector3D_80224624), 8, 1),
     ACTOR_BY_POS(A(buzzy_beetle), A(vector3D_80224630), 7, 1),
-};
-
-Formation A(Formation_13) = {
-    ACTOR_BY_POS(A(buzzy_beetle), A(vector3D_802240A0), 10, 1),
-    ACTOR_BY_POS(A(buzzy_beetle), A(vector3D_802240AC), 9, 1),
-    ACTOR_BY_POS(A(swooper), A(vector3D_802240B8), 8),
 };
 
 BattleList A(Formations) = {

@@ -8,6 +8,7 @@ u8 sp_pool_caps[SP_POOL_COUNT] = {
 
     [SP_POOL_MT_RUGGED] = 100,
     [SP_POOL_DESERT] = 75, // no need to force grinding the desert...
+    [SP_POOL_DRY_DRY_RUINS] = 90,
 
     [SP_POOL_DISCARD] = 0,
 };
