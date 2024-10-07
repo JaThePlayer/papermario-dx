@@ -108,30 +108,30 @@ void draw_scrollable_desc(s32 itemMsg, s32 posX, s32 posY, s32 width, s32 height
         }
     }
 
-    descTextOffset += interp_text_scroll(descTextPos * 16 - descTextOffset); //= descTextPos * 16; // todo: interpolate
+    descTextOffset += interp_text_scroll(descTextPos * 16 - descTextOffset);
 
     gDPSetScissor(gMainGfxPos++, G_SC_NON_INTERLACE, posX + 1, posY + 1, posX + width - 1, posY + height - 1);
     draw_msg(itemMsg, posX + 8, posY - descTextOffset, opacity, palette, style);
 
+    hud_element_set_flags(prevMsgHudElementId, HUD_ELEMENT_FLAG_DISABLED);
+    hud_element_set_flags(nextMsgHudElementId, HUD_ELEMENT_FLAG_DISABLED);
+
     if (descTextPos != 0) {
-        hud_element_set_flags(nextMsgHudElementId, HUD_ELEMENT_FLAG_DISABLED);
         hud_element_clear_flags(prevMsgHudElementId, HUD_ELEMENT_FLAG_DISABLED);
+        hud_element_set_flags(prevMsgHudElementId, HUD_ELEMENT_FLAG_80);
+        hud_element_set_render_pos(prevMsgHudElementId, posX + width - 8, posY + 8);
+        hud_element_draw_without_clipping(prevMsgHudElementId);
+    } else {
+        hud_element_update(get_hud_element(prevMsgHudElementId));
+    }
 
-        s32 id = prevMsgHudElementId;
-        hud_element_set_flags(id, HUD_ELEMENT_FLAG_80);
-
-        hud_element_set_render_pos(id, posX + width - 8, posY + 8);
-        hud_element_draw_without_clipping(id);
-    } else if (descTextPos < textMaxPos) {
-        hud_element_set_flags(prevMsgHudElementId, HUD_ELEMENT_FLAG_DISABLED);
+    if (descTextPos < textMaxPos) {
         hud_element_clear_flags(nextMsgHudElementId, HUD_ELEMENT_FLAG_DISABLED);
-
         hud_element_set_flags(nextMsgHudElementId, HUD_ELEMENT_FLAG_80);
         hud_element_set_render_pos(nextMsgHudElementId, posX + width - 8, posY + height - 8);
         hud_element_draw_without_clipping(nextMsgHudElementId);
     } else {
-        hud_element_set_flags(prevMsgHudElementId, HUD_ELEMENT_FLAG_DISABLED);
-        hud_element_set_flags(nextMsgHudElementId, HUD_ELEMENT_FLAG_DISABLED);
+        hud_element_update(get_hud_element(nextMsgHudElementId));
     }
 }
 
