@@ -2698,6 +2698,10 @@ void set_part_pal_adjustment(ActorPart* part, s32 palAdjust) {
 void set_actor_pal_adjustment(Actor* actor, s32 palAdjust) {
     ActorPart* partIt = &actor->partsTable[0];
 
+    if (palAdjust == ACTOR_PAL_ADJUST_POISON) {
+        return; // for now, decide whether poison should change sprites later...
+    }
+
     while (partIt != NULL) {
         if (!(partIt->flags & ACTOR_PART_FLAG_INVISIBLE)
             && (partIt->idleAnimations != NULL)

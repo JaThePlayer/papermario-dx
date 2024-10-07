@@ -407,7 +407,8 @@ EvtScript N(EVS_TayceT_Cook) = {
     // the actual cooking animation and reaction message
     Label(LABEL_COOK)
     Call(ContinueSpeech, NPC_TayceT, ANIM_TayceT_Talk, ANIM_TayceT_Idle, 0, MSG_MAC_Bridge_000D)
-    ExecWait(N(EVS_Scene_TayceTCooking))
+    // TODO: Instead have a "fast cook" button in the item choice popup
+    // ExecWait(N(EVS_Scene_TayceTCooking))
     Switch(LVar7)
         CaseEq(0)
             Call(SpeakToPlayer, NPC_TayceT, ANIM_TayceT_Talk, ANIM_TayceT_Idle, 0, MSG_MAC_Bridge_0012)

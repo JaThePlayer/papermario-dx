@@ -3,6 +3,15 @@
 
 #define NAMESPACE A(chan)
 
+/*
+PLAN:
+- Gains charge when flipping back up. Flips back up immediately
+- Has multi-hit attack he alternates - explained in tattle - requiring smart planning to avoid.
+- multi hit: - attack Mario, fly to the upright, midair dash to mario, fly to upleft, midair dash, then launch back to home
+
+*/
+
+
 extern s32 N(DefaultAnims)[];
 extern EvtScript N(EVS_Init);
 extern EvtScript N(EVS_Idle);

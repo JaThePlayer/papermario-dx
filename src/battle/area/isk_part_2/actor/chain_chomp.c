@@ -2,6 +2,8 @@
 #include "sprite/npc/ChainChomp.h"
 #include "sprite/npc/Tutankoopa.h"
 #include "tutankoopa_common.h"
+#include "misc_patches/custom_status.h"
+#include "misc_patches/misc_patches.h"
 
 #define NAMESPACE A(chain_chomp)
 
@@ -13,6 +15,8 @@ extern EvtScript N(EVS_UpdateChain);
 extern EvtScript N(EVS_Chomp_SpinSmashHit);
 extern EvtScript N(EVS_Chomp_HopHome);
 extern EvtScript N(EVS_Chomp_HopToPos);
+
+extern API_CALLABLE(ClearChargesOn);
 
 enum N(ActorVars) {
     AVAR_EnableChainSounds      = 8,
@@ -90,10 +94,6 @@ s32 N(ChainAnims)[] = {
 
 s32 N(DefenseTable)[] = {
     ELEMENT_NORMAL,   3,
-    ELEMENT_SHOCK,    3,
-    ELEMENT_FIRE,    99,
-    ELEMENT_ICE,     99,
-    ELEMENT_MAGIC,   99,
     ELEMENT_END,
 };
 
@@ -781,6 +781,15 @@ EvtScript N(EVS_TakeTurn) = {
     Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
     Call(SetPartPos, ACTOR_SELF, PRT_TARGET, LVar0, LVar1, LVar2)
     Call(EnemyDamageTarget, ACTOR_SELF, LVarF, 0, 0, 0, DMG_CHOMP_BITE, BS_FLAGS1_TRIGGER_EVENTS)
+
+    // gain ((dmg+1)/2) charge
+    Call(GetLastDamage, ACTOR_PLAYER, LVarE)
+    Add(LVarE, 1)
+    Div(LVarE, 2)
+    Call(ClearChargesOn, ACTOR_SELF)
+    Call(MarkActorAsNotAttackedThisTurn, ACTOR_SELF)
+    Call(InflictCustomStatus, ACTOR_SELF, CHARGE_STATUS, 99, LVarE, 100)
+
     Switch(LVarF)
         CaseDefault
             Call(UseBattleCamPreset, BTL_CAM_DEFAULT)

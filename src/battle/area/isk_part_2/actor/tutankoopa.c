@@ -53,9 +53,10 @@ enum N(ActorVars) {
     AVAR_Unknown                = 7,  // always zero
     AVAR_Stunned                = 8,  // overlapping usage with AVAR_StunState?
     AVAR_DoneFirstStrike        = 10, // unused
-    AVAR_UsedSpikeTaunt         = 11, // unused dialogue toggle for spiky-taunting
+    AVAR_Phase                  = 11, // ARMAGEDDON: phase counter
     AVAR_NextSummonTime         = 12, // set by chomp actor when it dies
     AVAR_HittingSelf            = 13, // signal to HandleEvent to treat hit as self-inflicted
+    AVAR_TurnCount              = 14, // ARMAGEDDON
 };
 
 enum N(ActorParams) {
@@ -239,7 +240,7 @@ ActorBlueprint NAMESPACE = {
     .flags = 0,
     .type = ACTOR_TYPE_TUTANKOOPA,
     .level = ACTOR_LEVEL_TUTANKOOPA,
-    .maxHP = 30,
+    .maxHP = 40,
     .partCount = ARRAY_COUNT(N(ActorParts)),
     .partsData = N(ActorParts),
     .initScript = &N(EVS_Init),
@@ -292,7 +293,7 @@ EvtScript N(EVS_Init) = {
     Call(SetActorVar, ACTOR_SELF, AVAR_DebrisDropState, 0)
     Call(SetActorVar, ACTOR_SELF, AVAR_Unknown, 0)
     Call(SetActorVar, ACTOR_SELF, AVAR_DoneFirstStrike, FALSE)
-    Call(SetActorVar, ACTOR_SELF, AVAR_UsedSpikeTaunt, FALSE)
+    Call(SetActorVar, ACTOR_SELF, AVAR_Phase, FALSE)
     Call(SetActorVar, ACTOR_SELF, AVAR_NextSummonTime, 0)
     Call(SetActorVar, ACTOR_SELF, AVAR_HittingSelf, FALSE)
     Return
@@ -394,17 +395,6 @@ EvtScript N(EVS_HandleEvent) = {
             EndIf
             ExecWait(EVS_Enemy_NoDamageHit)
         EndCaseGroup
-        CaseEq(EVENT_SPIKE_TAUNT)
-            Call(GetActorVar, ACTOR_SELF, AVAR_StunState, LVar1)
-            IfEq(LVar1, AVAL_State_Normal)
-                IfFlag(LVarE, DAMAGE_TYPE_JUMP)
-                    Call(GetActorVar, ACTOR_SELF, AVAR_UsedSpikeTaunt, LVar0)
-                    IfEq(LVar0, FALSE)
-                        Call(SetActorVar, ACTOR_SELF, AVAR_UsedSpikeTaunt, TRUE)
-                        Wait(60)
-                    EndIf
-                EndIf
-            EndIf
         CaseOrEq(EVENT_SHOCK_DEATH)
         CaseOrEq(EVENT_DEATH)
             SetConst(LVar0, PRT_MAIN)
@@ -527,67 +517,163 @@ EvtScript N(EVS_TemporaryKnockout) = {
     End
 };
 
+EvtScript N(EVS_SummonChompIfNeeded) = {
+    Call(ActorExists, ACTOR_CHOMP, LVar3)
+    IfEq(LVar3, FALSE)
+        ExecWait(N(EVS_Move_SummonChomp))
+    EndIf
+    Return
+    End
+};
+
+EvtScript N(EVS_GetUpIfNeeded) = {
+    Call(GetActorVar, ACTOR_SELF, AVAR_StunState, LVar3)
+    IfEq(LVar3, AVAL_State_Normal)
+        Return
+    EndIf
+
+    Call(SetActorVar, ACTOR_SELF, AVAR_StunState, AVAL_State_Normal)
+    ExecWait(N(EVS_GetBackUp))
+    ExecWait(N(EVS_LevitateToHomePos))
+    Return
+    End
+};
+
+extern s32 BattleMessages[];
+
+API_CALLABLE(N(do_point_swap_and_show_message)) {
+    s32 hp = gPlayerData.curHP;
+    s32 fp = gPlayerData.curFP;
+    s32 maxHp = gPlayerData.curMaxHP;
+    s32 maxFp = gPlayerData.curMaxFP;
+
+    gPlayerData.curMaxHP = maxFp;
+    gPlayerData.curMaxFP = maxHp;
+
+    gPlayerData.curHP = fp > 0
+    ? (fp < gPlayerData.curMaxHP ? fp : gPlayerData.curMaxHP)
+    : 1;
+
+    gPlayerData.curFP = hp < gPlayerData.curMaxFP ? hp : gPlayerData.curMaxFP;
+
+    BattleMessages[BTL_MSG_CUSTOM] = MSG_Menus_Buzzar_Phase2;
+    btl_show_battle_message(BTL_MSG_CUSTOM, 90);
+
+
+    return ApiStatus_DONE2;
+}
+
+EvtScript N(EVS_PointSwapSpell) = {
+    Call(UseBattleCamPreset, BTL_CAM_PRESET_15)
+    Call(SetBattleCamZoom, 350)
+    Call(SetBattleCamOffsetZ, 0)
+    Call(BattleCamTargetActor, ACTOR_SELF)
+    Call(MoveBattleCamOver, 40)
+    Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
+    Call(SetGoalToTarget, ACTOR_SELF)
+
+    Call(PlaySoundAtActor, ACTOR_SELF, SOUND_TUTANKOOPA_MAGIC)
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Tutankoopa_Shout)
+    Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
+    Add(LVar1, 20)
+    PlayEffect(EFFECT_HIEROGLYPHS, 0, LVar0, LVar1, LVar2, Float(1.0), 45, 0)
+    Wait(30)
+    Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
+    Call(MoveBattleCamOver, 70)
+    Call(PlaySound, SOUND_SPOOKY_LEVITATE)
+    //PlayEffect(EFFECT_CHOMP_DROP, 0, 0, 60, 0, Float(0.2), 0, Float(1.4), 255, Float(0.1), 150, 0)
+    Wait(15)
+
+    Call(N(do_point_swap_and_show_message))
+    Call(WaitForMessageBoxDone)
+
+    Return
+    End
+};
+
+/*
+TUTANKOOPA
+
+- Chain Chomp - gains charge -> exponentially faster
+
+AI:
+phase1:
+    Turn 1 - summon chomp if needed. shell attack
+    Turn 2 - vanilla spell
+    Turn 3 - shell attack
+phase2:
+    Turn 1 - Point Swap Spell - your current AND max fp and hp get swapped
+           - summon chomp if needed
+           - backfire spell (only first time, real spell afterwards)
+    Turn 2 - get up, spell
+    Turn 3 - shell, shell
+phase3:
+    On Begin - Poison Spell (green fog) - perma poison, unblockable
+    goto phase2 ai
+*/
+
 EvtScript N(EVS_TakeTurn) = {
     Call(UseIdleAnimation, ACTOR_SELF, FALSE)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
-    Label(0)
-        Call(GetActorVar, ACTOR_SELF, AVAR_Stunned, LVar0)
-        IfEq(LVar0, FALSE)
-            Call(ActorExists, ACTOR_CHOMP, LVar0)
-            IfEq(LVar0, FALSE)
-                Call(GetActorVar, ACTOR_SELF, AVAR_NextSummonTime, LVar0)
-                IfEq(LVar0, 0)
-                    ExecWait(N(EVS_Move_SummonChomp))
-                    Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-                    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
-                    Return
-                Else
-                    Sub(LVar0, 1)
-                    Call(SetActorVar, ACTOR_SELF, AVAR_NextSummonTime, LVar0)
-                EndIf
+
+    Call(GetActorVar, ACTOR_SELF, AVAR_Phase, LVar0)
+    Call(GetActorHP, ACTOR_SELF, LVar2)
+    Switch(LVar0)
+        CaseEq(0)
+            IfLe(LVar2, 25)
+                // goto phase 2
+                Call(SetActorVar, ACTOR_SELF, AVAR_Phase, 1)
             EndIf
-            // override to only use "drop debris" while shrunk
-            Call(GetStatusFlags, ACTOR_SELF, LVar0)
-            IfFlag(LVar0, STATUS_FLAG_SHRINK)
-                Call(SetActorVar, ACTOR_SELF, AVAR_NextMove, AVAL_Move_DropDebris)
+        CaseEq(1)
+            IfLe(LVar2, 15)
+                // goto phase 3
+                // TODO: POISON SPELL
+                Call(SetActorVar, ACTOR_SELF, AVAR_Phase, 2)
             EndIf
-            // select next attack, alternating between "throw shell" and "drop debris" when possible
-            Call(GetActorVar, ACTOR_SELF, AVAR_NextMove, LVar0)
-            Switch(LVar0)
-                CaseEq(AVAL_Move_Toss)
-                    Call(GetActorVar, ACTOR_SELF, AVAR_ShellsLeft, LVar0)
-                    IfEq(LVar0, 0)
-                        // always use "drop debris" after all shells are gone
-                        ExecWait(N(EVS_Attack_DropDebris))
-                        Call(SetActorVar, ACTOR_SELF, AVAR_NextMove, AVAL_Move_DropDebris)
-                    Else
-                        // throw a shell if not shrunk
-                        Call(GetStatusFlags, ACTOR_SELF, LVar0)
-                        IfNotFlag(LVar0, STATUS_FLAG_SHRINK)
-                            ExecWait(N(EVS_Attack_ThrowShell))
-                            Call(SetActorVar, ACTOR_SELF, AVAR_NextMove, AVAL_Move_DropDebris)
-                        Else
-                            ExecWait(N(EVS_Attack_DropDebris))
-                            Call(SetActorVar, ACTOR_SELF, AVAR_NextMove, AVAL_Move_Toss)
-                        EndIf
-                    EndIf
-                CaseDefault
-                    Call(SetActorVar, ACTOR_SELF, AVAR_NextMove, AVAL_Move_Toss)
+    EndSwitch
+
+    Call(GetActorVar, ACTOR_SELF, AVAR_TurnCount, LVar1)
+    Call(AddActorVar, ACTOR_SELF, AVAR_TurnCount, 1)
+    Switch(LVar0)
+        CaseEq(0)
+            // Phase 1
+            Mod(LVar1, 3)
+            Switch(LVar1)
+                CaseEq(0)
+                    ExecWait(N(EVS_SummonChompIfNeeded))
+                    ExecWait(N(EVS_Attack_ThrowShell))
+                CaseEq(1)
                     ExecWait(N(EVS_Attack_DropDebris))
+                CaseEq(2)
+                    ExecWait(N(EVS_Attack_ThrowShell))
             EndSwitch
-            Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-            Call(UseIdleAnimation, ACTOR_SELF, TRUE)
-            Return
-        Else
-            Call(SetActorVar, ACTOR_SELF, AVAR_Unknown, 0)
-            Call(SetActorVar, ACTOR_SELF, AVAR_StunState, AVAL_State_Normal)
-            ExecWait(N(EVS_GetBackUp))
-            ExecWait(N(EVS_LevitateToHomePos))
-            Goto(0)
-        EndIf
-    Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
+        CaseOrEq(1)
+        CaseOrEq(2)
+            // Phase 2 and 3
+            Mod(LVar1, 3)
+            Switch(LVar1)
+                CaseEq(0)
+                    ExecWait(N(EVS_SummonChompIfNeeded))
+                    ExecWait(N(EVS_PointSwapSpell))
+
+                    // Backfire if never backfired and was used at least once.
+                    Call(SetActorVar, ACTOR_SELF, AVAR_DebrisDropState, LVar3)
+                    IfEq(LVar3, 2)
+                        Call(SetActorVar, ACTOR_SELF, AVAR_DebrisDropState, 1)
+                    EndIf
+                    ExecWait(N(EVS_Attack_DropDebris))
+                CaseEq(1)
+                    ExecWait(N(EVS_GetUpIfNeeded))
+                    ExecWait(N(EVS_Attack_DropDebris))
+                CaseEq(2)
+                    ExecWait(N(EVS_Attack_ThrowShell))
+                    ExecWait(N(EVS_Attack_ThrowShell))
+            EndSwitch
+        EndCaseGroup
+    EndSwitch
+
     Call(UseIdleAnimation, ACTOR_SELF, TRUE)
-    Return
+    Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
     Return
     End
 };
@@ -758,30 +844,20 @@ EvtScript N(EVS_Attack_DropDebris) = {
     Switch(LVar0)
         // first use: target player
         CaseEq(0)
-            Call(SetActorVar, ACTOR_SELF, AVAR_DebrisDropState, 1)
+            Call(SetActorVar, ACTOR_SELF, AVAR_DebrisDropState, 2)
             ExecWait(N(EVS_DropDebris_Players))
         // second use: target self if damage is survivable
         CaseEq(1)
             Call(GetActorHP, ACTOR_SELF, LVar0)
-            Call(SetActorVar, ACTOR_SELF, AVAR_DebrisDropState, 2)
+            Call(SetActorVar, ACTOR_SELF, AVAR_DebrisDropState, 3)
             IfGt(LVar0, DMG_DROP_DEBRIS_SELF)
                 ExecWait(N(EVS_DropDebris_Self))
             Else
                 ExecWait(N(EVS_DropDebris_Players))
             EndIf
-        // subsequent use: 50% chance to target player or target self while damage is survivable
+        // subsequent use: always attack player
         CaseDefault
-            Call(RandInt, 2, LVar0)
-            IfEq(LVar0, 0)
-                Call(GetActorHP, ACTOR_SELF, LVar0)
-                IfGt(LVar0, DMG_DROP_DEBRIS_SELF)
-                    ExecWait(N(EVS_DropDebris_Self))
-                Else
-                    ExecWait(N(EVS_DropDebris_Players))
-                EndIf
-            Else
-                ExecWait(N(EVS_DropDebris_Players))
-            EndIf
+            ExecWait(N(EVS_DropDebris_Players))
     EndSwitch
     Return
     End
@@ -1219,8 +1295,14 @@ EvtScript N(EVS_HandlePhase) = {
     End
 };
 
+API_CALLABLE(N(reset_stats)) {
+    enforce_hpfp_limits();
+    return ApiStatus_DONE2;
+}
+
 // kills the summoned chomp before dying
 EvtScript N(EVS_Tutankoopa_Death) = {
+    Call(N(reset_stats))
     Call(ActorExists, ACTOR_CHOMP, LVar2)
     IfNe(LVar2, FALSE)
         Call(GetActorHP, ACTOR_CHOMP, LVar2)
