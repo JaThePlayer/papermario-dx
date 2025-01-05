@@ -9,11 +9,12 @@
 #include "dx/debug_menu.h"
 #include "misc_patches/scrollable_desc_draw.c"
 
-SHIFT_BSS s32 gOverrideFlags;
-SHIFT_BSS s32 timeFreezeMode;
-SHIFT_BSS u16** nuGfxCfb;
-SHIFT_BSS s16 SoftResetDelay;
-SHIFT_BSS DisplayContext DisplayContexts[2];
+s32 gOverrideFlags;
+s32 gTimeFreezeMode;
+u16** nuGfxCfb;
+BSS s16 SoftResetDelay;
+
+DisplayContext DisplayContexts[2];
 
 s8 gGameStepDelayAmount = 1;
 s8 gGameStepDelayCount = 5;
@@ -96,7 +97,7 @@ void step_game_loop(void) {
     profiler_update(PROFILER_TIME_MESSAGES, 0);
     update_hud_elements();
     profiler_update(PROFILER_TIME_HUD_ELEMENTS, 0);
-    step_current_game_mode();
+    step_game_mode();
     profiler_update(PROFILER_TIME_STEP_GAME_MODE, 0);
     update_entities();
     profiler_update(PROFILER_TIME_ENTITIES, 0);
@@ -213,7 +214,7 @@ void gfx_draw_frame(void) {
     render_workers_backUI();
     render_hud_elements_backUI();
     render_effects_UI();
-    state_render_backUI();
+    render_game_mode_backUI();
 
     if (!(gOverrideFlags & GLOBAL_OVERRIDES_WINDOWS_OVER_CURTAINS)) {
         render_window_root();
@@ -251,7 +252,7 @@ void gfx_draw_frame(void) {
         render_window_root();
     }
 
-    state_render_frontUI();
+    render_game_mode_frontUI();
 
     if (gOverrideFlags & GLOBAL_OVERRIDES_SOFT_RESET) {
         switch (SoftResetState) {
@@ -304,7 +305,7 @@ void load_engine_data(void) {
     gGameStatusPtr->multiplayerEnabled = FALSE;
     gGameStatusPtr->altViewportOffset.x = -8;
     gGameStatusPtr->altViewportOffset.y = 4;
-    timeFreezeMode = 0;
+    gTimeFreezeMode = TIME_FREEZE_NONE;
     gGameStatusPtr->debugQuizmo = gGameStatusPtr->unk_13C = 0;
     gGameStepDelayCount = 5;
     gGameStatusPtr->saveCount = 0;
@@ -314,7 +315,7 @@ void load_engine_data(void) {
     clear_render_tasks();
     clear_worker_list();
     clear_script_list();
-    create_cameras_a();
+    create_cameras();
     clear_player_status();
     spr_init_sprites(PLAYER_SPRITES_MARIO_WORLD);
     clear_entity_models();
@@ -324,7 +325,7 @@ void load_engine_data(void) {
     reset_background_settings();
     clear_character_set();
     clear_printers();
-    clear_game_modes();
+    clear_game_mode();
     clear_npcs();
     hud_element_clear_cache();
     clear_trigger_data();
@@ -352,45 +353,45 @@ void load_engine_data(void) {
 }
 
 /// Time freeze modes:
-///  0: normal
+///  0: none
 ///  1: NPCs move, can't be interacted with
 ///  2: NPCs don't move, no partner ability, can't interact, can't use exits
 ///  3: NPCs don't more or animate
 ///  4: NPCs can move, animations don't update, can use exits
 void set_time_freeze_mode(s32 mode) {
     switch (mode) {
-        case TIME_FREEZE_NORMAL:
-            timeFreezeMode = mode;
+        case TIME_FREEZE_NONE:
+            gTimeFreezeMode = mode;
             gOverrideFlags &= ~(GLOBAL_OVERRIDES_800 | GLOBAL_OVERRIDES_400 | GLOBAL_OVERRIDES_200 | GLOBAL_OVERRIDES_DISABLE_BATTLES);
-            resume_all_group(EVT_GROUP_01 | EVT_GROUP_02);
+            resume_all_group(EVT_GROUP_FLAG_INTERACT | EVT_GROUP_FLAG_MENUS);
             break;
         case TIME_FREEZE_PARTIAL:
-            timeFreezeMode = mode;
+            gTimeFreezeMode = mode;
             gOverrideFlags &= ~(GLOBAL_OVERRIDES_800 | GLOBAL_OVERRIDES_400 | GLOBAL_OVERRIDES_200);
             gOverrideFlags |= GLOBAL_OVERRIDES_DISABLE_BATTLES;
-            suspend_all_group(EVT_GROUP_01);
+            suspend_all_group(EVT_GROUP_FLAG_INTERACT);
             break;
         case TIME_FREEZE_FULL:
-            timeFreezeMode = mode;
+            gTimeFreezeMode = mode;
             gOverrideFlags &= ~(GLOBAL_OVERRIDES_400 | GLOBAL_OVERRIDES_800);
             gOverrideFlags |= GLOBAL_OVERRIDES_200 | GLOBAL_OVERRIDES_DISABLE_BATTLES;
-            suspend_all_group(EVT_GROUP_02);
+            suspend_all_group(EVT_GROUP_FLAG_MENUS);
             break;
         case TIME_FREEZE_POPUP_MENU:
-            timeFreezeMode = mode;
+            gTimeFreezeMode = mode;
             gOverrideFlags &= ~GLOBAL_OVERRIDES_800;
             gOverrideFlags |= GLOBAL_OVERRIDES_400 | GLOBAL_OVERRIDES_200 | GLOBAL_OVERRIDES_DISABLE_BATTLES;
-            suspend_all_group(EVT_GROUP_02);
+            suspend_all_group(EVT_GROUP_FLAG_MENUS);
             break;
         case TIME_FREEZE_EXIT:
-            timeFreezeMode = mode;
+            gTimeFreezeMode = mode;
             gOverrideFlags |= GLOBAL_OVERRIDES_800 | GLOBAL_OVERRIDES_400 | GLOBAL_OVERRIDES_200 | GLOBAL_OVERRIDES_DISABLE_BATTLES;
             break;
     }
 }
 
 s32 get_time_freeze_mode(void) {
-    return timeFreezeMode;
+    return gTimeFreezeMode;
 }
 
 #if VERSION_IQUE

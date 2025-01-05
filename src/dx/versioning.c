@@ -2,6 +2,7 @@
 #include "dx/config.h"
 #include "gcc/string.h"
 
+void ver_deserialize_standard();
 void ver_deserialize_vanilla_save(SaveData* save);
 
 /// Store current game data to gCurrentSaveFile
@@ -36,15 +37,12 @@ void fio_deserialize_state() {
     SaveData* saveData = &gCurrentSaveFile;
 
     if (saveData->modName[0] == '\0') {
-        // normally a mod should not be able to load a normal Paper Mario save
-        // however, if you would like your mod to support this, remove this PANIC
-        PANIC_MSG("Cannot load unmodded save");
+        // handle loading vanilla saves here
         ver_deserialize_vanilla_save(saveData);
     } else if (strcmp(saveData->modName, DX_MOD_NAME) != 0) {
-        // always prevent loading data from other mods
-        char error[0x40] = "Cannot load save from: ";
-        strcat(error, saveData->modName);
-        PANIC_MSG(error);
+        // handle loading saves from other mods here
+        // by default, dx assumes other mod save data format is vanilla
+        ver_deserialize_vanilla_save(saveData);
     } else if (saveData->majorVersion != DX_MOD_VER_MAJOR) {
         // handle breaking changes between major versions here
         ver_deserialize_standard(saveData);
@@ -130,7 +128,7 @@ void ver_port_item_ids(s16* array, s16* mapping, s32 size, s32 mapMax) {
 #define COPY_S16_ARRAY(new, old) ver_copy_s16_array(new, old, ARRAY_COUNT(old), ARRAY_COUNT(new));
 #define COPY_S32_ARRAY(new, old) ver_copy_s32_array(new, old, ARRAY_COUNT(old), ARRAY_COUNT(new));
 
-#define PORT_ITEM_IDS(array, map) ver_copy_s32_array(array, map, ARRAY_COUNT(array), ARRAY_COUNT(map));
+#define PORT_ITEM_IDS(array, map) ver_copy_s16_array(array, map, ARRAY_COUNT(array), ARRAY_COUNT(map));
 
 // Maps vanilla itemIDs to enum values which may have changed in the mod
 // If your mod removes an item, you can remap it to ITEM_NONE or something else here.
@@ -510,11 +508,15 @@ void ver_deserialize_vanilla_save(SaveData* newSave) {
     memset(newSave, 0, sizeof(SaveData));
 
     strcpy(newSave->magicString, oldSave.magicString);
+    memcpy(newSave->modName, oldSave.version, ARRAY_COUNT(oldSave.version));
 
     // copy metadata
     newSave->saveSlot = oldSave.saveSlot;
     newSave->saveCount = oldSave.saveCount;
-    newSave->metadata = oldSave.metadata;
+    memcpy(newSave->summary.filename, oldSave.summary.filename, ARRAY_COUNT(newSave->summary.filename));
+    newSave->summary.level = oldSave.summary.level;
+    newSave->summary.timePlayed = oldSave.summary.timePlayed;
+    newSave->summary.spiritsRescued = oldSave.summary.spiritsRescued;
 
     // copy world location
     newSave->areaID = oldSave.areaID;

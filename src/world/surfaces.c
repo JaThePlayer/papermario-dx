@@ -8,8 +8,8 @@ void player_surface_spawn_snow_fx(void);
 void player_surface_spawn_hedges_fx(void);
 void player_surface_spawn_water_fx(void);
 
-SHIFT_BSS s32 PrevTimeInAir;
-SHIFT_BSS s32 LandedTimeInAir;
+BSS s32 PrevTimeInAir;
+BSS s32 LandedTimeInAir;
 
 s32 PrevSurfaceType = SURFACE_TYPE_DEFAULT;
 
@@ -383,6 +383,13 @@ s16 NpcSnowSpawnDelay = 4;
 s32 NpcNextFootParity = 0;
 s16 NpcHedgeSpawnDelay = 4;
 s16 NpcWaterSpawnDelay = 4;
+
+void npc_surface_spawn_basic_fx(Npc* npc, SurfaceInteractMode mode);
+void npc_surface_spawn_flower_fx(Npc* npc, SurfaceInteractMode mode);
+void npc_surface_spawn_cloud_fx(Npc* npc, SurfaceInteractMode mode);
+void npc_surface_spawn_snow_fx(Npc* npc, SurfaceInteractMode mode);
+void npc_surface_spawn_hedges_fx(Npc* npc, SurfaceInteractMode mode);
+void npc_surface_spawn_water_fx(Npc* npc, SurfaceInteractMode mode);
 
 void npc_surface_spawn_fx(Npc* npc, SurfaceInteractMode mode) {
     s32 surfaceType;

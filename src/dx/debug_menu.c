@@ -4,6 +4,10 @@
 #include "battle/battle.h"
 #include "hud_element.h"
 #include "qsort.h"
+#include "gcc/string.h"
+#include "dx/utils.h"
+#include "msg.h"
+#include "fio.h"
 
 // layout
 
@@ -443,6 +447,29 @@ const s32 MainBoxHeight   = ARRAY_COUNT(DebugMainMenu) * RowHeight + 8;
 f32 ArrowAnimOffset = 0;
 f32 DebugArrowPhase = 0.0f;
 #define DEBUG_ARROW_ANIM_RATE 6
+
+void dx_debug_update_banner();
+void dx_debug_update_main_menu();
+void dx_debug_update_quick_save();
+void dx_debug_update_select_area();
+void dx_debug_update_select_map();
+void dx_debug_update_select_entry();
+void dx_debug_update_select_battle();
+void dx_debug_update_edit_progress();
+void dx_debug_update_sound_player();
+void dx_debug_update_select_sound();
+void dx_debug_update_edit_partners();
+void dx_debug_update_edit_inventory();
+void dx_debug_update_edit_items();
+void dx_debug_update_edit_items();
+void dx_debug_update_edit_items();
+void dx_debug_update_edit_gear();
+void dx_debug_update_edit_stats();
+void dx_debug_update_edit_coins();
+void dx_debug_update_edit_star_points();
+void dx_debug_update_edit_star_pieces();
+void dx_debug_update_view_collision();
+void dx_debug_update_cheat_menu();
 
 void dx_debug_menu_main() {
     s32 initialMenuState = DebugMenuState;
@@ -886,14 +913,14 @@ void dx_debug_begin_battle_with_IDs(s16 battle, s16 stage) {
     es->songID = -1;
     es->unk_18 = -1;
     es->fadeOutAmount = 0;
-    es->unk_94 = 0;
+    es->substateDelay = 0;
 
     disable_player_input();
     partner_disable_input();
 
     gEncounterState = ENCOUNTER_STATE_PRE_BATTLE;
     gEncounterSubState = ENCOUNTER_SUBSTATE_PRE_BATTLE_INIT;
-    D_8009A678 = 1;
+    EncounterStateChanged = TRUE;
 }
 
 void dx_debug_begin_battle() {
@@ -1733,7 +1760,7 @@ void dx_debug_draw_collision() {
                 f32 cY = (tri->v1->y + tri->v2->y + tri->v3->y) / 3;
                 f32 cZ = (tri->v1->z + tri->v2->z + tri->v3->z) / 3;
 
-                transform_point(camera->perspectiveMatrix, cX, cY, cZ, 1.0f, &outX, &outY, &outZ, &outW);
+                transform_point(camera->mtxPerspective, cX, cY, cZ, 1.0f, &outX, &outY, &outZ, &outW);
 
                 if (outZ < -100) {
                     // dont draw triangles sufficiently far behind the camera
@@ -1754,6 +1781,8 @@ void dx_debug_draw_collision() {
 #define LESS(i, j) DebugTris[i].depth > DebugTris[j].depth
 #define SWAP(i, j) temp = DebugTris[i], DebugTris[i] = DebugTris[j], DebugTris[j] = temp
     QSORT(DebugTriPos, LESS, SWAP);
+#undef LESS
+#undef SWAP
 
     gDPPipeSync(gMainGfxPos++);
     gDPSetCycleType(gMainGfxPos++, G_CYC_1CYCLE);
@@ -1861,7 +1890,7 @@ typedef struct DebugCheatEntry {
 DebugCheatEntry DebugCheatMenu[] = {
     [DEBUG_CHEAT_GOD_MODE]      { "God Mode",   FALSE },
     [DEBUG_CHEAT_SPEED_MODE]    { "Speed Mode", FALSE },
-//  [DEBUG_CHEAT_FLY]           { "Fly With L", FALSE },
+    [DEBUG_CHEAT_FLY]           { "Fly With L", FALSE },
     [DEBUG_CHEAT_HIGH_JUMP]     { "High Jump", FALSE },
     [DEBUG_CHEAT_IGNORE_WALLS]  { "Ignore Walls", FALSE },
 };
@@ -1881,7 +1910,7 @@ void dx_debug_update_cheat_menu() {
         // actions to execute on state change
         switch (DebugCheatPos) {
             case DEBUG_CHEAT_GOD_MODE:
-        //  case DEBUG_CHEAT_FLY:
+            case DEBUG_CHEAT_FLY:
             case DEBUG_CHEAT_HIGH_JUMP:
             case DEBUG_CHEAT_IGNORE_WALLS:
                 break;
@@ -1924,7 +1953,7 @@ void dx_debug_update_banner() {
     char fmtBuf[128];
     s32 effect;
 
-    if (gGameStatus.isBattle == 0) {
+    if (gGameStatus.context == CONTEXT_WORLD) {
         sprintf(fmtBuf, "Map: %7s (%X)", LastMapName, LastMapEntry);
         dx_debug_draw_ascii(fmtBuf, DefaultColor, 220, BottomRowY);
 
@@ -1944,7 +1973,7 @@ void dx_debug_update_banner() {
         if (dx_debug_is_cheat_enabled(DEBUG_CHEAT_GOD_MODE)) {
             dx_debug_draw_ascii("(GOD MODE)", MSG_PAL_YELLOW, 151, BottomRowY);
         }
-    } else {
+    } else if (gGameStatus.context == CONTEXT_BATTLE) {
         s32 areaID = (LastBattleID >> 24) & 0xFF;
         s32 battleID = (LastBattleID >> 16) & 0xFF;
         s32 stageID = LastBattleID & 0xFFFF;
@@ -2010,7 +2039,7 @@ static char *proutSprintf(char *dst, const char *src, size_t count) {
     return (char *)memcpy((u8 *)dst, (u8 *)src, count) + count;
 }
 
-void dx_hashed_debug_printf(char* filename, s32 line, char* fmt, ...) {
+void dx_hashed_debug_printf(const char* filename, s32 line, const char* fmt, ...) {
     char fmtBuf[128];
     va_list args;
     va_start(args, fmt);
@@ -2135,6 +2164,8 @@ void dx_debug_console_main() {
 #define LESS(i, j) DebugConsole[i]->timeLeft > DebugConsole[j]->timeLeft
 #define SWAP(i, j) temp = DebugConsole[i], DebugConsole[i] = DebugConsole[j], DebugConsole[j] = temp
     QSORT(ARRAY_COUNT(DebugConsole), LESS, SWAP);
+#undef LESS
+#undef SWAP
 
     for (idx = 0; idx < ARRAY_COUNT(DebugConsole); idx++) {
         s32 timeLeft = DebugConsole[idx]->timeLeft;

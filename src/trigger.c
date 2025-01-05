@@ -1,10 +1,10 @@
 #include "common.h"
 #include "vars_access.h"
 
-SHIFT_BSS s16 gTriggerCount;
-SHIFT_BSS TriggerList wTriggerList;
-SHIFT_BSS TriggerList bTriggerList;
-SHIFT_BSS TriggerList* gCurrentTriggerListPtr;
+s16 gTriggerCount;
+BSS TriggerList wTriggerList;
+BSS TriggerList bTriggerList;
+BSS TriggerList* gCurrentTriggerListPtr;
 
 void default_trigger_on_activate(Trigger* self) {
     self->flags |= TRIGGER_ACTIVATED;
@@ -14,7 +14,7 @@ void clear_trigger_data(void) {
     CollisionStatus* collisionStatus = &gCollisionStatus;
     s32 i;
 
-    if (!gGameStatusPtr->isBattle) {
+    if (gGameStatusPtr->context == CONTEXT_WORLD) {
         gCurrentTriggerListPtr = &wTriggerList;
     } else {
         gCurrentTriggerListPtr = &bTriggerList;
@@ -43,7 +43,7 @@ void clear_trigger_data(void) {
 }
 
 void init_trigger_list(void) {
-    if (!gGameStatusPtr->isBattle) {
+    if (gGameStatusPtr->context == CONTEXT_WORLD) {
         gCurrentTriggerListPtr = &wTriggerList;
     } else {
         gCurrentTriggerListPtr = &bTriggerList;

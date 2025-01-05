@@ -39,10 +39,10 @@ NUPiOverlaySegment PauseOverlaySegment = {
     .bssEnd = pause_BSS_END,
 };
 
-SHIFT_BSS s8 StepPauseDelay;
-SHIFT_BSS s8 StepPauseState;
-SHIFT_BSS s16 StepPauseAlpha; // effectively unused, always zero
-SHIFT_BSS s32 SavedReverbMode;
+BSS s8 StepPauseDelay;
+BSS s8 StepPauseState;
+BSS s16 StepPauseAlpha; // effectively unused, always zero
+BSS s32 SavedReverbMode;
 
 // TODO: these should be moved into player status
 u8 ReflectWallPrevAlpha = 254;
@@ -53,7 +53,7 @@ void state_init_pause(void) {
     StepPauseAlpha = 0;
     disable_player_input();
     set_time_freeze_mode(TIME_FREEZE_POPUP_MENU);
-    set_windows_visible(WINDOW_GROUP_PAUSE_MENU);
+    set_windows_visible(WINDOW_GROUP_PAUSE);
 }
 
 extern Addr D_80200000;
@@ -86,7 +86,7 @@ void state_step_pause(void) {
                     gGameStatusPtr->savedBackgroundDarkness = gGameStatusPtr->backgroundDarkness;
                     sfx_stop_env_sounds();
                     func_8003B1A8();
-                    gGameStatusPtr->isBattle = 2;
+                    gGameStatusPtr->context = CONTEXT_PAUSE;
                     backup_map_collision_data();
                     battle_heap_create();
                     nuContRmbForceStop();
@@ -167,7 +167,7 @@ void state_step_unpause(void) {
                     gOverrideFlags &= ~GLOBAL_OVERRIDES_DISABLE_DRAW_FRAME;
                     mapSettings = get_current_map_settings();
                     mapConfig = &gAreas[gGameStatusPtr->areaID].maps[gGameStatusPtr->mapID];
-                    gGameStatusPtr->isBattle = FALSE;
+                    gGameStatusPtr->context = CONTEXT_WORLD;
                     gGameStatusPtr->backgroundFlags &= ~BACKGROUND_RENDER_STATE_MASK;
                     func_8005AF84();
                     func_8002ACDC();
@@ -244,7 +244,7 @@ void state_step_unpause(void) {
             }
             break;
         case 4:
-            set_time_freeze_mode(TIME_FREEZE_NORMAL);
+            set_time_freeze_mode(TIME_FREEZE_NONE);
             update_encounters();
             update_npcs();
             update_player();

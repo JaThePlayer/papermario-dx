@@ -7,11 +7,11 @@
 #include "sprite/npc/WorldWatt.h"
 #include "dx/debug_menu.h"
 
-SHIFT_BSS s16 gNpcCount;
-SHIFT_BSS NpcList gWorldNpcList;
-SHIFT_BSS NpcList gBattleNpcList;
-SHIFT_BSS NpcList* gCurrentNpcListPtr;
-SHIFT_BSS b8 gNpcPlayerCollisionsEnabled;
+s16 gNpcCount;
+static NpcList gWorldNpcList;
+static NpcList gBattleNpcList;
+static NpcList* gCurrentNpcListPtr;
+static b8 gNpcPlayerCollisionsEnabled;
 
 #define PAL_ANIM_END 0xFF
 
@@ -60,7 +60,7 @@ void mtx_ident_mirror_y(Matrix4f mtx) {
 void clear_npcs(void) {
     s32 i;
 
-    if (!gGameStatusPtr->isBattle) {
+    if (gGameStatusPtr->context == CONTEXT_WORLD) {
         gCurrentNpcListPtr = &gWorldNpcList;
     } else {
         gCurrentNpcListPtr = &gBattleNpcList;
@@ -75,7 +75,7 @@ void clear_npcs(void) {
 }
 
 void init_npc_list(void) {
-    if (!gGameStatusPtr->isBattle) {
+    if (gGameStatusPtr->context == CONTEXT_WORLD) {
         gCurrentNpcListPtr = &gWorldNpcList;
     } else {
         gCurrentNpcListPtr = &gBattleNpcList;
@@ -181,7 +181,7 @@ s32 create_npc_impl(NpcBlueprint* blueprint, AnimID* animList, s32 isPeachNpc) {
     npc->shadowIndex = create_shadow_type(SHADOW_VARYING_CIRCLE, npc->pos.x, npc->pos.y, npc->pos.z);
     npc->shadowScale = 1.0f;
 
-    if (gGameStatusPtr->isBattle) {
+    if (gGameStatusPtr->context != CONTEXT_WORLD) {
         i |= BATTLE_NPC_ID_BIT;
     }
     return i;
@@ -791,7 +791,7 @@ f32 npc_get_render_yaw(Npc* npc) {
                 }
             }
 
-            if (npc->flags & NPC_FLAG_200000) {
+            if (npc->flags & NPC_FLAG_FLIP_INSTANTLY) {
                 npc->turnAroundYawAdjustment = 0;
             }
 
@@ -882,11 +882,10 @@ void appendGfx_npc(void* data) {
             || (npc->scale.y * npc->verticalStretch) * SPRITE_WORLD_SCALE_D != 1.0f
             || npc->scale.z * SPRITE_WORLD_SCALE_D != 1.0f
         ) {
-            do {
-                guScaleF(mtx2, npc->scale.x * SPRITE_WORLD_SCALE_D,
-                               (npc->scale.y * npc->verticalStretch) * SPRITE_WORLD_SCALE_D,
-                               npc->scale.z * SPRITE_WORLD_SCALE_D);
-            } while (0); // required to match (macro?)
+            guScaleF(mtx2,
+                SPRITE_WORLD_SCALE_D * npc->scale.x,
+                SPRITE_WORLD_SCALE_D * npc->scale.y * npc->verticalStretch,
+                SPRITE_WORLD_SCALE_D * npc->scale.z);
             guMtxCatF(mtx2, mtx1, mtx1);
 
         }
@@ -914,12 +913,10 @@ void appendGfx_npc(void* data) {
             || (npc->scale.y * npc->verticalStretch) * SPRITE_WORLD_SCALE_D != 1.0f
             || npc->scale.z * SPRITE_WORLD_SCALE_D != 1.0f
         ) {
-            do {
-                guScaleF(mtx2, npc->scale.x * SPRITE_WORLD_SCALE_D,
-                               (npc->scale.y * npc->verticalStretch) * SPRITE_WORLD_SCALE_D,
-                               npc->scale.z * SPRITE_WORLD_SCALE_D);
-            } while (0); // required to match (macro?)
-
+            guScaleF(mtx2,
+                SPRITE_WORLD_SCALE_D * npc->scale.x,
+                SPRITE_WORLD_SCALE_D * npc->scale.y * npc->verticalStretch,
+                SPRITE_WORLD_SCALE_D * npc->scale.z);
             guMtxCatF(mtx2, mtx1, mtx1);
         }
         if (!(npc->flags & NPC_FLAG_NO_ANIMS_LOADED)) {
@@ -948,7 +945,7 @@ void render_npcs(void) {
             && (npc->flags != 0)
             && !(npc->flags & (NPC_FLAG_SUSPENDED | NPC_FLAG_HAS_NO_SPRITE | NPC_FLAG_INACTIVE | NPC_FLAG_INVISIBLE))
         ) {
-            transform_point(cam->perspectiveMatrix, npc->pos.x, npc->pos.y, npc->pos.z, 1.0f, &x, &y, &z, &s);
+            transform_point(cam->mtxPerspective, npc->pos.x, npc->pos.y, npc->pos.z, 1.0f, &x, &y, &z, &s);
             if (!(s < 0.01) || !(s > -0.01)) {
                 renderDist = ((z * 5000.0f) / s) + 5000.0f;
                 if (renderDist < 0.0f) {
@@ -1933,9 +1930,10 @@ void npc_remove_decoration_glow_behind(Npc* npc, s32 idx) {
 }
 
 void npc_update_decoration_charged(Npc* npc, s32 idx) {
-    u8 rbuf[20];
-    u8 gbuf[20];
-    u8 bbuf[20];
+    #define RGBA_BUF_SIZE 20
+    u8 rbuf[RGBA_BUF_SIZE];
+    u8 gbuf[RGBA_BUF_SIZE];
+    u8 bbuf[RGBA_BUF_SIZE];
     s32 color;
     s32 alpha;
     s32 i;
@@ -1950,18 +1948,19 @@ void npc_update_decoration_charged(Npc* npc, s32 idx) {
             npc->decorationGlowPhase[idx] %= 360;
         }
 
-        for (i = 0; i < 20; i++) {
+        for (i = 0; i < RGBA_BUF_SIZE; i++) {
             rbuf[i] = (cosine(npc->decorationGlowPhase[idx] + (25 * i)) + 1.0) * 80.0f;
             gbuf[i] = (cosine(npc->decorationGlowPhase[idx] + (25 * i) + 45) + 1.0) * 80.0f;
             bbuf[i] = (cosine(npc->decorationGlowPhase[idx] + (25 * i) + 90) + 1.0) * 80.0f;
         }
 
         alpha = 255;
-        for (i = 0; i < 20; i++) {
+        for (i = 0; i < RGBA_BUF_SIZE; i++) {
             color = (rbuf[i] << 24) | (gbuf[i] << 16) | (bbuf[i] << 8) | alpha;
             set_npc_imgfx_all(npc->spriteInstanceID, IMGFX_COLOR_BUF_SET_MODULATE, i, color, 0, 255, 0);
         }
     }
+    #undef RGBA_BUF_SIZE
 }
 
 void npc_remove_decoration_charged(Npc* npc, s32 idx) {
@@ -2198,7 +2197,7 @@ void init_encounter_status(void) {
         currentEncounter->encounterList[i] = 0;
     }
 
-    currentEncounter->flags = ENCOUNTER_STATUS_FLAG_0;
+    currentEncounter->flags = ENCOUNTER_FLAG_NONE;
     currentEncounter->numEncounters = 0;
     currentEncounter->firstStrikeType = FIRST_STRIKE_NONE;
     currentEncounter->hitType = 0;
@@ -2354,7 +2353,7 @@ void make_npcs(s32 flags, s32 mapID, s32* npcGroupList) {
 
     if (npcGroupList != NULL) {
         gEncounterState = ENCOUNTER_STATE_CREATE;
-        D_8009A678 = 1;
+        EncounterStateChanged = TRUE;
         gEncounterSubState = ENCOUNTER_SUBSTATE_CREATE_INIT;
     }
 }
@@ -2428,16 +2427,13 @@ void kill_enemy(Enemy* enemy) {
         }
     }
 
-    do {
-        if (!(enemy->flags & ENEMY_FLAG_4)
-            && (!(enemy->flags & ENEMY_FLAG_ENABLE_HIT_SCRIPT) || (enemy == encounterStatus->curEnemy))
-            && !(enemy->flags & ENEMY_FLAG_PASSIVE)
-        ) {
-            if (!(enemy->flags & ENEMY_FLAG_FLED)) {
-                COPY_set_defeated(encounterStatus->mapID, encounter->encounterID + i);
-            }
-        }
-    } while (0); // required to match
+    if (!(enemy->flags & ENEMY_FLAG_DO_NOT_KILL)
+        && (!(enemy->flags & ENEMY_FLAG_ENABLE_HIT_SCRIPT) || (enemy == encounterStatus->curEnemy))
+        && !(enemy->flags & ENEMY_FLAG_PASSIVE)
+        && !(enemy->flags & ENEMY_FLAG_FLED)
+    ) {
+        COPY_set_defeated(encounterStatus->mapID, encounter->encounterID + i);
+    }
 
     heap_free(enemy);
 }

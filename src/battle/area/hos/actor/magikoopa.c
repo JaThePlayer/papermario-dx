@@ -1185,7 +1185,7 @@ EvtScript N(EVS_Move_MakeClone) = {
     Call(UseIdleAnimation, ACTOR_SELF, FALSE)
     Call(UseIdleAnimation, LVarA, FALSE)
     Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
-    Call(UseBattleCamPreset, BTL_CAM_PRESET_14)
+    Call(UseBattleCamPreset, BTL_CAM_ACTOR)
     Call(BattleCamTargetActor, ACTOR_SELF)
     Call(MoveBattleCamOver, 25)
     Wait(25)

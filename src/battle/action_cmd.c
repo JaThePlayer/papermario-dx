@@ -264,7 +264,7 @@ void action_command_init_status(void) {
             actionCommandStatus->autoSucceed = TRUE;
         }
 
-        if (!(gBattleStatus.flags1 & BS_FLAGS1_PARTNER_ACTING) && is_ability_active(ABILITY_BERSERKER)) {
+        if (is_ability_active(ABILITY_BERSERKER)) {
             actionCommandStatus->showHud = FALSE;
             actionCommandStatus->berserkerEnabled = TRUE;
 
@@ -465,7 +465,7 @@ void action_command_free(void) {
             action_command_whirlwind_free();
             break;
         case ACTION_COMMAND_STOP_LEECH:
-            action_command_jump_draw();
+            action_command_stop_leech_free();
             break;
         case ACTION_COMMAND_07:
             action_command_07_free();

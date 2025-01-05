@@ -562,7 +562,7 @@ EvtScript N(EVS_ShellShot) = {
         Call(PlaySoundAtActor, ACTOR_SELF, SOUND_SHELL_SPIN)
         Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_KoopaTroopa_ShellSpin)
         Wait(10)
-        Call(func_8024ECF8, BTL_CAM_MODEY_MINUS_1, BTL_CAM_MODEX_1, FALSE)
+        Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_TARGET, BTL_CAM_XADJ_AVG, FALSE)
     EndIf
 
     Call(PlaySoundAtActor, ACTOR_SELF, SOUND_SHELL_TOSS)
@@ -579,11 +579,11 @@ EvtScript N(EVS_ShellShot) = {
             Call(RunToGoal, ACTOR_SELF, 0, FALSE)
             Call(GetBattlePhase, LVar0)
             IfEq(LVar0, PHASE_FIRST_STRIKE)
-                Call(UseBattleCamPreset, BTL_CAM_PRESET_05)
-                Call(SetBattleCamZoom, 300)
-                Call(SetBattleCamOffsetZ, 20)
+                Call(UseBattleCamPreset, BTL_CAM_ACTOR_TARGET_MIDPOINT)
+                Call(SetBattleCamDist, 300)
+                Call(SetBattleCamOffsetY, 20)
                 Call(MoveBattleCamOver, 10)
-                Call(func_8024ECF8, BTL_CAM_MODEY_MINUS_1, BTL_CAM_MODEX_1, FALSE)
+                Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_TARGET, BTL_CAM_XADJ_AVG, FALSE)
             EndIf
             Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_KoopaTroopa_ShellExit)
             Wait(8)
@@ -715,7 +715,7 @@ EvtScript N(EVS_ChargedShellShot) = {
     Call(AddActorDecoration, ACTOR_SELF, PRT_MAIN, WHIRLWIND_DECOR_IDX, ACTOR_DECORATION_WHIRLWIND)
     Call(PlaySoundAtActor, ACTOR_SELF, SOUND_DIZZY_SHELL)
     Wait(40)
-    Call(func_8024ECF8, BTL_CAM_MODEY_MINUS_1, BTL_CAM_MODEX_1, FALSE) // BTL_CAM_MODEY_0 -> focus cam on y pos of enemy
+    Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_TARGET, BTL_CAM_XADJ_AVG, FALSE) // BTL_CAM_YADJ_NONE -> focus cam on y pos of enemy
 
     Call(PlaySoundAtActor, ACTOR_SELF, SOUND_SHELL_TOSS)
     Call(SetActorSounds, ACTOR_SELF, ACTOR_SOUND_WALK, SOUND_NONE, SOUND_NONE)
@@ -732,11 +732,11 @@ EvtScript N(EVS_ChargedShellShot) = {
 
             Call(GetBattlePhase, LVar0)
             IfEq(LVar0, PHASE_FIRST_STRIKE)
-                Call(UseBattleCamPreset, BTL_CAM_PRESET_05)
-                Call(SetBattleCamZoom, 300)
-                Call(SetBattleCamOffsetZ, 20)
+                Call(UseBattleCamPreset, BTL_CAM_ACTOR_TARGET_MIDPOINT)
+                Call(SetBattleCamDist, 300)
+                Call(SetBattleCamOffsetY, 20)
                 Call(MoveBattleCamOver, 10)
-                Call(func_8024ECF8, BTL_CAM_MODEY_MINUS_1, BTL_CAM_MODEX_1, FALSE)
+                Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_TARGET, BTL_CAM_XADJ_AVG, FALSE)
             EndIf
 
             Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_KoopaTroopa_ShellExit)
@@ -876,7 +876,7 @@ EvtScript N(BobombThrow) = {
     Call(SetActorFlags, BobombId, ACTOR_FLAG_NO_ATTACK)
     Call(UseBattleCamPreset, BTL_CAM_ENEMY_APPROACH)
     Call(BattleCamTargetActor, BobombId)
-    Call(func_8024ECF8, BTL_CAM_MODEY_MINUS_1, BTL_CAM_MODEX_1, FALSE)
+    Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_TARGET, BTL_CAM_XADJ_AVG, FALSE)
 
     Call(PlayLoopingSoundAtActor, BobombId, 0, SOUND_LOOP_BOBOMB_FUSE)
     Call(SetAnimation, BobombId, PRT_MAIN, ANIM_Bobomb_RunLit)
@@ -953,7 +953,7 @@ EvtScript N(EVS_ChargedShellShotIntoBobomb) = {
     Call(AddActorDecoration, ACTOR_SELF, PRT_MAIN, WHIRLWIND_DECOR_IDX, ACTOR_DECORATION_WHIRLWIND)
     Call(PlaySoundAtActor, ACTOR_SELF, SOUND_DIZZY_SHELL)
     Wait(40)
-    Call(func_8024ECF8, BTL_CAM_MODEY_MINUS_1, BTL_CAM_MODEX_1, FALSE) // BTL_CAM_MODEY_0 -> focus cam on y pos of enemy
+    Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_TARGET, BTL_CAM_XADJ_AVG, FALSE) // BTL_CAM_YADJ_NONE -> focus cam on y pos of enemy
 
     Call(PlaySoundAtActor, ACTOR_SELF, SOUND_SHELL_TOSS)
     Call(SetActorSounds, ACTOR_SELF, ACTOR_SOUND_WALK, SOUND_NONE, SOUND_NONE)

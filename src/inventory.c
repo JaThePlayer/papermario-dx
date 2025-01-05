@@ -13,9 +13,8 @@ enum BlinkModes {
 
 BSS b16 D_8010CD10;
 BSS b16 D_8010CD12;
-BSS s32 D_8010CD20;
 
-SHIFT_BSS StatusBar gStatusBar;
+StatusBar gStatusBar;
 
 extern HudScript* TimesHudScript;
 extern HudScript* SPIncrementHudScripts[];
@@ -458,18 +457,6 @@ s32 get_stored_empty(void) {
     return ARRAY_COUNT(gPlayerData.storedItems) - get_stored_count();
 }
 
-ALWAYS_INLINE b32 item_is_consumable(s32 itemID) {
-    return gItemTable[itemID].typeFlags & ITEM_TYPE_FLAG_CONSUMABLE;
-}
-
-ALWAYS_INLINE b32 item_is_badge(s32 itemID) {
-    return gItemTable[itemID].typeFlags & ITEM_TYPE_FLAG_BADGE;
-}
-
-ALWAYS_INLINE b32 item_is_key(s32 itemID) {
-    return gItemTable[itemID].typeFlags & ITEM_TYPE_FLAG_KEY;
-}
-
 void enforce_hpfp_limits(void) {
     PlayerData* playerData = &gPlayerData;
 
@@ -750,7 +737,7 @@ void update_status_bar(void) {
         return;
     }
 
-    if (!gGameStatusPtr->isBattle && playerData->coins != statusBar->displayCoins) {
+    if (gGameStatusPtr->context == CONTEXT_WORLD && playerData->coins != statusBar->displayCoins) {
         status_bar_start_blinking_coins();
     }
 
@@ -798,7 +785,7 @@ void update_status_bar(void) {
 
     // sync displayed HP toward true HP
     if (statusBar->displayHP != playerData->curHP) {
-        if (!gGameStatusPtr->isBattle && playerData->curHP < statusBar->displayHP) {
+        if (gGameStatusPtr->context == CONTEXT_WORLD && playerData->curHP < statusBar->displayHP) {
             status_bar_start_blinking_hp();
         }
         if (statusBar->displayHP < playerData->curHP) {
@@ -817,7 +804,7 @@ void update_status_bar(void) {
 
     // sync displayed FP toward true FP
     if (statusBar->displayFP != playerData->curFP) {
-        if (!gGameStatusPtr->isBattle && playerData->curFP < statusBar->displayFP) {
+        if (gGameStatusPtr->context == CONTEXT_WORLD && playerData->curFP < statusBar->displayFP) {
             status_bar_start_blinking_fp();
         }
         if (statusBar->displayFP < playerData->curFP) {
@@ -872,7 +859,7 @@ void update_status_bar(void) {
                 } else {
                     if (!statusBar->ignoreChanges) {
                         if (!statusBar->unk_3B || playerStatus->actionState != ACTION_STATE_IDLE) {
-                            if (!gGameStatusPtr->isBattle) {
+                            if (gGameStatusPtr->context == CONTEXT_WORLD) {
                                 statusBar->hidden = TRUE;
                                 statusBar->showTimer = 0;
                                 statusBar->unk_3C = FALSE;
@@ -895,7 +882,7 @@ void update_status_bar(void) {
                         statusBar->showTimer++;
                     }
 
-                    if (statusBar->showTimer >= 240 && !gGameStatusPtr->isBattle) {
+                    if (statusBar->showTimer >= 240 && gGameStatusPtr->context == CONTEXT_WORLD) {
                         statusBar->showTimer = 210;
                         statusBar->hidden = FALSE;
                         statusBar->unk_3B = TRUE;
@@ -1111,7 +1098,6 @@ void update_status_bar(void) {
     if (statusBar->spBlinking != BLINK_OFF) {
         if (!showStat) {
             s32 limit = statusBar->spBarsToBlink * 8;
-            do {} while (0);
             if (sp50 < limit) {
                 while (TRUE) {
                     i++; s1++; if (i >= limit) { break; }
@@ -1347,7 +1333,7 @@ void update_coin_counter(void) {
     if ((statusBar->displayCoins == gPlayerData.coins) || (statusBar->coinCounterHideTime <= 30)) {
         statusBar->coinCounterHideTime--;
         if (statusBar->coinCounterHideTime == 0) {
-            set_window_update(WINDOW_ID_CURRENCY_COUNTER, (s32)basic_hidden_window_update);
+            set_window_update(WIN_CURRENCY_COUNTER, (s32)basic_hidden_window_update);
             statusBar->unk_6D = 15;
             D_8010CD10 = FALSE;
             D_8010CD12 = TRUE;
@@ -1367,7 +1353,7 @@ void show_coin_counter(void) {
     s32 index;
 
     if (D_8010CD10 || D_8010CD12) {
-        set_window_update(WINDOW_ID_CURRENCY_COUNTER, WINDOW_UPDATE_HIDE);
+        set_window_update(WIN_CURRENCY_COUNTER, WINDOW_UPDATE_HIDE);
         if (statusBar->iconIndex12 > -1) {
             hud_element_free(statusBar->coinCountTimesHID);
             hud_element_free(statusBar->coinCountIconHID);
@@ -1380,8 +1366,8 @@ void show_coin_counter(void) {
     }
 
     if (statusBar->coinCounterHideTime == 0) {
-        set_window_properties(WINDOW_ID_CURRENCY_COUNTER, 32, 164, 64, 20, WINDOW_PRIORITY_21, coin_counter_draw_content, 0, -1);
-        set_window_update(WINDOW_ID_CURRENCY_COUNTER, (s32)basic_window_update);
+        set_window_properties(WIN_CURRENCY_COUNTER, 32, 164, 64, 20, WINDOW_PRIORITY_21, coin_counter_draw_content, 0, -1);
+        set_window_update(WIN_CURRENCY_COUNTER, (s32)basic_window_update);
         statusBar->coinCountTimesHID = index = hud_element_create(&HES_MenuTimes);
         hud_element_set_flags(index, HUD_ELEMENT_FLAG_80);
         hud_element_set_tint(index, 255, 255, 255);
@@ -1547,7 +1533,7 @@ s32 is_status_bar_visible(void) {
 void status_bar_start_blinking_hp(void) {
     StatusBar* statusBar = &gStatusBar;
 
-    if (!gGameStatusPtr->isBattle) {
+    if (gGameStatusPtr->context == CONTEXT_WORLD) {
         statusBar->hpBlinkTimer = 120;
     }
 
@@ -1570,7 +1556,7 @@ void status_bar_stop_blinking_hp(void) {
 void status_bar_start_blinking_fp(void) {
     StatusBar* statusBar = &gStatusBar;
 
-    if (!gGameStatusPtr->isBattle) {
+    if (gGameStatusPtr->context == CONTEXT_WORLD) {
         statusBar->fpBlinkTimer = 120;
     }
 
@@ -1592,7 +1578,7 @@ void status_bar_stop_blinking_fp(void) {
 void status_bar_start_blinking_coins(void) {
     StatusBar* statusBar = &gStatusBar;
 
-    if (!gGameStatusPtr->isBattle) {
+    if (gGameStatusPtr->context == CONTEXT_WORLD) {
         statusBar->coinsBlinkTimer = 120;
     }
 
@@ -1770,9 +1756,7 @@ s32 is_ability_active(s32 ability) {
         if (badgeItemID == ITEM_NONE)
             continue;
 
-        if (badgeItemID != ITEM_NONE) {
-            badgeMoveID = gItemTable[badgeItemID].moveID;
-        }
+        badgeMoveID = gItemTable[badgeItemID].moveID;
 
         switch (ability) {
             case ABILITY_DODGE_MASTER:

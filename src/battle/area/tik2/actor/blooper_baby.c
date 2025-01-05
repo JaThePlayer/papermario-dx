@@ -415,7 +415,7 @@ EvtScript N(EVS_TakeTurn) = {
 
     Call(ActorExists, ACTOR_ENEMY0, LVar1)
     IfTrue(LVar1)
-        Call(UseBattleCamPreset, BTL_CAM_PRESET_07)
+        Call(UseBattleCamPreset, BTL_CAM_ACTOR_GOAL_SIMPLE)
         Call(BattleCamTargetActor, ACTOR_SELF)
 
         Call(GetActorPos, ACTOR_SELF, LVar1, LVar2, LVar3)
@@ -426,10 +426,10 @@ EvtScript N(EVS_TakeTurn) = {
         Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_BabyBlooper_Anim01)
         Wait(10)
 
-        Call(UseBattleCamPreset, BTL_CAM_PRESET_07)
+        Call(UseBattleCamPreset, BTL_CAM_ACTOR_GOAL_SIMPLE)
         Call(BattleCamTargetActor, ACTOR_ENEMY0)
-        Call(SetBattleCamOffsetZ, 25)
-        Call(SetBattleCamZoom, 330)
+        Call(SetBattleCamOffsetY, 25)
+        Call(SetBattleCamDist, 330)
         Call(MoveBattleCamOver, 40)
         Wait(5)
 
@@ -494,9 +494,9 @@ EvtScript N(EVS_Attack) = {
     EndSwitch
     Call(GetActorPos, ACTOR_PLAYER, LVar0, LVar1, LVar2)
     Add(LVar1, 50)
-    Call(UseBattleCamPreset, BTL_CAM_PRESET_19)
+    Call(UseBattleCamPreset, BTL_CAM_REPOSITION)
     Call(SetBattleCamTarget, LVar0, LVar1, LVar2)
-    Call(SetBattleCamZoom, 325)
+    Call(SetBattleCamDist, 325)
     Call(MoveBattleCamOver, 30)
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_BabyBlooper_Anim02)
     Call(SetActorJumpGravity, ACTOR_SELF, Float(0.8))

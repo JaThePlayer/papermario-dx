@@ -83,9 +83,9 @@ s32 D_80078168[] = {
     MSG_Menus_Merlee_Exhausted,
 };
 
-SHIFT_BSS PopupMessage D_800A0BC0[32];
-SHIFT_BSS s32 D_800A0F40;
-SHIFT_BSS HudStatusIcon* D_800A0F44;
+BSS PopupMessage D_800A0BC0[32];
+BSS s32 D_800A0F40;
+BSS HudStatusIcon* D_800A0F44;
 
 extern HudScript HES_Item_KeyGift;
 CustomHudComplexStatusIcon* get_custom_status_icons(s32 iconID) {
@@ -138,7 +138,7 @@ void func_80045AC0(void) {
     for (i = 0; i < ARRAY_COUNT(D_800A0BC0); i++) {
         PopupMessage* popup = &D_800A0BC0[i];
         popup->active = FALSE;
-        popup->message = NULL;
+        popup->data.icons = NULL;
     }
 
     create_worker_world(NULL, func_80045BC8);
@@ -150,8 +150,8 @@ void func_80045B10(void) {
 
     for (i = 0; i < ARRAY_COUNT(D_800A0BC0); i++) {
         PopupMessage* popup = &D_800A0BC0[i];
-        if (popup->message != NULL) {
-            heap_free(popup->message);
+        if (popup->data.icons != NULL) {
+            heap_free(popup->data.icons);
         }
         popup->active = FALSE;
     }
@@ -205,9 +205,9 @@ PopupMessage* get_current_merlee_message(void) {
 }
 
 void dispose_merlee_message(PopupMessage* popup) {
-    if (popup->message != NULL) {
-        heap_free(popup->message);
-        popup->message = NULL;
+    if (popup->data.icons != NULL) {
+        heap_free(popup->data.icons);
+        popup->data.icons = NULL;
     }
     popup->active = FALSE;
 }
@@ -258,7 +258,7 @@ void update_merlee_message(void* data) {
     }
 
     if (closeMessage) {
-        set_window_update(WINDOW_ID_BATTLE_POPUP, WINDOW_UPDATE_HIDE);
+        set_window_update(WIN_BTL_POPUP, WINDOW_UPDATE_HIDE);
         D_800A0F40 = 0;
         dispose_merlee_message(popup);
     }
@@ -304,8 +304,8 @@ void draw_merlee_message(void* data) {
                 width = get_msg_width(messageID, 0) + 23;
                 xPos = 160 - (width / 2);
                 height = 45;
-                set_window_properties(WINDOW_ID_BATTLE_POPUP, xPos, 80, width, height, WINDOW_PRIORITY_0, draw_merlee_message_string, popup, -1);
-                set_window_update(WINDOW_ID_BATTLE_POPUP, WINDOW_UPDATE_SHOW);
+                set_window_properties(WIN_BTL_POPUP, xPos, 80, width, height, WINDOW_PRIORITY_0, draw_merlee_message_string, popup, -1);
+                set_window_update(WIN_BTL_POPUP, WINDOW_UPDATE_SHOW);
             }
             break;
 
@@ -316,8 +316,8 @@ void draw_merlee_message(void* data) {
                 width = get_msg_width(messageID, 0) + 23;
                 xPos = 160 - (width / 2);
                 height = 28;
-                set_window_properties(WINDOW_ID_BATTLE_POPUP, xPos, 80, width, height, WINDOW_PRIORITY_0, draw_merlee_message_string, popup, -1);
-                set_window_update(WINDOW_ID_BATTLE_POPUP, WINDOW_UPDATE_SHOW);
+                set_window_properties(WIN_BTL_POPUP, xPos, 80, width, height, WINDOW_PRIORITY_0, draw_merlee_message_string, popup, -1);
+                set_window_update(WIN_BTL_POPUP, WINDOW_UPDATE_SHOW);
             }
             break;
     }
@@ -332,8 +332,8 @@ void draw_merlee_message(void* data) {
         messageID = D_80078168[popup->messageIndex];
         width = get_msg_width(messageID, 0) + 30;
         xPos = 160 - (width / 2);
-        set_window_properties(WINDOW_ID_BATTLE_POPUP, xPos, 80, width, D_80078160[get_msg_lines(messageID) - 1], 0, draw_merlee_message_string, popup, -1);
-        set_window_update(WINDOW_ID_BATTLE_POPUP, WINDOW_UPDATE_SHOW);
+        set_window_properties(WIN_BTL_POPUP, xPos, 80, width, D_80078160[get_msg_lines(messageID) - 1], 0, draw_merlee_message_string, popup, -1);
+        set_window_update(WIN_BTL_POPUP, WINDOW_UPDATE_SHOW);
     }
 #endif
 }
@@ -352,8 +352,8 @@ void init_all_status_icons(void) {
         popup->unk_00 = 0;
         popup->renderWorldFunc = NULL;
         popup->renderUIFunc = draw_all_status_icons;
-        popup->message = general_heap_malloc(64 * sizeof(HudStatusIcon));
-        icons = D_800A0F44 = (HudStatusIcon*)(popup->message);
+        popup->data.icons = general_heap_malloc(MAX_ICONS * sizeof(HudStatusIcon));
+        icons = D_800A0F44 = popup->data.icons;
         ASSERT(icons != NULL);
 
         for (i = 0; i < MAX_ICONS; i++, icons++)
@@ -629,7 +629,7 @@ void draw_all_status_icons(void* data) {
         if (icon->status1.activeTask == STATUS_ICON_TASK_DRAW) {
             if (icon->flags & STATUS_ICON_FLAG_DEBUFF) {
                 hud_element_set_flags(icon->status1.activeElementID, HUD_ELEMENT_FLAG_DISABLED);
-            } else if (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->isBattle != 1) {
+            } else if (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->context != CONTEXT_BATTLE) {
                 hud_element_clear_flags(icon->status1.activeElementID, HUD_ELEMENT_FLAG_DISABLED);
 
                 x = icon->worldPos.x;
@@ -646,7 +646,9 @@ void draw_all_status_icons(void* data) {
             }
         }
 
-        if (icon->status1.removingTask == STATUS_ICON_TASK_DRAW && (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->isBattle != 1)) {
+        if (icon->status1.removingTask == STATUS_ICON_TASK_DRAW
+            && (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->context != CONTEXT_BATTLE)
+        ) {
             hud_element_clear_flags(icon->status1.removingElementID, HUD_ELEMENT_FLAG_DISABLED);
 
             if (isActiveDrawn == 0) {
@@ -668,7 +670,7 @@ void draw_all_status_icons(void* data) {
         if (icon->status2.activeTask == STATUS_ICON_TASK_DRAW) {
             if (icon->flags & STATUS_ICON_FLAG_STATIC) {
                 hud_element_set_flags(icon->status2.activeElementID, HUD_ELEMENT_FLAG_DISABLED);
-            } else if (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->isBattle != 1) {
+            } else if (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->context != CONTEXT_BATTLE) {
                 hud_element_clear_flags(icon->status2.activeElementID, HUD_ELEMENT_FLAG_DISABLED);
 
                 offsetY = 0;
@@ -691,7 +693,9 @@ void draw_all_status_icons(void* data) {
             }
         }
 
-        if (icon->status2.removingTask == STATUS_ICON_TASK_DRAW && (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->isBattle != 1)) {
+        if (icon->status2.removingTask == STATUS_ICON_TASK_DRAW
+            && (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->context != CONTEXT_BATTLE)
+        ) {
             hud_element_clear_flags(icon->status2.removingElementID, HUD_ELEMENT_FLAG_DISABLED);
 
             offsetY = 0;
@@ -717,7 +721,7 @@ void draw_all_status_icons(void* data) {
         if (icon->status3.activeTask == STATUS_ICON_TASK_DRAW) {
             if (icon->flags & STATUS_ICON_FLAG_TRANSPARENT) {
                 hud_element_set_flags(icon->status3.activeElementID, HUD_ELEMENT_FLAG_DISABLED);
-            } else if (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->isBattle != 1) {
+            } else if (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->context != CONTEXT_BATTLE) {
                 hud_element_clear_flags(icon->status3.activeElementID, HUD_ELEMENT_FLAG_DISABLED);
 
                 offsetY = 0;
@@ -741,7 +745,9 @@ void draw_all_status_icons(void* data) {
             }
         }
 
-        if (icon->status3.removingTask == STATUS_ICON_TASK_DRAW && (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->isBattle != 1)) {
+        if (icon->status3.removingTask == STATUS_ICON_TASK_DRAW
+            && (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->context != CONTEXT_BATTLE)
+        ) {
             hud_element_clear_flags(icon->status3.removingElementID, HUD_ELEMENT_FLAG_DISABLED);
 
             offsetY = 0;
@@ -770,7 +776,7 @@ void draw_all_status_icons(void* data) {
         if (icon->status4.activeTask == STATUS_ICON_TASK_DRAW) {
             if (icon->flags & STATUS_ICON_FLAG_STATUS_CHILL_OUT) {
                 hud_element_set_flags(icon->status4.activeElementID, HUD_ELEMENT_FLAG_DISABLED);
-            } else if (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->isBattle != 1) {
+            } else if (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->context != CONTEXT_BATTLE) {
                 hud_element_clear_flags(icon->status4.activeElementID, HUD_ELEMENT_FLAG_DISABLED);
 
                 offsetY = 0;
@@ -798,7 +804,9 @@ void draw_all_status_icons(void* data) {
             }
         }
 
-        if (icon->status4.removingTask == STATUS_ICON_TASK_DRAW && (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->isBattle != 1)) {
+        if (icon->status4.removingTask == STATUS_ICON_TASK_DRAW
+            && (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->context != CONTEXT_BATTLE)
+        ) {
             hud_element_clear_flags(icon->status4.removingElementID, HUD_ELEMENT_FLAG_DISABLED);
 
             offsetY = 0;
@@ -829,8 +837,8 @@ void draw_all_status_icons(void* data) {
         for (j = 0; j < CUSTOM_ICON_AMT; j++) {
             CustomHudComplexStatusIcon* customIcon = &icon->customIcons[j];
             isActiveDrawn = 0;
-// if (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->isBattle != 1)
-            if (customIcon->activeTask == STATUS_ICON_TASK_DRAW && (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->isBattle != 1)) {
+// if (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->context != CONTEXT_BATTLE)
+            if (customIcon->activeTask == STATUS_ICON_TASK_DRAW && (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->context != CONTEXT_BATTLE)) {
                 hud_element_clear_flags(customIcon->activeElementID, HUD_ELEMENT_FLAG_DISABLED);
 
                 offsetY = -51 + (iconCounter * 17);
@@ -851,7 +859,7 @@ void draw_all_status_icons(void* data) {
                 isActiveDrawn = 1;
             }
 
-            if (customIcon->removingTask == STATUS_ICON_TASK_DRAW && (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->isBattle != 1)) {
+            if (customIcon->removingTask == STATUS_ICON_TASK_DRAW && (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->context != CONTEXT_BATTLE)) {
                 hud_element_clear_flags(customIcon->removingElementID, HUD_ELEMENT_FLAG_DISABLED);
 
                 offsetY = -51 + (iconCounter * 17);
@@ -876,7 +884,7 @@ void draw_all_status_icons(void* data) {
             if (icon->boostJump.active) {
                 if (icon->flags & STATUS_ICON_FLAG_BOOST_JUMP) {
                     hud_element_set_flags(icon->boostJump.activeElementID, HUD_ELEMENT_FLAG_DISABLED);
-                } else if (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->isBattle != 1) {
+                } else if (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->context != CONTEXT_BATTLE) {
                     hud_element_clear_flags(icon->boostJump.activeElementID, HUD_ELEMENT_FLAG_DISABLED);
 
                     x = icon->worldPos.x;
@@ -906,7 +914,7 @@ void draw_all_status_icons(void* data) {
             if (icon->boostHammer.active) {
                 if (icon->flags & STATUS_ICON_FLAG_BOOST_HAMMER) {
                     hud_element_set_flags(icon->boostHammer.activeElementID, HUD_ELEMENT_FLAG_DISABLED);
-                } else if (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->isBattle != 1) {
+                } else if (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->context != CONTEXT_BATTLE) {
                     hud_element_clear_flags(icon->boostHammer.activeElementID, HUD_ELEMENT_FLAG_DISABLED);
 
                     x = icon->worldPos.x;
@@ -936,7 +944,7 @@ void draw_all_status_icons(void* data) {
             if (icon->boostPartner.active) {
                 if (icon->flags & STATUS_ICON_FLAG_BOOST_PARTNER) {
                     hud_element_set_flags(icon->boostPartner.activeElementID, HUD_ELEMENT_FLAG_DISABLED);
-                } else if (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->isBattle != 1) {
+                } else if (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->context != CONTEXT_BATTLE) {
                     hud_element_clear_flags(icon->boostPartner.activeElementID, HUD_ELEMENT_FLAG_DISABLED);
 
                     x = icon->worldPos.x;
@@ -954,7 +962,7 @@ void draw_all_status_icons(void* data) {
             if (icon->surprise.active) {
                 if (icon->flags & STATUS_ICON_FLAG_SURPRISE) {
                     hud_element_set_flags(icon->surprise.activeElementID, HUD_ELEMENT_FLAG_DISABLED);
-                } else if (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->isBattle != 1) {
+                } else if (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->context != CONTEXT_BATTLE) {
                     hud_element_clear_flags(icon->surprise.activeElementID, HUD_ELEMENT_FLAG_DISABLED);
 
                     x = icon->worldPos.x;
@@ -972,7 +980,7 @@ void draw_all_status_icons(void* data) {
             if (icon->peril.active) {
                 if (icon->flags & STATUS_ICON_FLAG_PERIL) {
                     hud_element_set_flags(icon->peril.activeElementID, HUD_ELEMENT_FLAG_DISABLED);
-                } else if (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->isBattle != 1) {
+                } else if (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->context != CONTEXT_BATTLE) {
                     hud_element_clear_flags(icon->peril.activeElementID, HUD_ELEMENT_FLAG_DISABLED);
 
                     x = icon->worldPos.x;
@@ -990,7 +998,7 @@ void draw_all_status_icons(void* data) {
             if (icon->danger.active) {
                 if (icon->flags & STATUS_ICON_FLAG_DANGER) {
                     hud_element_set_flags(icon->danger.activeElementID, HUD_ELEMENT_FLAG_DISABLED);
-                } else if (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->isBattle != 1) {
+                } else if (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->context != CONTEXT_BATTLE) {
                     hud_element_clear_flags(icon->danger.activeElementID, HUD_ELEMENT_FLAG_DISABLED);
 
                     x = icon->worldPos.x;
@@ -1019,8 +1027,9 @@ s32 create_status_icon_set(void) {
     ASSERT(i < MAX_ICONS);
 
     icon->flags = STATUS_ICON_FLAG_USED;
-    if (gGameStatusPtr->isBattle) {
-        icon->flags = STATUS_ICON_FLAG_BATTLE | STATUS_ICON_FLAG_USED;
+
+    if (gGameStatusPtr->context != CONTEXT_WORLD) {
+        icon->flags |= STATUS_ICON_FLAG_BATTLE;
     }
 
     icon->worldPos.x = 0;

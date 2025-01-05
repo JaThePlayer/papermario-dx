@@ -13,15 +13,15 @@ enum IntroStates {
     INTRO_ENABLE_DRAW_FRAME     = 0x00000015, // unused
 };
 
-SHIFT_BSS s32 IntroEnableDrawFrameDelay;
-SHIFT_BSS s16 IntroOverlayAlpha;
-SHIFT_BSS s16 IntroFrontFadeAlpha;
-SHIFT_BSS s16 IntroOverlayDelta;
-SHIFT_BSS s16 IntroFadeColorR;
-SHIFT_BSS s16 IntroFadeColorG;
-SHIFT_BSS s16 IntroFadeColorB;
-SHIFT_BSS s32 IntroOverlayType;
-SHIFT_BSS s32 D_800A0964; // related to skipping the intro
+BSS s32 IntroEnableDrawFrameDelay;
+BSS s16 IntroOverlayAlpha;
+BSS s16 IntroFrontFadeAlpha;
+BSS s16 IntroOverlayDelta;
+BSS s16 IntroFadeColorR;
+BSS s16 IntroFadeColorG;
+BSS s16 IntroFadeColorB;
+BSS s32 IntroOverlayType;
+BSS s32 D_800A0964; // related to skipping the intro
 
 void state_init_intro(void) {
     gGameStatusPtr->startupState = INTRO_INIT;
@@ -159,7 +159,7 @@ void state_step_intro(void) {
             break;
         case INTRO_LOAD_MAP:
             set_curtain_draw_callback(NULL);
-            gGameStatusPtr->isBattle = FALSE;
+            gGameStatusPtr->context = CONTEXT_WORLD;
             gGameStatusPtr->debugUnused1 = FALSE;
             gGameStatusPtr->debugScripts = DEBUG_SCRIPTS_NONE;
             gGameStatusPtr->keepUsingPartnerOnMapChange = FALSE;
@@ -169,7 +169,7 @@ void state_step_intro(void) {
                 clear_render_tasks();
                 clear_worker_list();
                 clear_script_list();
-                create_cameras_a();
+                create_cameras();
                 spr_init_sprites(PLAYER_SPRITES_MARIO_WORLD);
                 clear_entity_models();
                 clear_animator_list();

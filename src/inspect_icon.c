@@ -119,7 +119,7 @@ s32 should_continue_inspect(void) {
         } else if (!(playerStatus->flags & PS_FLAG_INPUT_DISABLED)
             && (playerStatus->flags & PS_FLAG_HAS_CONVERSATION_NPC)
             && (npc != NULL)
-            && (npc->flags & NPC_FLAG_10000000)
+            && (npc->flags & NPC_FLAG_USE_INSPECT_ICON)
         ) {
             curInteraction = npc->npcID | COLLISION_WITH_NPC_BIT;
             if (playerStatus->interactingWithID == curInteraction) {
@@ -274,5 +274,3 @@ void interact_inspect_dismiss(void) {
     func_800EF3D4(0);
     partner_reset_tether_distance();
 }
-
-MATCHING_BSS(0x30);

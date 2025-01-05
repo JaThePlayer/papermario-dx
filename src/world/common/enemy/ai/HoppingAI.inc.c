@@ -14,7 +14,7 @@ void N(HoppingAI_HopInit)(Evt* script, MobileAISettings* aiSettings, EnemyDetect
     npc->jumpScale = 1.5f;
     ai_enemy_play_sound(npc, SOUND_SEQ_FUZZY_HOP, 0);
 
-    if (is_point_within_region(enemy->territory->wander.wanderShape,
+    if (is_point_outside_territory(enemy->territory->wander.wanderShape,
                                enemy->territory->wander.centerPos.x,
                                enemy->territory->wander.centerPos.z,
                                npc->pos.x, npc->pos.z,
@@ -46,17 +46,15 @@ void N(HoppingAI_Hop)(Evt* script, MobileAISettings* aiSettings, EnemyDetectVolu
 
     if (aiSettings->playerSearchInterval >= 0) {
         if (script->functionTemp[1] <= 0) {
-            do {
-                script->functionTemp[1] = aiSettings->playerSearchInterval;
-                if (basic_ai_check_player_dist(territory, enemy, aiSettings->alertRadius, aiSettings->alertOffsetDist, 0) != 0) {
-                    EffectInstance* emoteTemp;
-                    fx_emote(EMOTE_EXCLAMATION, npc, 0.0f, npc->collisionHeight, 1.0f, 2.0f, -20.0f, 15, &emoteTemp);
-                    ai_enemy_play_sound(npc, SOUND_AI_ALERT_A, SOUND_PARAM_MORE_QUIET);
-                    npc->yaw = atan2(npc->pos.x, npc->pos.z, gPlayerStatusPtr->pos.x, gPlayerStatusPtr->pos.z);
-                    script->AI_TEMP_STATE = AI_STATE_CHASE_INIT;
-                    return;
-                }
-            } while (0); // required to match
+            script->functionTemp[1] = aiSettings->playerSearchInterval;
+            if (basic_ai_check_player_dist(territory, enemy, aiSettings->alertRadius, aiSettings->alertOffsetDist, 0) != 0) {
+                EffectInstance* emoteTemp;
+                fx_emote(EMOTE_EXCLAMATION, npc, 0.0f, npc->collisionHeight, 1.0f, 2.0f, -20.0f, 15, &emoteTemp);
+                ai_enemy_play_sound(npc, SOUND_AI_ALERT_A, SOUND_PARAM_MORE_QUIET);
+                npc->yaw = atan2(npc->pos.x, npc->pos.z, gPlayerStatusPtr->pos.x, gPlayerStatusPtr->pos.z);
+                script->AI_TEMP_STATE = AI_STATE_CHASE_INIT;
+                return;
+            }
         }
         script->functionTemp[1]--;
     }
@@ -245,18 +243,18 @@ API_CALLABLE(N(HoppingAI_Main)) {
         npc->flags &= ~NPC_FLAG_GRAVITY;
         npc->flags |= NPC_FLAG_FLYING;
 
-        enemy->aiFlags |= (ENEMY_AI_FLAG_8 | ENEMY_AI_FLAG_10);
+        enemy->aiFlags |= (AI_FLAG_SKIP_EMOTE_AFTER_FLEE | AI_FLAG_SKIP_IDLE_ANIM_AFTER_FLEE);
         if (enemy->flags & ENEMY_FLAG_BEGIN_WITH_CHASING) {
             script->AI_TEMP_STATE = AI_STATE_CHASE_INIT;
             enemy->flags &= ~ENEMY_FLAG_BEGIN_WITH_CHASING;
         }
     }
 
-    if (enemy->aiFlags & ENEMY_AI_FLAG_SUSPEND) {
+    if (enemy->aiFlags & AI_FLAG_SUSPEND) {
         if (enemy->aiSuspendTime != 0) {
             return ApiStatus_BLOCK;
         }
-        enemy->aiFlags &= ~ENEMY_AI_FLAG_SUSPEND;
+        enemy->aiFlags &= ~AI_FLAG_SUSPEND;
     }
 
     switch (script->AI_TEMP_STATE) {

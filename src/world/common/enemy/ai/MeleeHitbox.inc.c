@@ -104,16 +104,16 @@ API_CALLABLE(N(MeleeHitbox_Main)) {
     Npc* baseNpc;
     f32 posX, posZ;
 
-    if (isInitialCall || (hitboxEnemy->aiFlags & ENEMY_AI_FLAG_SUSPEND)) {
+    if (isInitialCall || (hitboxEnemy->aiFlags & AI_FLAG_SUSPEND)) {
         script->functionTemp[0] = 0;
         hitboxNpc->duration = 0;
         hitboxNpc->flags |= (NPC_FLAG_INVISIBLE | NPC_FLAG_IGNORE_PLAYER_COLLISION);
-        hitboxEnemy->flags |= ENEMY_FLAG_100000 | ENEMY_FLAG_ACTIVE_WHILE_OFFSCREEN | ENEMY_FLAG_IGNORE_TOUCH | ENEMY_FLAG_IGNORE_JUMP | ENEMY_FLAG_IGNORE_HAMMER | ENEMY_FLAG_CANT_INTERACT | ENEMY_FLAG_IGNORE_PARTNER;
+        hitboxEnemy->flags |= ENEMY_FLAG_SKIP_BATTLE | ENEMY_FLAG_ACTIVE_WHILE_OFFSCREEN | ENEMY_FLAG_IGNORE_TOUCH | ENEMY_FLAG_IGNORE_JUMP | ENEMY_FLAG_IGNORE_HAMMER | ENEMY_FLAG_CANT_INTERACT | ENEMY_FLAG_IGNORE_PARTNER;
         hitboxNpc->pos.x = NPC_DISPOSE_POS_X;
         hitboxNpc->pos.y = NPC_DISPOSE_POS_Y;
         hitboxNpc->pos.z = NPC_DISPOSE_POS_Z;
-        if (hitboxEnemy->aiFlags & ENEMY_AI_FLAG_SUSPEND) {
-            hitboxEnemy->aiFlags &= ~ENEMY_AI_FLAG_SUSPEND;
+        if (hitboxEnemy->aiFlags & AI_FLAG_SUSPEND) {
+            hitboxEnemy->aiFlags &= ~AI_FLAG_SUSPEND;
         }
     }
 
@@ -140,7 +140,7 @@ API_CALLABLE(N(MeleeHitbox_Main)) {
                 hitboxEnemy->unk_10.z = hitboxNpc->pos.z;
 
                 hitboxNpc->yaw = atan2(hitboxNpc->pos.x, hitboxNpc->pos.z, gPlayerStatusPtr->pos.x, gPlayerStatusPtr->pos.z);
-                hitboxEnemy->flags &= ~(ENEMY_FLAG_100000 | ENEMY_FLAG_IGNORE_TOUCH | ENEMY_FLAG_IGNORE_JUMP | ENEMY_FLAG_IGNORE_HAMMER | ENEMY_FLAG_CANT_INTERACT | ENEMY_FLAG_IGNORE_PARTNER);
+                hitboxEnemy->flags &= ~(ENEMY_FLAG_SKIP_BATTLE | ENEMY_FLAG_IGNORE_TOUCH | ENEMY_FLAG_IGNORE_JUMP | ENEMY_FLAG_IGNORE_HAMMER | ENEMY_FLAG_CANT_INTERACT | ENEMY_FLAG_IGNORE_PARTNER);
                 hitboxNpc->duration = 0;
                 script->functionTemp[0] = 1;
             }
@@ -153,7 +153,7 @@ API_CALLABLE(N(MeleeHitbox_Main)) {
                 hitboxEnemy->hitboxIsActive = FALSE;
             }
             if (baseEnemy->AI_VAR_ATTACK_STATE == MELEE_HITBOX_STATE_POST) {
-                hitboxEnemy->flags |= ENEMY_FLAG_100000 | ENEMY_FLAG_IGNORE_TOUCH | ENEMY_FLAG_IGNORE_JUMP | ENEMY_FLAG_IGNORE_HAMMER | ENEMY_FLAG_CANT_INTERACT | ENEMY_FLAG_IGNORE_PARTNER;
+                hitboxEnemy->flags |= ENEMY_FLAG_SKIP_BATTLE | ENEMY_FLAG_IGNORE_TOUCH | ENEMY_FLAG_IGNORE_JUMP | ENEMY_FLAG_IGNORE_HAMMER | ENEMY_FLAG_CANT_INTERACT | ENEMY_FLAG_IGNORE_PARTNER;
                 hitboxNpc->pos.x = NPC_DISPOSE_POS_X;
                 hitboxNpc->pos.y = NPC_DISPOSE_POS_Y;
                 hitboxNpc->pos.z = NPC_DISPOSE_POS_Z;

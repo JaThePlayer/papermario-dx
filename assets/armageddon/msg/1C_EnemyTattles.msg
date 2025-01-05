@@ -286,7 +286,7 @@
 	spinning attack![Wait][End]
 }
 
-#message:1C:(EnemyTattle_BlueNinjakoopa) {
+#message:1C:(EnemyTattle_BlackNinjakoopa) {
 	[Style right]
 	This is Black Ninjakoopa.[BR]
 	[Pause 10]Black is pretty fashionable...[BR]

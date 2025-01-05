@@ -118,7 +118,7 @@ EvtScript N(EVS_NpcHit_GardenShyGuy1) = {
     EndIf
     Set(GF_MAC01_ChasedShyGuysFromGardenA, TRUE)
     Call(BindNpcAI, NPC_SELF, Ref(N(EVS_GardenShyGuy_RunAway)))
-    Call(SetSelfEnemyFlagBits, ENEMY_FLAG_IGNORE_TOUCH | ENEMY_FLAG_IGNORE_JUMP | ENEMY_FLAG_IGNORE_HAMMER | ENEMY_FLAG_CANT_INTERACT | ENEMY_FLAG_IGNORE_PARTNER, 1)
+    Call(SetSelfEnemyFlagBits, ENEMY_FLAG_IGNORE_TOUCH | ENEMY_FLAG_IGNORE_JUMP | ENEMY_FLAG_IGNORE_HAMMER | ENEMY_FLAG_CANT_INTERACT | ENEMY_FLAG_IGNORE_PARTNER, TRUE)
     Return
     End
 };
@@ -130,7 +130,7 @@ EvtScript N(EVS_NpcHit_GardenShyGuy2) = {
     EndIf
     Set(GF_MAC01_ChasedShyGuysFromGardenB, TRUE)
     Call(BindNpcAI, NPC_SELF, Ref(N(EVS_GardenShyGuy_RunAway)))
-    Call(SetSelfEnemyFlagBits, ENEMY_FLAG_IGNORE_TOUCH | ENEMY_FLAG_IGNORE_JUMP | ENEMY_FLAG_IGNORE_HAMMER | ENEMY_FLAG_CANT_INTERACT | ENEMY_FLAG_IGNORE_PARTNER, 1)
+    Call(SetSelfEnemyFlagBits, ENEMY_FLAG_IGNORE_TOUCH | ENEMY_FLAG_IGNORE_JUMP | ENEMY_FLAG_IGNORE_HAMMER | ENEMY_FLAG_CANT_INTERACT | ENEMY_FLAG_IGNORE_PARTNER, TRUE)
     Return
     End
 };
@@ -347,7 +347,7 @@ EvtScript N(EVS_MinhT_PlantSeed) = {
 #else
     Call(SetCamSpeed, CAM_DEFAULT, 1)
 #endif
-    Call(PanToTarget, CAM_DEFAULT, 0, 1)
+    Call(PanToTarget, CAM_DEFAULT, 0, TRUE)
     Call(InterpNpcYaw, NPC_SELF, 90, 1)
     Call(SetNpcAnimation, NPC_SELF, ANIM_MinhT_Run)
     Call(NpcMoveTo, NPC_SELF, 175, 444, 0)
@@ -387,9 +387,9 @@ EvtScript N(EVS_MinhT_PlantSeed) = {
             Call(GetPlayerPos, LVar0, LVar1, LVar2)
             Call(UseSettingsFrom, CAM_DEFAULT, LVar0, LVar1, LVar2)
             Call(SetPanTarget, CAM_DEFAULT, LVar0, LVar1, LVar2)
-            Call(PanToTarget, CAM_DEFAULT, 0, 1)
+            Call(PanToTarget, CAM_DEFAULT, 0, TRUE)
             Call(WaitForCam, CAM_DEFAULT, Float(1.0))
-            Call(PanToTarget, CAM_DEFAULT, 0, 0)
+            Call(PanToTarget, CAM_DEFAULT, 0, FALSE)
         EndThread
     EndIf
     Call(InterpNpcYaw, NPC_SELF, 270, 1)
@@ -471,6 +471,10 @@ EvtScript N(EVS_NpcInteract_MinhT) = {
             Set(LVar0, GF_MAC01_ChasedShyGuysFromGardenA)
             Add(LVar0, GF_MAC01_ChasedShyGuysFromGardenB)
             IfEq(LVar0, 2)
+#if VERSION_JP
+                Set(LVar0, MSG_MAC_Plaza_00EC)
+                Set(LVar1, MSG_MAC_Plaza_00EC)
+#endif
                 Set(LVar2, 1)
             Else
                 Set(LVar0, MSG_MAC_Plaza_006D)
@@ -561,6 +565,10 @@ EvtScript N(EVS_NpcInteract_MinhT) = {
                 Set(LVar5, 2)
                 ExecWait(N(EVS_MinhT_PlantSeed))
             CaseEq(ITEM_MAGICAL_SEED4)
+#if VERSION_JP
+                Set(GF_MAC01_Planted_MagicalSeed4, TRUE)
+                Set(LVar4, MSG_MAC_Plaza_00ED)
+#endif
                 Set(LVar5, 3)
                 ExecWait(N(EVS_MinhT_PlantSeed))
         EndSwitch
@@ -581,7 +589,7 @@ EvtScript N(EVS_NpcIdle_MinhT) = {
             Add(LVar0, GF_MAC01_ChasedShyGuysFromGardenB)
             IfEq(LVar0, 2)
                 Call(SetNpcAnimation, NPC_SELF, ANIM_MinhT_Idle)
-                Call(SetSelfEnemyFlagBits, ENEMY_FLAG_400000, 0)
+                Call(SetSelfEnemyFlagBits, ENEMY_FLAG_DO_NOT_AUTO_FACE_PLAYER, FALSE)
                 Call(BindNpcAI, NPC_SELF, Ref(N(EVS_NpcAI_MinhT)))
                 BreakLoop
             EndIf
@@ -617,7 +625,7 @@ EvtScript N(EVS_NpcInit_MinhT) = {
     Switch(GB_StoryProgress)
         CaseRange(STORY_CH3_STAR_SPRIT_DEPARTED, STORY_CH4_STAR_SPIRIT_RESCUED)
             Set(GF_MAC01_ShyGuysTramplingGarden, TRUE)
-            Call(SetSelfEnemyFlagBits, ENEMY_FLAG_400000, 1)
+            Call(SetSelfEnemyFlagBits, ENEMY_FLAG_DO_NOT_AUTO_FACE_PLAYER, TRUE)
             Call(BindNpcIdle, NPC_SELF, Ref(N(EVS_NpcIdle_MinhT)))
     EndSwitch
     Call(SetNpcAnimation, NPC_SELF, ANIM_MinhT_Idle)
@@ -629,7 +637,7 @@ EvtScript N(EVS_NpcInit_MinhT) = {
 // FLOWER GATE
 
 EvtScript N(EVS_ExitFlowerGate) = {
-    SetGroup(EVT_GROUP_1B)
+    SetGroup(EVT_GROUP_EXIT_MAP)
     Call(DisablePlayerInput, TRUE)
     Wait(2)
     Call(GetPlayerActionState, LVar3)

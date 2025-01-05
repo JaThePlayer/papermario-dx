@@ -8,6 +8,10 @@
 #include "stdlib/stdarg.h"
 #include "libc/xstdio.h"
 
+#ifdef _LANGUAGE_C_PLUS_PLUS
+extern "C" {
+#endif
+
 f32 fabsf(f32 f);
 f64 fabs(f64 f);
 f32 cosine(s16 arg0);
@@ -17,7 +21,7 @@ void boot_idle(void* data);
 void boot_main(void* data);
 
 void is_debug_init(void);
-void is_debug_panic(const char* message, const char* file, u32 line, const char* func);
+void is_debug_panic(const char* message);
 
 f32 signF(f32 val);
 
@@ -37,7 +41,6 @@ void copy_matrix(Matrix4f src, Matrix4f dest);
 Shadow* get_shadow_by_index(s32 index);
 s32 get_time_freeze_mode(void);
 void render_player_model(void);
-s16 get_game_mode(void);
 s32 is_picking_up_item(void);
 
 f32 integrate_gravity(void);
@@ -63,7 +66,12 @@ void player_input_to_move_vector(f32* angle, f32* magnitude);
 void game_input_to_move_vector(f32* x, f32* y);
 void exec_ShakeCamX(s32 arg0, s32 arg1, s32 arg2, f32 arg3);
 void exec_ShakeCam1(s32 arg0, s32 arg1, s32 arg2);
-f32 func_800E5348(void);
+
+// returns the angle that the player is facing "toward" in world-space.
+// this will always be to the left or the right relative to the current camera position.
+// note that this is NOT the direction the player character is moving, nor the orientation of the sprite itself.
+// think of this as the direction of a hammer impact relative to the center of the player.
+f32 player_get_side_angle(void);
 
 void draw_number(s32 value, s32 x, s32 y, s32 variableWidthChars, s32 palette, s32 opacity, u16 style);
 
@@ -127,7 +135,7 @@ void player_handle_floor_collider_type(s32 colliderID);
 f32 player_fall_distance(void);
 void func_800E4AD8(s32 arg0);
 f32 player_check_collision_below(f32, s32* colliderID);
-s32 can_trigger_loading_zone(void);
+b32 can_trigger_loading_zone(void);
 void update_damage_popups(void);
 void show_action_rating(s32, Actor*, f32, f32, f32);
 s32 render_with_adjusted_palettes(s32, ActorPart*, s32, Matrix4f, s32);
@@ -731,12 +739,6 @@ void state_drawUI_pause(void);
 void state_init_unpause(void);
 void state_step_unpause(void);
 void state_drawUI_unpause(void);
-void state_init_language_select(void);
-void state_step_language_select(void);
-void state_drawUI_language_select(void);
-void state_init_exit_language_select(void);
-void state_step_exit_language_select(void);
-void state_drawUI_exit_language_select(void);
 void state_init_file_select(void);
 void state_step_file_select(void);
 void state_drawUI_file_select(void);
@@ -785,6 +787,8 @@ void basic_ai_chase_init(Evt* script, MobileAISettings* npcAISettings, EnemyDete
 void basic_ai_chase(Evt* script, MobileAISettings* npcAISettings, EnemyDetectVolume* territory);
 void basic_ai_lose_player(Evt* script, MobileAISettings* npcAISettings, EnemyDetectVolume* territory);
 void basic_ai_suspend(Evt* script);
+
+b32 is_point_outside_territory(s32 shape, f32 centerX, f32 centerZ, f32 pointX, f32 pointZ, f32 sizeX, f32 sizeZ);
 
 // This legally allows all functions to be pointers without warnings.
 // Perhaps the void arg functions can be changed later to remove this need.
@@ -875,12 +879,12 @@ void draw_entity_model_D(s32, Mtx*, s32, Vec3s*);
 void draw_entity_model_E(s32, Mtx*);
 void free_entity_model_by_index(s32 idx);
 void btl_cam_use_preset(s32);
-void btl_cam_set_params(s16, s16, s16, s16, s32, s32, s32, s32);
+void btl_cam_set_params(b16, s16, s16, s16, s32, s32, s32);
 void btl_cam_set_zoffset(s16);
 void btl_cam_target_actor(s32);
 void btl_cam_set_zoom(s16);
 void btl_cam_move(s16);
-void func_8024E60C(void);
+void btl_cam_disable_clamp_x(void);
 
 void initialize_battle(void);
 
@@ -1023,7 +1027,7 @@ void set_background_size(s16, s16, s16, s16);
 void set_background(BackgroundHeader*);
 void set_max_star_power(s8);
 void sync_status_bar(void);
-void create_cameras_a(void);
+void create_cameras(void);
 void func_80045AC0(void);
 void func_8005AF84(void);
 void npc_follow_init(Npc*, s32, FollowAnims*, f32, f32, s32, s32);
@@ -1063,7 +1067,7 @@ s32 lookup_defense(s32*, s32);
 s32 lookup_status_chance(s32*, s32);
 void peach_check_for_parasol_input(void);
 void peach_sync_disguise_npc(void);
-s32 check_conversation_trigger(void);
+b32 check_conversation_trigger(void);
 
 void clear_player_status(void);
 void clear_entity_models(void);
@@ -1094,9 +1098,12 @@ void btl_save_world_cameras(void);
 void load_battle_section(void);
 void btl_update(void);
 void update_item_entities(void);
-void iterate_models(void);
 void restore_map_collision_data(void);
 void mdl_load_all_textures(struct ModelNode* model, s32 romOffset, s32 size);
 void mdl_calculate_model_sizes(void);
+
+#ifdef _LANGUAGE_C_PLUS_PLUS
+}
+#endif
 
 #endif

@@ -4,10 +4,15 @@
 #include "model.h"
 #include "pause/pause_common.h"
 #include "misc_patches/scrollable_desc_draw.h"
+#include "inventory.h"
 
+#if !VERSION_JP
 extern u8 MessagePlural[];
 extern u8 MessageSingular[];
+#endif
+
 extern HudScript HES_ItemCoin;
+void create_shop_popup_menu(PopupMenu* popup);
 
 s32 shop_get_sell_price(s32 itemID);
 
@@ -99,6 +104,7 @@ s32 shop_owner_buy_dialog(s32 messageIndex, s32 itemName, s32 coinCost, s32 bpCo
 
     if (bpCost > 0) {
         set_message_int_var(bpCost, 2);
+#if !VERSION_JP
     } else {
         if (coinCost == 1) {
             suffix = MessageSingular;
@@ -106,6 +112,7 @@ s32 shop_owner_buy_dialog(s32 messageIndex, s32 itemName, s32 coinCost, s32 bpCo
             suffix = MessagePlural;
         }
         set_message_text_var((s32) suffix, 2);
+#endif
     }
 
     script = start_script(&EVS_ShopBeginSpeech, EVT_PRIORITY_1, 0);
@@ -138,6 +145,7 @@ s32 shop_owner_continue_speech_with_quantity(s32 messageIndex, s32 amount) {
 
     set_message_int_var(amount, 0);
 
+#if !VERSION_JP
     if (amount == 1) {
         suffixMsg = MessageSingular;
     } else {
@@ -145,6 +153,7 @@ s32 shop_owner_continue_speech_with_quantity(s32 messageIndex, s32 amount) {
     }
 
     set_message_text_var((s32) suffixMsg, 1);
+#endif
 
     script = start_script(&EVS_ShopContinueSpeech, EVT_PRIORITY_1, 0);
     script->varTable[0] = shopMsgID;
@@ -365,45 +374,53 @@ API_CALLABLE(ShowShopPurchaseDialog) {
     return ApiStatus_BLOCK;
 }
 
-void create_shop_popup_menu(PopupMenu* popup);
+enum {
+    ITEM_POPUP_SELL     = 0,
+    ITEM_POPUP_CHECK    = 1,
+    ITEM_POPUP_CLAIM    = 2,
+};
 
 /// Fills in the popup menu for the shop, without actually opening it.
 void shop_fill_item_select_popup(s32 mode) {
     Shop* shop = gGameStatusPtr->mapShop;
     PopupMenu* menu = &gGameStatusPtr->mapShop->itemSelectMenu;
+    s16* itemArray;
     s32 numItemSlots;
     s32 popupType;
     s32 numEntries;
-    s32 itemID;
     s32 i;
 
     switch (mode) {
-        case 0:
+        case ITEM_POPUP_SELL:
             popupType = POPUP_MENU_SELL_ITEM;
             numItemSlots = ARRAY_COUNT(gPlayerData.invItems);
             // In Armageddon, menu->userData[0] is used by POPUP_MENU_SELL_ITEM to change the "Sell which one?" message
             menu->userData[0] = NULL;
+            itemArray = gPlayerData.invItems;
             break;
-        case 1:
+        case ITEM_POPUP_CHECK:
             popupType = POPUP_MENU_CHECK_ITEM;
             numItemSlots = ARRAY_COUNT(gPlayerData.invItems);
+            itemArray = gPlayerData.invItems;
             break;
         case 3:
             popupType = POPUP_MENU_SELL_ITEM;
             numItemSlots = shop->numItems;
             menu->userData[0] = MSG_Menus_BuyWhichOne;
             break;
+        
         default:
             popupType = POPUP_MENU_CLAIM_ITEM;
             numItemSlots = ARRAY_COUNT(gPlayerData.storedItems);
+            itemArray = gPlayerData.storedItems;
             break;
     }
 
     numEntries = 0;
 
     for (i = 0; i < numItemSlots; i++) {
-        ItemData* itemData;
         b8 isEnabled = TRUE;
+        s32 itemID;
 
         switch (mode) {
             case 0:
@@ -412,7 +429,6 @@ void shop_fill_item_select_popup(s32 mode) {
                 if (itemID == ITEM_NONE) {
                     continue;
                 }
-                itemData = &gItemTable[itemID];
                 break;
             case 3:
                 itemID = shop->staticInventory[i].itemID;
@@ -420,16 +436,15 @@ void shop_fill_item_select_popup(s32 mode) {
                     continue;
                 }
                 isEnabled = gPlayerData.coins >= shop->staticInventory[i].price;
-                itemData = &gItemTable[itemID];
                 break;
             default:
                 itemID = gPlayerData.storedItems[i];
                 if (itemID == ITEM_NONE) {
                     continue;
                 }
-                itemData = &gItemTable[itemID];
                 break;
         }
+        ItemData* itemData = &gItemTable[itemID];
 
         menu->ptrIcon[numEntries] = gItemHudScripts[itemData->hudElemID].enabled;
         menu->userIndex[numEntries] = i;
@@ -615,7 +630,7 @@ API_CALLABLE(ShowShopOwnerDialog) {
             break;
         case DIALOG_STATE_INIT_SELL_CHOICE:
             if (!does_script_exist(script->functionTemp[1])) {
-                shop_open_item_select_popup(0);
+                shop_open_item_select_popup(ITEM_POPUP_SELL);
                 show_coin_counter();
                 script->functionTemp[0] = DIALOG_STATE_AWAIT_SELL_CHOICE;
             }
@@ -720,7 +735,7 @@ API_CALLABLE(ShowShopOwnerDialog) {
             break;
         case DIALOG_STATE_INIT_CHECK_CHOICE:
             if (does_script_exist(script->functionTemp[1]) == 0) {
-                shop_open_item_select_popup(1);
+                shop_open_item_select_popup(ITEM_POPUP_CHECK);
                 script->functionTemp[0] = DIALOG_STATE_AWAIT_CHECK_CHOICE;
             }
             break;
@@ -791,7 +806,7 @@ API_CALLABLE(ShowShopOwnerDialog) {
             break;
         case DIALOG_STATE_INIT_CLAIM_CHOICE:
             if (!does_script_exist(script->functionTemp[1])) {
-                shop_open_item_select_popup(2);
+                shop_open_item_select_popup(ITEM_POPUP_CLAIM);
                 script->functionTemp[0] = DIALOG_STATE_AWAIT_CLAIM_CHOICE;
             }
             break;
@@ -925,7 +940,7 @@ void shop_draw_item_name(s32 arg0, s32 posX, s32 posY) {
 void shop_draw_item_desc(s32 arg0, s32 posX, s32 posY) {
     Shop* shop = gGameStatusPtr->mapShop;
     ShopItemData* shopItem = &shop->staticInventory[shop->curItemSlot];
-    Window* window = &gWindows[WINDOW_ID_ITEM_INFO_DESC];
+    Window* window = &gWindows[WIN_SHOP_ITEM_DESC];
     s32 width = window->width;
     s32 height = window->height;
 
@@ -945,11 +960,11 @@ void draw_shop_items(void) {
     ShopItemEntity* shopItemEntities;
 
     if (shop->flags & SHOP_FLAG_SHOWING_ITEM_INFO) {
-        set_window_update(WINDOW_ID_ITEM_INFO_NAME, (s32) basic_window_update);
-        set_window_update(WINDOW_ID_ITEM_INFO_DESC, (s32) basic_window_update);
+        set_window_update(WIN_SHOP_ITEM_NAME, (s32) basic_window_update);
+        set_window_update(WIN_SHOP_ITEM_DESC, (s32) basic_window_update);
     } else {
-        set_window_update(WINDOW_ID_ITEM_INFO_NAME, (s32) basic_hidden_window_update);
-        set_window_update(WINDOW_ID_ITEM_INFO_DESC, (s32) basic_hidden_window_update);
+        set_window_update(WIN_SHOP_ITEM_NAME, (s32) basic_hidden_window_update);
+        set_window_update(WIN_SHOP_ITEM_DESC, (s32) basic_hidden_window_update);
     }
 
     if (shop->flags & SHOP_FLAG_SHOWING_ITEM_INFO) {
@@ -963,7 +978,7 @@ void draw_shop_items(void) {
             inY = shopItemEntities->pos.y + 30.0f;
             inZ = shopItemEntities->pos.z;
 
-            transform_point(camera->perspectiveMatrix, inX, inY, inZ, 1.0f, &x, &y, &z, &s);
+            transform_point(camera->mtxPerspective, inX, inY, inZ, 1.0f, &x, &y, &z, &s);
 
             s = 1.0f / s;
 
@@ -1085,8 +1100,12 @@ API_CALLABLE(MakeShop) {
     hud_element_set_flags(shop->costIconID, HUD_ELEMENT_FLAG_80);
     hud_element_clear_flags(shop->costIconID, HUD_ELEMENT_FLAG_FILTER_TEX);
     get_worker(create_worker_frontUI(NULL, draw_shop_items));
-    set_window_properties(WINDOW_ID_ITEM_INFO_NAME, 100, 66, 120, 28, WINDOW_PRIORITY_0, shop_draw_item_name, NULL, -1);
-    set_window_properties(WINDOW_ID_ITEM_INFO_DESC, 32, 184, 256, 32, WINDOW_PRIORITY_1, shop_draw_item_desc, NULL, -1);
+    set_window_properties(WIN_SHOP_ITEM_NAME, 100, 66, 120, 28, WINDOW_PRIORITY_0, shop_draw_item_name, NULL, -1);
+#if VERSION_JP
+    set_window_properties(WIN_SHOP_ITEM_DESC, 39, 184, 242, 32, WINDOW_PRIORITY_1, shop_draw_item_desc, NULL, -1);
+#else
+    set_window_properties(WIN_SHOP_ITEM_DESC, 32, 184, 256, 32, WINDOW_PRIORITY_1, shop_draw_item_desc, NULL, -1);
+#endif
     gWindowStyles[10].defaultStyleID = WINDOW_STYLE_9;
     gWindowStyles[11].defaultStyleID = WINDOW_STYLE_3;
     shop->curItemSlot = 0;

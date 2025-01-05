@@ -3,6 +3,7 @@
 
 #include "common.h"
 #include "gcc/string.h"
+#include "inventory.h"
 
 #include "world/common/todo/GetItemName.inc.c"
 
@@ -80,7 +81,6 @@ API_CALLABLE(N(GetCookResultForDoubleRecipe)) {
     s32 outVarQuality = *args++;
     s32 inputItemA = evt_get_variable(script, *args++);
     s32 inputItemB = evt_get_variable(script, *args++);
-    ExtraCookingPair* extraList;
     s32 resultItemID, resultQuality;
     s32 inputIdxA, inputIdxB;
     s32 recipeIdx;
@@ -309,7 +309,11 @@ EvtScript N(EVS_TayceT_Cook) = {
         CaseEq(0)
         CaseEq(-1)
             Call(SpeakToPlayer, NPC_TayceT, ANIM_TayceT_Talk, ANIM_TayceT_Idle, 0, MSG_MAC_Bridge_0006)
+#if VERSION_JP
+            Call(ShowChoice, MSG_Choice_0010)
+#else
             Call(ShowChoice, MSG_Choice_0009)
+#endif
             IfEq(LVar0, 0)
                 Call(ContinueSpeech, NPC_TayceT, ANIM_TayceT_Talk, ANIM_TayceT_Idle, 0, MSG_MAC_Bridge_0004)
                 Goto(LABEL_DONE)

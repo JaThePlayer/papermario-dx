@@ -62,7 +62,7 @@
 	R Ninjakoopa[End]
 }
 
-#message:29:(EnemyName_BlueNinjakoopa) {
+#message:29:(EnemyName_BlackNinjakoopa) {
 	B Ninjakoopa[End]
 }
 

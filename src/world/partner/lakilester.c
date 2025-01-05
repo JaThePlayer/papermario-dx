@@ -277,6 +277,7 @@ s32 N(can_dismount)(void) {
     return canDismount;
 }
 
+#if !VERSION_JP
 s32 N(test_mounting_height_adjustment)(Npc* lakilester, f32 height, f32 dist) {
     f32 x = gPlayerStatus.pos.x;
     f32 y = gPlayerStatus.pos.y + height;
@@ -305,6 +306,7 @@ s32 N(test_mounting_height_adjustment)(Npc* lakilester, f32 height, f32 dist) {
     }
     return FALSE;
 }
+#endif
 
 void N(apply_riding_static_collisions)(Npc* lakilester) {
     f32 radius = lakilester->collisionDiameter * 0.8f;
@@ -542,6 +544,37 @@ void N(update_riding_physics)(Npc* lakilester) {
     }
 }
 
+#if VERSION_JP
+s32 N(test_mounting_height_adjustment)(Npc* lakilester, f32 height, f32 dist) {
+    f32 x = gPlayerStatus.pos.x;
+    f32 y = gPlayerStatus.pos.y + height;
+    f32 z = gPlayerStatus.pos.z;
+    f32 depth = dist;
+    f32 hitRx, hitRz;
+    f32 hitDirX, hitDirZ;
+    f32 deltaY;
+
+    N(MountingDeltaY) = 0;
+
+    if (npc_raycast_down_around(0, &x, &y, &z, &depth,
+            lakilester->yaw, lakilester->collisionDiameter))
+    {
+        deltaY = y - lakilester->moveToPos.y;
+        if (deltaY != 0.0f) {
+            if (fabs(deltaY) < 10.0) {
+                N(MountingDeltaY) = deltaY;
+                lakilester->moveToPos.y = y;
+                return TRUE;
+            } else {
+                return FALSE;
+            }
+        }
+        return TRUE;
+    }
+    return FALSE;
+}
+#endif
+
 s32 N(test_dismount_height)(f32* posY) {
     f32 colliderHeight = gPlayerStatus.colliderHeight;
     f32 hitDirX, hitDirZ;
@@ -642,7 +675,11 @@ API_CALLABLE(N(UseAbility)) {
 
     switch (N(AbilityState)) {
         case RIDE_STATE_BEGIN:
+#if VERSION_JP
+            if (playerStatus->inputDisabledCount != 0) {
+#else
             if (playerStatus->flags & PS_FLAG_HIT_FIRE || playerStatus->inputDisabledCount != 0) {
+#endif
                 playerStatus->flags &= ~PS_FLAG_PAUSE_DISABLED;
                 return ApiStatus_DONE2;
             }
@@ -652,6 +689,7 @@ API_CALLABLE(N(UseAbility)) {
             N(AbilityState)++; // RIDE_STATE_DELAY
             break;
         case RIDE_STATE_DELAY:
+#if !VERSION_JP
             if (playerStatus->flags & PS_FLAG_HIT_FIRE) {
                 playerStatus->flags &= ~PS_FLAG_PAUSE_DISABLED;
                 if (N(LockingPlayerInput)) {
@@ -660,6 +698,7 @@ API_CALLABLE(N(UseAbility)) {
                 }
                 return ApiStatus_DONE2;
             }
+#endif
 
             if (playerStatus->animFlags & PA_FLAG_CHANGING_MAP) {
                 if (script->functionTemp[2] < playerStatus->inputDisabledCount) {
@@ -732,7 +771,9 @@ API_CALLABLE(N(UseAbility)) {
             N(AbilityState)++;
             // fallthrough
         case RIDE_STATE_MOUNT_4:
+#if !VERSION_JP
             if (!(playerStatus->flags & PS_FLAG_HIT_FIRE)) {
+#endif
                 lakilester->pos.x += (lakilester->moveToPos.x - lakilester->pos.x) / lakilester->duration;
                 lakilester->pos.z += (lakilester->moveToPos.z - lakilester->pos.z) / lakilester->duration;
                 lakilester->pos.y += (lakilester->moveToPos.y - lakilester->pos.y) / lakilester->duration;
@@ -772,17 +813,27 @@ API_CALLABLE(N(UseAbility)) {
                     N(AbilityState) = RIDE_STATE_START_RIDING;
                     playerStatus->animFlags |= PA_FLAG_RIDING_PARTNER;
                 }
+#if !VERSION_JP
             } else {
                 N(AbilityState) = RIDE_STATE_FINISH_1;
             }
+#endif
             break;
         case RIDE_STATE_START_RIDING:
+#if !VERSION_JP
             if (playerStatus->flags & PS_FLAG_HIT_FIRE) {
                 N(AbilityState) = RIDE_STATE_FINISH_1;
                 break;
             }
+#endif
             lakilester->duration--;
             if (lakilester->duration != 0) {
+#if VERSION_JP
+                if (playerStatus->flags & PS_FLAG_HIT_FIRE) {
+                    N(AbilityState) = RIDE_STATE_FINISH_1;
+                    break;
+                }
+#endif
                 if (partnerStatus->pressedButtons & (BUTTON_B | D_CBUTTONS)) {
                     if (N(can_dismount)()) {
                         N(AbilityState) = RIDE_STATE_DISMOUNT_1;
@@ -865,7 +916,7 @@ API_CALLABLE(N(UseAbility)) {
 
             yaw = playerStatus->spriteFacingAngle - 90.0f + gCameras[gCurrentCameraID].curYaw;
 
-            if (player_raycast_up_corners(playerStatus, &x, &y, &z, &dist, yaw) >= 0) {
+            if (player_raycast_up_corners(playerStatus, &x, &y, &z, &dist, yaw) > NO_COLLIDER) {
                 N(AbilityState) = RIDE_STATE_FINISH_1;
                 break;
             }
@@ -873,7 +924,7 @@ API_CALLABLE(N(UseAbility)) {
             lakilester->jumpVel -= lakilester->jumpScale;
             add_vec2D_polar(&playerStatus->pos.x, &playerStatus->pos.z, lakilester->moveSpeed, lakilester->yaw);
 
-            func_800E4AD8(0);
+            func_800E4AD8(PLAYER_COLLISION_0);
             if (N(test_dismount_height)(&y) > NO_COLLIDER) {
                 N(AbilityState) = RIDE_STATE_FINISH_1;
                 playerStatus->pos.y = y;
@@ -993,7 +1044,7 @@ API_CALLABLE(N(PutAway)) {
             lakilester->jumpVel -= lakilester->jumpScale;
             add_vec2D_polar(&playerStatus->pos.x, &playerStatus->pos.z,
                             lakilester->moveSpeed, lakilester->yaw);
-            func_800E4AD8(0);
+            func_800E4AD8(PLAYER_COLLISION_0);
             if (lakilester->jumpVel <= 0.0f) {
                 playerStatus->flags |= PS_FLAG_FALLING;
                 if (lakilester->jumpVel < -10.0) {
@@ -1210,5 +1261,3 @@ EvtScript EVS_WorldLakilester_EnterMap = {
     Return
     End
 };
-
-MATCHING_BSS(0xB0);

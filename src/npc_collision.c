@@ -1,11 +1,11 @@
 #include "common.h"
 
-SHIFT_BSS s32 NpcHitQueryBehindRightY;
-SHIFT_BSS s32 NpcHitQueryBehindCollider;
-SHIFT_BSS s32 NpcHitQueryAheadCollider;
-SHIFT_BSS s32 NpcHitQueryAheadY;
-SHIFT_BSS s32 NpcHitQueryBehindLeftY;
-SHIFT_BSS s32 NpcHitQueryColliderID;
+s32 NpcHitQueryBehindRightY;
+s32 NpcHitQueryBehindCollider;
+s32 NpcHitQueryAheadCollider;
+s32 NpcHitQueryAheadY;
+s32 NpcHitQueryBehindLeftY;
+s32 NpcHitQueryColliderID;
 
 PlayerStatus* gPlayerStatusPtr = &gPlayerStatus;
 
@@ -341,7 +341,7 @@ HitID npc_raycast_up_corner(s32 ignoreFlags, f32* x, f32* y, f32* z, f32* length
     s32 entityID;
     f32 sx, sy, sz;
     f32 sx2, sy2, sz2;
-    s32 ret = NO_COLLIDER;
+    HitID ret = NO_COLLIDER;
 
     // needed to match
     sx2 = sx = *x;
@@ -442,7 +442,6 @@ HitID npc_raycast_up_corners(s32 ignoreFlags, f32* posX, f32* posY, f32* posZ, f
 
 HitID npc_raycast_general(s32 flags, f32 startX, f32 startY, f32 startZ, f32 dirX, f32 dirY, f32 dirZ, f32* hitX,
                         f32* hitY, f32* hitZ, f32* outDepth, f32* hitNx, f32* hitNy, f32* hitNz) {
-    s32 colliderID;
     s32 entityID;
     HitID ret = NO_COLLIDER;
 

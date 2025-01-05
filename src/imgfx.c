@@ -113,16 +113,12 @@ typedef ImgFXState ImgFXInstanceList[MAX_IMGFX_INSTANCES];
 
 extern HeapNode heap_spriteHead;
 
-SHIFT_BSS ImgFXWorkingTexture ImgFXCurrentTexture;
-SHIFT_BSS Vtx* ImgFXVtxBuffers[2];
-SHIFT_BSS Vtx* imgfx_vtxBuf;
-SHIFT_BSS ImgFXInstanceList* ImgFXInstances;
-SHIFT_BSS s8 D_80156958[2];
-SHIFT_BSS s32 D_80156960[2];
-SHIFT_BSS s32 D_80156968[2];
-SHIFT_BSS s8 D_80156970;
-SHIFT_BSS ImgFXAnimHeader ImgFXAnimHeaders[MAX_IMGFX_INSTANCES];
-SHIFT_BSS ImgFXCacheEntry ImgFXDataCache[8];
+BSS ImgFXWorkingTexture ImgFXCurrentTexture;
+BSS Vtx* ImgFXVtxBuffers[2];
+BSS Vtx* imgfx_vtxBuf;
+BSS ImgFXInstanceList* ImgFXInstances;
+BSS ImgFXAnimHeader ImgFXAnimHeaders[MAX_IMGFX_INSTANCES];
+BSS ImgFXCacheEntry ImgFXDataCache[8];
 
 // Data
 ImgFXWorkingTexture* ImgFXCurrentTexturePtr = &ImgFXCurrentTexture;
@@ -256,13 +252,6 @@ void imgfx_init(void) {
     for (i = 0; i < ARRAY_COUNT(*ImgFXInstances); i++) {
         imgfx_init_instance(&(*ImgFXInstances)[i]);
         imgfx_clear_instance_data(&(*ImgFXInstances)[i]);
-    }
-
-    for (i = 0; i < ARRAY_COUNT(D_80156958); i++) {
-        D_80156958[i] = -1;
-        D_80156960[i] = 0;
-        D_80156968[i] = 0;
-        D_80156970 = 0;
     }
 
     for (i = 0; i < ARRAY_COUNT(ImgFXDataCache); i++) {
@@ -498,7 +487,6 @@ void imgfx_init_instance(ImgFXState* state) {
 void imgfx_update(u32 idx, ImgFXType type, s32 imgfxArg1, s32 imgfxArg2, s32 imgfxArg3, s32 imgfxArg4, s32 flags) {
     ImgFXState* state = &(*ImgFXInstances)[idx];
     s32 oldFlags;
-    s32 t1;
     u8 r, g, b, a;
 
     if (!(state->flags & IMGFX_FLAG_VALID) || (idx >= MAX_IMGFX_INSTANCES)) {
@@ -697,6 +685,8 @@ void imgfx_update(u32 idx, ImgFXType type, s32 imgfxArg1, s32 imgfxArg2, s32 img
             }
             state->floats.overlay.posX = 0.0f;
             state->floats.overlay.posY = 0.0f;
+            break;
+        case IMGFX_CLEAR:
             break;
     }
 }
@@ -1524,7 +1514,7 @@ void imgfx_appendGfx_mesh_basic(ImgFXState* state, Matrix4f mtx) {
                 ) {
                     cam = &gCameras[gCurrentCamID];
 
-                    if (gGameStatusPtr->isBattle == 2) {
+                    if (gGameStatusPtr->context == CONTEXT_PAUSE) {
                         gSPViewport(gMainGfxPos++, &D_8014EE50);
                     } else {
                         gSPViewport(gMainGfxPos++, &cam->vpAlt);
@@ -1563,7 +1553,7 @@ void imgfx_appendGfx_mesh_basic(ImgFXState* state, Matrix4f mtx) {
                     alpha2 = 255;
                     cam = &gCameras[gCurrentCamID];
 
-                    if (gGameStatusPtr->isBattle == 2) {
+                    if (gGameStatusPtr->context == CONTEXT_PAUSE) {
                         gSPViewport(gMainGfxPos++, &D_8014EE50);
                     } else {
                         gSPViewport(gMainGfxPos++, &cam->vpAlt);
@@ -1618,7 +1608,7 @@ void imgfx_appendGfx_mesh_basic(ImgFXState* state, Matrix4f mtx) {
             && (state->flags & someFlags)
         ) {
             cam = &gCameras[gCurrentCamID];
-            if (gGameStatusPtr->isBattle == 2) {
+            if (gGameStatusPtr->context == CONTEXT_PAUSE) {
                 gSPViewport(gMainGfxPos++, &D_8014EE40);
                 D_8014EE50.vp.vtrans[0] = D_8014EE40.vp.vtrans[0] + gGameStatusPtr->altViewportOffset.x;
                 D_8014EE50.vp.vtrans[1] = D_8014EE40.vp.vtrans[1] + gGameStatusPtr->altViewportOffset.y;

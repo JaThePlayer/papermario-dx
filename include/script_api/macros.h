@@ -4,6 +4,10 @@
 #include "evt.h"
 #include "stdlib/stdarg.h"
 
+#ifdef _LANGUAGE_C_PLUS_PLUS
+extern "C" {
+#endif
+
 /****** EXPRESSIONS ***************************************************************************************************/
 
 /// Expressions in EVT instructions should be one of the following types:
@@ -200,26 +204,10 @@
 ///     }
 /// This macro expands to the given opcode and argv, with argc calculated automatically.
 
-#ifndef PERMUTER
-#ifndef M2CTX
 #define EVT_CMD(opcode, argv...) \
     opcode, \
     (sizeof((Bytecode[]){argv})/sizeof(Bytecode)), \
     ##argv
-#else
-// This definition that passes in 0 for the number of args is used for pycparser since it can't handle varargs
-#define EVT_CMD(opcode, argv...) \
-    opcode, \
-    0, \
-    ##argv
-#endif
-#else
-// This definition that passes in 0 for the number of args is used for pycparser since it can't handle varargs
-#define EVT_CMD(opcode, argv...) \
-    opcode, \
-    0, \
-    ##argv
-#endif
 
 /// Signals the end of EVT script data. A script missing this will likely crash on load.
 #define End                                 EVT_CMD(EVT_OP_END),
@@ -659,7 +647,7 @@
 
 #define EVT_EXIT_WALK(walkDistance, exitIdx, map, entryIdx) \
     { \
-        SetGroup(EVT_GROUP_1B) \
+        SetGroup(EVT_GROUP_EXIT_MAP) \
         Call(DisablePlayerInput, TRUE) \
         Call(UseExitHeading, walkDistance, exitIdx) \
         Exec(ExitWalk) \
@@ -669,7 +657,7 @@
         End \
     }
 
-// alternate version of EVT_EXIT_WALK used on Pleasant Path which does not join EVT_GROUP_1B
+// alternate version of EVT_EXIT_WALK used on Pleasant Path which does not join EVT_GROUP_EXIT_MAP
 #define EVT_EXIT_WALK_NOK(walkDistance, exitIdx, map, entryIdx) \
     { \
         Call(UseExitHeading, walkDistance, exitIdx) \
@@ -682,7 +670,7 @@
 
 #define EVT_EXIT_SINGLE_DOOR(exitIdx, map, entryIdx, colliderID, modelID, swingDir) \
     { \
-        SetGroup(EVT_GROUP_1B) \
+        SetGroup(EVT_GROUP_EXIT_MAP) \
         Call(DisablePlayerInput, TRUE) \
         Set(LVar0, exitIdx) \
         Set(LVar1, colliderID) \
@@ -698,7 +686,7 @@
 
 #define EVT_EXIT_SINGLE_DOOR_SET_SOUNDS(exitIdx, map, entryIdx, colliderID, modelID, swingDir, sounds) \
     { \
-        SetGroup(EVT_GROUP_1B) \
+        SetGroup(EVT_GROUP_EXIT_MAP) \
         Call(DisablePlayerInput, TRUE) \
         Call(UseDoorSounds, sounds) \
         Set(LVar0, exitIdx) \
@@ -715,7 +703,7 @@
 
 #define EVT_EXIT_SPLIT_SINGLE_DOOR(exitIdx, map, entryIdx, colliderID, topModelID, bottomModelID, swingDir) \
     { \
-        SetGroup(EVT_GROUP_1B) \
+        SetGroup(EVT_GROUP_EXIT_MAP) \
         Call(DisablePlayerInput, TRUE) \
         Set(LVar0, exitIdx) \
         Set(LVar1, colliderID) \
@@ -732,7 +720,7 @@
 
 #define EVT_EXIT_DOUBLE_DOOR(exitIdx, map, entryIdx, colliderID, leftDoorModelID, rightDoorModelID) \
     { \
-        SetGroup(EVT_GROUP_1B) \
+        SetGroup(EVT_GROUP_EXIT_MAP) \
         Call(DisablePlayerInput, TRUE) \
         Set(LVar0, exitIdx) \
         Set(LVar1, colliderID) \
@@ -748,7 +736,7 @@
 
 #define EVT_EXIT_DOUBLE_DOOR_SET_SOUNDS(exitIdx, map, entryIdx, colliderID, leftDoorModelID, rightDoorModelID, sounds) \
     { \
-        SetGroup(EVT_GROUP_1B) \
+        SetGroup(EVT_GROUP_EXIT_MAP) \
         Call(DisablePlayerInput, TRUE) \
         Call(UseDoorSounds, sounds) \
         Set(LVar0, exitIdx) \
@@ -845,5 +833,9 @@
     Call(PlayEffect_impl, effect, subtype, a, b, c, d, e, f, g, h, i, j, k, 0)
 #define PlayEffect14(effect, subtype, a, b, c, d, e, f, g, h, i, j, k, l) \
     Call(PlayEffect_impl, effect, subtype, a, b, c, d, e, f, g, h, i, j, k, l)
+
+#ifdef _LANGUAGE_C_PLUS_PLUS
+}
+#endif
 
 #endif

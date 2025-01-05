@@ -260,7 +260,7 @@ EvtScript N(EVS_UseMove_Impl) = {
     EndSwitch
     Call(InitTargetIterator)
     Call(UseBattleCamPreset, BTL_CAM_PLAYER_ATTACK_APPROACH)
-    Call(AddBattleCamZoom, 50)
+    Call(AddBattleCamDist, 50)
     Call(MoveBattleCamOver, 20)
     Call(PlaySoundAtActor, ACTOR_PLAYER, SOUND_HAMMER_WINDUP)
     Call(GetMenuSelection, LVar0, LVar1, LVar2)
@@ -396,7 +396,7 @@ EvtScript N(EVS_UseMove_Impl) = {
     IfEq(LVar3, HIT_RESULT_MISS)
         Call(VirtualEntityLandJump, LVarA)
         Call(DeleteVirtualEntity, LVarA)
-        ExecWait(N(EVS_Hammer_ReturnHome_C))
+        ExecWait(N(EVS_HammerSupport_ReturnHome_Miss))
         Return
     EndIf
     Thread
@@ -497,11 +497,11 @@ EvtScript N(EVS_UseMove_Impl) = {
     Switch(LVar0)
         CaseOrEq(HIT_RESULT_NICE)
         CaseOrEq(HIT_RESULT_NICE_NO_DAMAGE)
-            ExecWait(N(EVS_Hammer_ReturnHome_A))
+            ExecWait(N(EVS_HammerSupport_ReturnHome_Success))
         EndCaseGroup
         CaseOrEq(HIT_RESULT_HIT)
         CaseOrEq(HIT_RESULT_NO_DAMAGE)
-            ExecWait(N(EVS_Hammer_ReturnHome_C))
+            ExecWait(N(EVS_HammerSupport_ReturnHome_Miss))
         EndCaseGroup
     EndSwitch
     Return

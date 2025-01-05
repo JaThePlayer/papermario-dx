@@ -20,7 +20,7 @@ void N(FlyingAI_WanderInit)(Evt* script, MobileAISettings* aiSettings, EnemyDete
     Npc* npc = get_npc_unsafe(enemy->npcID);
 
     npc->duration = aiSettings->moveTime / 2 + rand_int(aiSettings->moveTime / 2 + 1);
-    if (is_point_within_region(enemy->territory->wander.wanderShape,
+    if (is_point_outside_territory(enemy->territory->wander.wanderShape,
             enemy->territory->wander.centerPos.x, enemy->territory->wander.centerPos.z,
             npc->pos.x, npc->pos.z,
             enemy->territory->wander.wanderSize.x, enemy->territory->wander.wanderSize.z)) {
@@ -75,32 +75,28 @@ void N(FlyingAI_Wander)(Evt* script, MobileAISettings* aiSettings, EnemyDetectVo
         f64 test;
         f32 yTemp;
 
-        do {
-            if (npc->flags & NPC_FLAG_FLYING) {
-                yTemp = temp_f24;
-                test = vt4 + ((temp_f24 - vt4) * 0.09);
-                npc->pos.y = test;
-            } else {
-                posX = npc->pos.x;
-                posY = vt4;
-                posZ = npc->pos.z;
-                posW = 1000.0f;
-                npc_raycast_down_sides(npc->collisionChannel, &posX, &posY, &posZ, &posW);
+        if (npc->flags & NPC_FLAG_FLYING) {
+            yTemp = temp_f24;
+            test = vt4 + ((temp_f24 - vt4) * 0.09);
+            npc->pos.y = test;
+        } else {
+            posX = npc->pos.x;
+            posY = vt4;
+            posZ = npc->pos.z;
+            posW = 1000.0f;
+            npc_raycast_down_sides(npc->collisionChannel, &posX, &posY, &posZ, &posW);
 
-                yTemp = posY;
-                yTemp += vt3;
-                test = vt4 + ((yTemp - vt4) * 0.09);
-                npc->pos.y = test;
-            }
+            yTemp = posY;
+            yTemp += vt3;
+            test = vt4 + ((yTemp - vt4) * 0.09);
+            npc->pos.y = test;
+        }
 
-            if (fabsf(yTemp - npc->pos.y) < 1.0) {
-                npc->pos.y = yTemp;
-                enemy->varTable[0] &= ~0x10;
-            }
-        } while (0); // required to match
+        if (fabsf(yTemp - npc->pos.y) < 1.0) {
+            npc->pos.y = yTemp;
+            enemy->varTable[0] &= ~0x10;
+        }
     } else {
-        f32 vt1temp = vt1; // required to match
-
         if (enemy->varTable[1] > 0) {
             f32 sinTemp = sin_deg(enemy->varTable[2]);
             s32 hit;
@@ -116,9 +112,9 @@ void N(FlyingAI_Wander)(Evt* script, MobileAISettings* aiSettings, EnemyDetectVo
             }
 
             if (hit) {
-                npc->pos.y = posY + vt3 + (sinTemp * vt1temp);
+                npc->pos.y = posY + vt3 + (sinTemp * vt1);
             } else {
-                npc->pos.y = temp_f24 + (sinTemp * vt1temp);
+                npc->pos.y = temp_f24 + (sinTemp * vt1);
             }
 
             enemy->varTable[2] = clamp_angle(enemy->varTable[2] + 10);
@@ -151,7 +147,7 @@ void N(FlyingAI_Wander)(Evt* script, MobileAISettings* aiSettings, EnemyDetectVo
         enemy->varTable[9]--;
     }
 
-    if (is_point_within_region(enemy->territory->wander.wanderShape,
+    if (is_point_outside_territory(enemy->territory->wander.wanderShape,
                                enemy->territory->wander.centerPos.x,
                                enemy->territory->wander.centerPos.z,
                                npc->pos.x, npc->pos.z,
@@ -428,7 +424,7 @@ void N(FlyingAI_Init)(Npc* npc, Enemy* enemy, Evt* script, MobileAISettings* aiS
     enemy->varTable[3] = (depth * 100.0) + 0.5;
     enemy->varTable[7] = (posY * 100.0) + 0.5;
     script->functionTemp[1] = aiSettings->playerSearchInterval;
-    enemy->aiFlags |= ENEMY_AI_FLAG_10;
+    enemy->aiFlags |= AI_FLAG_SKIP_IDLE_ANIM_AFTER_FLEE;
 }
 
 API_CALLABLE(N(FlyingAI_Main)) {
@@ -454,11 +450,11 @@ API_CALLABLE(N(FlyingAI_Main)) {
 
     npc->verticalRenderOffset = -2;
 
-    if (enemy->aiFlags & ENEMY_AI_FLAG_SUSPEND) {
+    if (enemy->aiFlags & AI_FLAG_SUSPEND) {
         if (enemy->aiSuspendTime != 0) {
             return ApiStatus_BLOCK;
         }
-        enemy->aiFlags &= ~ENEMY_AI_FLAG_SUSPEND;
+        enemy->aiFlags &= ~AI_FLAG_SUSPEND;
     }
 
     switch (script->AI_TEMP_STATE) {

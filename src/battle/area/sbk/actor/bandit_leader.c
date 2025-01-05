@@ -338,7 +338,7 @@ EvtScript N(EVS_Tackle) = {
 
     Call(UseBattleCamPreset, BTL_CAM_ENEMY_APPROACH)
     Call(BattleCamTargetActor, ACTOR_SELF)
-    Call(func_8024ECF8, BTL_CAM_MODEY_MINUS_1, BTL_CAM_MODEX_1, FALSE)
+    Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_TARGET, BTL_CAM_XADJ_AVG, FALSE)
     Call(GetBattlePhase, LVar0)
 
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Bandit_Leader_Run)

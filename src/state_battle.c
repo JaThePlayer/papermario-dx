@@ -19,9 +19,9 @@ s32 D_800778AC[] = {
     0x00000000, 0xFFFFFF00, 0xFFFFFF00, 0x00000000, 0x00000000
 };
 
-SHIFT_BSS s8 D_800A0900;
-SHIFT_BSS s32 D_800A0904;
-SHIFT_BSS s32 D_800A0908;
+BSS s8 D_800A0900;
+BSS s32 D_800A0904;
+BSS s32 D_800A0908;
 
 #if defined(SHIFT) || VERSION_IQUE
 #define shim_battle_heap_create_obfuscated battle_heap_create
@@ -57,7 +57,7 @@ void state_step_battle(void) {
         nuContRmbForceStopEnd();
         sfx_stop_env_sounds();
         func_8003B1A8();
-        gGameStatusPtr->isBattle = TRUE;
+        gGameStatusPtr->context = CONTEXT_BATTLE;
         backup_map_collision_data();
 
 #if !VERSION_IQUE
@@ -99,7 +99,7 @@ void state_step_battle(void) {
         D_800A0904 = gPlayerStatusPtr->animFlags;
         gPlayerStatusPtr->animFlags &= ~PA_FLAG_PULSE_STONE_VISIBLE;
         D_800A0908 = get_time_freeze_mode();
-        set_time_freeze_mode(TIME_FREEZE_NORMAL);
+        set_time_freeze_mode(TIME_FREEZE_NONE);
         gOverrideFlags &= ~GLOBAL_OVERRIDES_DISABLE_DRAW_FRAME;
 
         if (D_800A0900 >= 0) {
@@ -112,7 +112,6 @@ void state_step_battle(void) {
     update_npcs();
     update_item_entities();
     update_effects();
-    iterate_models();
     update_cameras();
 }
 
@@ -146,7 +145,7 @@ void state_step_end_battle(void) {
             mapSettings = get_current_map_settings();
             mapConfig = &gAreas[gGameStatusPtr->areaID].maps[gGameStatusPtr->mapID];
             btl_restore_world_cameras();
-            gGameStatusPtr->isBattle = FALSE;
+            gGameStatusPtr->context = CONTEXT_WORLD;
             func_8005AF84();
             func_8002ACDC();
             sfx_clear_env_sounds(1);

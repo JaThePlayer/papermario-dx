@@ -16,7 +16,7 @@ typedef struct {
     /* 0x9D2 */ u16 height;
 } CrashScreen; // size = 0x9D4
 
-SHIFT_BSS CrashScreen gCrashScreen;
+BSS CrashScreen gCrashScreen;
 
 u8 gCrashScreencharToGlyph[128] = {
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -62,22 +62,11 @@ const char* gFPCSRFaultCauses[6] = {
     "Inexact operation",
 };
 
-char crashScreenAssertMessage[0x30] = {0};
-char crashScreenAssertLocation[0x30] = {0};
+char crashScreenAssertMessage[0x100] = {0};
 
-void crash_screen_set_assert_info(const char* message, const char* file, u32 line, const char* func) {
+void crash_screen_set_assert_info(const char* message) {
     strncpy(crashScreenAssertMessage, message, sizeof(crashScreenAssertMessage));
     crashScreenAssertMessage[sizeof(crashScreenAssertMessage) - 1] = '\0';
-
-    // To make file consistent with standard exceptions, grab only the filename, not the full path.
-    const char* slash;
-    while (slash = strchr(file, '/')) {
-        if (slash[1] == '\0') {
-            break;
-        }
-        file = slash + 1;
-    }
-    sprintf(crashScreenAssertLocation, "%s (%s:%d)", func, file, line);
 }
 
 void crash_screen_sleep(s32 ms) {
@@ -199,7 +188,8 @@ char* crash_screen_copy_to_buf(char* dest, const char* src, size_t size) {
     return dest + size;
 }
 
-void crash_screen_printf(s32 x, s32 y, const char* fmt, ...) {
+/// @returns Y advance
+s32 crash_screen_printf(s32 x, s32 y, const char* fmt, ...) {
     u8* ptr;
     u32 glyph;
     s32 size;
@@ -209,7 +199,7 @@ void crash_screen_printf(s32 x, s32 y, const char* fmt, ...) {
 
     va_start(args, fmt);
 
-    size = _Printf(crash_screen_copy_to_buf, buf, fmt, args);
+    size = _Printf(crash_screen_copy_to_buf, (s8*)buf, fmt, args);
 
     if (size > 0) {
         ptr = buf;
@@ -235,20 +225,27 @@ void crash_screen_printf(s32 x, s32 y, const char* fmt, ...) {
         }
     }
 
+    // If last character was not a newline, move to the next line
+    if (x != ox) {
+        y += 10;
+    }
+    return y;
+
     va_end(args);
 }
 
-void crash_screen_printf_proportional(s32 x, s32 y, const char* fmt, ...) {
+/// @returns Y advance
+s32 crash_screen_printf_proportional(s32 x, s32 y, const char* fmt, ...) {
     u8* ptr;
     u32 glyph;
     s32 size;
-    u8 buf[0x100];
+    u8 buf[0x200];
     va_list args;
     s32 ox = x;
 
     va_start(args, fmt);
 
-    size = _Printf(crash_screen_copy_to_buf, buf, fmt, args);
+    size = _Printf(crash_screen_copy_to_buf, (s8*)buf, fmt, args);
 
     if (size > 0) {
         ptr = buf;
@@ -273,6 +270,12 @@ void crash_screen_printf_proportional(s32 x, s32 y, const char* fmt, ...) {
             ptr++;
         }
     }
+
+    // If last character was not a newline, move to the next line
+    if (x != ox) {
+        y += 10;
+    }
+    return y;
 
     va_end(args);
 }
@@ -307,14 +310,12 @@ void crash_screen_print_fpcsr(u32 value) {
 
 void crash_screen_draw(OSThread* faultedThread) {
     s16 causeIndex;
-    __OSThreadContext* ctx;
 
     s32 bt[8];
     s32 max = backtrace_thread((void**)bt, ARRAY_COUNT(bt), faultedThread);
     s32 i = 0;
-    char buf[128];
+    static char buf[0x200];
 
-    ctx = &faultedThread->context;
     causeIndex = ((faultedThread->context.cause >> 2) & 0x1F);
 
     if (causeIndex == 23) {
@@ -328,26 +329,47 @@ void crash_screen_draw(OSThread* faultedThread) {
     osWritebackDCacheAll();
 
     s32 x = 10;
-    s32 y = 0;
+    s32 y = 10;
 
     crash_screen_draw_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    if (crashScreenAssertMessage[0] == '\0' || crashScreenAssertLocation[0] == '\0') {
-        crash_screen_printf_proportional(x, y += 10, "Exception in thread %d: %s", faultedThread->id, gFaultCauses[causeIndex]);
+    // Print error message
+    b32 isException = FALSE;
+    if (crashScreenAssertMessage[0] == '\0') {
+        y += crash_screen_printf_proportional(x, y, "Exception in thread %d: %s", faultedThread->id, gFaultCauses[causeIndex]);
+        isException = TRUE;
     } else {
-        crash_screen_printf_proportional(x, y += 10, crashScreenAssertMessage);
-        crash_screen_printf_proportional(x + 10, y += 10, "at %s", crashScreenAssertLocation);
-        i = 2; // Don't include is_debug_panic and ASSERT line in backtrace.
+        y += crash_screen_printf_proportional(x, y, crashScreenAssertMessage);
+        i = 1; // Don't include is_debug_panic line in backtrace.
     }
 
+    // Print register values
+    // TODO: print registers relevant to the exception
+    if (isException) {
+        __OSThreadContext* ctx = &faultedThread->context;
+        crash_screen_printf_proportional(x, y, "Registers:");
+        y += 10;
+        crash_screen_printf(x, y, "  a0 = 0x%08X     a1 = 0x%08X", (u32)ctx->a0, (u32)ctx->a1);
+        y += 10;
+        crash_screen_printf(x, y, "  a2 = 0x%08X     a3 = 0x%08X", (u32)ctx->a2, (u32)ctx->a3);
+        y += 10;
+
+        y += 10;
+    }
+
+    // Print backtrace
+    crash_screen_printf_proportional(x, y, "Call stack:");
+    y += 10;
     for (; i < max; i++) {
         backtrace_address_to_string(bt[i], buf);
-        crash_screen_printf_proportional(x + 10, y += 10, "at %s", buf);
+        crash_screen_printf_proportional(x, y, "  in %s", buf);
+        y += 10;
     }
 
-    y += 5;
+    y += 10;
+
 #ifndef DEBUG
-    crash_screen_printf_proportional(x, y += 15, "Build with `./configure --debug` for file/line numbers", buf);
+    y += crash_screen_printf_proportional(x, y, "Build with `./configure --debug` for file/line numbers", buf);
 #endif
 
     osViBlack(0);
@@ -444,7 +466,7 @@ void crash_screen_init(void) {
     osStartThread(&gCrashScreen.thread);
 
     // gCrashScreencharToGlyph is hard to modify, so we'll just do it here
-    char chars[] =
+    u8 chars[] =
         "_[]<>"
         "|{};,"
         "\"#$&'"
@@ -471,7 +493,7 @@ void crash_screen_printf_with_bg(s16 x, s16 y, const char* fmt, ...) {
 
     va_start(args, fmt);
 
-    size = _Printf(crash_screen_copy_to_buf, buf, fmt, args);
+    size = _Printf(crash_screen_copy_to_buf, (s8*)buf, fmt, args);
 
     if (size > 0) {
         crash_screen_draw_rect(x - 6, y - 6, (size + 2) * 6, 19);

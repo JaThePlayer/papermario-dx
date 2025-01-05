@@ -55,8 +55,6 @@ extern WindowStyle gWindowStyles[];
 extern u16 gCurrentDoorSounds;
 extern u16 gCurrentRoomDoorSounds;
 
-extern b8 D_8014C248;
-
 extern UNK_FUN_PTR(TalkNotificationCallback);
 extern UNK_FUN_PTR(InteractNotificationCallback);
 extern UNK_FUN_PTR(ISpyNotificationCallback);
@@ -75,11 +73,9 @@ extern f32 PlayerNormalPitch;
 extern s32 NpcHitQueryColliderID;
 extern Vec3s StandardActorHomePositions[];
 
-extern SaveData gCurrentSaveFile;
-
 extern s32 gEncounterSubState;
-extern s32 timeFreezeMode;
-extern s32 D_8009A678;
+extern s32 gTimeFreezeMode;
+extern b32 EncounterStateChanged;
 
 extern u8 IntroMessageIdx;
 extern s32 PartnerIDFromMenuIndex[12]; // partner IDs

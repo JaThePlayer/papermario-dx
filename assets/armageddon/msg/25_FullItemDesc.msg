@@ -830,13 +830,10 @@
 #message:25:(ItemFullDesc_SlowGo) {
 	Poisoned enemies and Mario[BR]
 	spread their poison to their[BR]
-	[Wait][Next]
 	targets after any attack that[BR]
 	makes contact.[BR]
-	[Wait][Next]
 	Successful guards prevent this.[BR]
-	Increases poison damage by 1.[BR]
-	[End]
+	Increases poison damage by 1.[End]
 }
 
 #message:25:(ItemFullDesc_IcePower) {

@@ -1800,25 +1800,24 @@ enum Cams {
     CAM_DEFAULT      = 0,
     CAM_BATTLE       = 1,
     CAM_TATTLE       = 2,
-    CAM_3            = 3,
+    CAM_HUD          = 3,
 };
 
 enum CamShakeModes {
     CAM_SHAKE_CONSTANT_VERTICAL     = 0,
     CAM_SHAKE_ANGULAR_HORIZONTAL    = 1,
-    CAM_SHAKE_DECAYING_VERTICAL     = 2
+    CAM_SHAKE_DECAYING_VERTICAL     = 2,
 };
 
 // for use with SetBattleCamParam
-enum AuxCameraParams {
-    AUX_CAM_PARAM_1             = 1,
-    AUX_CAM_BOOM_LENGTH         = 2,
-    AUX_CAM_PARAM_3             = 3,
-    AUX_CAM_BOOM_PITCH          = 4,
-    AUX_CAM_BOOM_YAW            = 5,
-    AUX_CAM_BOOM_ZOFFSET        = 6,
-    AUX_CAM_PARAM_7             = 7,
-    AUX_CAM_ZOOM_PERCENT        = 8
+enum BasicCameraParams {
+    CAM_PARAM_SKIP_RECALC           = 1,
+    CAM_PARAM_BOOM_LENGTH           = 2,
+    CAM_PARAM_FOV_SCALE             = 3,
+    CAM_PARAM_BOOM_PITCH            = 4,
+    CAM_PARAM_BOOM_YAW              = 5,
+    CAM_PARAM_BOOM_Y_OFFSET         = 6,
+    CAM_PARAM_ZOOM_PERCENT          = 7,
 };
 
 #include "item_enum.h"
@@ -1904,7 +1903,7 @@ enum EncounterOutcomes {
     OUTCOME_PLAYER_LOST         = 1,
     OUTCOME_PLAYER_FLED         = 2,
     OUTCOME_ENEMY_FLED          = 3,
-    OUTCOME_4                   = 4,
+    OUTCOME_SKIP                = 4,
 };
 
 enum MerleeSpellType {
@@ -2414,9 +2413,7 @@ enum DoorSounds {
     DOOR_SOUNDS_UNUSED              = 6,
 };
 
-#if VERSION_US || VERSION_PAL || VERSION_IQUE
 #include "sprite/sprite_shading_profiles.h"
-#endif
 
 enum LightSourceFlags {
     LIGHT_SOURCE_DISABLED           = 0,
@@ -2994,11 +2991,11 @@ enum NpcPalSwapState {
     NPC_PALSWAP_HOLDING_A           = 0,
     NPC_PALSWAP_FROM_A_TO_B         = 1,
     NPC_PALSWAP_HOLDING_B           = 2,
-    NPC_PALSWAP_FROM_B_TO_A         = 3
+    NPC_PALSWAP_FROM_B_TO_A         = 3,
 };
 
 enum NpcFlags {
-    NPC_FLAG_ENABLED                        = 0x00000001, // Does nothing aside from making npc->flags !=
+    NPC_FLAG_ENABLED                        = 0x00000001, // Does nothing aside from making npc->flags != 0
     NPC_FLAG_INVISIBLE                      = 0x00000002, // NPC will not be drawn or cause surface effects while moving
     NPC_FLAG_INACTIVE                       = 0x00000004, // NPC will not render, move, or have collisions with other NPCs. They may still be interacted with.
     NPC_FLAG_FLYING                         = 0x00000008,
@@ -3019,15 +3016,15 @@ enum NpcFlags {
     NPC_FLAG_IGNORE_CAMERA_FOR_YAW          = 0x00040000, // Do not adjust renderYaw to face the camera
     NPC_FLAG_REFLECT_FLOOR                  = 0x00080000, // Mirror rendering across y=0
     NPC_FLAG_MOTION_BLUR                    = 0x00100000, // Gives motion blur effect as NPC moves. Set by enable_npc_blur
-    NPC_FLAG_200000                         = 0x00200000,
+    NPC_FLAG_FLIP_INSTANTLY                 = 0x00200000, // Flip instantly when changing facing direction
     NPC_FLAG_TOUCHES_GROUND                 = 0x00400000, // Can cause effects to play when touching special surface types
     NPC_FLAG_HIDING                         = 0x00800000,
     NPC_FLAG_HAS_NO_SPRITE                  = 0x01000000,
     NPC_FLAG_COLLIDING_WITH_NPC             = 0x02000000,
     NPC_FLAG_PARTNER                        = 0x04000000,
     NPC_FLAG_WORLD_COLLISION_DIRTY          = 0x08000000,
-    NPC_FLAG_10000000                       = 0x10000000,
-    NPC_FLAG_20000000                       = 0x20000000,
+    NPC_FLAG_USE_INSPECT_ICON               = 0x10000000, // Approaching this NPC will cause a red ! to appear.
+    NPC_FLAG_RAYCAST_TO_INTERACT            = 0x20000000, // Intended to require a line of sight raycast before conversations can be triggered. Seems bugged.
     NPC_FLAG_NO_ANIMS_LOADED                = 0x40000000, // Npc has no animations loaded
     NPC_FLAG_SUSPENDED                      = 0x80000000,
 };
@@ -3458,14 +3455,14 @@ enum AnyEnemyAnims {
     ENEMY_ANIM_F            = 0x210,
 };
 
-enum FirstStrikes {
+enum FirstStrikeType {
     FIRST_STRIKE_NONE           = 0,
     FIRST_STRIKE_PLAYER         = 1,
     FIRST_STRIKE_ENEMY          = 2,
 };
 
 enum TimeFreezeMode {
-    TIME_FREEZE_NORMAL          = 0,
+    TIME_FREEZE_NONE            = 0,
     TIME_FREEZE_PARTIAL         = 1,
     TIME_FREEZE_FULL            = 2,
     TIME_FREEZE_POPUP_MENU      = 3,
@@ -3528,6 +3525,12 @@ enum EffectGfxDataFlags {
 };
 
 #include "move_enum.h"
+
+enum GameContext {
+    CONTEXT_WORLD       = 0,
+    CONTEXT_BATTLE      = 1,
+    CONTEXT_PAUSE       = 2,
+};
 
 enum DemoState {
     DEMO_STATE_NONE         = 0,
@@ -4292,6 +4295,32 @@ enum DebuffTypes {
     DEBUFF_TYPE_INVISIBLE           = 0x04000000,
 };
 
+enum PlayerBasicJump {
+    PLAYER_BASIC_JUMP_0         = 0,
+    PLAYER_BASIC_JUMP_1         = 1,
+    PLAYER_BASIC_JUMP_2         = 2,
+    PLAYER_BASIC_JUMP_3         = 3,
+    PLAYER_BASIC_JUMP_4         = 4,
+};
+
+enum PlayerSuperJump {
+    PLAYER_SUPER_JUMP_0         = 0,
+    PLAYER_SUPER_JUMP_1         = 1,
+    PLAYER_SUPER_JUMP_2         = 2,
+    PLAYER_SUPER_JUMP_3         = 3,
+    PLAYER_SUPER_JUMP_4         = 4,
+    PLAYER_SUPER_JUMP_5         = 5,
+    PLAYER_SUPER_JUMP_6         = 6,
+};
+
+enum PlayerUltraJump {
+    PLAYER_ULTRA_JUMP_0         = 0,
+    PLAYER_ULTRA_JUMP_1         = 1,
+    PLAYER_ULTRA_JUMP_2         = 2,
+    PLAYER_ULTRA_JUMP_3         = 3,
+    PLAYER_ULTRA_JUMP_4         = 4,
+};
+
 enum GlobalOverrides {
     GLOBAL_OVERRIDES_DISABLE_RENDER_WORLD           = 0x00000002,
     GLOBAL_OVERRIDES_DISABLE_DRAW_FRAME             = 0x00000008,
@@ -4319,7 +4348,7 @@ enum GlobalOverrides {
     | MODEL_FLAG_20 \
     | MODEL_FLAG_IGNORE_FOG \
     | MODEL_FLAG_HAS_LOCAL_VERTEX_COPY \
-    | MODEL_FLAG_USE_CAMERA_UNK_MATRIX \
+    | MODEL_FLAG_BILLBOARD \
     | MODEL_FLAG_DO_BOUNDS_CULLING \
     | MODEL_FLAG_HAS_TRANSFORM \
     | MODEL_FLAG_HAS_TEX_PANNER \
@@ -4337,7 +4366,7 @@ enum ModelFlags {
     MODEL_FLAG_20                       = 0x0020,
     MODEL_FLAG_IGNORE_FOG               = 0x0040,
     MODEL_FLAG_HAS_LOCAL_VERTEX_COPY    = 0x0080,
-    MODEL_FLAG_USE_CAMERA_UNK_MATRIX    = 0x0100,
+    MODEL_FLAG_BILLBOARD                = 0x0100, // rotate to face the camera
     MODEL_FLAG_DO_BOUNDS_CULLING        = 0x0200,
     MODEL_FLAG_HAS_TRANSFORM            = 0x0400,
     MODEL_FLAG_HAS_TEX_PANNER           = 0x0800,
@@ -4494,8 +4523,8 @@ enum MapRoomNotifications {
 
 enum EnemyFlags {
     ENEMY_FLAG_PASSIVE                  = 0x00000001, // Not hostile; collision does not trigger battle
-    ENEMY_FLAG_2                        = 0x00000002, // Unused
-    ENEMY_FLAG_4                        = 0x00000004,
+    ENEMY_FLAG_UNUSED_2                 = 0x00000002, // Unused
+    ENEMY_FLAG_DO_NOT_KILL              = 0x00000004, // Enemy will not be killed after being defeated in battle
     ENEMY_FLAG_ENABLE_HIT_SCRIPT        = 0x00000008,
     ENEMY_FLAG_FLED                     = 0x00000010,
     ENEMY_FLAG_DISABLE_AI               = 0x00000020, // Disable movement AI and collision (idle animation plays)
@@ -4508,14 +4537,14 @@ enum EnemyFlags {
     ENEMY_FLAG_GRAVITY                  = 0x00001000,
     ENEMY_FLAG_NO_SHADOW_RAYCAST        = 0x00002000,
     ENEMY_FLAG_HAS_NO_SPRITE            = 0x00004000,
-    ENEMY_FLAG_8000                     = 0x00008000, // Corresponds with NPC_FLAG_10000000
-    ENEMY_FLAG_10000                    = 0x00010000, // Corresponds with NPC_FLAG_20000000
+    ENEMY_FLAG_USE_INSPECT_ICON         = 0x00008000, // Corresponds with NPC_FLAG_USE_INSPECT_ICON
+    ENEMY_FLAG_RAYCAST_TO_INTERACT      = 0x00010000, // Intended to require a line of sight raycast before conversations can be triggered. Seems bugged. Corresponds with NPC_FLAG_RAYCAST_TO_INTERACT
     ENEMY_FLAG_USE_PLAYER_SPRITE        = 0x00020000, // Used for Peach NPCs
-    ENEMY_FLAG_40000                    = 0x00040000,
-    ENEMY_FLAG_80000                    = 0x00080000,
-    ENEMY_FLAG_100000                   = 0x00100000,
+    ENEMY_FLAG_NO_DELAY_AFTER_FLEE      = 0x00040000,
+    ENEMY_FLAG_DONT_SUSPEND_SCRIPTS     = 0x00080000, // Do not suspend ai/aux scripts when aiSuspendTime != 0
+    ENEMY_FLAG_SKIP_BATTLE              = 0x00100000,
     ENEMY_FLAG_ACTIVE_WHILE_OFFSCREEN   = 0x00200000,
-    ENEMY_FLAG_400000                   = 0x00400000,
+    ENEMY_FLAG_DO_NOT_AUTO_FACE_PLAYER  = 0x00400000,
     ENEMY_FLAG_NO_DROPS                 = 0x00800000, // Do not drop hearts, flowers, or coins on defeat
     ENEMY_FLAG_IGNORE_TOUCH             = 0x01000000,
     ENEMY_FLAG_IGNORE_JUMP              = 0x02000000,
@@ -4527,23 +4556,28 @@ enum EnemyFlags {
     ENEMY_FLAG_SUSPENDED                = 0x80000000,
 };
 
-#define COMMON_PASSIVE_FLAGS \
-      ENEMY_FLAG_PASSIVE \
-    | ENEMY_FLAG_ENABLE_HIT_SCRIPT \
+#define BASE_PASSIVE_FLAGS \
+    ( ENEMY_FLAG_PASSIVE \
     | ENEMY_FLAG_IGNORE_WORLD_COLLISION \
     | ENEMY_FLAG_IGNORE_ENTITY_COLLISION \
-    | ENEMY_FLAG_FLYING
+    | ENEMY_FLAG_FLYING \
+    )
+
+#define COMMON_PASSIVE_FLAGS \
+    ( BASE_PASSIVE_FLAGS \
+    | ENEMY_FLAG_ENABLE_HIT_SCRIPT \
+    )
 
 // used with enemy->aiFlags
 enum EnemyAIFlags {
-    ENEMY_AI_FLAG_1              = 0x00000001,
-    ENEMY_AI_FLAG_2              = 0x00000002, // do not move; do not sense player
-    ENEMY_AI_FLAG_SUSPEND        = 0x00000004,
-    ENEMY_AI_FLAG_8              = 0x00000008,
-    ENEMY_AI_FLAG_10             = 0x00000010,
-    ENEMY_AI_FLAG_20             = 0x00000020,
-    ENEMY_AI_FLAG_40             = 0x00000040,
-    ENEMY_AI_FLAG_80             = 0x00000080,
+    AI_FLAG_1                           = 0x00000001,
+    AI_FLAG_CANT_DETECT_PLAYER          = 0x00000002,
+    AI_FLAG_SUSPEND                     = 0x00000004,
+    AI_FLAG_SKIP_EMOTE_AFTER_FLEE       = 0x00000008,
+    AI_FLAG_SKIP_IDLE_ANIM_AFTER_FLEE   = 0x00000010,
+    AI_FLAG_OUTSIDE_TERRITORY           = 0x00000020,
+    AI_FLAG_NEEDS_HEADING               = 0x00000040,
+    AI_FLAG_80                          = 0x00000080,
 };
 
 enum EnemyAIStates {
@@ -4593,7 +4627,7 @@ enum EnemyDetectFlags {
     AI_DETECT_FLAG_8                = 0x08,
 };
 
-enum EnemyTerritoryFlags {
+enum TerritoryFlags {
     AI_TERRITORY_IGNORE_HIDING      = 0x01, // bow and sushi dont prevent enemy detection
     AI_TERRITORY_IGNORE_ELEVATION   = 0x02, // vertical size of detection volume is ignored
 };
@@ -4682,7 +4716,7 @@ enum PlayerCollisionTests {
     PLAYER_COLLISION_0          = 0,
     PLAYER_COLLISION_1          = 1,
     PLAYER_COLLISION_2          = 2,
-    PLAYER_COLLISION_3          = 3,
+    PLAYER_COLLISION_HAMMER     = 3,
     PLAYER_COLLISION_4          = 4,
 };
 
@@ -4704,14 +4738,51 @@ enum CameraMoveFlags {
     CAMERA_MOVE_ACCEL_INTERP_Y      = 0x00000004,
 };
 
-enum CameraUpdateType {
-    CAM_UPDATE_MODE_INIT            = 0,
-    CAM_UPDATE_UNUSED_1             = 1,
-    CAM_UPDATE_MODE_2               = 2,
+enum CameraUpdateMode {
+    // simple camera based on lookAt_eye and lookAt_obj with no blending or interpolation
+    // control this camera by directly setting these positions
+    // has no other control parameters
+    CAM_UPDATE_MINIMAL              = 0,
+
+    // this camera uses a set of control parameters to calculate its target lookAt_obj and lookAt_eye positions,
+    // then interpolates current positions toward those targets, moving up to half the remaining distance each frame
+    // the ultimate target is given by lookAt_obj_target
+    // mostly used for CAM_HUD
+    CAM_UPDATE_INTERP_POS           = 2,
+
+    // this camera samples camera zones below its targetPos and derives control parameters from their settings,
+    // interpolating its control parameters when changing zones. these control parameters determine the camera
+    // position and orientation just like other camera modes.
+    // note that this code does NOT directly reference the player position in any manner, it is only concerned
+    // with the camera's targetPos, which must be assigned elsewhere.
+    // this is the camera used during world gameplay
     CAM_UPDATE_FROM_ZONE            = 3,
-    CAM_UPDATE_UNUSED_4             = 4,
-    CAM_UPDATE_UNUSED_5             = 5,
-    CAM_UPDATE_MODE_6               = 6,
+
+    // this camera uses a set of control parameters to calculate its lookAt_obj and lookAt_eye positions,
+    // which are only updated if skipRecalc = FALSE
+    // the ultimate target is given by lookAt_obj_target, with an offset given by targetPos (?!)
+    // in practice, this is used for CAM_BATTLE and CAM_TATTLE, with skipRecalc almost always set to FALSE
+    CAM_UPDATE_NO_INTERP            = 6,
+
+    // this camera tracks lookAt_obj_target in a circular region centered on targetPos. the camera does not update
+    // unless lookAt_obj_target is greater than a minimum distance from targetPos to prevent wild movements.
+    CAM_UPDATE_UNUSED_RADIAL        = 1,
+
+    // this camera tracks targetPos, clamped within the rectangular region given by +/- xLimit and +/- zLimit
+    // y-position is drawn from lookAt_obj_target
+    // does not use easing or interpolation
+    CAM_UPDATE_UNUSED_CONFINED      = 4,
+
+    // this camera tracks player position and adds basic 'leading' in the x-direction only
+    // camera yaw is fixed at zero and the lead direction is determined by player world yaw
+    // thus, this only works for '2D' style maps where left is -x and right is +x
+    CAM_UPDATE_UNUSED_LEADING       = 5,
+
+    // this mode is completely unused in vanilla; it doesn't even have a case in update_cameras
+    // seems to be based on CAM_UPDATE_NO_INTERP (the one used for battle cam)
+    // tracks a point 400 units ahead of player position in the z-direction and 60 units above
+    // defaults to a relatively short boom length and no pitch angle, resulting in a head-on direct view
+    // CAM_UPDATE_UNUSED_AHEAD,
 };
 
 enum CameraControlType {
@@ -4751,93 +4822,93 @@ enum CameraControlType {
     CAM_CONTROL_CONSTAIN_BETWEEN_POINTS         = 6,
 };
 
-enum BtlCameraPreset {
-    BTL_CAM_PRESET_00               = 0,    // unused?
-    BTL_CAM_PRESET_01               = 1,    // STOP
-    BTL_CAM_DEFAULT                 = 2,
-    BTL_CAM_PRESET_03               = 3,
-    BTL_CAM_PRESET_04               = 4,
-    BTL_CAM_PRESET_05               = 5,
-    BTL_CAM_PRESET_06               = 6,   // unused?
-    BTL_CAM_PRESET_07               = 7,
-    BTL_CAM_PRESET_08               = 8,
-    BTL_CAM_PRESET_09               = 9,    // unused?
-    BTL_CAM_PRESET_10               = 10,
-    BTL_CAM_PRESET_11               = 11,
-    BTL_CAM_PRESET_12               = 12,   // unused?
-    BTL_CAM_PRESET_13               = 13,
-    BTL_CAM_PRESET_14               = 14,  // FOCUS_ON_TARGET?
-    BTL_CAM_PRESET_15               = 15,
-    BTL_CAM_PRESET_16               = 16,   // unused?
-    BTL_CAM_PRESET_17               = 17,   // unused?
-    BTL_CAM_PRESET_18               = 18,   // unused?
-    BTL_CAM_PRESET_19               = 19,
-    BTL_CAM_PRESET_20               = 20,   // unused?
-    BTL_CAM_PRESET_21               = 21,   // unused?
-    BTL_CAM_PLAYER_ENTRY            = 22,
-    BTL_CAM_VICTORY                 = 23,   // closeup on party while star points are tallied
-    BTL_CAM_PRESET_24               = 24,
-    BTL_CAM_PRESET_25               = 25,   // closeup on player used when running away or being defeated
-    BTL_CAM_PLAYER_ATTACK_APPROACH  = 26,
-    BTL_CAM_PRESET_27               = 27,
-    BTL_CAM_PRESET_28               = 28,
-    BTL_CAM_PRESET_29               = 29,
-    BTL_CAM_PLAYER_HIT_SPIKE        = 30,   // player hurt via spike contact
-    BTL_CAM_PLAYER_HIT_HAZARD       = 31,   // player hurt via burn or shock contact
-    BTL_CAM_PLAYER_CHARGE_UP        = 32,
-    BTL_CAM_PLAYER_STATUS_AFFLICTED = 33,
-    BTL_CAM_PRESET_34               = 34,
-    BTL_CAM_PRESET_35               = 35,
-    BTL_CAM_PRESET_36               = 36,   // unused?
-    BTL_CAM_PRESET_37               = 37,
-    BTL_CAM_PRESET_38               = 38,
-    BTL_CAM_PRESET_39               = 39,
-    BTL_CAM_PRESET_40               = 40,
-    BTL_CAM_PRESET_41               = 41,   // unused?
-    BTL_CAM_PRESET_42               = 42,   // unused?
-    BTL_CAM_PLAYER_AIM_HAMMER       = 43,
-    BTL_CAM_PLAYER_HAMMER_STRIKE    = 44,
-    BTL_CAM_PRESET_45               = 45,   // unused?
-    BTL_CAM_PRESET_46               = 46,
-    BTL_CAM_PARTNER_APPROACH        = 47,   // used by Goombario and Watt (power shock only)
-    BTL_CAM_PRESET_48               = 48,
-    BTL_CAM_PRESET_49               = 49,   // unused?
-    BTL_CAM_PRESET_50               = 50,
-    BTL_CAM_PRESET_51               = 51,
-    BTL_CAM_PRESET_52               = 52,
-    BTL_CAM_PRESET_53               = 53,
-    BTL_CAM_PARTNER_INJURED         = 54,   // closeup on partner after being injured
-    BTL_CAM_PRESET_55               = 55,
-    BTL_CAM_PRESET_56               = 56,   // unused?
-    BTL_CAM_PRESET_57               = 57,   // unused?
-    BTL_CAM_PRESET_58               = 58,   // unused?
-    BTL_CAM_PRESET_59               = 59,
-    BTL_CAM_PRESET_60               = 60,   // unused?
-    BTL_CAM_PRESET_61               = 61,
-    BTL_CAM_PRESET_62               = 62,
-    BTL_CAM_ENEMY_APPROACH          = 63,   // (very common)
-    BTL_CAM_PRESET_64               = 64,   // unused?
-    BTL_CAM_PRESET_65               = 65,   // unused?
-    BTL_CAM_PRESET_66               = 66,
-    BTL_CAM_PRESET_67               = 67,   // unused?
-    BTL_CAM_PRESET_68               = 68,   // unused?
-    BTL_CAM_PRESET_69               = 69,
-    BTL_CAM_PRESET_70               = 70,   // unused?
-    BTL_CAM_PRESET_71               = 71,   // unused?
-    BTL_CAM_PRESET_72               = 72,   // unused?
-    BTL_CAM_PRESET_73               = 73,
+enum BattleCamPreset {
+    BTL_CAM_RESET                           = 0x00,
+    BTL_CAM_INTERRUPT                       = 0x01, // forces camera motion to end
+    BTL_CAM_DEFAULT                         = 0x02, // wide shot of the entire arena
+    BTL_CAM_VIEW_ENEMIES                    = 0x03, // broad focus on enemy side of the field
+    BTL_CAM_RETURN_HOME                     = 0x04,
+    BTL_CAM_ACTOR_TARGET_MIDPOINT           = 0x05, // focus on midpoint between subject actor and its target
+    BTL_CAM_ACTOR_PART                      = 0x06, // unused
+    BTL_CAM_ACTOR_GOAL_SIMPLE               = 0x07,
+    BTL_CAM_ACTOR_SIMPLE                    = 0x08, // same as BTL_CAM_ACTOR, but does not change boom pitch, yaw, or y-offset
+    BTL_CAM_SLOW_DEFAULT                    = 0x09, // unused, same as BTL_CAM_DEFAULT but takes 4x as long
+    BTL_CAM_MIDPOINT_CLOSE                  = 0x0A,
+    BTL_CAM_MIDPOINT_NORMAL                 = 0x0B,
+    BTL_CAM_MIDPOINT_FAR                    = 0x0C, // unused
+    BTL_CAM_ACTOR_CLOSE                     = 0x0D, // focus on a targeted actor, closer than normal
+    BTL_CAM_ACTOR                           = 0x0E, // focus on a targeted actor using typical distance
+    BTL_CAM_ACTOR_FAR                       = 0x0F, // focus on a targeted actor, further away than normal
+    BTL_CAM_ACTOR_GOAL_NEAR                 = 0x10, // unused, focus on a targeted actor's goal, closer than normal
+    BTL_CAM_ACTOR_GOAL                      = 0x11, // unused, focus on a targeted actor's goal, using typical distance
+    BTL_CAM_ACTOR_GOAL_FAR                  = 0x12, // unused, focus on a targeted actor's goal, further away than normal
+    BTL_CAM_REPOSITION                      = 0x13, // generic reposition, lerp to target parameters over the next 20 frames
+    BTL_CAM_FOLLOW_ACTOR_Y                  = 0x14, // unused
+    BTL_CAM_FOLLOW_ACTOR_POS                = 0x15, // unused
+    BTL_CAM_PLAYER_ENTRY                    = 0x16,
+    BTL_CAM_VICTORY                         = 0x17, // closeup on party while star points are tallied
+    BTL_CAM_PLAYER_DIES                     = 0x18, // closeup on player dying
+    BTL_CAM_PLAYER_FLEE                     = 0x19, // closeup on player while running away
+    BTL_CAM_PLAYER_ATTACK_APPROACH          = 0x1A,
+    BTL_CAM_PLAYER_PRE_JUMP_FINISH          = 0x1B,
+    BTL_CAM_PLAYER_PRE_ULTRA_JUMP_FINISH    = 0x1C,
+    BTL_CAM_PLAYER_MISTAKE                  = 0x1D, // player missed a jump or hammer acion command
+    BTL_CAM_PLAYER_HIT_SPIKE                = 0x1E, // player hurt via spike contact
+    BTL_CAM_PLAYER_HIT_HAZARD               = 0x1F, // player hurt via burn or shock contact
+    BTL_CAM_PLAYER_CHARGE_UP                = 0x20,
+    BTL_CAM_PLAYER_STATUS_AFFLICTED         = 0x21,
+    BTL_CAM_PLAYER_JUMP_MIDAIR              = 0x22, // move through the air with the player mid-jump
+    BTL_CAM_PLAYER_JUMP_FINISH              = 0x23, // after a sucessful action command
+    BTL_CAM_PLAYER_JUMP_FINISH_CLOSE        = 0x24, // unused
+    BTL_CAM_PLAYER_SUPER_JUMP_MIDAIR        = 0x25, // alternate BTL_CAM_PLAYER_JUMP_MIDAIR associated with an unused script for Super Jump
+    BTL_CAM_PLAYER_ULTRA_JUMP_MIDAIR        = 0x26, // alternate BTL_CAM_PLAYER_JUMP_MIDAIR associated with an unused script for Ultra Jump
+    BTL_CAM_PLAYER_UNUSED_ULTRA_JUMP        = 0x27, // unused camera for followup hit of unused script for Ultra Jump
+    BTL_CAM_PLAYER_MULTIBOUNCE              = 0x28,
+    BTL_CAM_PRESET_UNUSED_29                = 0x29, // unused
+    BTL_CAM_PRESET_UNUSED_2A                = 0x2A, // unused
+    BTL_CAM_PLAYER_AIM_HAMMER               = 0x2B,
+    BTL_CAM_PLAYER_HAMMER_STRIKE            = 0x2C,
+    BTL_CAM_PRESET_UNUSED_2D                = 0x2D, // unused, alterative to BTL_CAM_PLAYER_HAMMER_QUAKE
+    BTL_CAM_PLAYER_HAMMER_QUAKE             = 0x2E, // slowly pan over the enemy side
+    BTL_CAM_PARTNER_APPROACH                = 0x2F, // used by Goombario and Watt (power shock only)
+    BTL_CAM_CLOSER_PARTNER_APPROACH         = 0x30,
+    BTL_CAM_PRESET_UNUSED_31                = 0x31, // unused
+    BTL_CAM_GOOMBARIO_BONK_FOLLOWUP_1       = 0x32, // goombario pre-jump 1
+    BTL_CAM_PARTNER_MISTAKE                 = 0x33,
+    BTL_CAM_PARTNER_MIDAIR                  = 0x34,
+    BTL_CAM_GOOMBARIO_BONK_FOLLOWUP_2       = 0x35, // goombario pre-jump 2
+    BTL_CAM_PARTNER_INJURED                 = 0x36, // closeup on partner after being injured
+    BTL_CAM_PARTNER_GOOMPA                  = 0x37, // focus on Goompa speaking or Goombario charging
+    BTL_CAM_PRESET_UNUSED_38                = 0x38, // unused
+    BTL_CAM_PRESET_UNUSED_39                = 0x39, // unused
+    BTL_CAM_PRESET_UNUSED_3A                = 0x3A, // unused
+    BTL_CAM_PARTNER_CLOSE_UP                = 0x3B, // close focus on partner, used when kooper or sushie are charging an attack
+    BTL_CAM_PRESET_UNUSED_3C                = 0x3C, // unused
+    BTL_CAM_PARTNER_HIT_SPIKE               = 0x3D, // partner hurt via spike contact
+    BTL_CAM_PARTNER_HIT_HAZARD              = 0x3E, // partner hurt via burn or shock contact
+    BTL_CAM_ENEMY_APPROACH                  = 0x3F, // (very common)
+    BTL_CAM_PRESET_UNUSED_40                = 0x40, // unused
+    BTL_CAM_SLOWER_DEFAULT                  = 0x41, // unused, same as BTL_CAM_DEFAULT but takes slightly longer
+    BTL_CAM_ENEMY_DIVE                      = 0x42, // used just before contact from dive attacks (paragoomba, para jr troopa, etc)
+    BTL_CAM_PRESET_UNUSED_43                = 0x43, // unused
+    BTL_CAM_PRESET_UNUSED_44                = 0x44, // unused
+    BTL_CAM_PLAYER_WISH                     = 0x45, // used for Focus and Star Spirit wishing
+    BTL_CAM_PRESET_UNUSED_46                = 0x46, // unused
+    BTL_CAM_PRESET_UNUSED_47                = 0x47, // unused
+    BTL_CAM_PRESET_UNUSED_48                = 0x48, // unused
+    BTL_CAM_STAR_SPIRIT                     = 0x49,
 };
 
-enum BattleCamXModes {
-    BTL_CAM_MODEX_0         = 0,
-    BTL_CAM_MODEX_1         = 1,
+enum BattleCamTargetAdjustX {
+    BTL_CAM_XADJ_NONE       = 0, // use actor X
+    BTL_CAM_XADJ_AVG        = 1, // use average
 };
 
-enum BattleCamYModes {
-    BTL_CAM_MODEY_MINUS_2   = -2,
-    BTL_CAM_MODEY_MINUS_1   = -1,
-    BTL_CAM_MODEY_0         = 0,
-    BTL_CAM_MODEY_1         = 1,
+enum BattleCamTargetAdjustY {
+    BTL_CAM_YADJ_SLIGHT     = -2, // target y position is weighted 75% actor and 25% target:
+    BTL_CAM_YADJ_TARGET     = -1, // use target Y
+    BTL_CAM_YADJ_NONE       = 0, // use actor Y
+    BTL_CAM_YADJ_AVG        = 1, // target y position is weighted 66% actor and 33% target:
 };
 
 enum ModelAnimatorFlags {
@@ -4915,50 +4986,21 @@ enum {
     SHOP_BUY_RESULT_NOT_ENOUGH_ROOM     = 5,
 };
 
-enum EncounterStatusFlags {
-    ENCOUNTER_STATUS_FLAG_0                 = 0x00000000,
-    ENCOUNTER_STATUS_FLAG_1                 = 0x00000001,
-    ENCOUNTER_STATUS_FLAG_2                 = 0x00000002,
-    ENCOUNTER_STATUS_FLAG_4                 = 0x00000004,
-    ENCOUNTER_STATUS_FLAG_8                 = 0x00000008,
-    ENCOUNTER_STATUS_FLAG_10                = 0x00000010,
-    ENCOUNTER_STATUS_FLAG_20                = 0x00000020,
-    ENCOUNTER_STATUS_FLAG_40                = 0x00000040,
-    ENCOUNTER_STATUS_FLAG_80                = 0x00000080,
-    ENCOUNTER_STATUS_FLAG_100               = 0x00000100,
-    ENCOUNTER_STATUS_FLAG_200               = 0x00000200,
-    ENCOUNTER_STATUS_FLAG_400               = 0x00000400,
-    ENCOUNTER_STATUS_FLAG_800               = 0x00000800,
-    ENCOUNTER_STATUS_FLAG_1000              = 0x00001000,
-    ENCOUNTER_STATUS_FLAG_2000              = 0x00002000,
-    ENCOUNTER_STATUS_FLAG_4000              = 0x00004000,
-    ENCOUNTER_STATUS_FLAG_8000              = 0x00008000,
-    ENCOUNTER_STATUS_FLAG_10000             = 0x00010000,
-    ENCOUNTER_STATUS_FLAG_20000             = 0x00020000,
-    ENCOUNTER_STATUS_FLAG_40000             = 0x00040000,
-    ENCOUNTER_STATUS_FLAG_80000             = 0x00080000,
-    ENCOUNTER_STATUS_FLAG_100000            = 0x00100000,
-    ENCOUNTER_STATUS_FLAG_200000            = 0x00200000,
-    ENCOUNTER_STATUS_FLAG_400000            = 0x00400000,
-    ENCOUNTER_STATUS_FLAG_800000            = 0x00800000,
-    ENCOUNTER_STATUS_FLAG_1000000           = 0x01000000,
-    ENCOUNTER_STATUS_FLAG_2000000           = 0x02000000,
-    ENCOUNTER_STATUS_FLAG_4000000           = 0x04000000,
-    ENCOUNTER_STATUS_FLAG_8000000           = 0x08000000,
-    ENCOUNTER_STATUS_FLAG_10000000          = 0x10000000,
-    ENCOUNTER_STATUS_FLAG_20000000          = 0x20000000,
-    ENCOUNTER_STATUS_FLAG_40000000          = 0x40000000,
-    ENCOUNTER_STATUS_FLAG_80000000          = 0x80000000,
+enum EncounterFlags {
+    ENCOUNTER_FLAG_NONE                 = 0x00000000,
+    ENCOUNTER_FLAG_THUMBS_UP            = 0x00000001, ///< Mario will do a 'thumbs up' animation after winning
+    ENCOUNTER_FLAG_CANT_SKIP_WIN_DELAY  = 0x00000002,
+    ENCOUNTER_FLAG_SKIP_FLEE_DROPS      = 0x00000004,
 };
 
 enum WindowFlags {
-    WINDOW_FLAG_INITIALIZED       = 0x00000001,
-    WINDOW_FLAG_FPUPDATE_CHANGED  = 0x00000002,
-    WINDOW_FLAG_HIDDEN            = 0x00000004, ///< Updated but not rendered
-    WINDOW_FLAG_INITIAL_ANIMATION = 0x00000008,
-    WINDOW_FLAG_HAS_CHILDREN      = 0x00000010,
-    WINDOW_FLAG_DISABLED          = 0x00000020, ///< Not updated or rendered
-    WINDOW_FLAG_40                = 0x00000040,
+    WINDOW_FLAG_INITIALIZED             = 0x00000001,
+    WINDOW_FLAG_FPUPDATE_CHANGED        = 0x00000002,
+    WINDOW_FLAG_HIDDEN                  = 0x00000004, ///< Updated but not rendered
+    WINDOW_FLAG_INITIAL_ANIMATION       = 0x00000008,
+    WINDOW_FLAG_HAS_CHILDREN            = 0x00000010,
+    WINDOW_FLAG_DISABLED                = 0x00000020, ///< Not updated or rendered
+    WINDOW_FLAG_40                      = 0x00000040,
 };
 
 enum DrawFlags {
@@ -5198,78 +5240,78 @@ enum DictionaryIndex {
     DICTIONARY_SIZE,
 };
 
-enum WindowId {
-    WINDOW_ID_NONE                              = -1,
-    WINDOW_ID_0                                 = 0,
-    WINDOW_ID_1                                 = 1,
-    WINDOW_ID_2                                 = 2,
-    WINDOW_ID_3                                 = 3,
-    WINDOW_ID_4                                 = 4,
-    WINDOW_ID_5                                 = 5,
-    WINDOW_ID_6                                 = 6,
-    WINDOW_ID_7                                 = 7,
-    WINDOW_ID_8                                 = 8, // battle main?
-    WINDOW_ID_BATTLE_POPUP                      = 9,
-    WINDOW_ID_ITEM_INFO_NAME                    = 10,
-    WINDOW_ID_ITEM_INFO_DESC                    = 11,
-    WINDOW_ID_12                                = 12,
-    WINDOW_ID_13                                = 13,
-    WINDOW_ID_14                                = 14,
-    WINDOW_ID_15                                = 15,
-    WINDOW_ID_16                                = 16,
-    WINDOW_ID_17                                = 17, // brown box used for "Throw away an item" and certain popup titles
-    WINDOW_ID_18                                = 18,
-    WINDOW_ID_19                                = 19,
-    WINDOW_ID_CURRENCY_COUNTER                  = 20,
-    WINDOW_ID_21                                = 21,
-    WINDOW_ID_PAUSE_MAIN                        = 22,
-    WINDOW_ID_PAUSE_DECRIPTION                  = 23,
-    WINDOW_ID_FILEMENU_CURSOR                   = 23, // same as previous
-    WINDOW_ID_PAUSE_TUTORIAL                    = 24,
-    WINDOW_ID_FILEMENU_COPYARROW                = 24, // same as previous
-    WINDOW_ID_PAUSE_TAB_STATS                   = 25,
-    WINDOW_ID_PAUSE_TAB_BADGES                  = 26,
-    WINDOW_ID_PAUSE_TAB_ITEMS                   = 27,
-    WINDOW_ID_PAUSE_TAB_PARTY                   = 28,
-    WINDOW_ID_PAUSE_TAB_SPIRITS                 = 29,
-    WINDOW_ID_PAUSE_TAB_MAP                     = 30,
-    WINDOW_ID_PAUSE_STATS                       = 31,
-    WINDOW_ID_PAUSE_BADGES                      = 32,
-    WINDOW_ID_PAUSE_ITEMS                       = 33,
-    WINDOW_ID_PAUSE_PARTNERS                    = 34,
-    WINDOW_ID_PAUSE_PARTNERS_TITLE              = 35,
-    WINDOW_ID_PAUSE_PARTNERS_MOVELIST           = 36,
-    WINDOW_ID_PAUSE_PARTNERS_MOVELIST_TITLE     = 37,
-    WINDOW_ID_PAUSE_PARTNERS_MOVELIST_FLOWER    = 38,
-    WINDOW_ID_PAUSE_SPIRITS                     = 39,
-    WINDOW_ID_PAUSE_SPIRITS_TITLE               = 40,
-    WINDOW_ID_PAUSE_MAP                         = 41,
-    WINDOW_ID_PAUSE_MAP_TITLE                   = 42,
-    WINDOW_ID_PAUSE_TAB_INVIS                   = 43,
-    WINDOW_ID_PAUSE_CURSOR                      = 44,
-    WINDOW_ID_FILEMENU_MAIN                     = 44, // same as previous
-    WINDOW_ID_FILEMENU_TITLE                    = 45,
-    WINDOW_ID_FILEMENU_YESNO_PROMPT             = 46,
-    WINDOW_ID_FILEMENU_INFO                     = 47,
-    WINDOW_ID_FILEMENU_CREATEFILE_HEADER        = 48,
-    WINDOW_ID_FILEMENU_KEYBOARD                 = 49,
-    WINDOW_ID_FILEMENU_YESNO_OPTIONS            = 50,
-    WINDOW_ID_FILEMENU_STEREO                   = 51,
-    WINDOW_ID_FILEMENU_MONO                     = 52,
-    WINDOW_ID_FILEMENU_OPTION_LEFT              = 53,
-    WINDOW_ID_FILEMENU_OPTION_CENTER            = 54,
-    WINDOW_ID_FILEMENU_OPTION_RIGHT             = 55,
-    WINDOW_ID_FILEMENU_FILE0_INFO               = 56,
-    WINDOW_ID_FILEMENU_FILE1_INFO               = 57,
-    WINDOW_ID_FILEMENU_FILE2_INFO               = 58,
-    WINDOW_ID_FILEMENU_FILE3_INFO               = 59,
-    WINDOW_ID_FILEMENU_FILE0_TITLE              = 60,
-    WINDOW_ID_FILEMENU_FILE1_TITLE              = 61,
-    WINDOW_ID_FILEMENU_FILE2_TITLE              = 62,
-    WINDOW_ID_FILEMENU_FILE3_TITLE              = 63,
+enum WindowID {
+    WIN_NONE                                = -1,
+    WIN_UNUSED_0                            = 0,
+    WIN_BTL_MOVES_MENU                      = 1,
+    WIN_BTL_MOVES_TITLE                     = 2,
+    WIN_BTL_MOVES_ICON                      = 3,
+    WIN_BTL_SPIRITS_TITLE                   = 4,
+    WIN_BTL_SPIRITS_ICON                    = 5,
+    WIN_BTL_STRATS_MENU                     = 6,
+    WIN_BTL_STRATS_TITLE                    = 7,
+    WIN_BTL_DESC_BOX                        = 8, // strats and level up menus
+    WIN_BTL_POPUP                           = 9,
+    WIN_SHOP_ITEM_NAME                      = 10,
+    WIN_SHOP_ITEM_DESC                      = 11,
+    WIN_PICKUP_HEADER                       = 12,
+    WIN_UNUSED_13                           = 13, // unused
+    WIN_POPUP_CONTENT                       = 14,
+    WIN_POPUP_TITLE_A                       = 15,
+    WIN_POPUP_COST                          = 16,
+    WIN_POPUP_TITLE_B                       = 17, // brown box used for "Throw away an item" and certain popup titles
+    WIN_PARTNER_COST                        = 18,
+    WIN_POPUP_DESC                          = 19,
+    WIN_CURRENCY_COUNTER                    = 20,
+    WIN_POPUP_PROMPT                        = 21,
+    WIN_PAUSE_MAIN                          = 22,
+    WIN_PAUSE_DECRIPTION                    = 23,
+    WIN_FILES_CURSOR                        = 23, // same as previous
+    WIN_PAUSE_TUTORIAL                      = 24,
+    WIN_FILES_COPYARROW                     = 24, // same as previous
+    WIN_PAUSE_TAB_STATS                     = 25,
+    WIN_PAUSE_TAB_BADGES                    = 26,
+    WIN_PAUSE_TAB_ITEMS                     = 27,
+    WIN_PAUSE_TAB_PARTY                     = 28,
+    WIN_PAUSE_TAB_SPIRITS                   = 29,
+    WIN_PAUSE_TAB_MAP                       = 30,
+    WIN_PAUSE_STATS                         = 31,
+    WIN_PAUSE_BADGES                        = 32,
+    WIN_PAUSE_ITEMS                         = 33,
+    WIN_PAUSE_PARTNERS                      = 34,
+    WIN_PAUSE_PARTNERS_TITLE                = 35,
+    WIN_PAUSE_PARTNERS_MOVELIST             = 36,
+    WIN_PAUSE_PARTNERS_MOVELIST_TITLE       = 37,
+    WIN_PAUSE_PARTNERS_MOVELIST_FLOWER      = 38,
+    WIN_PAUSE_SPIRITS                       = 39,
+    WIN_PAUSE_SPIRITS_TITLE                 = 40,
+    WIN_PAUSE_MAP                           = 41,
+    WIN_PAUSE_MAP_TITLE                     = 42,
+    WIN_PAUSE_TAB_INVIS                     = 43,
+    WIN_PAUSE_CURSOR                        = 44,
+    WIN_FILES_MAIN                          = 44, // same as previous
+    WIN_FILES_TITLE                         = 45,
+    WIN_FILES_CONFIRM_PROMPT                = 46,
+    WIN_FILES_MESSAGE                       = 47,
+    WIN_FILES_INPUT_FIELD                   = 48,
+    WIN_FILES_INPUT_KEYBOARD                = 49,
+    WIN_FILES_CONFIRM_OPTIONS               = 50,
+    WIN_FILES_STEREO                        = 51,
+    WIN_FILES_MONO                          = 52,
+    WIN_FILES_OPTION_LEFT                   = 53,
+    WIN_FILES_OPTION_CENTER                 = 54,
+    WIN_FILES_OPTION_RIGHT                  = 55,
+    WIN_FILES_SLOT1_BODY                    = 56,
+    WIN_FILES_SLOT2_BODY                    = 57,
+    WIN_FILES_SLOT3_BODY                    = 58,
+    WIN_FILES_SLOT4_BODY                    = 59,
+    WIN_FILES_SLOT1_TITLE                   = 60,
+    WIN_FILES_SLOT2_TITLE                   = 61,
+    WIN_FILES_SLOT3_TITLE                   = 62,
+    WIN_FILES_SLOT4_TITLE                   = 63,
 };
 
-enum SimpleWindowUpdateId {
+enum SimpleWindowUpdateID {
     WINDOW_UPDATE_SHOW              = 1,
     WINDOW_UPDATE_HIDE              = 2,
     WINDOW_UPDATE_HIER_UPDATE       = 3,
@@ -5281,11 +5323,11 @@ enum SimpleWindowUpdateId {
     WINDOW_UPDATE_9                 = 9,
 };
 
-enum WindowGroupId {
+enum WindowGroups {
     WINDOW_GROUP_ALL = 0,
-    WINDOW_GROUP_1 = 1,
-    WINDOW_GROUP_PAUSE_MENU = 2,
-    WINDOW_GROUP_FILE_MENU = 3,
+    WINDOW_GROUP_BATTLE = 1,
+    WINDOW_GROUP_PAUSE = 2,
+    WINDOW_GROUP_FILES = 3,
 };
 
 enum RushFlags {
@@ -5995,6 +6037,12 @@ enum MsgChars {
 
     MSG_CHAR_UNK_C3                 = 0xC3,
 
+    MSG_CHAR_MENU_SPACE             = 0xC6,
+    MSG_CHAR_MENU_USE_CHARSET_B     = 0xC7,
+    MSG_CHAR_MENU_USE_CHARSET_A     = 0xC8,
+    MSG_CHAR_MENU_BACK              = 0xC9,
+    MSG_CHAR_MENU_END               = 0xCA,
+
     // special character codes used when reading from the source buffer
     MSG_CHAR_READ_ENDL              = 0xF0,
     MSG_CHAR_READ_WAIT              = 0xF1,
@@ -6256,46 +6304,46 @@ enum EncounterStates {
 };
 
 enum EncounterCreateSubStates {
-    ENCOUNTER_SUBSTATE_CREATE_INIT = 0,
-    ENCOUNTER_SUBSTATE_CREATE_RUN_INIT_SCRIPT = 1,
-    ENCOUNTER_SUBSTATE_CREATE_RUN_AI = 2,
+    ENCOUNTER_SUBSTATE_CREATE_INIT                      = 0,
+    ENCOUNTER_SUBSTATE_CREATE_RUN_INIT_SCRIPT           = 1,
+    ENCOUNTER_SUBSTATE_CREATE_RUN_AI                    = 2,
 };
 
 enum EncounterNeutralSubStates {
-    ENCOUNTER_SUBSTATE_NEUTRAL = 0,
+    ENCOUNTER_SUBSTATE_NEUTRAL                          = 0,
 };
 
 enum EncounterPreBattleSubStates {
-    ENCOUNTER_SUBSTATE_PRE_BATTLE_INIT = 0,
-    ENCOUNTER_SUBSTATE_PRE_BATTLE_LOAD_BATTLE = 1,
-    ENCOUNTER_SUBSTATE_PRE_BATTLE_AUTO_WIN = 2,
-    ENCOUNTER_SUBSTATE_PRE_BATTLE_3 = 3,
+    ENCOUNTER_SUBSTATE_PRE_BATTLE_INIT                  = 0,
+    ENCOUNTER_SUBSTATE_PRE_BATTLE_LOAD                  = 1,
+    ENCOUNTER_SUBSTATE_PRE_BATTLE_AUTO_WIN              = 2,
+    ENCOUNTER_SUBSTATE_PRE_BATTLE_SKIP                  = 3,
 };
 
 enum EncounterConversationSubStates {
-    ENCOUNTER_SUBSTATE_CONVERSATION_INIT = 0,
-    ENCOUNTER_SUBSTATE_CONVERSATION_END = 1,
+    ENCOUNTER_SUBSTATE_CONVERSATION_INIT                = 0,
+    ENCOUNTER_SUBSTATE_CONVERSATION_END                 = 1,
 };
 
 enum EncounterPostBattleSubStates {
-    ENCOUNTER_SUBSTATE_POST_BATTLE_INIT = 0,
-    ENCOUNTER_SUBSTATE_POST_BATTLE_WON_WAIT = 2,
-    ENCOUNTER_SUBSTATE_POST_BATTLE_WON_KILL = 3,
-    ENCOUNTER_SUBSTATE_POST_BATTLE_WON_TO_NEUTRAL = 4,
-    ENCOUNTER_SUBSTATE_POST_BATTLE_WON_CHECK_MERLEE_BONUS = 10,
-    ENCOUNTER_SUBSTATE_POST_BATTLE_PLAY_NPC_DEFEAT = 11,
-    ENCOUNTER_SUBSTATE_POST_BATTLE_FLED_INIT = 100,
-    ENCOUNTER_SUBSTATE_POST_BATTLE_FLED_WAIT = 101,
-    ENCOUNTER_SUBSTATE_POST_BATTLE_102 = 102,
-    ENCOUNTER_SUBSTATE_POST_BATTLE_103 = 103,
-    ENCOUNTER_SUBSTATE_POST_BATTLE_LOST_INIT = 200,
-    ENCOUNTER_SUBSTATE_POST_BATTLE_LOST_WAIT = 201,
-    ENCOUNTER_SUBSTATE_POST_BATTLE_202 = 202,
-    ENCOUNTER_SUBSTATE_POST_BATTLE_LOST_TO_NEUTRAL = 203,
-    ENCOUNTER_SUBSTATE_POST_BATTLE_300 = 300,
-    ENCOUNTER_SUBSTATE_POST_BATTLE_ENEMY_FLED_INIT = 400,
-    ENCOUNTER_SUBSTATE_POST_BATTLE_ENEMY_FLED_WAIT = 401,
-    ENCOUNTER_SUBSTATE_POST_BATTLE_ENEMY_FLED_TO_NEUTRAL = 402,
+    ENCOUNTER_SUBSTATE_POST_BATTLE_INIT                 = 0,
+    ENCOUNTER_SUBSTATE_POST_BATTLE_WON_FADE_IN          = 2,
+    ENCOUNTER_SUBSTATE_POST_BATTLE_WON_KILL             = 3,
+    ENCOUNTER_SUBSTATE_POST_BATTLE_WON_RESUME           = 4,
+    ENCOUNTER_SUBSTATE_POST_BATTLE_WON_CHECK_MERLEE     = 10,
+    ENCOUNTER_SUBSTATE_POST_BATTLE_PLAY_NPC_DEFEAT      = 11,
+    ENCOUNTER_SUBSTATE_POST_BATTLE_FLED_INIT            = 100,
+    ENCOUNTER_SUBSTATE_POST_BATTLE_FLED_FADE_IN         = 101,
+    ENCOUNTER_SUBSTATE_POST_BATTLE_FLED_RESUME          = 102,
+    ENCOUNTER_SUBSTATE_POST_BATTLE_FLED_DELAY           = 103, // delay before battle can be retriggered
+    ENCOUNTER_SUBSTATE_POST_BATTLE_LOST_INIT            = 200,
+    ENCOUNTER_SUBSTATE_POST_BATTLE_LOST_FADE_IN         = 201,
+    ENCOUNTER_SUBSTATE_POST_BATTLE_LOST_RESUME          = 202,
+    ENCOUNTER_SUBSTATE_POST_BATTLE_LOST_DELAY           = 203,
+    ENCOUNTER_SUBSTATE_POST_BATTLE_SKIP                 = 300,
+    ENCOUNTER_SUBSTATE_POST_BATTLE_ENEMY_FLED_INIT      = 400,
+    ENCOUNTER_SUBSTATE_POST_BATTLE_ENEMY_FLED_FADE_IN   = 401,
+    ENCOUNTER_SUBSTATE_POST_BATTLE_ENEMY_FLED_RESUME    = 402,
 };
 
 enum PlayerSpriteSets {

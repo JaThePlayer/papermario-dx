@@ -171,7 +171,7 @@ EvtScript N(EVS_Scene_KooverGetsMugged) = {
     Call(NpcJump0, NPC_FuzzyWithShell, LVar0, LVar1, LVar2, 20)
     PlayEffect(EFFECT_DAMAGE_STARS, FX_DAMAGE_STARS_3, LVar0, LVar1, LVar2, 0, -1, 0, 3)
     Thread
-        Call(PanToTarget, CAM_DEFAULT, 0, 0)
+        Call(PanToTarget, CAM_DEFAULT, 0, FALSE)
         Call(SetCamSpeed, CAM_DEFAULT, 4)
         Wait(60)
         Call(SetCamSpeed, CAM_DEFAULT, 1)
@@ -281,7 +281,7 @@ EvtScript N(EVS_NpcIdle_Koover_Crisis) = {
         MulF(LVarA, Float(0.7))
         Call(SetCamDistance, CAM_DEFAULT, LVarA)
         Call(SetCamSpeed, CAM_DEFAULT, 4)
-        Call(PanToTarget, CAM_DEFAULT, 0, 1)
+        Call(PanToTarget, CAM_DEFAULT, 0, TRUE)
         Call(NpcMoveTo, NPC_Koover, -280, 301, 30)
         Call(SetNpcAnimation, NPC_Koover, ANIM_Koopa_Idle)
         Wait(7)
@@ -316,7 +316,7 @@ EvtScript N(EVS_NpcIdle_Koover_Crisis) = {
 };
 
 EvtScript N(EVS_NpcIdle_FuzzyWithShell) = {
-    SetGroup(EVT_GROUP_0A)
+    SetGroup(EVT_GROUP_PASSIVE_NPC)
     IfEq(GF_NOK01_RecoveredShellA, TRUE)
         Call(SetNpcPos, NPC_FuzzyWithShell, NPC_DISPOSE_LOCATION)
         Call(SetNpcPos, NPC_KooversShell, NPC_DISPOSE_LOCATION)
@@ -371,7 +371,7 @@ EvtScript N(EVS_NpcHit_FuzzyWithShell) = {
     IfNe(LVar1, 0)
         Call(DisablePlayerInput, TRUE)
         Set(GF_NOK01_RecoveredShellA, TRUE)
-        Call(SetSelfEnemyFlagBits, ENEMY_FLAG_DISABLE_AI, 1)
+        Call(SetSelfEnemyFlagBits, ENEMY_FLAG_DISABLE_AI, TRUE)
         Thread
             Call(GetNpcPos, NPC_KooversShell, LVar0, LVar1, LVar2)
             Call(SetNpcAnimation, NPC_FuzzyWithShell, ANIM_Fuzzy_Hurt)
@@ -458,7 +458,7 @@ EvtScript N(EVS_NpcHit_FuzzyWithShell) = {
             Call(ResetCam, CAM_DEFAULT, 4)
         EndThread
         Call(DisablePlayerInput, FALSE)
-        Call(SetEnemyFlagBits, NPC_Koover, ENEMY_FLAG_400000, 0)
+        Call(SetEnemyFlagBits, NPC_Koover, ENEMY_FLAG_DO_NOT_AUTO_FACE_PLAYER, FALSE)
     EndIf
     Return
     End
@@ -506,7 +506,7 @@ EvtScript N(EVS_NpcInit_Koover_Crisis) = {
     Call(BindNpcIdle, NPC_SELF, Ref(N(EVS_NpcIdle_Koover_Crisis)))
     Call(BindNpcInteract, NPC_SELF, Ref(N(EVS_NpcInteract_Koover_Crisis)))
     IfEq(GF_NOK01_RecoveredShellA, TRUE)
-        Call(SetEnemyFlagBits, NPC_SELF, ENEMY_FLAG_400000, 0)
+        Call(SetEnemyFlagBits, NPC_SELF, ENEMY_FLAG_DO_NOT_AUTO_FACE_PLAYER, FALSE)
         Return
     EndIf
     IfGe(GB_StoryProgress, STORY_CH1_ARRIVED_AT_KOOPA_VILLAGE)

@@ -24,8 +24,7 @@ enum WorldMenuTypes {
     WORLD_MENU_PAUSE            = 2,
 };
 
-BSS s16 SwappedWorldMenus;
-BSS char D_8010C9C4[0x4];
+BSS s32 D_8010C9C4;
 BSS PopupMenu WorldPopupMenu;
 BSS s16 WorldMenuType;
 BSS s16 WorldMenuDelay;
@@ -253,7 +252,7 @@ block_17:
                                 reset_outta_sight_alpha_on_menu_close();
                                 playerStatus->flags &= ~PS_FLAG_PAUSED;
                                 gOverrideFlags &= ~GLOBAL_OVERRIDES_40;
-                                set_time_freeze_mode(TIME_FREEZE_NORMAL);
+                                set_time_freeze_mode(TIME_FREEZE_NONE);
                             }
                         } else {
                             numEntries = setup_partner_popup(popup);
@@ -295,7 +294,7 @@ block_17:
                     reset_outta_sight_alpha_on_menu_close();
                     playerStatus->flags &= ~PS_FLAG_PAUSED;
                     gOverrideFlags &= ~GLOBAL_OVERRIDES_40;
-                    set_time_freeze_mode(TIME_FREEZE_NORMAL);
+                    set_time_freeze_mode(TIME_FREEZE_NONE);
                 }
             } else {
                 WorldMenuDelay--;
@@ -363,9 +362,7 @@ block_17:
                         switch_to_partner(popup->userIndex[WorldPopupResult - 1]);
                         break;
                     case WORLD_MENU_USE_ITEM:
-                        do {
-                            use_consumable(popup->userIndex[WorldPopupResult - 1]);
-                        } while (0); // todo required to match
+                        use_consumable(popup->userIndex[WorldPopupResult - 1]);
 #ifndef VERSION_JP
                         gOverrideFlags |= GLOBAL_OVERRIDES_CANT_PICK_UP_ITEMS;
 #endif
@@ -375,7 +372,7 @@ block_17:
             reset_outta_sight_alpha_on_menu_close();
             playerStatus->flags &= ~PS_FLAG_PAUSED;
             gOverrideFlags &= ~GLOBAL_OVERRIDES_40;
-            set_time_freeze_mode(TIME_FREEZE_NORMAL);
+            set_time_freeze_mode(TIME_FREEZE_NONE);
             break;
         case WORLD_MENU_STATE_UNPAUSE:
             WorldMenuDelay--;

@@ -1,6 +1,7 @@
 #include "common.h"
 #include "nu/nusys.h"
 #include "gcc/string.h"
+#include "dx/debug_menu.h"
 
 u16 heap_nextMallocID = 0;
 
@@ -21,8 +22,7 @@ u8 sIntegerDigits[] = {
     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i',
     'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
-    's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
 };
 
 u32 gRandSeed = 1;
@@ -88,6 +88,7 @@ void* _heap_malloc(HeapNode* head, u32 size) {
     // must allocate 16 bytes or more at minimum or fail
     size = ALIGN16(size);
     if (!size) {
+        debug_printf("warning: attempt to malloc less than 16 bytes\n");
         return NULL;
     }
 
@@ -145,6 +146,7 @@ void* _heap_malloc(HeapNode* head, u32 size) {
         }
         return (u8*)pPrevHeapNode + sizeof(HeapNode);
     }
+    debug_printf("warning: out of memory\n");
     return NULL;
 }
 
@@ -160,6 +162,7 @@ void* _heap_malloc_tail(HeapNode* head, u32 size) {
 
     // make sure we have a size to allocate
     if (!size) {
+        debug_printf("warning: attempt to malloc less than 16 bytes\n");
         return NULL;
     }
 
@@ -211,6 +214,7 @@ void* _heap_malloc_tail(HeapNode* head, u32 size) {
     }
 
     // did not find a block
+    debug_printf("warning: out of memory\n");
     return NULL;
 }
 
@@ -611,23 +615,23 @@ f32 get_clamped_angle_diff(f32 a, f32 b) {
 }
 
 f32 atan2(f32 startX, f32 startZ, f32 endX, f32 endZ) {
-    f32 xDiff = endX - startX;
-    f32 zDiff = endZ - startZ;
-    f32 absXDiff = fabsf(xDiff);
-    f32 absZDiff = fabsf(zDiff);
+    f32 dx = endX - startX;
+    f32 dz = endZ - startZ;
+    f32 absXDiff = fabsf(dx);
+    f32 absZDiff = fabsf(dz);
     f32 ret;
 
     if (absZDiff < absXDiff) {
         ret = (absZDiff / absXDiff) * 45.0f;
         ret *= sAtanFactors[round(2.0f * ret)];
-        if (xDiff >= 0.0f) {
-            if (zDiff >= 0.0f) {
+        if (dx >= 0.0f) {
+            if (dz >= 0.0f) {
                 return ret + 90.0f;
             } else {
                 return 90.0f - ret;
             }
         }
-        if (zDiff >= 0.0f) {
+        if (dz >= 0.0f) {
             return 270.0f - ret;
         } else {
             return ret + 270.0f;
@@ -638,13 +642,13 @@ f32 atan2(f32 startX, f32 startZ, f32 endX, f32 endZ) {
         }
         ret = (absXDiff / absZDiff) * 45.0f;
         ret *= sAtanFactors[round(2.0f * ret)];
-        if (zDiff >= 0.0f) {
-            if (xDiff >= 0.0f) {
+        if (dz >= 0.0f) {
+            if (dx >= 0.0f) {
                 return 180.0f - ret;
             } else {
                 return ret + 180.0f;
             }
-        } else if (!(xDiff >= 0.0f)) {
+        } else if (!(dx >= 0.0f)) {
             return 360.0f - ret;
         }
     }

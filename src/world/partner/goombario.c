@@ -250,10 +250,20 @@ API_CALLABLE(N(SelectTattleMsg)) {
 
     switch (script->USE_STATE) {
         case USE_TATTLE_INIT:
+#if VERSION_JP
+            if (!(goombario->flags & NPC_FLAG_GROUNDED)) {
+                return ApiStatus_DONE2;
+            }
+            if (playerStatus->inputDisabledCount != 0) {
+                script->VAR_MSG = -1;
+                return ApiStatus_DONE2;
+            }
+#else
             if (!(goombario->flags & NPC_FLAG_GROUNDED) || playerStatus->inputDisabledCount != 0) {
                 script->VAR_MSG = -1;
                 return ApiStatus_DONE2;
             }
+#endif
             script->functionTemp[1] = 3;
             disable_player_input();
             N(IsTattleActive) = TRUE;
@@ -431,7 +441,7 @@ API_CALLABLE(N(SelectTattleMsg)) {
 API_CALLABLE(N(TattleEnd)) {
     PartnerStatus* partnerStatus = &gPartnerStatus;
 
-    set_time_freeze_mode(TIME_FREEZE_NORMAL);
+    set_time_freeze_mode(TIME_FREEZE_NONE);
 
     if (N(IsTattleActive)) {
         N(IsTattleActive) = FALSE;
@@ -489,7 +499,7 @@ void N(pre_battle)(Npc* goombario) {
     PartnerStatus* partnerStatus = &gPartnerStatus;
 
     if (partnerStatus->partnerActionState != PARTNER_ACTION_NONE) {
-        set_time_freeze_mode(TIME_FREEZE_NORMAL);
+        set_time_freeze_mode(TIME_FREEZE_NONE);
         enable_player_input();
         cancel_current_message();
         partner_clear_player_tracking(goombario);

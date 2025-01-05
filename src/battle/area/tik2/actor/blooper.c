@@ -500,16 +500,16 @@ EvtScript N(EVS_Attack_SpinDrop) = {
     IfNotFlag(LVar0, STATUS_FLAG_SHRINK)
         Call(GetActorPos, ACTOR_PLAYER, LVar0, LVar1, LVar2)
         Add(LVar1, 95)
-        Call(UseBattleCamPreset, BTL_CAM_PRESET_19)
+        Call(UseBattleCamPreset, BTL_CAM_REPOSITION)
         Call(SetBattleCamTarget, LVar0, LVar1, LVar2)
-        Call(SetBattleCamZoom, 400)
+        Call(SetBattleCamDist, 400)
         Call(MoveBattleCamOver, 130)
     Else
         Call(GetActorPos, ACTOR_PLAYER, LVar0, LVar1, LVar2)
         Add(LVar1, 72)
-        Call(UseBattleCamPreset, BTL_CAM_PRESET_19)
+        Call(UseBattleCamPreset, BTL_CAM_REPOSITION)
         Call(SetBattleCamTarget, LVar0, LVar1, LVar2)
-        Call(SetBattleCamZoom, 340)
+        Call(SetBattleCamDist, 340)
         Call(MoveBattleCamOver, 130)
     EndIf
     Call(GetActorPos, ACTOR_PLAYER, LVar0, LVar1, LVar2)
@@ -621,10 +621,10 @@ EvtScript N(EVS_Attack_InkBlast) = {
     Call(SetGoalPos, ACTOR_SELF, LVarA, LVarB, LVarC)
     Call(FallToGoal, ACTOR_SELF, 8)
     Thread
-        Call(UseBattleCamPreset, BTL_CAM_PRESET_19)
+        Call(UseBattleCamPreset, BTL_CAM_REPOSITION)
         Sub(LVar0, 30)
         Call(SetBattleCamTarget, LVar0, LVar1, LVar2)
-        Call(SetBattleCamZoom, 350)
+        Call(SetBattleCamDist, 350)
         Call(MoveBattleCamOver, 50)
     EndThread
     Call(GetActorPos, ACTOR_SELF, LVar4, LVar5, LVar6)
@@ -727,10 +727,10 @@ EvtScript N(ZoomInOnBlooper) = {
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
     Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-    Call(UseBattleCamPreset, BTL_CAM_PRESET_07)
+    Call(UseBattleCamPreset, BTL_CAM_ACTOR_GOAL_SIMPLE)
     Call(BattleCamTargetActor, ACTOR_SELF)
-    Call(SetBattleCamOffsetZ, 25) // was 50
-    Call(SetBattleCamZoom, 330)
+    Call(SetBattleCamOffsetY, 25) // was 50
+    Call(SetBattleCamDist, 330)
     Call(MoveBattleCamOver, 40)
     Wait(20)
     Call(PlaySoundAtActor, ACTOR_SELF, SOUND_BIG_POWER_UP)
@@ -739,10 +739,10 @@ EvtScript N(ZoomInOnBlooper) = {
     Thread
         Call(ShakeCam, CAM_BATTLE, 0, 10, Float(0.3))
     EndThread
-    Call(UseBattleCamPreset, BTL_CAM_PRESET_07)
+    Call(UseBattleCamPreset, BTL_CAM_ACTOR_GOAL_SIMPLE)
     Call(BattleCamTargetActor, ACTOR_SELF)
-    Call(SetBattleCamOffsetZ, 30) // was 65
-    Call(SetBattleCamZoom, 240)
+    Call(SetBattleCamOffsetY, 30) // was 65
+    Call(SetBattleCamDist, 240)
     Call(MoveBattleCamOver, 15)
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Blooper_Anim09)
     Wait(15)
@@ -750,10 +750,10 @@ EvtScript N(ZoomInOnBlooper) = {
     Thread
         Call(ShakeCam, CAM_BATTLE, 0, 10, Float(0.4))
     EndThread
-    Call(UseBattleCamPreset, BTL_CAM_PRESET_07)
+    Call(UseBattleCamPreset, BTL_CAM_ACTOR_GOAL_SIMPLE)
     Call(BattleCamTargetActor, ACTOR_SELF)
-    Call(SetBattleCamOffsetZ, 40) // was 80
-    Call(SetBattleCamZoom, 150)
+    Call(SetBattleCamOffsetY, 40) // was 80
+    Call(SetBattleCamDist, 150)
     Call(MoveBattleCamOver, 15)
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Blooper_Anim0A)
     Wait(15)
@@ -761,10 +761,10 @@ EvtScript N(ZoomInOnBlooper) = {
     Thread
         Call(ShakeCam, CAM_BATTLE, 0, 10, Float(0.5))
     EndThread
-    Call(UseBattleCamPreset, BTL_CAM_PRESET_07)
+    Call(UseBattleCamPreset, BTL_CAM_ACTOR_GOAL_SIMPLE)
     Call(BattleCamTargetActor, ACTOR_SELF)
-    Call(SetBattleCamOffsetZ, 45) // was 95
-    Call(SetBattleCamZoom, 60)
+    Call(SetBattleCamOffsetY, 45) // was 95
+    Call(SetBattleCamDist, 60)
     Call(MoveBattleCamOver, 15)
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Blooper_Anim0B)
     Wait(30)

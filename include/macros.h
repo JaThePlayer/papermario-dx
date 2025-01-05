@@ -4,53 +4,40 @@
 #include "types.h"
 #include "include_asm.h"
 
-#ifndef M2CTX
-
-#ifdef SHIFT
-#define SHIFT_BSS __attribute__ ((section (".bss")))
-#else
-#define SHIFT_BSS extern
-#endif
-
-#ifdef SHIFT
-#define MATCHING_BSS(size)
-#else
-#define MATCHING_BSS(size) static BSS u8 padding_bss[size];
-#endif
-
-#define BSS __attribute__ ((section (".bss")))
+#define BSS __attribute__ ((nocommon, section (".bss")))
 #define TRANSPARENT_UNION __attribute__ ((__transparent_union__))
-#else
-#define SHIFT_BSS static
-#define BSS static
-#define TRANSPARENT_UNION
-#endif
+
+#define ALIGNED(x) __attribute__((aligned(x)))
 
 #ifndef BBPLAYER
-# define ALIGNED(x) __attribute__((aligned(x)))
+# define OSALIGNED(x) ALIGNED(x)
 #else
-# define ALIGNED(x)
+# define OSALIGNED(x)
 #endif
 
-#define BBALIGNED(x) __attribute__((aligned(x)))
+# define BBALIGNED(x) ALIGNED(x)
 
 #define ALIGN16(val) (((val) + 0xF) & ~0xF)
 #define ALIGN8(val) (((val) + 0x7) & ~0x7)
 
+#ifdef _LANGUAGE_C_PLUS_PLUS
+#define EXTERN_C extern "C"
+#else
+#define EXTERN_C extern
+#endif
+
 #define NAME_SUFFIX
 #define NAME_PREFIX
+#ifdef _LANGUAGE_C_PLUS_PLUS
+// use C++ namespaces instead of these macros!
+#define A(sym) sym
+#define N(sym) sym
+#else
 #define A(sym) NS(AREA, NAME_PREFIX, sym, NAME_SUFFIX)
 #define N(sym) NS(NAMESPACE, NAME_PREFIX, sym, NAME_SUFFIX)
+#endif
 
 #define ARRAY_COUNT(arr) (s32)(sizeof(arr) / sizeof(arr[0]))
-
-#if !defined(PERMUTER) && !defined(M2CTX) && defined(OLD_GCC)
-#define NOP_FIX __asm__(".set nogpopt");
-#define NOP_UNFIX __asm__(".set gpopt");
-#else
-#define NOP_FIX
-#define NOP_UNFIX
-#endif
 
 #define PTR_LIST_END ((void*) -1)
 
@@ -60,34 +47,34 @@
 #define VIRTUAL_TO_PHYSICAL(addr) (u32)((u8*)(addr) - 0x80000000)
 
 //#ifdef DEBUG
-#define IS_DEBUG_PANIC(statement, file, line, func) is_debug_panic(statement, file, line, func)
+#define IS_DEBUG_PANIC(statement) is_debug_panic(statement)
 /*#else
-#define IS_DEBUG_PANIC(statement, file, line, func) do {} while(TRUE)
+#define IS_DEBUG_PANIC(statement) do {} while(TRUE)
 #endif*/
 
-#define PANIC() IS_DEBUG_PANIC("Panic", __FILE__, __LINE__, __func__)
+#define PANIC() IS_DEBUG_PANIC("Panic")
 #define PANIC_MSG(msg, args...) \
     do { \
         char panicMsg[0x40]; \
         sprintf(panicMsg, msg, ##args); \
-        IS_DEBUG_PANIC(msg, __FILE__, __LINE__, __func__); \
+        IS_DEBUG_PANIC(msg); \
     } while (0)
 #define ASSERT(condition) \
     if (!(condition)) { \
-        IS_DEBUG_PANIC("Assertion failed: " #condition, __FILE__, __LINE__, __func__); \
+        IS_DEBUG_PANIC("Assertion failed: " #condition); \
     }
 #define ASSERT_MSG(condition, msg, args...) \
     if (!(condition)) { \
         char assertMsg[0x40]; \
         sprintf(assertMsg, msg, ##args); \
-        IS_DEBUG_PANIC(assertMsg, __FILE__, __LINE__, __func__); \
+        IS_DEBUG_PANIC(assertMsg); \
     }
 
 #define BADGE_MENU_PAGE(index) (&gPauseBadgesPages[index])
 #define ITEM_MENU_PAGE(index) (&gPauseItemsPages[index])
 
 #define MENU_PANEL_SELECTED_GRID_DATA(panel) \
-    (panel)->gridData[(panel)->page * (panel)->numCols * (panel)->numRows + \
+    (panel)->gridData[(panel)->state * (panel)->numCols * (panel)->numRows + \
                       (panel)->numCols * (panel)->row + \
                       (panel)->col]
 
@@ -377,9 +364,10 @@
 #define PM_CC_23        1, TEXEL0, PRIMITIVE, TEXEL0, 0, 0, 0, TEXEL0
 #define PM_CC1_24       1, TEXEL0, PRIMITIVE, TEXEL0, 1, TEXEL0, TEXEL1, TEXEL0
 #define PM_CC2_24       1, TEXEL1, TEXEL0, COMBINED, 0, 0, 0, COMBINED
-#define PM_CC_26        0, 0, 0, 0, TEXEL0, TEXEL1, SHADE, 0
-#define PM_CC_27        0, 0, 0, SHADE, 0, 0, 0, COMBINED
-#define PM_CC_28        SHADE, 0, PRIMITIVE, ENVIRONMENT, 0, 0, 0, COMBINED
+
+#define PM_CC_TEX_COMBINE_3A        0, 0, 0, 0, TEXEL0, TEXEL1, SHADE, 0
+#define PM_CC_TEX_COMBINE_3B        0, 0, 0, SHADE, 0, 0, 0, COMBINED
+#define PM_CC_TEX_COMBINE_3C        SHADE, 0, PRIMITIVE, ENVIRONMENT, 0, 0, 0, COMBINED
 
 #define PM_CC1_29        TEXEL0, SHADE,    TEXEL0,       TEXEL0, 1, TEXEL1, TEXEL0, TEXEL1
 #define PM_CC2_29        TEXEL0, COMBINED, TEXEL0_ALPHA, TEXEL0, 1, TEXEL0, TEXEL1, TEXEL0
@@ -526,10 +514,6 @@
 #define VLA 0
 #else
 #define VLA
-#endif
-
-#ifdef M2CTX
-#define VLA 0
 #endif
 
 #if VERSION_PAL

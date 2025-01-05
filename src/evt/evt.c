@@ -869,7 +869,7 @@ ApiStatus evt_handle_OR(Evt* script) {
     s32 bits = evt_get_variable(script, *args++);
     s32 prev = evt_get_variable(script, var);
 
-    evt_set_variable(script, bits, prev | bits);
+    evt_set_variable(script, var, prev | bits);
     return ApiStatus_DONE2;
 }
 
@@ -910,11 +910,11 @@ ApiStatus evt_handle_call(Evt* script) {
 
 ApiStatus evt_handle_exec1(Evt* script) {
     Bytecode* args = script->ptrReadPos;
+    EvtScript* newSource = (EvtScript*)evt_get_variable(script, *args++);
     Evt* newScript;
     s32 i;
 
-    newScript = start_script_in_group((EvtScript*)evt_get_variable(script, *args++), script->priority, 0,
-                                      script->groupFlags);
+    newScript = start_script_in_group(newSource, script->priority, 0, script->groupFlags);
 
     newScript->owner1 = script->owner1;
     newScript->owner2 = script->owner2;
@@ -937,7 +937,7 @@ ApiStatus evt_handle_exec1(Evt* script) {
 ApiStatus evt_handle_exec1_get_id(Evt* script) {
     Bytecode* args = script->ptrReadPos;
     EvtScript* newSource = (EvtScript*)evt_get_variable(script, *args++);
-    Bytecode arg2 = *args++;
+    Bytecode outVar = *args++;
     Evt* newScript;
     s32 i;
 
@@ -957,15 +957,16 @@ ApiStatus evt_handle_exec1_get_id(Evt* script) {
     newScript->array = script->array;
     newScript->flagArray = script->flagArray;
 
-    evt_set_variable(script, arg2, newScript->id);
+    evt_set_variable(script, outVar, newScript->id);
 
     return ApiStatus_DONE2;
 }
 
 ApiStatus evt_handle_exec_wait(Evt* script) {
     Bytecode* args = script->ptrReadPos;
+    EvtScript* newSource = (EvtScript*)evt_get_variable(script, *args++);
 
-    start_child_script(script, (EvtScript*) evt_get_variable(script, *args++), 0);
+    start_child_script(script, newSource, 0);
     script->curOpcode = EVT_OP_INTERNAL_FETCH;
     return ApiStatus_FINISH;
 }
@@ -1296,15 +1297,11 @@ s32 evt_handle_print_debug_var(Evt* script) {
         sprintf(evtDebugPrintBuffer, "LF(%3d)  [%d]", var, script->varFlags[var / 32] & (1 << flagBitPos));
     } else if (var <= EVT_MAP_VAR_CUTOFF) {
         s32 mapVar;
-        s32 temp;
 
-        do {
-            var = EVT_INDEX_OF_MAP_VAR(var);
-            mapVar = gMapVars[var];
-            temp = EVT_LIMIT;
-        } while (0);
+        var = EVT_INDEX_OF_MAP_VAR(var);
+        mapVar = gMapVars[var];
 
-        if (mapVar <= temp) {
+        if (mapVar <= EVT_LIMIT) {
             sprintf(evtDebugPrintBuffer, "GW(%3d)  [%08X]", mapVar);
         } else if (mapVar <= EVT_FIXED_CUTOFF) {
             sprintf(evtDebugPrintBuffer, "GW(%3d)  [%4.2f]", var, evt_fixed_var_to_float(mapVar));
@@ -2031,14 +2028,14 @@ Bytecode* evt_find_label(Evt* script, s32 arg1) {
         return (Bytecode*) arg1;
     }
 
-    for (i = 0; i < 16; i++) {
+    for (i = 0; i < ARRAY_COUNT(script->labelIndices); i++) {
         if (script->labelIndices[i] == arg1) {
             ret = script->labelPositions[i];
             break;
         }
     }
 
-    ASSERT(i < 16);
+    ASSERT(i < ARRAY_COUNT(script->labelIndices));
     return ret;
 }
 
