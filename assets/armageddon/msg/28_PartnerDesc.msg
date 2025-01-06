@@ -19,8 +19,8 @@
 }
 
 #message:28:(PartnerDesc_Goombario_Battle_Charge) {
-	Charge attack power. It goes up[BR]
-	by 2 then returns to normal.[End]
+	Increase the Charge status by 1,[BR]
+	then double it, capping at +6.[End]
 }
 
 #message:28:(PartnerDesc_Goombario_Battle_Multibonk) {

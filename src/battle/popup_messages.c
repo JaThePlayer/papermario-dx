@@ -1325,8 +1325,8 @@ void btl_message_popup_draw_content(void* data, s32 x, s32 y) {
         case BTL_MSG_STAR_POWER_MAXED:
         case BTL_MSG_STAR_POWER_FILLED:
         case BTL_MSG_PARTNER_INJURED:
-        case BTL_MSG_CHARGE_GOOMBARIO:
-        case BTL_MSG_CHARGE_GOOMBARIO_MORE:
+       // case BTL_MSG_CHARGE_GOOMBARIO:
+       // case BTL_MSG_CHARGE_GOOMBARIO_MORE:
         case BTL_MSG_WATER_BLOCK_BEGIN:
         case BTL_MSG_WATER_BLOCK_END:
         case BTL_MSG_CLOUD_NINE_BEGIN:
@@ -1368,6 +1368,8 @@ void btl_message_popup_draw_content(void* data, s32 x, s32 y) {
         case BTL_MSG_NEXT_WAVE:
         case BTL_MSG_WAVE_BATTLE:
         case BTL_MSG_CUSTOM:
+        case BTL_MSG_CHARGE_GOOMBARIO:
+        case BTL_MSG_CHARGE_GOOMBARIO_MORE:
             messageID = BattleMessages[popup->messageIndex];
 #if !VERSION_JP
             msgLinesIdx = get_msg_lines(messageID) - 1;

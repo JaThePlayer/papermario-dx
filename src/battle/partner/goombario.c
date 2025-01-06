@@ -256,7 +256,6 @@ API_CALLABLE(N(JumpOnTarget)) {
 }
 
 API_CALLABLE(N(OnMissHeadbonk)) {
-    BattleStatus* battleStatus = &gBattleStatus;
     Actor* partner = gBattleStatus.partnerActor;
     Vec3f* pos = &partner->state.curPos;
 
@@ -359,28 +358,16 @@ API_CALLABLE(N(CloseTattleWindow)) {
     return ApiStatus_DONE2;
 }
 
+// CANT charge more
 API_CALLABLE(N(CanChargeMore)) {
     BattleStatus* battleStatus = &gBattleStatus;
     Actor* partner = battleStatus->partnerActor;
 
     script->varTable[0] = FALSE;
 
-    switch (battleStatus->selectedMoveID) {
-        case MOVE_TATTLE:
-            if (partner->isGlowing >= 99) {
-                script->varTable[0] = TRUE;
-            }
-            break;
-        case MOVE_CHARGE:
-            if (partner->isGlowing >= 99) {
-                script->varTable[0] = TRUE;
-            }
-            break;
-        case MOVE_MULTIBONK:
-            if (partner->isGlowing >= 99) {
-                script->varTable[0] = TRUE;
-            }
-            break;
+    s32 charge = custom_status_get_potency(partner, CHARGE_STATUS);
+    if (charge >= 6) {
+        script->varTable[0] = TRUE;
     }
 
     return ApiStatus_DONE2;
@@ -390,43 +377,32 @@ API_CALLABLE(N(ChargeAtPos)) {
     Bytecode* args = script->ptrReadPos;
     BattleStatus* battleStatus = &gBattleStatus;
     Actor* partner = battleStatus->partnerActor;
-    s32 boostAmount;
-    s32 x, y, z;
+
+    s32 x = evt_get_variable(script, *args++);
+    s32 y = evt_get_variable(script, *args++);
+    s32 z = evt_get_variable(script, *args++);
 
     N(isCharged) = FALSE;
     if (partner->isGlowing > 0) {
         N(isCharged) = TRUE;
     }
 
-    boostAmount = 0;
-    switch (battleStatus->selectedMoveID) {
-        case MOVE_TATTLE:
-            partner->isGlowing += 2;
-            boostAmount = 2;
-            if (partner->isGlowing >= 99) {
-                partner->isGlowing = 99;
-            }
-            break;
-        case MOVE_CHARGE:
-            partner->isGlowing += 2;
-            boostAmount = 2;
-            if (partner->isGlowing >= 99) {
-                partner->isGlowing = 99;
-            }
-            break;
-        case MOVE_MULTIBONK:
-            partner->isGlowing += 2;
-            boostAmount = 2;
-            if (partner->isGlowing >= 99) {
-                partner->isGlowing = 99;
-            }
-            break;
+    s32 currCharge = custom_status_get_potency(partner, CHARGE_STATUS);
+    s32 resultCharge = currCharge;
+    // Don't remove charge if the current charge is >= 6.
+    if (resultCharge < 6) {
+        resultCharge = (resultCharge + 1) * 2;
+        resultCharge = MIN(resultCharge, 6);
     }
 
-    x = evt_get_variable(script, *args++);
-    y = evt_get_variable(script, *args++);
-    z = evt_get_variable(script, *args++);
-    fx_stat_change(ARROW_TYPE_ATK_UP, boostAmount, x, y, z, 1.0f, 60);
+    partner->isGlowing = 1;
+
+    s32 boostAmount = resultCharge - currCharge;
+
+    if (currCharge != resultCharge)
+        try_inflict_custom_status(partner, (Vec3f) {x, y, z}, CHARGE_STATUS, 99, boostAmount, 100);
+
+    script->varTable[0xF] = boostAmount;
 
     gBattleStatus.flags1 |= BS_FLAGS1_GOOMBARIO_CHARGED;
     return ApiStatus_DONE2;
@@ -451,14 +427,6 @@ API_CALLABLE(N(StopChargeAndGet)) {
     script->varTable[0] = partner->isGlowing;
     partner->isGlowing = 0;
     gBattleStatus.flags1 &= ~BS_FLAGS1_GOOMBARIO_CHARGED;
-
-    return ApiStatus_DONE2;
-}
-
-API_CALLABLE(N(GetChargeAmount)) {
-    BattleStatus* battleStatus = &gBattleStatus;
-
-    script->varTable[0] = battleStatus->partnerActor->isGlowing;
 
     return ApiStatus_DONE2;
 }
@@ -969,17 +937,13 @@ EvtScript N(EVS_Attack_Headbonk1) = {
         Call(SetActorScale, ACTOR_PARTNER, Float(1.0), Float(1.0), Float(1.0))
     EndChildThread
     Wait(1)
-    // Call(SetNextAttackCustomStatus, DEF_DOWN_TEMP_STATUS, 1, 4, 100)
     Call(GetPartnerActionSuccess, LVar0)
     Switch(LVar0)
         CaseGt(0)
-            Call(N(GetChargeAmount))
-            Add(LVar0, 1)
-            Call(PartnerDamageEnemy, LVar0, DAMAGE_TYPE_JUMP, 0, 0, LVar0, BS_FLAGS1_NICE_HIT | BS_FLAGS1_INCLUDE_POWER_UPS)
+            Call(PartnerDamageEnemy, LVar0, DAMAGE_TYPE_JUMP, 0, 0, 1, BS_FLAGS1_NICE_HIT | BS_FLAGS1_INCLUDE_POWER_UPS)
         CaseDefault
             Call(N(StopChargeAndGet))
-            Add(LVar0, 1)
-            Call(PartnerDamageEnemy, LVar0, DAMAGE_TYPE_JUMP, 0, 0, LVar0, BS_FLAGS1_TRIGGER_EVENTS | BS_FLAGS1_INCLUDE_POWER_UPS)
+            Call(PartnerDamageEnemy, LVar0, DAMAGE_TYPE_JUMP, 0, 0, 1, BS_FLAGS1_TRIGGER_EVENTS | BS_FLAGS1_INCLUDE_POWER_UPS)
     EndSwitch
     Call(PlaySoundAtActor, ACTOR_PARTNER, SOUND_NONE)
     Switch(LVar0)
@@ -1027,9 +991,7 @@ EvtScript N(EVS_Attack_Headbonk1) = {
     EndChildThread
     Wait(1)
     Call(N(StopChargeAndGet))
-    Add(LVar0, 1)
-    // Call(SetNextAttackCustomStatus, DEF_DOWN_TEMP_STATUS, 1, 4, 100)
-    Call(PartnerDamageEnemy, LVar0, DAMAGE_TYPE_JUMP, 0, 0, LVar0, BS_FLAGS1_TRIGGER_EVENTS)
+    Call(PartnerDamageEnemy, LVar0, DAMAGE_TYPE_JUMP, 0, 0, 1, BS_FLAGS1_TRIGGER_EVENTS)
     Call(PlaySoundAtActor, ACTOR_PARTNER, SOUND_NONE)
     Call(SetActionResult, LVarF)
     ExecWait(N(EVS_ReturnHome_Success))
@@ -1079,13 +1041,10 @@ EvtScript N(EVS_Attack_Headbonk2) = {
     Call(GetPartnerActionSuccess, LVar0)
     Switch(LVar0)
         CaseGt(0)
-            Call(N(GetChargeAmount))
-            Add(LVar0, 2)
-            Call(PartnerDamageEnemy, LVar0, DAMAGE_TYPE_JUMP, 0, 0, LVar0, BS_FLAGS1_NICE_HIT | BS_FLAGS1_INCLUDE_POWER_UPS)
+            Call(PartnerDamageEnemy, LVar0, DAMAGE_TYPE_JUMP, 0, 0, 2, BS_FLAGS1_NICE_HIT | BS_FLAGS1_INCLUDE_POWER_UPS)
         CaseDefault
             Call(N(StopChargeAndGet))
-            Add(LVar0, 2)
-            Call(PartnerDamageEnemy, LVar0, DAMAGE_TYPE_JUMP, 0, 0, LVar0, BS_FLAGS1_TRIGGER_EVENTS | BS_FLAGS1_INCLUDE_POWER_UPS)
+            Call(PartnerDamageEnemy, LVar0, DAMAGE_TYPE_JUMP, 0, 0, 2, BS_FLAGS1_TRIGGER_EVENTS | BS_FLAGS1_INCLUDE_POWER_UPS)
     EndSwitch
     Call(PlaySoundAtActor, ACTOR_PARTNER, SOUND_NONE)
     Switch(LVar0)
@@ -1135,8 +1094,7 @@ EvtScript N(EVS_Attack_Headbonk2) = {
     EndChildThread
     Wait(1)
     Call(N(StopChargeAndGet))
-    Add(LVar0, 2)
-    Call(PartnerDamageEnemy, LVar0, DAMAGE_TYPE_JUMP, 0, 0, LVar0, BS_FLAGS1_TRIGGER_EVENTS)
+    Call(PartnerDamageEnemy, LVar0, DAMAGE_TYPE_JUMP, 0, 0, 2, BS_FLAGS1_TRIGGER_EVENTS)
     Call(PlaySoundAtActor, ACTOR_PARTNER, SOUND_NONE)
     Call(SetActionResult, LVarF)
     ExecWait(N(EVS_ReturnHome_Success))
@@ -1186,13 +1144,10 @@ EvtScript N(EVS_Attack_Headbonk3) = {
     Call(GetPartnerActionSuccess, LVar0)
     Switch(LVar0)
         CaseGt(0)
-            Call(N(GetChargeAmount))
-            Add(LVar0, 3)
-            Call(PartnerDamageEnemy, LVar0, DAMAGE_TYPE_JUMP, 0, 0, LVar0, BS_FLAGS1_NICE_HIT | BS_FLAGS1_INCLUDE_POWER_UPS)
+            Call(PartnerDamageEnemy, LVar0, DAMAGE_TYPE_JUMP, 0, 0, 3, BS_FLAGS1_NICE_HIT | BS_FLAGS1_INCLUDE_POWER_UPS)
         CaseDefault
             Call(N(StopChargeAndGet))
-            Add(LVar0, 3)
-            Call(PartnerDamageEnemy, LVar0, DAMAGE_TYPE_JUMP, 0, 0, LVar0, BS_FLAGS1_TRIGGER_EVENTS | BS_FLAGS1_INCLUDE_POWER_UPS)
+            Call(PartnerDamageEnemy, LVar0, DAMAGE_TYPE_JUMP, 0, 0, 3, BS_FLAGS1_TRIGGER_EVENTS | BS_FLAGS1_INCLUDE_POWER_UPS)
     EndSwitch
     Call(PlaySoundAtActor, ACTOR_PARTNER, SOUND_NONE)
     Switch(LVar0)
@@ -1251,8 +1206,7 @@ EvtScript N(EVS_Attack_Headbonk3) = {
     EndChildThread
     Wait(1)
     Call(N(StopChargeAndGet))
-    Add(LVar0, 3)
-    Call(PartnerDamageEnemy, LVar0, DAMAGE_TYPE_JUMP, 0, 0, LVar0, BS_FLAGS1_TRIGGER_EVENTS)
+    Call(PartnerDamageEnemy, LVar0, DAMAGE_TYPE_JUMP, 0, 0, 3, BS_FLAGS1_TRIGGER_EVENTS)
     Call(PlaySoundAtActor, ACTOR_PARTNER, SOUND_NONE)
     Call(SetActionResult, LVarF)
     ExecWait(N(EVS_ReturnHome_Success))
@@ -1306,13 +1260,10 @@ EvtScript N(EVS_Move_Multibonk) = {
     Call(GetPartnerActionSuccess, LVar0)
     Switch(LVar0)
         CaseGt(0)
-            Call(N(GetChargeAmount))
-            Add(LVar0, 3)
-            Call(PartnerDamageEnemy, LVar0, DAMAGE_TYPE_JUMP | DAMAGE_TYPE_POWER_BOUNCE, 0, 0, LVar0, BS_FLAGS1_NICE_HIT | BS_FLAGS1_INCLUDE_POWER_UPS)
+            Call(PartnerDamageEnemy, LVar0, DAMAGE_TYPE_JUMP | DAMAGE_TYPE_POWER_BOUNCE, 0, 0, 3, BS_FLAGS1_NICE_HIT | BS_FLAGS1_INCLUDE_POWER_UPS)
         CaseDefault
             Call(N(StopChargeAndGet))
-            Add(LVar0, 3)
-            Call(PartnerDamageEnemy, LVar0, DAMAGE_TYPE_JUMP | DAMAGE_TYPE_POWER_BOUNCE, 0, 0, LVar0, BS_FLAGS1_TRIGGER_EVENTS | BS_FLAGS1_INCLUDE_POWER_UPS)
+            Call(PartnerDamageEnemy, LVar0, DAMAGE_TYPE_JUMP | DAMAGE_TYPE_POWER_BOUNCE, 0, 0, 3, BS_FLAGS1_TRIGGER_EVENTS | BS_FLAGS1_INCLUDE_POWER_UPS)
     EndSwitch
     Call(PlaySoundAtActor, ACTOR_PARTNER, SOUND_NONE)
     Switch(LVar0)
@@ -1400,18 +1351,12 @@ EvtScript N(EVS_Move_Multibonk) = {
     Switch(LVar0)
         CaseGt(0)
             IfEq(LFlag0, FALSE)
-                Call(N(GetChargeAmount))
-                Add(LVar0, 3)
-                Call(PartnerPowerBounceEnemy, LVar0, DAMAGE_TYPE_JUMP | DAMAGE_TYPE_POWER_BOUNCE, 0, 0, LVar0, LVarD, BS_FLAGS1_NICE_HIT)
+                Call(PartnerPowerBounceEnemy, LVar0, DAMAGE_TYPE_JUMP | DAMAGE_TYPE_POWER_BOUNCE, 0, 0, 3, LVarD, BS_FLAGS1_NICE_HIT)
             Else
-                Call(N(StopChargeAndGet))
-                Add(LVar0, 3)
-                Call(PartnerPowerBounceEnemy, LVar0, DAMAGE_TYPE_JUMP | DAMAGE_TYPE_POWER_BOUNCE, 0, 0, LVar0, LVarD, BS_FLAGS1_TRIGGER_EVENTS)
+                Call(PartnerPowerBounceEnemy, LVar0, DAMAGE_TYPE_JUMP | DAMAGE_TYPE_POWER_BOUNCE, 0, 0, 3, LVarD, BS_FLAGS1_TRIGGER_EVENTS)
             EndIf
         CaseDefault
-            Call(N(StopChargeAndGet))
-            Add(LVar0, 3)
-            Call(PartnerPowerBounceEnemy, LVar0, DAMAGE_TYPE_JUMP | DAMAGE_TYPE_POWER_BOUNCE, 0, 0, LVar0, LVarD, BS_FLAGS1_TRIGGER_EVENTS)
+            Call(PartnerPowerBounceEnemy, LVar0, DAMAGE_TYPE_JUMP | DAMAGE_TYPE_POWER_BOUNCE, 0, 0, 3, LVarD, BS_FLAGS1_TRIGGER_EVENTS)
             Set(LFlag0, FALSE)
     EndSwitch
     Call(PlaySoundAtActor, ACTOR_PARTNER, SOUND_NONE)
@@ -1528,7 +1473,7 @@ EvtScript N(EVS_Move_Charge) = {
                 Call(ShowMessageBox, BTL_MSG_CHARGE_GOOMBARIO, 60)
             CaseEq(MOVE_CHARGE)
                 Call(N(GetChargeMessage))
-                Call(ShowMessageBox, LVar0, 60)
+                Call(ShowVariableMessageBox, LVar0, 60, LVarF) // LVarF set by ChargeAtPos
             CaseEq(MOVE_MULTIBONK)
                 Call(ShowMessageBox, BTL_MSG_CHARGE_GOOMBARIO, 60)
         EndSwitch

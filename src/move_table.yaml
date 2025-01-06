@@ -1238,7 +1238,7 @@
     flags: [ TARGET_FLAG_PARTNER ]
     category: MOVE_TYPE_PARTNER
     actionTip: NONE
-    costFP: 1
+    costFP: 2
     costBP: 0
 - Multibonk:
     nameMsg: MSG_PartnerMoveName_Multibonk
