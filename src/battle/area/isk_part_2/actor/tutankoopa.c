@@ -4,7 +4,11 @@
 #include "sprite/npc/BuzzyBeetle.h"
 #include "sprite/player.h"
 #include "tutankoopa_common.h"
+#include "misc_patches/custom_status.h"
 
+#include "battle/common/actor/weather_controller.h"
+
+#undef NAMESPACE
 #define NAMESPACE A(tutankoopa)
 
 extern ActorBlueprint A(chain_chomp);
@@ -50,7 +54,7 @@ enum N(ActorVars) {
     AVAR_Dialogue_Recover       = 4,
     AVAR_GateOpenAmount         = 5,
     AVAR_DebrisDropState        = 6,
-    AVAR_Unknown                = 7,  // always zero
+    AVAR_UsedPointSwap          = 7,  // ARMAGEDDON
     AVAR_Stunned                = 8,  // overlapping usage with AVAR_StunState?
     AVAR_DoneFirstStrike        = 10, // unused
     AVAR_Phase                  = 11, // ARMAGEDDON: phase counter
@@ -62,7 +66,7 @@ enum N(ActorVars) {
 enum N(ActorParams) {
     DMG_DROP_DEBRIS_SELF        = 2,
     DMG_DROP_DEBRIS_PLAYER      = 2,
-    DMG_DROP_DEBRIS_PARTNER     = 2,
+    DMG_DROP_DEBRIS_PARTNER     = 1,
     DMG_THROW_SHELL             = 3,
 };
 
@@ -240,7 +244,7 @@ ActorBlueprint NAMESPACE = {
     .flags = 0,
     .type = ACTOR_TYPE_TUTANKOOPA,
     .level = ACTOR_LEVEL_TUTANKOOPA,
-    .maxHP = 40,
+    .maxHP = 45,
     .partCount = ARRAY_COUNT(N(ActorParts)),
     .partsData = N(ActorParts),
     .initScript = &N(EVS_Init),
@@ -291,7 +295,7 @@ EvtScript N(EVS_Init) = {
     Call(SetActorVar, ACTOR_SELF, AVAR_Dialogue_Recover, FALSE)
     Call(SetActorVar, ACTOR_SELF, AVAR_ShellsLeft, 3)
     Call(SetActorVar, ACTOR_SELF, AVAR_DebrisDropState, 0)
-    Call(SetActorVar, ACTOR_SELF, AVAR_Unknown, 0)
+    Call(SetActorVar, ACTOR_SELF, AVAR_UsedPointSwap, FALSE)
     Call(SetActorVar, ACTOR_SELF, AVAR_DoneFirstStrike, FALSE)
     Call(SetActorVar, ACTOR_SELF, AVAR_Phase, FALSE)
     Call(SetActorVar, ACTOR_SELF, AVAR_NextSummonTime, 0)
@@ -507,7 +511,6 @@ EvtScript N(EVS_TemporaryKnockout) = {
     Wait(30)
     Call(RemoveEffect, LVarF)
     Call(SetActorVar, ACTOR_SELF, AVAR_Stunned, TRUE)
-    Call(SetActorVar, ACTOR_SELF, AVAR_Unknown, 0)
     Call(SetActorVar, ACTOR_SELF, AVAR_StunState, AVAL_State_Stunned)
     Call(SetIdleAnimations, ACTOR_SELF, PRT_MAIN, Ref(N(FallenAnims)))
     Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
@@ -539,6 +542,40 @@ EvtScript N(EVS_GetUpIfNeeded) = {
     End
 };
 
+EvtScript N(EVS_DoSpellAnim) = {
+    Call(UseBattleCamPreset, BTL_CAM_ACTOR)
+    Call(SetBattleCamDist, 350)
+    Call(SetBattleCamOffsetY, 0)
+    Call(BattleCamTargetActor, ACTOR_SELF)
+    Call(MoveBattleCamOver, 40)
+    Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
+    Call(SetGoalToTarget, ACTOR_SELF)
+
+    IfNe(LVarF, 0)
+        // dialog
+        Call(UseBattleCamPreset, BTL_CAM_ACTOR_CLOSE)
+        Call(BattleCamTargetActor, ACTOR_SELF)
+        Call(MoveBattleCamOver, 20)
+        Wait(20)
+        Call(ActorSpeak, LVarF, ACTOR_SELF, PRT_MAIN, ANIM_Tutankoopa_Shout, ANIM_Tutankoopa_Shout)
+        Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
+        Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
+    EndIf
+
+    Call(PlaySoundAtActor, ACTOR_SELF, SOUND_TUTANKOOPA_MAGIC)
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Tutankoopa_Shout)
+    Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
+    Add(LVar1, 20)
+    PlayEffect(EFFECT_HIEROGLYPHS, 0, LVar0, LVar1, LVar2, Float(1.0), 45, 0)
+    Wait(30)
+    Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
+    Call(MoveBattleCamOver, 70)
+    Call(PlaySound, SOUND_SPOOKY_LEVITATE)
+
+    Return
+    End
+};
+
 extern s32 BattleMessages[];
 
 API_CALLABLE(N(do_point_swap_and_show_message)) {
@@ -556,36 +593,33 @@ API_CALLABLE(N(do_point_swap_and_show_message)) {
 
     gPlayerData.curFP = hp < gPlayerData.curMaxFP ? hp : gPlayerData.curMaxFP;
 
-    BattleMessages[BTL_MSG_CUSTOM] = MSG_Menus_Buzzar_Phase2;
-    btl_show_battle_message(BTL_MSG_CUSTOM, 90);
-
+    BattleMessages[BTL_MSG_CUSTOM] = MSG_Menus_Tutan_PointSwap;
+    btl_show_battle_message(BTL_MSG_CUSTOM, 160);
 
     return ApiStatus_DONE2;
 }
 
 EvtScript N(EVS_PointSwapSpell) = {
-    Call(UseBattleCamPreset, BTL_CAM_ACTOR)
-    Call(SetBattleCamDist, 350)
-    Call(SetBattleCamOffsetY, 0)
-    Call(BattleCamTargetActor, ACTOR_SELF)
-    Call(MoveBattleCamOver, 40)
-    Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
-    Call(SetGoalToTarget, ACTOR_SELF)
-
-    Call(PlaySoundAtActor, ACTOR_SELF, SOUND_TUTANKOOPA_MAGIC)
-    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Tutankoopa_Shout)
-    Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-    Add(LVar1, 20)
-    PlayEffect(EFFECT_HIEROGLYPHS, 0, LVar0, LVar1, LVar2, Float(1.0), 45, 0)
-    Wait(30)
-    Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
-    Call(MoveBattleCamOver, 70)
-    Call(PlaySound, SOUND_SPOOKY_LEVITATE)
-    //PlayEffect(EFFECT_CHOMP_DROP, 0, 0, 60, 0, Float(0.2), 0, Float(1.4), 255, Float(0.1), 150, 0)
+    SetConst(LVarF, 0)
+    Call(GetActorVar, ACTOR_SELF, AVAR_UsedPointSwap, LVarA)
+    IfFalse(LVarA)
+        Call(SetActorVar, ACTOR_SELF, AVAR_UsedPointSwap, TRUE)
+        SetConst(LVarF, MSG_CH2_PointSwapIntro)
+    EndIf
+    ExecWait(N(EVS_DoSpellAnim))
     Wait(15)
 
     Call(N(do_point_swap_and_show_message))
     Call(WaitForMessageBoxDone)
+
+    Return
+    End
+};
+
+EvtScript N(EVS_PoisonSpell) = {
+    SetConst(LVarF, MSG_CH2_PermaPoisonIntro)
+    ExecWait(N(EVS_DoSpellAnim))
+    Call(A(EnableWeatherByType), WEATHER_TutanPoisonFog)
 
     Return
     End
@@ -609,7 +643,7 @@ phase2:
     Turn 3 - shell, shell
 phase3:
     On Begin - Poison Spell (green fog) - perma poison, unblockable
-    goto phase2 ai
+    resume phase2 ai
 */
 
 EvtScript N(EVS_TakeTurn) = {
@@ -618,20 +652,28 @@ EvtScript N(EVS_TakeTurn) = {
 
     Call(GetActorVar, ACTOR_SELF, AVAR_Phase, LVar0)
     Call(GetActorHP, ACTOR_SELF, LVar2)
-    Switch(LVar0)
-        CaseEq(0)
-            IfLe(LVar2, 25)
-                // goto phase 2
-                Call(SetActorVar, ACTOR_SELF, AVAR_Phase, 1)
-            EndIf
-        CaseEq(1)
-            IfLe(LVar2, 15)
-                // goto phase 3
-                // TODO: POISON SPELL
-                Call(SetActorVar, ACTOR_SELF, AVAR_Phase, 2)
-            EndIf
-    EndSwitch
+    IfLe(LVar2, 30)
+    IfEq(LVar0, 0)
+        // goto phase 2
+        Call(SetActorVar, ACTOR_SELF, AVAR_Phase, 1)
+        Call(SetActorVar, ACTOR_SELF, AVAR_TurnCount, 0)
+    EndIf
+    EndIf
 
+    Call(GetActorVar, ACTOR_SELF, AVAR_Phase, LVar0)
+    Call(GetActorHP, ACTOR_SELF, LVar2)
+    IfLe(LVar2, 15)
+    IfEq(LVar0, 1)
+        // goto phase 3
+        Call(SetActorVar, ACTOR_SELF, AVAR_Phase, 2)
+        Set(LVar0, 2)
+        ExecWait(N(EVS_PoisonSpell))
+        // Intentionally DON'T change the turn counter, to resume the AI from phase 2
+        // Call(SetActorVar, ACTOR_SELF, AVAR_TurnCount, 0)
+    EndIf
+    EndIf
+
+    Call(GetActorVar, ACTOR_SELF, AVAR_Phase, LVar0)
     Call(GetActorVar, ACTOR_SELF, AVAR_TurnCount, LVar1)
     Call(AddActorVar, ACTOR_SELF, AVAR_TurnCount, 1)
     Switch(LVar0)
@@ -655,12 +697,6 @@ EvtScript N(EVS_TakeTurn) = {
                 CaseEq(0)
                     ExecWait(N(EVS_SummonChompIfNeeded))
                     ExecWait(N(EVS_PointSwapSpell))
-
-                    // Backfire if never backfired and was used at least once.
-                    Call(SetActorVar, ACTOR_SELF, AVAR_DebrisDropState, LVar3)
-                    IfEq(LVar3, 2)
-                        Call(SetActorVar, ACTOR_SELF, AVAR_DebrisDropState, 1)
-                    EndIf
                     ExecWait(N(EVS_Attack_DropDebris))
                 CaseEq(1)
                     ExecWait(N(EVS_GetUpIfNeeded))
@@ -678,6 +714,37 @@ EvtScript N(EVS_TakeTurn) = {
     End
 };
 
+#define ResummonShell(Part) \
+    Call(SetAnimation, ACTOR_SELF, Part, ANIM_BuzzyBeetle_Anim06) \
+    Call(BattleCamTargetActorPart, ACTOR_SELF, Part) \
+    Wait(8) \
+    Call(PlaySoundAtActor, ACTOR_SELF, SOUND_VANISH_IN_SMOKE) \
+    Call(GetPartPos, ACTOR_SELF, Part, LVar2, LVar3, LVar4) \
+    PlayEffect(EFFECT_BIG_SMOKE_PUFF, LVar2, LVar3, LVar4, 0, 0, 0, 0, 0) \
+    Call(SetPartFlagBits, ACTOR_SELF, Part, ACTOR_PART_FLAG_INVISIBLE, FALSE)
+
+EvtScript N(EVS_ResummonShells) = {
+    ExecWait(N(EVS_DoSpellAnim))
+
+    Call(SetPartPos, ACTOR_SELF, PRT_SHELL_1, 70, 70, 3)
+    Call(SetPartPos, ACTOR_SELF, PRT_SHELL_2, 80, 70, -7)
+    Call(SetPartPos, ACTOR_SELF, PRT_SHELL_3, 60, 70, -7)
+
+    Call(UseBattleCamPreset, BTL_CAM_ACTOR_FAR)
+    Call(SetBattleCamDist, 320)
+    Call(SetBattleCamOffsetY, 0)
+
+    ResummonShell(PRT_SHELL_1)
+    ResummonShell(PRT_SHELL_2)
+    ResummonShell(PRT_SHELL_3)
+
+    Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
+    Call(SetActorVar, ACTOR_SELF, AVAR_ShellsLeft, 3)
+
+    Return
+    End
+};
+
 EvtScript N(EVS_Attack_ThrowShell) = {
     Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
     Call(GetActorVar, ACTOR_SELF, AVAR_ShellsLeft, LVar0)
@@ -690,6 +757,7 @@ EvtScript N(EVS_Attack_ThrowShell) = {
         CaseEq(3)
             Set(LVar9, PRT_SHELL_1)
         CaseDefault
+            ExecWait(N(EVS_ResummonShells))
             Return
     EndSwitch
     Sub(LVar0, 1)
@@ -772,7 +840,7 @@ EvtScript N(EVS_Attack_ThrowShell) = {
         Return
     EndIf
     Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
-    Call(YieldTurn)
+    //Call(YieldTurn)
     Call(SetGoalToHome, ACTOR_SELF)
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Tutankoopa_Run)
     Call(RunToGoal, ACTOR_SELF, 10, FALSE)
@@ -1225,7 +1293,6 @@ EvtScript N(EVS_SummonedChompHop) = {
 };
 
 EvtScript N(EVS_LevitateToHomePos) = {
-    Call(SetActorVar, ACTOR_SELF, AVAR_Unknown, 0)
     Call(UseBattleCamPreset, BTL_CAM_ACTOR_CLOSE)
     Call(BattleCamTargetActor, ACTOR_SELF)
     Call(PlaySoundAtActor, ACTOR_SELF, SOUND_TUTANKOOPA_MAGIC)
@@ -1334,6 +1401,8 @@ EvtScript N(EVS_Tutankoopa_Death) = {
             EndThread
         EndIf
     EndIf
+    SetConst(LVar0, PRT_MAIN)
+    SetConst(LVar1, ANIM_Tutankoopa_Hurt)
     ExecWait(EVS_Enemy_DeathWithoutRemove)
     Label(0)
         Call(ActorExists, ACTOR_CHOMP, LVar0)

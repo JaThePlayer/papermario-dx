@@ -607,12 +607,12 @@
 
 #message:1D:(Menus_ChargeGoombario) {
 	Goombario's attack power will[BR]
-	increase by 2![End]
+	increase by [Var 0]![End]
 }
 
 #message:1D:(Menus_ChargeGoombarioMore) {
 	Goombario's attack power will[BR]
-	increase by 2 more![End]
+	increase by [Var 0] more![End]
 }
 
 #message:1D:(Menus_StarEnergyRecharged) {
@@ -2754,4 +2754,23 @@
 	[Cursor 2][Option 2]To claim[BR]
 	[Option 255][DelayOn]
 	[SetCancel 3][EndChoice 3][End]
+}
+
+#message:1D:(Menus_Tutan_PointSwap) {
+	HP and FP swapped![End]
+}
+
+#message:1D:(Menus_Tutan_PoisonFog) {
+	The air is getting heavy...[BR]
+	Permanently poisoned![End]
+}
+
+#message:1D:(Menus_Tutan_PoisonFog_2) {
+	This poison will become[BR]
+	stronger each turn...[End]
+}
+
+#message:1D:(Menus_Tutan_PoisonFog_Stronger) {
+	The air is getting heavier...[BR]
+	Perma-poison potency increased![End]
 }

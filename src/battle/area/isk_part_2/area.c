@@ -1,5 +1,7 @@
 #include "area.h"
 
+#include "battle/common/actor/weather_controller.inc.c"
+
 extern ActorBlueprint A(tutankoopa);
 
 extern Stage A(isk_00);
@@ -19,6 +21,7 @@ Vec3i A(BossPos) = { 97, 70, 17 };
 
 Formation A(Formation_00) = {
     ACTOR_BY_POS(A(tutankoopa), A(BossPos), 10),
+    ACTOR_BY_IDX(A(weather_controller), 0, 9, WEATHER_TutanPoisonFog, TRUE),
 };
 
 BattleList A(Formations) = {

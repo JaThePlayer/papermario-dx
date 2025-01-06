@@ -1773,7 +1773,7 @@
     tattleCamOffset: [ 0, 0, 0 ]
     shadowOffset: 0
 - Tutankoopa:
-    level: 30
+    level: 20
     nameMsg: MSG_EnemyName_Tutankoopa
     tattleMsg: MSG_EnemyTattle_Tutankoopa
     walkSound: [ SOUND_ACTOR_STEP_A, SOUND_ACTOR_STEP_B ]

@@ -2888,6 +2888,22 @@
 	[Pause 10]Watch, and be amazed![Wait][End]
 }
 
+#message:0D:(CH2_PointSwapIntro) {
+	[Style right]
+	Bleah [Pause 3]heh [Pause 3]heh [Pause 3]heh[Pause 3]...[BR]
+	[Wait][Next]
+	I know more than just one spell![BR]
+	[Pause 10]Watch, and be bewildered![Wait][End]
+}
+
+#message:0D:(CH2_PermaPoisonIntro) {
+	[Style right]
+	Bleah [Pause 3]heh [Pause 3]heh [Pause 3]heh[Pause 3]...[BR]
+	[Wait][Next]
+	You thought the curse's a joke?[BR]
+	[Pause 10]Watch, and be terrified![Wait][End]
+}
+
 #message:0D:(CH2_00E6) {
 	[Style right]
 	Bleah [Pause 3]heh [Pause 3]heh [Pause 3]heh[Pause 3]...[BR]

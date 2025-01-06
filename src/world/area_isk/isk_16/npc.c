@@ -28,7 +28,7 @@ EvtScript N(EVS_NpcDefeat_Tutankoopa_01) = {
 };
 
 EvtScript N(EVS_NpcInit_Tutankoopa_01) = {
-    Call(InterpNpcYaw, NPC_Tutankoopa_01, 150, 1)
+    //Call(InterpNpcYaw, NPC_Tutankoopa_01, 150, 1)
     Switch(GB_StoryProgress)
         CaseLt(STORY_CH2_DEFEATED_TUTANKOOPA)
             Call(BindNpcIdle, NPC_SELF, Ref(N(EVS_NpcIdle_Tutankoopa_01)))
