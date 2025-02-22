@@ -1,7 +1,7 @@
 #ifndef _H_CUSTOM_STATUS_ICONS_
 #define _H_CUSTOM_STATUS_ICONS_
 
-#define CUSTOM_ICON_AMT 8
+#define CUSTOM_ICON_AMT 16
 
 #define DEF_DOWN_ICON_ID 0
 #define ATK_DOWN_ICON_ID 1
@@ -11,6 +11,7 @@
 #define FP_COST_DOWN_ICON_ID 5
 #define CHARGE_ICON_ID 6
 #define POISON_ICON_ID 7
+#define PAIN_FOCUS_ICON_ID 8
 
 typedef struct CustomHudComplexStatusIcon {
     /* 0x0 */ s8 active;

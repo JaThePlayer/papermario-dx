@@ -1708,3 +1708,12 @@
     actionTip: NONE
     costFP: 0
     costBP: 2
+- PainFocus:
+    nameMsg: MSG_ItemName_PainFocus
+    fullDescMsg: MSG_Menus_StarPowerDesc_PainFocus
+    shortDescMsg: MSG_Menus_StarPowerDesc_PainFocus
+    flags: [ TARGET_FLAG_OVERRIDE ]
+    category: MOVE_TYPE_STAR_POWER
+    actionTip: NONE
+    costFP: 0
+    costBP: 3

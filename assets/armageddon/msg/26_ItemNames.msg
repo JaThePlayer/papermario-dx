@@ -1133,3 +1133,7 @@
 #message:26:(ItemName_ThreatFocus) {
 	Threat Focus[End]
 }
+
+#message:26:(ItemName_PainFocus) {
+	Pain Focus[End]
+}

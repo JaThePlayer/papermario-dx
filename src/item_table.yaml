@@ -5239,3 +5239,17 @@
     moveID: MOVE_THREAT_FOCUS
     potencyA: 0
     potencyB: 0
+- PainFocus:
+    nameMsg: MSG_ItemName_PainFocus
+    fullDescMsg: MSG_ItemFullDesc_PainFocus
+    shortDescMsg: MSG_ItemFullDesc_PainFocus
+    icon: badge/PainFocus
+    itemEntityTemplate: STANDARD
+    hudElementTemplate: ITEM
+    sellValue: 100
+    sortValue: 52
+    targetFlags: []
+    typeFlags: [ ITEM_TYPE_FLAG_BADGE, ITEM_TYPE_FLAG_ENTITY_FULLSIZE ]
+    moveID: MOVE_PAIN_FOCUS
+    potencyA: 0
+    potencyB: 0

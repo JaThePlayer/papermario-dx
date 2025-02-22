@@ -15,6 +15,7 @@
 #define FP_COST_STATUS 7
 #define CHARGE_STATUS 8
 #define POISON_STATUS 9
+#define PAIN_FOCUS_STATUS 10
 
 #define STATUS_KEY_CUSTOM(status) (0x100 + status)
 #define STATUS_TURN_MOD_CUSTOM(status) (0x200 + status)

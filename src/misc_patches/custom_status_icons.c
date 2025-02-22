@@ -25,6 +25,7 @@ typedef struct StatusIconType {
 #include "status_icons/fp_cost.c"
 #include "status_icons/charge.c"
 #include "status_icons/poison.c"
+#include "status_icons/pain_focus.c"
 
 StatusIconType gCustomStatusIconTypes[CUSTOM_ICON_AMT] = {
     [DEF_DOWN_ICON_ID] = STATUS_ICON_ENTRY(status_temp_def_down, DEF_DOWN_TEMP_STATUS),
@@ -39,6 +40,7 @@ StatusIconType gCustomStatusIconTypes[CUSTOM_ICON_AMT] = {
         .endHudScript = &HES_PoisonedEnd,
         .customStatusid = POISON_STATUS,
     },
+    [PAIN_FOCUS_ICON_ID] = STATUS_ICON_ENTRY(status_icon_pain_focus, PAIN_FOCUS_STATUS),
 };
 
 void custom_status_icons_init(CustomHudComplexStatusIcon customIcons[CUSTOM_ICON_AMT]) {

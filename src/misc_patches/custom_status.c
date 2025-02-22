@@ -11,6 +11,7 @@
 #include "statuses/fp_cost.c"
 #include "statuses/charge.c"
 #include "statuses/poison.c"
+#include "statuses/pain_focus.c"
 
 #define STATUS_ENTRY(namespace, _isDebuff, _hasTurnCount, _stacking) { \
         .onApply = &namespace##_on_apply, \
@@ -34,6 +35,7 @@ StatusType gCustomStatusTypes[CUSTOM_STATUS_AMT] = {
     [FP_COST_STATUS] = STATUS_ENTRY(fp_cost_status, FALSE, TRUE, STATUS_STACKING_OVERRIDE),
     [CHARGE_STATUS] = STATUS_ENTRY(charge_status, FALSE, FALSE, STATUS_STACKING_ADD_POTENCY),
     [POISON_STATUS] = STATUS_ENTRY(poison_status, TRUE, TRUE, STATUS_STACKING_OVERRIDE),
+    [PAIN_FOCUS_STATUS] = STATUS_ENTRY(pain_focus_status, FALSE, TRUE, STATUS_STACKING_ADD_POTENCY),
 };
 
 StatusInfo* custom_status_get_info(Actor* actor, s8 customStatusId) {
@@ -223,6 +225,14 @@ s32 inflict_next_attack_statuses(Actor* attacker, Actor* target, Vec3f position)
                 try_inflict_custom_status(target, position, POISON_STATUS, attackerPoison->turns, attackerPoison->potency, 100);
             }
         }
+    }
+
+    StatusInfo* targetPainFocus = custom_status_get_info(target, PAIN_FOCUS_STATUS);
+    if (targetPainFocus->turns > 0) {
+        s32 potency = targetPainFocus->potency;
+        potency += target->lastDamageTaken;
+        potency = MIN(potency, 99);
+        targetPainFocus->potency = potency;
     }
 
     return inflicted;

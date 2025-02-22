@@ -1581,3 +1581,21 @@
 	can take effect at once.[BR]
 	[End]
 }
+
+#message:26:(ItemFullDesc_PainFocus) {
+	- Alt Focus Mode -[BR]
+	Replaces the Focus move.[BR]
+	Charge Star Energy based on[BR]
+	damage taken until next turn.[BR]
+	First 4 damage restores 1/8 SE[BR]
+	per damage.[BR]
+	The next 4 damage restores[BR]
+	1/8 SE per 2 damage.[BR]
+	All further damage restores[BR]
+	1/8 SE per 4 damage.[BR]
+	All badges related to Focus[BR]
+	apply to this move as well,[BR]
+	but only one Alt Focus Mode[BR]
+	can take effect at once.[BR]
+	[End]
+}

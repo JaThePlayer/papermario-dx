@@ -162,6 +162,8 @@ HudScript* battle_menu_StarPowerMovesHudScripts[] = {
 s32 fixed_star_power_index(s32 moveId) {
     if (moveId == MOVE_THREAT_FOCUS)
         moveId = MOVE_FOCUS;
+    if (moveId == MOVE_PAIN_FOCUS)
+        moveId = MOVE_FOCUS;
     return STAR_POWER_INDEX(moveId);
 }
 

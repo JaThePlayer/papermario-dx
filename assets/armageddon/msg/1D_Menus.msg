@@ -182,6 +182,21 @@
 	3 times per battle.[End]
 }
 
+#message:1D:(Menus_StarPowerDesc_PainFocus) {
+	Charge Star Energy based on[BR]
+	damage taken until next turn.[BR]
+	First 4 damage restores 1/8 SE[BR]
+	per damage.[BR]
+	The next 4 damage restores[BR]
+	1/8 SE per 2 damage.[BR]
+	All further damage restores[BR]
+	1/8 SE per 4 damage.[BR]
+	Can be used once per battle.[BR]
+	[BR]
+	SE recharges passively by 1/8[BR]
+	3 times per battle.[End]
+}
+
 #message:1D:(Menus_StarPowerDesc_Refresh) {
 	Recover HP & FP by 7.[End]
 }

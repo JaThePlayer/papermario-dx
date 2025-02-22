@@ -2,6 +2,7 @@
 #include "script_api/battle.h"
 #include "sprite/player.h"
 #include "misc_patches/misc_patches.h"
+#include "misc_patches/custom_status.h"
 
 #define NAMESPACE battle_move_focus
 
@@ -31,12 +32,15 @@ s32 count_enemies() {
     return count;
 }
 
-s32 get_base_sp_recovery() {
+s32 get_base_sp_recovery(b32 isPartner) {
     s32 sp = 0;
     switch (get_focus_move_id())
     {
         case MOVE_THREAT_FOCUS:
             sp += count_enemies() * SP_PER_SEG * 2;
+            break;
+        case MOVE_PAIN_FOCUS:
+            try_inflict_custom_status(gBattleStatus.playerActor, gBattleStatus.playerActor->curPos, PAIN_FOCUS_STATUS, 1, 1, 100);
             break;
         default:
             sp += SP_PER_SEG * 4;
@@ -60,7 +64,7 @@ ApiStatus RestoreStarPowerImpl(Evt* script, s32 isInitialCall, b32 isPartner) {
         return ApiStatus_DONE2;
     }
 
-    sp = get_base_sp_recovery();
+    sp = get_base_sp_recovery(isPartner);
     if (!isPartner) {
         sp += is_ability_active(ABILITY_DEEP_FOCUS) * SP_PER_SEG * 2;
         sp += is_ability_active(ABILITY_SUPER_FOCUS) * SP_PER_SEG * 4;
