@@ -273,7 +273,7 @@
 	The elder of Star Haven,[BR]
 	he's respected by all others.[BR]
 	His power, Refresh,[BR]
-	recovers HP & FP by 5.[End]
+	recovers HP & FP by 7.[End]
 }
 
 #message:1D:(Menus_SpiritDesc_Mamar) {

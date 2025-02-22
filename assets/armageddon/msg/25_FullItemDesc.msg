@@ -714,13 +714,18 @@
 }
 
 #message:25:(ItemFullDesc_DeepFocus) {
-	When using Focus, charges Star[BR]
-	Energy more than usual.[End]
+	Focus can be used one more[BR]
+	time per battle,[BR]
+	and it recovers an additional[BR]
+	2/8 SE per use.[BR]
+	Works with Alt Focus Mode badges.[End]
 }
 
 #message:25:(ItemFullDesc_SpikeShield) {
 	Lets Mario jump on a spiked[BR]
-	enemy without taking damage.[End]
+	enemy without taking damage,[BR]
+	dealing 1 less damage when[BR]
+	doing so.[End]
 }
 
 #message:25:(ItemFullDesc_DodgeMaster) {
@@ -746,8 +751,8 @@
 }
 
 #message:25:(ItemFullDesc_PowerRush) {
-	When Mario's in Danger, his[BR]
-	attack power increases by 2.[End]
+	When an attack puts Mario into[BR]
+	Danger, he gains +3 Charge.[End]
 }
 
 #message:25:(ItemFullDesc_LastStand) {
@@ -756,8 +761,8 @@
 }
 
 #message:25:(ItemFullDesc_MegaRush) {
-	When Mario's in Peril, his attack[BR]
-	power goes up by 4.  [End]
+	When an attack puts Mario into[BR]
+	Peril, he gains +5 Charge.[End]
 }
 
 #message:25:(ItemFullDesc_FirstAttack) {

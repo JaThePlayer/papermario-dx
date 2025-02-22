@@ -335,15 +335,20 @@ HitResult calc_player_damage_enemy(void) {
 
         #define GET_CONTACT_DMG(default) (targetPart->staticData->contactDamage == 0 ? default : targetPart->staticData->contactDamage)
 
+        b32 usedSpikeShield = FALSE;
+
         // check jumping on spiky enemy
         if ((battleStatus->curAttackElement & DAMAGE_TYPE_JUMP)
-            && (targetPart->eventFlags & ACTOR_EVENT_FLAG_SPIKY_TOP)
-            && !player_team_is_ability_active(player, ABILITY_SPIKE_SHIELD))
+            && (targetPart->eventFlags & ACTOR_EVENT_FLAG_SPIKY_TOP))
         {
-            sfx_play_sound_at_position(SOUND_HIT_SPIKE, SOUND_SPACE_DEFAULT, state->goalPos.x, state->goalPos.y, state->goalPos.z);
-            dispatch_hazard_event_player(GET_CONTACT_DMG(2), EVENT_SPIKE_CONTACT);
-            dispatch_event_actor(target, EVENT_SPIKE_TAUNT);
-            return HIT_RESULT_BACKFIRE;
+            if (player_team_is_ability_active(player, ABILITY_SPIKE_SHIELD)) {
+                usedSpikeShield = TRUE;
+            } else {
+                sfx_play_sound_at_position(SOUND_HIT_SPIKE, SOUND_SPACE_DEFAULT, state->goalPos.x, state->goalPos.y, state->goalPos.z);
+                dispatch_hazard_event_player(GET_CONTACT_DMG(2), EVENT_SPIKE_CONTACT);
+                dispatch_event_actor(target, EVENT_SPIKE_TAUNT);
+                return HIT_RESULT_BACKFIRE;
+            }
         }
 
         // check touching fiery enemy and explode on contact
@@ -385,12 +390,15 @@ HitResult calc_player_damage_enemy(void) {
         if (!(battleStatus->curAttackElement & (DAMAGE_TYPE_NO_CONTACT | DAMAGE_TYPE_SMASH))
             && targetPart->eventFlags & ACTOR_EVENT_FLAG_ALT_SPIKY
             && !(battleStatus->curAttackEventSuppression & SUPPRESS_EVENT_ALT_SPIKY)
-            && !player_team_is_ability_active(player, ABILITY_SPIKE_SHIELD)
         ) {
-            sfx_play_sound_at_position(SOUND_HIT_SPIKE, SOUND_SPACE_DEFAULT, state->goalPos.x, state->goalPos.y, state->goalPos.z);
-            dispatch_hazard_event_player(GET_CONTACT_DMG(2), EVENT_SPIKE_CONTACT);
-            dispatch_event_actor(target, EVENT_SPIKE_TAUNT);
-            return HIT_RESULT_BACKFIRE;
+            if (player_team_is_ability_active(player, ABILITY_SPIKE_SHIELD)) {
+                usedSpikeShield = TRUE;
+            } else {
+                sfx_play_sound_at_position(SOUND_HIT_SPIKE, SOUND_SPACE_DEFAULT, state->goalPos.x, state->goalPos.y, state->goalPos.z);
+                dispatch_hazard_event_player(GET_CONTACT_DMG(2), EVENT_SPIKE_CONTACT);
+                dispatch_event_actor(target, EVENT_SPIKE_TAUNT);
+                return HIT_RESULT_BACKFIRE;
+            }
         }
         #undef GET_CONTACT_DMG
 
@@ -500,6 +508,11 @@ HitResult calc_player_damage_enemy(void) {
             currentAttackDamage--;
         }
 
+        // NEW: Using Spike Shield decreases damage by one
+        if (usedSpikeShield) {
+            currentAttackDamage--;
+        }
+
         if (battleStatus->turboChargeTurnsLeft != 0) {
             currentAttackDamage++;
         }
@@ -548,6 +561,7 @@ HitResult calc_player_damage_enemy(void) {
         if (gBattleStatus.flags2 & BS_FLAGS2_HAS_RUSH
             && (gBattleStatus.flags1 & BS_FLAGS1_INCLUDE_POWER_UPS || battleStatus->curAttackElement & DAMAGE_TYPE_JUMP)
         ) {
+            /*
             if (battleStatus->rushFlags & RUSH_FLAG_POWER) {
                 currentAttackDamage += 2;
             }
@@ -555,6 +569,7 @@ HitResult calc_player_damage_enemy(void) {
             if (battleStatus->rushFlags & RUSH_FLAG_MEGA) {
                 currentAttackDamage += 4;
             }
+            */
             fx_radial_shimmer(9, state->goalPos.x, state->goalPos.y, state->goalPos.z, 0.5f, 20);
         }
 

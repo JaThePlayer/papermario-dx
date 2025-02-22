@@ -924,7 +924,7 @@
     category: MOVE_TYPE_NONE
     actionTip: NONE
     costFP: 0
-    costBP: 1
+    costBP: 2
 - CrazyHeart:
     nameMsg: MSG_ItemName_CrazyHeart
     fullDescMsg: MSG_ItemFullDesc_CrazyHeart

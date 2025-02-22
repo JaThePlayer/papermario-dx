@@ -535,7 +535,17 @@ HitResult calc_enemy_damage_target(Actor* attacker) {
                     s32 closeCalls = player_team_is_ability_active(target, ABILITY_CLOSE_CALL);
                     if (closeCalls > 0)
                         try_inflict_custom_status(target, target->curPos, CLOSE_CALL_STATUS, 1, closeCalls, 100);
+                    s32 powerRushes = player_team_is_ability_active(target, ABILITY_POWER_RUSH);
+                    if (powerRushes > 0)
+                        try_inflict_custom_status(target, target->curPos, CHARGE_STATUS, 1, powerRushes * 3, 100);
                 }
+                if (target->curHP >= 2 && nextHp > 0 && nextHp < 2) {
+                    // just entering peril after this move
+                    s32 megaRushes = player_team_is_ability_active(target, ABILITY_MEGA_RUSH);
+                    if (megaRushes > 0)
+                        try_inflict_custom_status(target, target->curPos, CHARGE_STATUS, 1, megaRushes * 5, 100);
+                }
+
                 target->curHP -= damage;
             }
 
