@@ -17,8 +17,14 @@ RED="\033[1;31m"
 GREEN='\033[1;32m'
 RESET='\033[0m'
 
-DX_DIR="${DX_DIR:-~/pm-mods/papermario-dx}"
+GIT_REPO="${GIT_REPO:-https://github.com/bates64/papermario-dx.git}"
+
+DX_DIR="${DX_DIR:-$HOME/papermario-dx}"
+DX_DIR="$(printf '%s\n' "$DX_DIR")" # Expand ~ in path
+
 COMPLETE=0
+
+echo -e "${PURPLE}This script will install Paper Mario DX in $DX_DIR.${RESET}"
 
 # Check for $DX_DIR; if it exists, exit
 #if [ -d "$DX_DIR" ]; then
@@ -39,7 +45,7 @@ else
     # Check if flakes are enabled
     if ! nix flake --help > /dev/null; then
         echo -e "${PURPLE}Nix is installed but flakes are not enabled. Enabling flakes...${RESET}"
-        echo "experimental-features = nix-command" | sudo tee -a /etc/nix/nix.conf
+        echo "experimental-features = nix-command" | sudo tee -a /etc/nix/nix.conf || echo -e "${RED}Please add \"experimental-features = nix-command\" to your Nix/NixOS config.${RESET}"
     fi
 fi
 
@@ -47,7 +53,7 @@ fi
 if ! nix config show | grep -q -E "^trusted-users = .* ${USER}($| )"; then
     # TODO: extend existing trusted-users
     echo -e "${PURPLE}Adding $USER to Nix trusted-users...${RESET}"
-    echo "trusted-users = root $USER" | sudo tee -a /etc/nix/nix.conf
+    echo "trusted-users = root $USER" | sudo tee -a /etc/nix/nix.conf || echo -e "${RED}Please add \"$USER\" to trusted-users in your Nix/NixOS config.${RESET}"
 fi
 
 # Prompt for baserom
@@ -77,13 +83,12 @@ cp "$baserom" papermario.us.z64
 nix-store --add-fixed sha256 papermario.us.z64
 
 # Clone the repository
-#git clone https://github.com/bates64/papermario-dx.git "$DX_DIR" --depth 1
+git clone "$GIT_REPO" "$DX_DIR" --depth 1
 cd "$DX_DIR"
 
 # Prepare devshell
 echo -e "${PURPLE}Downloading dependencies and splitting assets from ROM...${RESET}"
-echo -e "${PURPLE}If you are asked about adding to ${YELLOW}extra-substituters${PURPLE} or ${YELLOW}extra-trusted-public-keys${PURPLE}, type ${YELLOW}y${PURPLE} and press Enter.${RESET}"
-nix develop --profile .nix-profile --command ./configure
+nix develop --profile .nix-profile --accept-flake-config --command ./configure
 
 echo -e "${GREEN}Paper Mario DX has been installed in $DX_DIR!${RESET}"
 COMPLETE=1
