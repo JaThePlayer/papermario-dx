@@ -1,7 +1,10 @@
 #include "inventory.h"
+#include "PR/gbi.h"
 #include "hud_element.h"
 #include "dx/config.h"
 #include "dx/debug_menu.h"
+#include "macros.h"
+#include "misc_patches/misc_patches.h"
 
 #define FULLY_EXTENDED_Y  18
 #define FULLY_RETRACTED_Y -100
@@ -716,7 +719,6 @@ void update_status_bar(void) {
     StatusBar* statusBar = &gStatusBar;
     PlayerData* playerData = &gPlayerData;
     PlayerStatus* playerStatus = &gPlayerStatus;
-    s32 sp50;
     s32 sp54;
     s32 i;
     s32 x;
@@ -725,9 +727,7 @@ void update_status_bar(void) {
     s32 id;
     s32 limit;
     s32 s7;
-    s32 s1;
     s32 spBars;
-    s32 maxStarPower;
 
     if (gGameStatusPtr->introPart >= INTRO_PART_0
         || gGameStatusPtr->demoState != DEMO_STATE_NONE
@@ -1084,7 +1084,6 @@ void update_status_bar(void) {
         if ((statusBar->unk_58 / 5) & 1) {
             sp54 = TRUE;
         }
-        maxStarPower = statusBar->unk_59; // required to match
         s7 = statusBar->unk_59 % 8;
         s7 += statusBar->unk_59 / 8 * 8;
     } else {
@@ -1092,199 +1091,19 @@ void update_status_bar(void) {
     }
 
     i = 0;
-    sp50 = 0;
-    s1 = 0;
 
     if (statusBar->spBlinking != BLINK_OFF) {
         if (!showStat) {
-            s32 limit = statusBar->spBarsToBlink * 8;
-            if (sp50 < limit) {
-                while (TRUE) {
-                    i++; s1++; if (i >= limit) { break; }
-                    i++; s1++; if (i >= limit) { break; }
-                    i++; s1++; if (i >= limit) { break; }
-                    i++; s1++; if (i >= limit) { break; }
-                    i++; s1++; if (i >= limit) { break; }
-                    i++; s1++; if (i >= limit) { break; }
-                    i++; s1++; if (i >= limit) { break; }
-                    i++;
-                    s1 = 0;
-                    sp50++;
-                    if (i >= limit) {
-                        break;
-                    }
-                }
-            }
+            // start rendering after the blinking SP bars
+            i = statusBar->spBarsToBlink * (SP_PER_BAR / SP_PER_SEG);
         }
     }
 
-    while (TRUE) {
-        if (i >= limit || i >= s7 && !sp54) {
-            break;
-        }
-        i++;
-
-        hud_element_set_script(id, SPIncrementHudScripts[sp50]);
-        hud_element_set_render_pos(id, x + sp50 * 20 + StatusBarSPIncrementOffsets[0], y - 2);
-        hud_element_draw_next(id);
-
-        s1++;
-        if (i >= limit || i >= s7 && !sp54) {
-            break;
-        }
-        i++;
-        hud_element_set_script(id, SPIncrementHudScripts[sp50]);
-
-        hud_element_set_render_pos(id, x + sp50 * 20 + StatusBarSPIncrementOffsets[1], y - 2);
-        hud_element_draw_next(id);
-        s1++;
-        if (i >= limit || i >= s7 && !sp54) {
-            break;
-        }
-        i++;
-        hud_element_set_script(id, SPIncrementHudScripts[sp50]);
-        hud_element_set_render_pos(id, x + sp50 * 20 + StatusBarSPIncrementOffsets[2], y - 2);
-        hud_element_draw_next(id);
-        s1++;
-        if (i >= limit || i >= s7 && !sp54) {
-            break;
-        }
-        i++;
-        hud_element_set_script(id, SPIncrementHudScripts[sp50]);
-        hud_element_set_render_pos(id, x + sp50 * 20 + StatusBarSPIncrementOffsets[3], y - 2);
-        hud_element_draw_next(id);
-        s1++;
-        if (i >= limit || i >= s7 && !sp54) {
-            break;
-        }
-        i++;
-        hud_element_set_script(id, SPIncrementHudScripts[sp50]);
-        hud_element_set_render_pos(id, x + sp50 * 20 + StatusBarSPIncrementOffsets[4], y - 2);
-        hud_element_draw_next(id);
-        s1++;
-
-        if (i >= limit || i >= s7 && !sp54) {
-            break;
-        }
-        i++;
-        hud_element_set_script(id, SPIncrementHudScripts[sp50]);
-        hud_element_set_render_pos(id, x + sp50 * 20 + StatusBarSPIncrementOffsets[5], y - 2);
-        hud_element_draw_next(id);
-        s1++;
-
-        if (i >= limit || i >= s7 && !sp54) {
-            break;
-        }
-        i++;
-        hud_element_set_script(id, SPIncrementHudScripts[sp50]);
-        hud_element_set_render_pos(id, x + sp50 * 20 + StatusBarSPIncrementOffsets[6], y - 2);
-        hud_element_draw_next(id);
-        s1++;
-
-        if (i >= limit || i >= s7 && !sp54) {
-            break;
-        }
-        i++;
-        hud_element_set_script(id, SPStarHudScripts[sp50]);
-        hud_element_set_render_pos(id, x + 12 + sp50 * 20, y);
-        hud_element_draw_next(id);
-
-        s1 = 0;
-        sp50++;
-        if (i >= limit || i >= s7 && !sp54) {
-            break;
-        }
+    if (!sp54) {
+        limit = MIN(limit, s7);
     }
 
-    maxStarPower = playerData->maxStarPower;
-    limit = maxStarPower * 8;
-    while (TRUE) {
-        if (i >= limit) {
-            break;
-        }
-        if (s1 == 0) {
-            i++;
-            hud_element_set_script(id, &HES_StatusSPEmptyIncrement);
-            hud_element_set_render_pos(id, x + sp50 * 20 + StatusBarSPIncrementOffsets[s1], y - 2);
-            hud_element_draw_next(id);
-            if (i >= limit) {
-                break;
-            }
-            s1 = 1;
-        }
-        if (s1 == 1) {
-            i++;
-            hud_element_set_script(id, &HES_StatusSPEmptyIncrement);
-            hud_element_set_render_pos(id, x + sp50 * 20 + StatusBarSPIncrementOffsets[s1], y - 2);
-            hud_element_draw_next(id);
-            if (i >= limit) {
-                break;
-            }
-            s1 = 2;
-        }
-        if (s1 == 2) {
-            i++;
-            hud_element_set_script(id, &HES_StatusSPEmptyIncrement);
-            hud_element_set_render_pos(id, x + sp50 * 20 + StatusBarSPIncrementOffsets[s1], y - 2);
-            hud_element_draw_next(id);
-            if (i >= limit) {
-                break;
-            }
-            s1 = 3;
-        }
-        if (s1 == 3) {
-            i++;
-            hud_element_set_script(id, &HES_StatusSPEmptyIncrement);
-            hud_element_set_render_pos(id, x + sp50 * 20 + StatusBarSPIncrementOffsets[s1], y - 2);
-            hud_element_draw_next(id);
-            if (i >= limit) {
-                break;
-            }
-            s1 = 4;
-        }
-        if (s1 == 4) {
-            i++;
-            hud_element_set_script(id, &HES_StatusSPEmptyIncrement);
-            hud_element_set_render_pos(id, x + sp50 * 20 + StatusBarSPIncrementOffsets[s1], y - 2);
-            hud_element_draw_next(id);
-            if (i >= limit) {
-                break;
-            }
-            s1 = 5;
-        }
-        if (s1 == 5) {
-            i++;
-            hud_element_set_script(id, &HES_StatusSPEmptyIncrement);
-            hud_element_set_render_pos(id, x + sp50 * 20 + StatusBarSPIncrementOffsets[s1], y - 2);
-            hud_element_draw_next(id);
-            if (i >= limit) {
-                break;
-            }
-            s1 = 6;
-        }
-        if (s1 == 6) {
-            i++;
-            hud_element_set_script(id, &HES_StatusSPEmptyIncrement);
-            hud_element_set_render_pos(id, x + sp50 * 20 + StatusBarSPIncrementOffsets[s1], y - 2);
-            hud_element_draw_next(id);
-            if (i >= limit) {
-                break;
-            }
-            s1 = 7;
-        }
-
-        if (s1 == 7) {
-            i++;
-            hud_element_set_script(id, &HES_StatusStarEmpty);
-            hud_element_set_render_pos(id, x + 12 + sp50 * 20, y);
-            hud_element_draw_next(id);
-            if (i >= limit) {
-                break;
-            }
-        }
-        s1 = 0;
-        sp50++;
-    }
+    render_se_bar(id, x, y, i, limit);
 
     func_800F0D80();
     func_800F102C();
@@ -2132,12 +1951,12 @@ s32 add_star_pieces(s32 amt) {
 
 void increment_max_star_power(void) {
     gPlayerData.maxStarPower++;
-    gPlayerData.starPower = gPlayerData.maxStarPower * SP_PER_BAR;
+    gPlayerData.starPower = getMaxStarEnergy() * SP_PER_BAR;
 }
 
 void set_max_star_power(s8 newMax) {
     gPlayerData.maxStarPower = newMax;
-    gPlayerData.starPower = newMax * SP_PER_BAR;
+    gPlayerData.starPower = getMaxStarEnergy() * SP_PER_BAR;
 }
 
 void add_star_power(s32 amt) {
@@ -2156,7 +1975,7 @@ void add_star_power(s32 amt) {
 
     playerData->starPower += amt;
 
-    maxPower = playerData->maxStarPower * SP_PER_BAR;
+    maxPower = getMaxStarEnergy() * SP_PER_BAR;
     if (playerData->starPower > maxPower) {
         playerData->starPower = maxPower;
     }

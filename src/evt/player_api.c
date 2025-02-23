@@ -4,6 +4,7 @@
 #include "world/partners.h"
 #include "world/surfaces.h"
 #include "sprite/player.h"
+#include "misc_patches/misc_patches.h"
 
 extern Npc playerNpcData;
 extern u16 PlayerImgFXFlags;
@@ -491,7 +492,7 @@ API_CALLABLE(FullyRestoreHPandFP) {
 API_CALLABLE(FullyRestoreSP) {
     PlayerData* playerData = &gPlayerData;
 
-    playerData->starPower = playerData->maxStarPower * SP_PER_BAR;
+    playerData->starPower = getMaxStarEnergy() * SP_PER_BAR;
     return ApiStatus_DONE2;
 }
 

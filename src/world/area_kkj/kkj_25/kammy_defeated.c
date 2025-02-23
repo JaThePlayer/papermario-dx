@@ -1,6 +1,7 @@
 #include "kkj_25.h"
 #include "effects.h"
 #include "sprite/player.h"
+#include "misc_patches/misc_patches.h"
 
 API_CALLABLE(N(SpawnStarsOrbitingKammy2)) {
     EffectInstance* effect;
@@ -22,7 +23,7 @@ API_CALLABLE(N(UpgradeStarBeam)) {
     gPlayerData.starBeamLevel = 2;
     gPlayerData.curHP = gPlayerData.curMaxHP;
     gPlayerData.curFP = gPlayerData.curMaxFP;
-    gPlayerData.starPower = gPlayerData.maxStarPower * SP_PER_BAR;
+    gPlayerData.starPower = getMaxStarEnergy() * SP_PER_BAR;
 
     sync_status_bar();
     return ApiStatus_DONE2;

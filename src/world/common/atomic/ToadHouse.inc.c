@@ -1,6 +1,7 @@
 #include "common.h"
 #include "npc.h"
 #include "../../partners.h"
+#include "misc_patches/misc_patches.h"
 
 API_CALLABLE(N(ToadHouse_DisableStatusBar)) {
     status_bar_ignore_changes();
@@ -65,7 +66,7 @@ API_CALLABLE(N(ToadHouse_DoesPlayerNeedSleep)) {
     if (playerData->curMaxFP != playerData->curFP) {
         return ApiStatus_DONE2;
     }
-    if (playerData->starPower != playerData->maxStarPower * SP_PER_BAR) {
+    if (playerData->starPower != getMaxStarEnergy() * SP_PER_BAR) {
         return ApiStatus_DONE2;
     }
     script->varTable[1] = TRUE;

@@ -58,7 +58,7 @@ ApiStatus RestoreStarPowerImpl(Evt* script, s32 isInitialCall, b32 isPartner) {
 
     gBattleStatus.focusUses++;
 
-    if (playerData->starPower >= playerData->maxStarPower * SP_PER_BAR
+    if (playerData->starPower >= getMaxStarEnergy() * SP_PER_BAR
         || gBattleStatus.focusUses > get_focus_cap()) {
         script->varTable[0] = RESTORE_ALREADY_FULL;
         return ApiStatus_DONE2;
@@ -72,7 +72,7 @@ ApiStatus RestoreStarPowerImpl(Evt* script, s32 isInitialCall, b32 isPartner) {
 
     add_star_power(sp);
 
-    if (playerData->starPower == playerData->maxStarPower * SP_PER_BAR) {
+    if (playerData->starPower == getMaxStarEnergy() * SP_PER_BAR) {
         script->varTable[0] = RESTORE_NOW_FULL;
     }
 

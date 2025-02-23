@@ -428,6 +428,9 @@ INCLUDE_PAL("ui/status/pow_unit_6.pal", ui_status_pow_unit_6_pal);
 INCLUDE_IMG("ui/status/pow_unit_7.png", ui_status_pow_unit_7_png);
 INCLUDE_PAL("ui/status/pow_unit_7.pal", ui_status_pow_unit_7_pal);
 
+INCLUDE_IMG("ui/status/pow_unit_white.png", ui_status_pow_unit_white_png);
+INCLUDE_PAL("ui/status/pow_unit_white.pal", ui_status_pow_unit_white_pal);
+
 INCLUDE_IMG("ui/status/pow_unit_empty.png", ui_status_pow_unit_empty_png);
 INCLUDE_PAL("ui/status/pow_unit_empty.pal", ui_status_pow_unit_empty_pal);
 
@@ -454,6 +457,9 @@ INCLUDE_PAL("ui/status/pow_star_7.pal", ui_status_pow_star_7_pal);
 
 INCLUDE_IMG("ui/status/pow_star_empty.png", ui_status_pow_star_empty_png);
 INCLUDE_PAL("ui/status/pow_star_empty.pal", ui_status_pow_star_empty_pal);
+
+INCLUDE_IMG("ui/status/pow_star_white.png", ui_status_pow_star_white_png);
+INCLUDE_PAL("ui/status/pow_star_white.pal", ui_status_pow_star_white_pal);
 
 INCLUDE_IMG("ui/status/coin_0.png", ui_status_coin_0_png);
 INCLUDE_PAL("ui/status/coin_0.pal", ui_status_coin_0_pal);
@@ -2040,6 +2046,12 @@ HudScript HES_StatusSPIncrement6 = HES_TEMPLATE_CI_ENUM_SIZE(ui_status_pow_unit_
 
 HudScript HES_StatusSPIncrement7 = HES_TEMPLATE_CI_ENUM_SIZE(ui_status_pow_unit_7, 8, 8);
 
+HudScript HES_StatusSPIncrementWhite = HES_TEMPLATE_CI_ENUM_SIZE(ui_status_pow_unit_white, 8, 8);
+
+HudScript HES_StatusSPIncrementRainbow = HES_TEMPLATE_CI_ENUM_SIZE(ui_status_pow_unit_white, 8, 8);
+
+HudScript HES_StatusPowUnitWhite = HES_TEMPLATE_CI_ENUM_SIZE(ui_status_pow_unit_white, 8, 8);
+
 HudScript HES_StatusSPEmptyIncrement = HES_TEMPLATE_CI_ENUM_SIZE(ui_status_pow_unit_empty, 8, 8);
 
 HudScript HES_StatusStar1 = HES_TEMPLATE_CI_ENUM_SIZE(ui_status_pow_star_1, 8, 8);
@@ -2057,6 +2069,11 @@ HudScript HES_StatusStar6 = HES_TEMPLATE_CI_ENUM_SIZE(ui_status_pow_star_6, 8, 8
 HudScript HES_StatusStar7 = HES_TEMPLATE_CI_ENUM_SIZE(ui_status_pow_star_7, 8, 8);
 
 HudScript HES_StatusStarEmpty = HES_TEMPLATE_CI_ENUM_SIZE(ui_status_pow_star_empty, 8, 8);
+
+HudScript HES_StatusStarWhite = HES_TEMPLATE_CI_ENUM_SIZE(ui_status_pow_star_white, 8, 8);
+
+HudScript HES_StatusStarRainbow = HES_TEMPLATE_CI_ENUM_SIZE(ui_status_pow_star_white, 8, 8);
+
 
 HudScript HES_StatusHeart = {
     hs_SetTileSize(HUD_ELEMENT_SIZE_16x16)

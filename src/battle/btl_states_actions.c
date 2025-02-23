@@ -8,6 +8,7 @@
 #include "game_modes.h"
 #include "dx/debug_menu.h"
 #include "misc_patches/custom_status.h"
+#include "misc_patches/misc_patches.h"
 
 #if VERSION_JP
 extern Addr btl_states_menus_ROM_START;
@@ -1698,8 +1699,8 @@ void btl_state_update_end_turn(void) {
         // New in armageddon: Passive SP regen 3 times per battle. TODO: Make a badge to remove this.
         if (gBattleStatus.turnCounter <= 3) {
             playerData->starPower += SP_PER_SEG;
-            if (playerData->starPower > playerData->maxStarPower * SP_PER_BAR) {
-                playerData->starPower = playerData->maxStarPower * SP_PER_BAR;
+            if (playerData->starPower > getMaxStarEnergy() * SP_PER_BAR) {
+                playerData->starPower = getMaxStarEnergy() * SP_PER_BAR;
             }
         }
 

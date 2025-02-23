@@ -6,6 +6,7 @@
 
 #include "battle/common/move/StarPowerSupport.inc.c"
 
+// TODO: This is a copy of the function from focus.c. It should be moved to a shared file.
 API_CALLABLE(N(RestoreStarPower)) {
     PlayerData* playerData = &gPlayerData;
     PlayerData* playerData2 = &gPlayerData;

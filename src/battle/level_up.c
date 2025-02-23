@@ -16,6 +16,7 @@
 #include "sprite/npc/BattleLakilester.h"
 #include "sprite/npc/BattleBow.h"
 #include "sprite/player.h"
+#include "misc_patches/misc_patches.h"
 
 extern HudScript HES_ProjectorBeam;
 extern IconHudScriptPair gItemHudScripts[];
@@ -654,7 +655,7 @@ void btl_state_update_celebration(void) {
                 y = player->curPos.y + 25.0f;
                 z = player->curPos.z;
                 fx_recover(1, x, y, z, playerData->curFP);
-                playerData->starPower = playerData->maxStarPower * SP_PER_BAR;
+                playerData->starPower = getMaxStarEnergy() * SP_PER_BAR;
             }
 
             if (CelebrateSubstateTime != 0) {

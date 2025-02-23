@@ -1,5 +1,10 @@
 #include "common.h"
+#include "common_structs.h"
 #include "custom_status.h"
+#include "enemy_items/api.h"
+#include "move_enum.h"
+#include "variables.h"
+#include "hud_element.h"
 
 // returns how much fp costs are changed by
 s32 getFpCostChange(Actor* player) {
@@ -212,11 +217,148 @@ void _on_dispatch_event_actor(Actor* actor, s32 event) {
     }
 }
 
+s32 player_count_badges_with_move_id(s32 moveId) {
+    s32 sum = 0;
+    for (s32 idx = 0; idx < ARRAY_COUNT(gPlayerData.equippedBadges); idx++) {
+        s32 badgeMoveID = gItemTable[gPlayerData.equippedBadges[idx]].moveID;
+        if (badgeMoveID == moveId) {
+            sum += 1;
+        }
+    }
+    return sum;
+}
+
 s32 get_focus_move_id() {
-    if (_player_count_badges_with_move_id(MOVE_THREAT_FOCUS))
+    if (player_count_badges_with_move_id(MOVE_THREAT_FOCUS))
         return MOVE_THREAT_FOCUS;
-    if (_player_count_badges_with_move_id(MOVE_PAIN_FOCUS))
+    if (player_count_badges_with_move_id(MOVE_PAIN_FOCUS))
         return MOVE_PAIN_FOCUS;
 
     return MOVE_FOCUS;
+}
+
+s8 getMaxStarEnergy() {
+    s8 max = gPlayerData.maxStarPower;
+
+    max += player_count_badges_with_move_id(MOVE_SP_PLUS);
+
+    return max;
+}
+
+extern HudScript* SPIncrementHudScripts[];
+extern HudScript* SPStarHudScripts[];
+extern HudScript HES_StatusSPEmptyIncrement;
+extern HudScript HES_StatusStarEmpty;
+extern s32 StatusBarSPIncrementOffsets[];
+extern HudElementList* gHudElements;
+extern HudScript HES_StatusStarRainbow;
+extern HudScript HES_StatusStarWhite;
+extern HudScript HES_StatusSPIncrementRainbow;
+extern HudScript HES_StatusSPIncrementWhite;
+
+static u32 frameCounter = 0;
+
+// hue is in [0-360], s and v are in [0-1]
+Color_RGB8 hsv_to_rgb(float hue, float s, float v) {
+    int i;
+    float f, p, q, t;
+    float r, g, b;
+
+    if (s == 0) {
+        r = g = b = v;
+    } else {
+        hue /= 60.0f;
+        i = (int)hue;
+        f = hue - i;
+        p = v * (1.0f - s);
+        q = v * (1.0f - s * f);
+        t = v * (1.0f - s * (1.0f - f));
+        switch (i) {
+            case 0:
+                r = v;
+                g = t;
+                b = p;
+                break;
+            case 1:
+                r = q;
+                g = v;
+                b = p;
+                break;
+            case 2:
+                r = p;
+                g = v;
+                b = t;
+                break;
+            case 3:
+                r = p;
+                g = q;
+                b = v;
+                break;
+            case 4:
+                r = t;
+                g = p;
+                b = v;
+                break;
+            default:
+                r = v;
+                g = p;
+                b = q;
+                break;
+        }
+    }
+
+    Color_RGB8 color;
+    color.r = (u8)(r * 255.0f);
+    color.g = (u8)(g * 255.0f);
+    color.b = (u8)(b * 255.0f);
+    return color;
+}
+
+void render_se_bar(s32 id, s32 x, s32 y, s32 startSegment, s32 limit) {
+    // 7 in vanilla
+    #define MAX_SE_ICONS 8
+    s32 i = startSegment;
+    s32 maxStarPower = getMaxStarEnergy();
+    s32 maxSegments = maxStarPower * (SP_PER_BAR / SP_PER_SEG);
+
+    for (; i < maxSegments; i++) {
+        b32 isActive = i < limit;
+        s32 currentSegment = i % (SP_PER_BAR / SP_PER_SEG);
+        s32 currentSpUnit = i / (SP_PER_BAR / SP_PER_SEG);
+        s32 currentSpUnitToRender = currentSpUnit;
+        b32 isRainbow = currentSpUnit >= 7;
+        b32 isStar = currentSegment == (SP_PER_BAR / SP_PER_SEG) - 1;
+
+        if (!isActive && currentSpUnitToRender > 7)
+            break;
+
+        HudScript* script;
+        if (!isActive) {
+            script = isStar ? &HES_StatusStarEmpty : &HES_StatusSPEmptyIncrement;
+        } else if (isRainbow) {
+            script = isStar ? &HES_StatusStarRainbow : &HES_StatusSPIncrementRainbow;
+        } else if (currentSpUnitToRender + 7 <= maxStarPower - 1) {
+            script = isStar ? &HES_StatusStarWhite : &HES_StatusSPIncrementWhite;
+        } else {
+            script = isStar ? SPStarHudScripts[MIN(currentSpUnitToRender, MAX_SE_ICONS - 1)] : SPIncrementHudScripts[MIN(currentSpUnitToRender, MAX_SE_ICONS - 1)];
+        }
+        hud_element_set_script(id, script);
+
+        if (isStar) {
+            hud_element_set_render_pos(id, x + 12 + ((currentSpUnit % 7) * 20), y);
+        } else {
+            hud_element_set_render_pos(id, x + ((currentSpUnit % 7) * 20) + StatusBarSPIncrementOffsets[currentSegment], y - 2);
+        }
+
+        if (isRainbow) {
+            Color_RGB8 color = hsv_to_rgb(((i * 2) + frameCounter) % 360, 0.65, 1);
+            hud_element_set_tint(id, color.r, color.g, color.b);
+        } else {
+            hud_element_set_tint(id, 255, 255, 255);
+        }
+
+        hud_element_draw_next(id);
+    }
+
+    frameCounter++;
 }

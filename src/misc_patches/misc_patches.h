@@ -41,6 +41,12 @@ s32 get_bp_cost_of_move(s32 moveId);
 /// Returns the cap of how many times Focus can be used in one battle
 s32 get_focus_cap();
 
+s32 player_count_badges_with_move_id(s32 moveId);
+
+s8 getMaxStarEnergy();
+
+void render_se_bar(s32 id, s32 x, s32 y, s32 startSegment, s32 limit);
+
 // EVENTS
 
 /// Called when an actor gets constructed, used to zero-initialize new fields.
