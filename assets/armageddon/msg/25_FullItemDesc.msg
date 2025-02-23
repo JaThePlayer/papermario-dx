@@ -751,8 +751,10 @@
 }
 
 #message:25:(ItemFullDesc_PowerRush) {
+	When Mario's in Danger, his[BR]
+	attack power increases by 1.[BR]
 	When an attack puts Mario into[BR]
-	Danger, he gains +3 Charge.[End]
+	Danger, he gains +1 Charge.[End]
 }
 
 #message:25:(ItemFullDesc_LastStand) {
@@ -761,8 +763,10 @@
 }
 
 #message:25:(ItemFullDesc_MegaRush) {
+	When Mario's in Peril, his[BR]
+	attack power increases by 2.[BR]
 	When an attack puts Mario into[BR]
-	Peril, he gains +5 Charge.[End]
+	Peril, he gains +3 Charge.[End]
 }
 
 #message:25:(ItemFullDesc_FirstAttack) {

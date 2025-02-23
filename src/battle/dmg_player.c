@@ -561,15 +561,13 @@ HitResult calc_player_damage_enemy(void) {
         if (gBattleStatus.flags2 & BS_FLAGS2_HAS_RUSH
             && (gBattleStatus.flags1 & BS_FLAGS1_INCLUDE_POWER_UPS || battleStatus->curAttackElement & DAMAGE_TYPE_JUMP)
         ) {
-            /*
             if (battleStatus->rushFlags & RUSH_FLAG_POWER) {
-                currentAttackDamage += 2;
+                currentAttackDamage++;
             }
 
             if (battleStatus->rushFlags & RUSH_FLAG_MEGA) {
-                currentAttackDamage += 4;
+                currentAttackDamage += 2;
             }
-            */
             fx_radial_shimmer(9, state->goalPos.x, state->goalPos.y, state->goalPos.z, 0.5f, 20);
         }
 
