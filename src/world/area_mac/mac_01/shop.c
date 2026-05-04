@@ -9,7 +9,7 @@ typedef struct RowfBadgeOption {
 RowfBadgeOption N(RowfBadgeInventory)[] = {
     { .itemID = ITEM_SPIN_SMASH,     .price =  50, .story = STORY_CH1_STAR_SPRIT_DEPARTED },
     { .itemID = ITEM_FIRST_ATTACK,   .price = 100, .story = STORY_CH1_STAR_SPRIT_DEPARTED  },
-    { .itemID = ITEM_MONEY_MONEY,    .price = 100, .story = STORY_CH1_STAR_SPRIT_DEPARTED  },
+    { .itemID = ITEM_MONEY_MONEY,    .price =  75, .story = STORY_CH1_STAR_SPRIT_DEPARTED  },
     { .itemID = ITEM_D_DOWN_POUND,   .price =  75, .story = STORY_CH1_STAR_SPRIT_DEPARTED  },
 
     { .itemID = ITEM_DODGE_MASTER,   .price = 100, .story = STORY_CH2_STAR_SPRIT_DEPARTED },
