@@ -1608,3 +1608,7 @@
 	can take effect at once.[BR]
 	[End]
 }
+
+#message:26:(ItemFullDesc_SPPlus) {
+	Increases maximum SE by 1 bar.[End]
+}

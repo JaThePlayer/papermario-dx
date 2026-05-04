@@ -1137,3 +1137,7 @@
 #message:26:(ItemName_PainFocus) {
 	Pain Focus[End]
 }
+
+#message:26:(ItemName_SPPlus) {
+	SE Plus[End]
+}

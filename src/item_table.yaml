@@ -5253,3 +5253,17 @@
     moveID: MOVE_PAIN_FOCUS
     potencyA: 0
     potencyB: 0
+- SPPlus:
+    nameMsg: MSG_ItemName_SPPlus
+    fullDescMsg: MSG_ItemFullDesc_SPPlus
+    shortDescMsg: MSG_ItemFullDesc_SPPlus
+    icon: badge/SPPlus
+    itemEntityTemplate: STANDARD
+    hudElementTemplate: ITEM
+    sellValue: 150
+    sortValue: 58
+    targetFlags: []
+    typeFlags: [ ITEM_TYPE_FLAG_BADGE, ITEM_TYPE_FLAG_ENTITY_FULLSIZE ]
+    moveID: MOVE_SP_PLUS
+    potencyA: 0
+    potencyB: 0

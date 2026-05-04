@@ -1717,3 +1717,12 @@
     actionTip: NONE
     costFP: 0
     costBP: 3
+- SPPlus:
+    nameMsg: MSG_ItemName_SPPlus
+    fullDescMsg: MSG_ItemFullDesc_SPPlus
+    shortDescMsg: MSG_ItemFullDesc_SPPlus
+    flags: [ TARGET_FLAG_OVERRIDE ]
+    category: MOVE_TYPE_STAR_POWER
+    actionTip: NONE
+    costFP: 0
+    costBP: 4
