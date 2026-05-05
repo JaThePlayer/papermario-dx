@@ -893,3 +893,50 @@
 }
 
 
+#message:08:(ChetRippo_HpUp_Name) {
+	HP Up[End]
+}
+
+#message:08:(ChetRippo_HpUp_Desc) {
+	Increase Max HP by 5.[End]
+}
+
+#message:08:(ChetRippo_FpUp_Name) {
+	FP Up[End]
+}
+
+#message:08:(ChetRippo_FpUp_Desc) {
+	Increase Max FP by 5.[End]
+}
+
+#message:08:(ChetRippo_BpUp_Name) {
+	BP Up[End]
+}
+
+#message:08:(ChetRippo_BpUp_Desc) {
+	Increase Max BP by 3.[End]
+}
+
+#message:08:(ChetRippo_HpDown_Name) {
+	HP Down[End]
+}
+
+#message:08:(ChetRippo_HpDown_Desc) {
+	Decrease Max HP by 5.[End]
+}
+
+#message:08:(ChetRippo_FpDown_Name) {
+	FP Down[End]
+}
+
+#message:08:(ChetRippo_FpDown_Desc) {
+	Decrease Max FP by 5.[End]
+}
+
+#message:08:(ChetRippo_BpDown_Name) {
+	BP Down[End]
+}
+
+#message:08:(ChetRippo_BpDown_Desc) {
+	Decrease Max BP by 3.[End]
+}

@@ -460,7 +460,7 @@ s32 popup_menu_update(void) {
             hud_element_set_flags(elementID, HUD_ELEMENT_FLAG_DROP_SHADOW | HUD_ELEMENT_FLAG_80);
 
             if (gPopupMenu->popupType == POPUP_MENU_TRADE_FOR_BADGE) {
-                PopupMenu_TitleIconHEID = hud_element_create(&HES_StatusStarPiece);
+                PopupMenu_TitleIconHEID = hud_element_create(gPopupMenu->userData[1] != NULL ? (HudScript*)gPopupMenu->userData[1] : &HES_StatusStarPiece);
                 elementID = PopupMenu_TitleIconHEID;
                 hud_element_set_flags(elementID, HUD_ELEMENT_FLAG_80);
                 hud_element_set_tint(elementID, 255, 255, 255);
@@ -1950,8 +1950,10 @@ void popup_menu_draw_title_contents(
                     break;
             }
             break;
-        case POPUP_MENU_TRADE_FOR_BADGE:
-            draw_msg(MSG_MenuTip_0032, baseX + POPUP_BADGE_X, baseY + 2, PopupMenu_Alpha, MSG_PAL_32, DRAW_MSG_STYLE_MENU);
+        case POPUP_MENU_TRADE_FOR_BADGE: {
+            s32 msgId = gPopupMenu->userData[3] != NULL ? (s32)gPopupMenu->userData[3] : MSG_MenuTip_0032;
+            draw_msg(msgId, baseX + POPUP_BADGE_X, baseY + 2, PopupMenu_Alpha, MSG_PAL_32, DRAW_MSG_STYLE_MENU);
+        }
             break;
         case POPUP_MENU_TRIAL_SELECT:
             draw_msg(MSG_MenuTip_BooTrial, baseX + POPUP_BADGE_X, baseY + 2, PopupMenu_Alpha, MSG_PAL_32, DRAW_MSG_STYLE_MENU);
@@ -2112,10 +2114,13 @@ void func_800F4944(s32* userData, s32 baseX, s32 baseY, s32 width, s32 height, s
                 draw_msg(MSG_Menus_0064, baseX, baseY - 4, 255, MSG_PAL_0F, 0);
                 break;
             case POPUP_MENU_TRADE_FOR_BADGE:
-                msgWidth = get_msg_width(MSG_Menus_0070, 0);
+            {
+                s32 tradeMsgId = gPopupMenu->userData[2] != NULL ? (s32)gPopupMenu->userData[2] : MSG_Menus_0070;
+                msgWidth = get_msg_width(tradeMsgId, 0);
                 baseX += 64 - (msgWidth / 2);
-                draw_msg(MSG_Menus_0070, baseX, baseY - 4, 255, MSG_PAL_0F, 0);
+                draw_msg(tradeMsgId, baseX, baseY - 4, 255, MSG_PAL_0F, 0);
                 break;
+            }
             case POPUP_MENU_UPGRADE_PARTNER:
                 msgWidth = get_msg_width(MSG_Menus_006A, 0);
                 baseX += 68 - (msgWidth / 2);
@@ -2124,7 +2129,7 @@ void func_800F4944(s32* userData, s32 baseX, s32 baseY, s32 width, s32 height, s
             case POPUP_MENU_SELL_ITEM: {
                 s32 msgId = MSG_Menus_0065;
                 if (gPopupMenu->userData[0] != NULL)
-                    msgId = gPopupMenu->userData[0];
+                    msgId = (s32)gPopupMenu->userData[0];
                 msgWidth = get_msg_width(msgId, 0);
                 baseX += 60 - (msgWidth / 2);
                 draw_msg(msgId, baseX, baseY, 255, MSG_PAL_0F, 0);
@@ -2269,7 +2274,14 @@ void func_800F4D28(s32* userData, s32 x, s32 y) {
 
     type = gPopupMenu->popupType;
     if (type == POPUP_TYPE_TRADE_FOR_BADGE) {
-        draw_number(playerData->starPieces, x + 58, y + 4, DRAW_NUMBER_CHARSET_THIN, MSG_PAL_STANDARD, PopupMenu_Alpha, DRAW_NUMBER_STYLE_MONOSPACE | DRAW_NUMBER_STYLE_ALIGN_RIGHT);
+        s32 number = playerData->starPieces;
+        if (gPopupMenu->userData[0] != NULL) {
+            number = (s32)gPopupMenu->userData[0];
+            if (number == 0xffffffff) {
+                number = 0;
+            }
+        }
+        draw_number(number, x + 58, y + 4, DRAW_NUMBER_CHARSET_THIN, MSG_PAL_STANDARD, PopupMenu_Alpha, DRAW_NUMBER_STYLE_MONOSPACE | DRAW_NUMBER_STYLE_ALIGN_RIGHT);
     }
 }
 

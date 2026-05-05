@@ -564,6 +564,15 @@
 	which one?[End]
 }
 
+#message:1D:(Menus_ChetRippo_UI_Left) {
+	Change[BR]
+	which one?[End]
+}
+
+#message:1F:(Menus_ChetRippo_UI_Title) {
+	Stat[End]
+}
+
 #message:1D:(Menus_Merlee_IncreaseAttack) {
 	The spell will increase[BR]
 	your attack power![End]

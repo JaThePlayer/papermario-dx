@@ -4,6 +4,11 @@
 #include "common.h"
 
 #define LEVEL_CAP 27
+#define MAX_HP 50
+#define MAX_CURR_HP 75
+#define MAX_FP 50
+#define MAX_CURR_FP 75
+#define MAX_BP 30
 
 // returns how much fp costs are changed by
 s32 getFpCostChange(Actor* player);
