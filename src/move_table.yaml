@@ -618,7 +618,7 @@
     category: MOVE_TYPE_DEFENSE_UP
     actionTip: NONE
     costFP: 0
-    costBP: 3
+    costBP: 2
 - FeelingFine:
     nameMsg: MSG_ItemName_FeelingFine
     fullDescMsg: MSG_ItemFullDesc_FeelingFine

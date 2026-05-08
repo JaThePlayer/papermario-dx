@@ -1,4 +1,5 @@
 #include "common.h"
+#include "move_enum.h"
 #include "script_api/battle.h"
 #include "ld_addrs.h"
 #include "effects.h"
@@ -1697,8 +1698,10 @@ void btl_state_update_end_turn(void) {
         btl_set_player_idle_anims();
         gBattleStatus.flags1 &= ~BS_FLAGS1_PLAYER_DEFENDING;
         // New in armageddon: Passive SP regen 3 times per battle. TODO: Make a badge to remove this.
-        if (gBattleStatus.turnCounter <= 3) {
-            playerData->starPower += SP_PER_SEG;
+        s32 starCharms = player_count_badges_with_move_id(MOVE_PRETTY_LUCKY);
+        s32 starTuners = player_count_badges_with_move_id(MOVE_LUCKY_DAY);
+        if (starTuners > 0 || gBattleStatus.turnCounter <= (starCharms + 3)) {
+            playerData->starPower += SP_PER_SEG * (starCharms + (starTuners * 2) + 1);
             if (playerData->starPower > getMaxStarEnergy() * SP_PER_BAR) {
                 playerData->starPower = getMaxStarEnergy() * SP_PER_BAR;
             }

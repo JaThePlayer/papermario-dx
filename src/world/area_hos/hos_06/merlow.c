@@ -1,5 +1,7 @@
+#include "functions.h"
 #include "hos_06.h"
 #include "hud_element.h"
+#include "item_enum.h"
 
 extern IconHudScriptPair gItemHudScripts[];
 
@@ -49,7 +51,7 @@ EvtScript N(EVS_NpcInteract_Merluvlee_Passthrough) = {
     End
 };
 
-// Star Pieces: =vanilla-5+16+8-25
+// Star Pieces: =vanilla-5+16+12-25
 // Obtainable: =vanilla + 1(Boo Trial)
 ShopItemData N(MerlowBadgeInventory)[MERLOW_BADGE_COUNT] = {
     { .itemID = ITEM_ATTACK_FX_A,    .price =  1 },
@@ -57,7 +59,6 @@ ShopItemData N(MerlowBadgeInventory)[MERLOW_BADGE_COUNT] = {
     { .itemID = ITEM_PEEKABOO,       .price =  2 }, // was 10 -> -8
     { .itemID = ITEM_BERSERKER,      .price =  3 },
     { .itemID = ITEM_PRETTY_LUCKY,   .price =  5 },
-    { .itemID = ITEM_SHRINK_STOMP,   .price =  8 }, // new 8
 
     { .itemID = ITEM_HAPPY_HEART_A,  .price =  8 },
     { .itemID = ITEM_HAPPY_FLOWER_A, .price =  8 },
@@ -65,6 +66,7 @@ ShopItemData N(MerlowBadgeInventory)[MERLOW_BADGE_COUNT] = {
     { .itemID = ITEM_ZAP_TAP,        .price = 10 },
     { .itemID = ITEM_HEART_FINDER,   .price = 12 },
     { .itemID = ITEM_FLOWER_FINDER,  .price = 12 },
+    { .itemID = ITEM_SP_PLUS,        .price = 12 }, // new 12
 
     { .itemID = ITEM_HP_DRAIN,       .price = 15 },
     { .itemID = ITEM_FLOWER_SAVER_A, .price = 16 }, // was 25

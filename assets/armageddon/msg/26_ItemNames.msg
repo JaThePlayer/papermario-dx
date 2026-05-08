@@ -515,11 +515,11 @@
 }
 
 #message:26:(ItemName_PrettyLucky) {
-	Pretty Lucky[End]
+	Star Charm[End]
 }
 
 #message:26:(ItemName_LuckyDay) {
-	Lucky Day[End]
+	Star Tuner[End]
 }
 
 #message:26:(ItemName_CloseCall) {

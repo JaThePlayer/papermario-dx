@@ -734,13 +734,17 @@
 }
 
 #message:25:(ItemFullDesc_PrettyLucky) {
-	Makes enemies fail to attack[BR]
-	Mario every once in a while.[End]
+	Increase passive SE recovery[BR]
+	by 1/8 SE per turn.[BR]
+	Passive SE recovery lasts[BR]
+	for an additional turn.[END]
 }
 
 #message:25:(ItemFullDesc_LuckyDay) {
-	Sometimes makes enemies fail to[BR]
-	attack Mario.[End]
+	Increase passive SE recovery[BR]
+	by 2/8 SE per turn.[BR]
+	Passive SE recovery[BR]
+	never runs out.[END]
 }
 
 #message:25:(ItemFullDesc_CloseCall) {

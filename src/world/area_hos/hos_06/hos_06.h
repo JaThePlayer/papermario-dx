@@ -12,7 +12,7 @@
 #include "sprite/npc/Merlow.h"
 #include "sprite/npc/Merluvlee.h"
 
-#define MERLOW_BADGE_COUNT 15
+#define MERLOW_BADGE_COUNT 16
 
 enum {
     NPC_Merluvlee   = 0,
