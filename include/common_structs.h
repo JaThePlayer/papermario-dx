@@ -1969,6 +1969,7 @@ typedef struct Actor {
     /* new   */ u8 attackedThisTurn;
     /* new   */ s8 overridenLevel; // set to -1 by default, when > 0, overrides the `level` in the Blueprint for star point dropping purposes.
     /* new   */ struct EvtScript* onEnemyDamagedScript; // Invoked when any damage in the battle got damaged.
+    /* new   */ u8 inflictedImmobilisingStatusFlags; // Each bit indicates whether a specific immobilising status has been inflicted on this actor, to implement the status cap.
 } Actor; // size = 0x444
 
 typedef struct BackgroundHeader {

@@ -8,6 +8,7 @@
 - Custom status effect support
 - You get the full item description everywhere and can use C-Up/Down to scroll through it
 - Status Effect Rework - Sleep, Dizzy
+- Immobilizing statuses can now only be applied once per enemy per status type.
 
 ## Minor
 - Hammer first strikes deal full damage

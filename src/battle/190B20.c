@@ -1,4 +1,5 @@
 #include "common.h"
+#include "enums.h"
 #include "nu/nusys.h"
 #include "effects.h"
 #include "battle/battle.h"
@@ -2098,9 +2099,38 @@ s32 lookup_status_duration_mod(s32* statusTable, s32 statusKey) {
     return defaultTurnMod;
 }
 
+s32 get_bit_in_immobilising_status_mask(s32 statusTypeKey) {
+    switch (statusTypeKey) {
+        case STATUS_KEY_DIZZY:
+            return 0;
+        case STATUS_KEY_PARALYZE:
+            return 1;
+        case STATUS_KEY_SLEEP:
+            return 2;
+        case STATUS_KEY_FROZEN:
+            return 3;
+        case STATUS_KEY_STOP:
+            return 4;
+        case STATUS_KEY_STATIC:
+            return 5;
+        case STATUS_KEY_STONE:
+            return 6;
+    }
+
+    return -1;
+}
+
 s32 inflict_status(Actor* target, s32 statusTypeKey, s32 duration) {
     BattleStatus* battleStatus = &gBattleStatus;
     EffectInstance* effect;
+    s32 bitInImmobilisingStatusMask = get_bit_in_immobilising_status_mask(statusTypeKey);
+    if (bitInImmobilisingStatusMask >= 0) {
+        if (target->inflictedImmobilisingStatusFlags & (1 << bitInImmobilisingStatusMask)) {
+            return FALSE;
+        }
+
+        target->inflictedImmobilisingStatusFlags |= (1 << bitInImmobilisingStatusMask);
+    }
 
     switch (statusTypeKey) {
         case STATUS_KEY_FEAR:
@@ -2566,6 +2596,12 @@ s32 try_inflict_status(Actor* actor, s32 statusTypeKey, s32 statusKey) {
     BattleStatus* battleStatus = &gBattleStatus;
     s32 chance;
     s32 duration;
+
+    s32 bitInImmobilisingStatusMask = get_bit_in_immobilising_status_mask(statusTypeKey);
+    if (bitInImmobilisingStatusMask >= 0 && actor->inflictedImmobilisingStatusFlags & (1 << bitInImmobilisingStatusMask)) {
+        return 0;
+    }
+
 
     if (battleStatus->statusChance == STATUS_KEY_IGNORE_RES) {
         duration = battleStatus->statusDuration;
