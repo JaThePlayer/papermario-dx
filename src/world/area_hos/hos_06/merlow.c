@@ -99,6 +99,7 @@ API_CALLABLE(N(Merlow_ShopBadgesPopup)) {
     if (isInitialCall) {
         script->functionTempPtr[2] = heap_malloc(sizeof(*menu));
         menu = script->functionTempPtr[2];
+        mem_clear(menu, sizeof(*menu));
         menuPos = 0;
         for (i = 0; i < MERLOW_BADGE_COUNT; i++) {
             ShopItemData* shopItem = &N(MerlowBadgeInventory)[i];

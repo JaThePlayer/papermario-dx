@@ -216,6 +216,7 @@ API_CALLABLE(N(ChetRippo_CreatePopup)) {
     if (isInitialCall) {
         script->functionTempPtr[2] = heap_malloc(sizeof(*menu));
         menu = script->functionTempPtr[2];
+        mem_clear(menu, sizeof(*menu));
 
         N(ChetRippo_PopulatePopupEntries)(menu, script);
 
