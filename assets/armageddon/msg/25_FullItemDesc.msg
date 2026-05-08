@@ -198,7 +198,7 @@
 
 #message:25:(ItemFullDesc_SleepySheep) {
 	If it works, makes all enemies [BR]
-	sleep for a little while.[End]
+	sleep for a 2 turns.[End]
 }
 
 #message:25:(ItemFullDesc_POWBlock) {

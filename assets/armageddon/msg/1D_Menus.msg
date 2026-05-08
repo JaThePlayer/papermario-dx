@@ -203,7 +203,7 @@
 
 #message:1D:(Menus_StarPowerDesc_Lullaby) {
 	Lull enemies to sleep with[BR]
-	a tender lullaby.[BR]
+	a tender lullaby for 3 turns.[BR]
 	[End]
 }
 

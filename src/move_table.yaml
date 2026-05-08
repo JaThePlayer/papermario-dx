@@ -1112,8 +1112,8 @@
     flags: [ TARGET_FLAG_2, TARGET_FLAG_PRIMARY_ONLY ]
     category: MOVE_TYPE_STAR_POWER
     actionTip: NONE
-    costFP: 2
-    costBP: 2
+    costFP: 1
+    costBP: 1
 - StarStorm:
     nameMsg: MSG_Menus_StarPower_StarStorm
     fullDescMsg: MSG_Menus_StarPowerDesc_StarStorm
