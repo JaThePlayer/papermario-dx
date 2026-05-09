@@ -1,3 +1,4 @@
+#include "misc_patches/misc_events.h"
 #include "states.h"
 #include "model.h"
 #include "script_api/battle.h"
@@ -165,6 +166,7 @@ void btl_state_update_normal_start(void) {
             battleStatus->camMovementScript = script;
             battleStatus->camMovementScriptID = script->id;
             gBattleSubState = BTL_SUBSTATE_CREATE_ENEMIES;
+            _on_battle_start();
             break;
         case BTL_SUBSTATE_CREATE_ENEMIES:
             // wait for camera initialization to finish

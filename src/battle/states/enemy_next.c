@@ -63,7 +63,8 @@ void btl_state_update_next_enemy(void) {
                 skipEnemy = true;
             }
             if (enemy->debuff == STATUS_KEY_DIZZY) {
-                skipEnemy = true;
+                // Armageddon: don't skip dizzy enemies
+                //skipEnemy = true;
             }
             if (enemy->debuff == STATUS_KEY_PARALYZE) {
                 skipEnemy = true;

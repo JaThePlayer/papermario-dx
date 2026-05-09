@@ -1,3 +1,5 @@
+#include "PR/ultratypes.h"
+#include "misc_patches/misc_events.h"
 #include "states.h"
 
 enum {
@@ -117,13 +119,13 @@ void btl_state_update_end_turn(void) {
 
         btl_set_player_idle_anims();
         gBattleStatus.flags1 &= ~BS_FLAGS1_PLAYER_DEFENDING;
-        playerData->starPower += SP_PER_SEG;
-        if (playerData->starPower > playerData->maxStarPower * SP_PER_BAR) {
-            playerData->starPower = playerData->maxStarPower * SP_PER_BAR;
-        }
+        _on_handle_passive_se_regen();
 
         for (i = 0; i < ARRAY_COUNT(battleStatus->enemyActors); i++) {
             actor = battleStatus->enemyActors[i];
+            if (actor != nullptr)
+                _on_dispatch_phase_enemy_end(actor);
+
             if (actor != nullptr && actor->handlePhaseSource != nullptr) {
                 battleStatus->battlePhase = PHASE_ENEMY_END;
                 script = start_script(actor->handlePhaseSource, EVT_PRIORITY_A, 0);

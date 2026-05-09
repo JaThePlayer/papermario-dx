@@ -1,3 +1,4 @@
+#include "misc_patches/misc_events.h"
 #include "states.h"
 #include "battle/battle.h"
 
@@ -26,6 +27,7 @@ void btl_state_update_begin_turn(void) {
     s16* enemyIDs;
 
     if (gBattleSubState == BTL_SUBSTATE_INIT) {
+        _on_turn_start();
         battleStatus->flags2 &= ~BS_FLAGS2_PLAYER_TURN_USED;
         battleStatus->flags2 &= ~BS_FLAGS2_PARTNER_TURN_USED;
         battleStatus->flags2 &= ~BS_FLAGS2_OVERRIDE_INACTIVE_PLAYER;
