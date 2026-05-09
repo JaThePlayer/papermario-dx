@@ -36,7 +36,6 @@ extern s16 MessageSingular;
 extern u8 MessagePlural_de[];
 #endif
 
-BSS s32 N(Quizmo_Worker);
 BSS s32 N(Quizmo_ScriptArray)[5];
 BSS EffectInstance* N(Quizmo_StageEffect);
 BSS EffectInstance* N(Quizmo_AudienceEffect);
@@ -384,7 +383,6 @@ API_CALLABLE(N(Quizmo_DestroyEffects)) {
     if (stageData->microphoneRaiseAmt <= 0) {
         stageData->microphoneRaiseAmt = 0;
         remove_effect(N(Quizmo_StageEffect));
-        free_worker(N(Quizmo_Worker));
         return ApiStatus_DONE2;
     }
 
@@ -550,11 +548,6 @@ void N(Quizmo_CreateReactionEffect)(void) {
     } else if (result == 2) {
         fx_quizmo_answer(1, 0, 0, 0);
     }
-}
-
-API_CALLABLE(N(Quizmo_CreateWorker)) {
-    N(Quizmo_Worker) = create_worker_frontUI(nullptr, N(Quizmo_CreateReactionEffect));
-    return ApiStatus_DONE2;
 }
 
 EvtScript N(EVS_Quizmo_Exit) = {
