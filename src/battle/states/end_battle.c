@@ -22,8 +22,6 @@ void btl_state_update_end_battle(void) {
 
     switch (gBattleSubState) {
         case BTL_SUBSTATE_INIT:
-            sp_pool_end_of_battle();
-
             BattleScreenFadeAmt = 0;
             if (gGameStatusPtr->debugEnemyContact == DEBUG_CONTACT_DIE_ON_TOUCH) {
                 BattleScreenFadeAmt = 255;
@@ -47,6 +45,7 @@ void btl_state_update_end_battle(void) {
             }
             break;
         case BTL_SUBSTATE_EXEC_STAGE_SCRIPT:
+            sp_pool_end_of_battle();
             BattleScreenFadeAmt = 255;
             gBattleStatus.flags1 &= ~BS_FLAGS1_ACTORS_VISIBLE;
             if (gCurrentStagePtr == nullptr) {

@@ -2930,7 +2930,7 @@ void dx_debug_console_main() {
 // SP Pools
 
 #include "misc_patches/sp_pools.h"
-
+extern u8 sp_pool_used_up_this_battle[SP_POOL_COUNT];
 s32 spPoolsPos = 0;
 void armageddon_debug_sp_pools(void) {
     s32 idx;
@@ -2954,5 +2954,6 @@ void armageddon_debug_sp_pools(void) {
 
         dx_debug_draw_number(sp_pool_used(idx), "%2d", color, 255, SubmenuPosX + 24, SubmenuPosY + (idx - spPoolsPos) * RowHeight);
         dx_debug_draw_number(sp_pool_cap(idx), "%2d", color, 255, SubmenuPosX + 48, SubmenuPosY + (idx - spPoolsPos) * RowHeight);
+        dx_debug_draw_number(sp_pool_used_up_this_battle[idx - 1], "%2d", color, 255, SubmenuPosX + 48 + 24, SubmenuPosY + (idx - spPoolsPos) * RowHeight);
     }
 }
