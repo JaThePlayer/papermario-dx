@@ -1,3 +1,4 @@
+#include "misc_patches/custom_status.h"
 #include "states.h"
 #include "effects.h"
 #include "script_api/battle.h"
@@ -127,6 +128,8 @@ void btl_state_update_transfer_turn(void) {
                     BattleStatusUpdateDelay = 20;
                 }
             }
+
+            custom_status_decrement(actor);
 
             oldKoDuration = actor->koDuration;
             actor->koDuration = actor->debuffDuration;

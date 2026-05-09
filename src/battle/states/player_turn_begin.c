@@ -1,3 +1,4 @@
+#include "misc_patches/custom_status.h"
 #include "states.h"
 #include "script_api/battle.h"
 
@@ -252,6 +253,9 @@ void update_status_damage(void) {
                     }
                 }
 
+                custom_status_decrement(player);
+                custom_status_decrement_late(player);
+
                 debuffDuration = player->debuffDuration;
                 prevDuration = player->koDuration;
                 player->koDuration = debuffDuration;
@@ -278,6 +282,8 @@ void update_status_damage(void) {
                             BattleStatusUpdateDelay = 20;
                         }
                     }
+
+                    custom_status_decrement_late(enemy);
                 }
             }
             gBattleSubState = BTL_SUBSTATE_TRY_COMMAND_RECOVER;
