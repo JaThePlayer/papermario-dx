@@ -34,7 +34,7 @@ s32 N(DefaultAnims)[] = {
     STATUS_KEY_STATIC,    ANIM_FireBros_Anim02,
     STATUS_KEY_PARALYZE,  ANIM_FireBros_Anim00,
     STATUS_KEY_DIZZY,     ANIM_FireBros_Anim12,
-    STATUS_KEY_FEAR,      ANIM_FireBros_Anim12,
+    STATUS_KEY_UNUSED,      ANIM_FireBros_Anim12,
     STATUS_END,
 };
 
@@ -55,7 +55,7 @@ s32 N(StatusTable)[] = {
     STATUS_KEY_POISON,            100,
     STATUS_KEY_FROZEN,            100,
     STATUS_KEY_DIZZY,              75,
-    STATUS_KEY_FEAR,                0,
+    STATUS_KEY_UNUSED,                0,
     STATUS_KEY_STATIC,            100,
     STATUS_KEY_PARALYZE,          100,
     STATUS_KEY_SHRINK,             70,
@@ -65,7 +65,7 @@ s32 N(StatusTable)[] = {
     STATUS_TURN_MOD_POISON,         0,
     STATUS_TURN_MOD_FROZEN,         1,
     STATUS_TURN_MOD_DIZZY,          0,
-    STATUS_TURN_MOD_FEAR,           0,
+    STATUS_TURN_MOD_UNUSED,           0,
     STATUS_TURN_MOD_STATIC,         0,
     STATUS_TURN_MOD_PARALYZE,       0,
     STATUS_TURN_MOD_SHRINK,         0,
@@ -158,7 +158,7 @@ EvtScript N(EVS_Idle) = {
 };
 
 EvtScript N(EVS_HandleEvent) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(GetLastEvent, ACTOR_SELF, LVar0)
     Switch(LVar0)
@@ -248,13 +248,13 @@ EvtScript N(EVS_HandleEvent) = {
         CaseDefault
     EndSwitch
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };
 
 EvtScript N(fireThrowAtMario) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
     Call(GetBattlePhase, LVar0)
@@ -274,7 +274,7 @@ EvtScript N(fireThrowAtMario) = {
             Goto(0)
         EndChildThread
         Call(SetPartPos, ACTOR_SELF, PRT_FIREBALL, 0, 50, 0)
-        Call(SetPartFlagBits, ACTOR_SELF, PRT_FIREBALL, ACTOR_PART_FLAG_INVISIBLE, FALSE)
+        Call(SetPartFlagBits, ACTOR_SELF, PRT_FIREBALL, ACTOR_PART_FLAG_INVISIBLE, false)
         Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_FireBros_Anim0C)
         Goto(5)
     EndIf
@@ -294,7 +294,7 @@ EvtScript N(fireThrowAtMario) = {
     Call(SetPartPos, ACTOR_SELF, PRT_FIREBALL, LVar0, LVar1, LVar2)
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_FireBros_Anim0C)
     Wait(8)
-    Call(SetPartFlagBits, ACTOR_SELF, PRT_FIREBALL, ACTOR_PART_FLAG_INVISIBLE, FALSE)
+    Call(SetPartFlagBits, ACTOR_SELF, PRT_FIREBALL, ACTOR_PART_FLAG_INVISIBLE, false)
     Label(5)
     Thread
         Wait(15)
@@ -318,24 +318,24 @@ EvtScript N(fireThrowAtMario) = {
             Sub(LVar0, 20)
             Set(LVar1, 10)
             Call(SetPartJumpGravity, ACTOR_SELF, PRT_FIREBALL, Float(1.3))
-            Call(JumpPartTo, ACTOR_SELF, PRT_FIREBALL, LVar0, LVar1, LVar2, 15, TRUE)
+            Call(JumpPartTo, ACTOR_SELF, PRT_FIREBALL, LVar0, LVar1, LVar2, 15, true)
             IfEq(LVarA, HIT_RESULT_LUCKY)
                 Call(EnemyTestTarget, ACTOR_SELF, LVarA, DAMAGE_TYPE_TRIGGER_LUCKY, 0, 0, 0)
             EndIf
             Sub(LVar0, 40)
-            Call(JumpPartTo, ACTOR_SELF, PRT_FIREBALL, LVar0, LVar1, LVar2, 15, TRUE)
+            Call(JumpPartTo, ACTOR_SELF, PRT_FIREBALL, LVar0, LVar1, LVar2, 15, true)
             Sub(LVar0, 30)
-            Call(JumpPartTo, ACTOR_SELF, PRT_FIREBALL, LVar0, LVar1, LVar2, 10, TRUE)
+            Call(JumpPartTo, ACTOR_SELF, PRT_FIREBALL, LVar0, LVar1, LVar2, 10, true)
             Sub(LVar0, 20)
-            Call(JumpPartTo, ACTOR_SELF, PRT_FIREBALL, LVar0, LVar1, LVar2, 5, TRUE)
-            Call(SetPartFlagBits, ACTOR_SELF, PRT_FIREBALL, ACTOR_PART_FLAG_INVISIBLE, TRUE)
+            Call(JumpPartTo, ACTOR_SELF, PRT_FIREBALL, LVar0, LVar1, LVar2, 5, true)
+            Call(SetPartFlagBits, ACTOR_SELF, PRT_FIREBALL, ACTOR_PART_FLAG_INVISIBLE, true)
             Wait(15)
             Call(YieldTurn)
             Call(AddActorDecoration, ACTOR_SELF, PRT_MAIN, 0, ACTOR_DECORATION_SWEAT)
             Wait(20)
             Call(RemoveActorDecoration, ACTOR_SELF, PRT_MAIN, 0)
             Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-            Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+            Call(UseIdleAnimation, ACTOR_SELF, true)
             Return
         EndCaseGroup
     EndSwitch
@@ -345,13 +345,13 @@ EvtScript N(fireThrowAtMario) = {
 
     Call(SetPartJumpGravity, ACTOR_SELF, PRT_FIREBALL, Float(2.5))
     Call(GetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-    Call(JumpPartTo, ACTOR_SELF, PRT_FIREBALL, LVar0, LVar1, LVar2, 10, TRUE)
+    Call(JumpPartTo, ACTOR_SELF, PRT_FIREBALL, LVar0, LVar1, LVar2, 10, true)
     Wait(2)
 
     // set burn status
     Call(SetNextAttackCustomStatus, BURN_STATUS, 2, 1, 100) // 2 turn t1 burn
     Call(EnemyDamageTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_NO_CONTACT | DAMAGE_TYPE_FIRE, 0, 0, DMG_FIRE_THROW, BS_FLAGS1_TRIGGER_EVENTS)
-    Call(SetPartFlagBits, ACTOR_SELF, PRT_FIREBALL, ACTOR_PART_FLAG_INVISIBLE, TRUE)
+    Call(SetPartFlagBits, ACTOR_SELF, PRT_FIREBALL, ACTOR_PART_FLAG_INVISIBLE, true)
     Switch(LVar0)
         CaseOrEq(HIT_RESULT_HIT)
         CaseOrEq(HIT_RESULT_NO_DAMAGE)
@@ -361,7 +361,7 @@ EvtScript N(fireThrowAtMario) = {
     EndSwitch
 
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };
@@ -376,7 +376,7 @@ EvtScript N(bobombIgnite) = {
 };
 
 EvtScript N(fireThrowAtBomb) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(SetTargetActor, ACTOR_SELF, BobombId)
     Call(GetBattlePhase, LVar0)
@@ -398,7 +398,7 @@ EvtScript N(fireThrowAtBomb) = {
     Call(GetBattlePhase, LVar0)
     IfEq(LVar0, PHASE_FIRST_STRIKE)
         Call(SetPartPos, ACTOR_SELF, PRT_FIREBALL, 0, 50, 0)
-        Call(SetPartFlagBits, ACTOR_SELF, PRT_FIREBALL, ACTOR_PART_FLAG_INVISIBLE, FALSE)
+        Call(SetPartFlagBits, ACTOR_SELF, PRT_FIREBALL, ACTOR_PART_FLAG_INVISIBLE, false)
         Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_FireBros_Anim0C)
         Goto(5)
     EndIf
@@ -410,7 +410,7 @@ EvtScript N(fireThrowAtBomb) = {
     Call(SetPartPos, ACTOR_SELF, PRT_FIREBALL, LVar0, LVar1, LVar2)
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_FireBros_Anim0C)
     Wait(8)
-    Call(SetPartFlagBits, ACTOR_SELF, PRT_FIREBALL, ACTOR_PART_FLAG_INVISIBLE, FALSE)
+    Call(SetPartFlagBits, ACTOR_SELF, PRT_FIREBALL, ACTOR_PART_FLAG_INVISIBLE, false)
     Label(5)
     Thread
         Wait(15)
@@ -429,15 +429,15 @@ EvtScript N(fireThrowAtBomb) = {
 
     Call(SetPartJumpGravity, ACTOR_SELF, PRT_FIREBALL, Float(2.5))
     Call(GetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-    Call(JumpPartTo, ACTOR_SELF, PRT_FIREBALL, LVar0, LVar1, LVar2, 10, TRUE)
+    Call(JumpPartTo, ACTOR_SELF, PRT_FIREBALL, LVar0, LVar1, LVar2, 10, true)
     Wait(2)
 
-    Call(SetPartFlagBits, ACTOR_SELF, PRT_FIREBALL, ACTOR_PART_FLAG_INVISIBLE, TRUE)
+    Call(SetPartFlagBits, ACTOR_SELF, PRT_FIREBALL, ACTOR_PART_FLAG_INVISIBLE, true)
     Exec(N(bobombIgnite))
     Wait(4)
 
     //Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-    //Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    //Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };
@@ -462,13 +462,13 @@ API_CALLABLE(N(FindBestBobomb)) {
         if (targetActor == untilActor)
             break;
 
-        if (targetActor == NULL)
+        if (targetActor == nullptr)
             continue;
         if (targetActor->actorType != ACTOR_TYPE_BOB_OMB)
             continue;
 
         // Don't fireball already ignited bobombs, thats a waste
-        if (targetActor->state.varTable[8/*AVAR_Ignited*/] == TRUE)
+        if (targetActor->state.varTable[8/*AVAR_Ignited*/] == true)
             continue;
 
         s32 turnCount = targetActor->state.varTable[0/*AVAR_TurnsUntilIgnition*/];
@@ -483,7 +483,7 @@ API_CALLABLE(N(FindBestBobomb)) {
         return ApiStatus_DONE2;
     }
 
-    evt_set_variable(script, retActorId, FALSE);
+    evt_set_variable(script, retActorId, false);
     return ApiStatus_DONE2;
 }
 
@@ -491,7 +491,7 @@ EvtScript N(EVS_TakeTurn) = {
     STANDARD_ITEM_USE_AI()
 
     Call(N(FindBestBobomb), ACTOR_SELF, BobombId)
-    IfNe(BobombId, FALSE)
+    IfNe(BobombId, false)
         ExecWait(N(fireThrowAtBomb))
     EndIf
 

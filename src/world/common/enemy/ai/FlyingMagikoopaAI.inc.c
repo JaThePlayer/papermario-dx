@@ -42,7 +42,6 @@ enum MagikoopaMoveResult {
 };
 
 void N(FlyingMagikoopaAI_15)(Evt* arg0, MobileAISettings* arg1, EnemyDetectVolume* arg2) {
-    f32 dist;
     f32 distToHit;
     f32 randomDist;
     f32 baseYaw;
@@ -59,7 +58,7 @@ void N(FlyingMagikoopaAI_15)(Evt* arg0, MobileAISettings* arg1, EnemyDetectVolum
     npc->duration--;
     if (npc->duration <= 0) {
         randomDist = rand_int(30) + 180.0;
-        isCCW = FALSE;
+        isCCW = false;
         if (is_point_outside_territory(enemy->territory->wander.wanderShape, enemy->territory->wander.centerPos.x, enemy->territory->wander.centerPos.z, npc->pos.x, npc->pos.z, enemy->territory->wander.wanderSize.x, enemy->territory->wander.wanderSize.z)) {
             npc->yaw = atan2(npc->pos.x, npc->pos.z, enemy->territory->wander.centerPos.x, enemy->territory->wander.centerPos.z) - iterations;
             moveDist = dist2D(npc->pos.x, npc->pos.z, enemy->territory->wander.centerPos.x, enemy->territory->wander.centerPos.z);
@@ -74,7 +73,7 @@ void N(FlyingMagikoopaAI_15)(Evt* arg0, MobileAISettings* arg1, EnemyDetectVolum
                 baseYaw = (rand_int(10) + 270.0) - 5.0;
             }
             angleAdjust = iterations * 5;
-            while (TRUE) {
+            while (true) {
                 if (isCCW) {
                     npc->yaw = baseYaw + angleAdjust;
                 } else {
@@ -102,11 +101,11 @@ void N(FlyingMagikoopaAI_15)(Evt* arg0, MobileAISettings* arg1, EnemyDetectVolum
                 }
 
                 if (!isCCW) {
-                    isCCW = TRUE;
+                    isCCW = true;
                 } else {
                     angleAdjust += 5;
-                    iterations += 1;
-                    isCCW = FALSE;
+                    iterations++;
+                    isCCW = false;
                 }
 
                 if (iterations >= 7) {

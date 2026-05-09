@@ -129,16 +129,16 @@ EffectInstance* water_fountain_main(s32 arg0, f32 posX, f32 posY, f32 posZ, f32 
 
     effectBp.init = water_fountain_init;
     effectBp.update = water_fountain_update;
-    effectBp.renderWorld = water_fountain_render;
+    effectBp.renderScene = water_fountain_render;
     effectBp.unk_00 = 0;
-    effectBp.renderUI = NULL;
+    effectBp.renderUI = nullptr;
     effectBp.effectID = EFFECT_WATER_FOUNTAIN;
 
     effect = create_effect_instance(&effectBp);
     effect->numParts = numParts;
 
     data = effect->data.waterFountain = general_heap_malloc(numParts * sizeof(*data));
-    ASSERT(data != NULL);
+    ASSERT(data != nullptr);
 
     data->unk_00 = arg0;
     data->lifeTime = 0;
@@ -188,7 +188,6 @@ void water_fountain_update(EffectInstance* effect) {
     }
 }
 
-
 void water_fountain_render(EffectInstance* effect) {
     RenderTask renderTask;
     RenderTask* retTask;
@@ -205,7 +204,7 @@ void water_fountain_render(EffectInstance* effect) {
 void func_E00B8200(void) {
 }
 
-void water_fountain_appendGfx(void *effect) {
+void water_fountain_appendGfx(void* effect) {
     WaterFountainFXData* data = ((EffectInstance*)effect)->data.waterFountain;
     Camera* camera = &gCameras[gCurrentCameraID];
     s32 lifeTime = data->lifeTime;
@@ -236,7 +235,7 @@ void water_fountain_appendGfx(void *effect) {
     }
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
 
     guTranslateF(sp18, data->pos.x, data->pos.y, data->pos.z);
     guScaleF(sp58, data->unk_34, data->unk_34, data->unk_34);

@@ -32,7 +32,7 @@ s32 N(StatusTable)[] = {
     STATUS_KEY_POISON,            0,
     STATUS_KEY_FROZEN,            0,
     STATUS_KEY_DIZZY,              0,
-    STATUS_KEY_FEAR,              0,
+    STATUS_KEY_UNUSED,              0,
     STATUS_KEY_STATIC,            0,
     STATUS_KEY_PARALYZE,           0,
     STATUS_KEY_SHRINK,             0,
@@ -42,7 +42,7 @@ s32 N(StatusTable)[] = {
     STATUS_TURN_MOD_POISON,         0,
     STATUS_TURN_MOD_FROZEN,         0,
     STATUS_TURN_MOD_DIZZY,          0,
-    STATUS_TURN_MOD_FEAR,           0,
+    STATUS_TURN_MOD_UNUSED,           0,
     STATUS_TURN_MOD_STATIC,         0,
     STATUS_TURN_MOD_PARALYZE,       0,
     STATUS_TURN_MOD_SHRINK,         0,
@@ -57,7 +57,7 @@ ActorPartBlueprint N(ActorParts)[] = {
         .posOffset = { 0, 0, 0 },
         .targetOffset = { 0, 20 },
         .opacity = 255,
-        .idleAnimations = NULL,
+        .idleAnimations = nullptr,
         .defenseTable = N(DefenseTable),
         .eventFlags = 0,
         .elementImmunityFlags = 0,
@@ -103,17 +103,17 @@ API_CALLABLE(A(EnableWeatherByType)) {
     s32 i;
 
     if (!isInitialCall) {
-        if (script->userData == NULL)
+        if (script->userData == nullptr)
             return ApiStatus_DONE2;
         if (does_script_exist_by_ref((Evt*)script->userData))
             return ApiStatus_BLOCK;
-        script->userData = NULL;
+        script->userData = nullptr;
         return ApiStatus_DONE2;
     }
 
     for (i = 0; i < ARRAY_COUNT(battleStatus->enemyActors); i++) {
         Actor* targetActor = battleStatus->enemyActors[i];
-        if (targetActor == NULL)
+        if (targetActor == nullptr)
             continue;
         if (targetActor->actorType != ACTOR_TYPE_CONTROLLER)
             continue;
@@ -123,7 +123,7 @@ API_CALLABLE(A(EnableWeatherByType)) {
             continue;
 
         if (targetActor->state.varTable[N(AVAR_DelayedInit)]) {
-            targetActor->state.varTable[N(AVAR_DelayedInit)] = FALSE;
+            targetActor->state.varTable[N(AVAR_DelayedInit)] = false;
             Evt* newScript = start_script(&A(EVS_WeatherInitImpl), EVT_PRIORITY_A, 0);
             newScript->owner1.actorID = targetActor->actorID;
 
@@ -188,7 +188,7 @@ EvtScript A(EVS_WeatherInitImpl) = {
 };
 
 EvtScript N(EVS_HandlePhase) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
 
     // Start of battle popup
@@ -198,7 +198,7 @@ EvtScript N(EVS_HandlePhase) = {
     EndSwitch
 
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };
@@ -229,13 +229,13 @@ EvtScript N(EVS_Idle) = {
 };
 
 EvtScript N(EVS_HandleEvent) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(GetLastEvent, ACTOR_SELF, LVar0)
     Switch(LVar0)
     EndSwitch
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };
@@ -254,7 +254,7 @@ EvtScript N(EVS_TakeTurn) = {
         Return
     EndIf
 
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
 
     INCREMENT_ACTOR_VAR(N(AVAR_TurnCount))
@@ -274,12 +274,12 @@ EvtScript N(EVS_TakeTurn) = {
     Label(0)
         Wait(1)
         Call(IsMessageBoxDisplayed, LVar0)
-        IfEq(LVar0, TRUE)
+        IfEq(LVar0, true)
             Goto(0)
         EndIf
 
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };

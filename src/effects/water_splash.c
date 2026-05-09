@@ -39,14 +39,14 @@ EffectInstance* water_splash_main(s32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 ar
 
     bpPtr->init = water_splash_init;
     bpPtr->update = water_splash_update;
-    bpPtr->renderWorld = water_splash_render;
+    bpPtr->renderScene = water_splash_render;
     bpPtr->unk_00 = 0;
-    bpPtr->renderUI = NULL;
+    bpPtr->renderUI = nullptr;
     bpPtr->effectID = EFFECT_WATER_SPLASH;
     effect = create_effect_instance(bpPtr);
     effect->numParts = numParts;
     effect->data.waterSplash = part = general_heap_malloc(numParts * sizeof(*part));
-    ASSERT(part != NULL);
+    ASSERT(part != nullptr);
 
     part->unk_00 = arg0;
     part->unk_20 = 0;
@@ -177,7 +177,7 @@ void water_splash_appendGfx(void* effect) {
     s32 i;
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, OS_K0_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, OS_K0_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
     guTranslateF(sp10, sp94, temp_fp, data->unk_04.z);
     guScaleF(sp50, data->unk_34, data->unk_34, data->unk_34);
     guMtxCatF(sp50, sp10, sp10);

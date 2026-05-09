@@ -388,7 +388,7 @@ API_CALLABLE(InterpPlayerYaw) {
 
 API_CALLABLE(PlayerFaceNpc) {
     PlayerStatus* playerStatus = &gPlayerStatus;
-    s32* args = script->ptrReadPos;
+    Bytecode* args = script->ptrReadPos;
     f32* playerTargetYaw = &script->functionTempF[1];
     f32* angle = &script->functionTempF[2];
     s32* ft3 = &script->functionTemp[3];
@@ -403,7 +403,7 @@ API_CALLABLE(PlayerFaceNpc) {
             npc = (Npc*)npcID;
         } else {
             npc = get_npc_safe(npcID);
-            if (npc == NULL) {
+            if (npc == nullptr) {
                 return ApiStatus_DONE2;
             }
         }
@@ -500,7 +500,7 @@ API_CALLABLE(EnablePartner) {
     s32 partnerIdx = evt_get_variable(script, *script->ptrReadPos) - 1;
     PartnerData* partner = &gPlayerData.partners[partnerIdx];
 
-    partner->enabled = TRUE;
+    partner->enabled = true;
     return ApiStatus_DONE2;
 }
 
@@ -508,7 +508,7 @@ API_CALLABLE(DisablePartner) {
     s32 partnerIdx = evt_get_variable(script, *script->ptrReadPos) - 1;
     PartnerData* partner = &gPlayerData.partners[partnerIdx];
 
-    partner->enabled = FALSE;
+    partner->enabled = false;
     return ApiStatus_DONE2;
 }
 
@@ -585,9 +585,9 @@ s32 func_802D23F8(void) {
         gPlayerStatus.actionState == ACTION_STATE_RUN || gPlayerStatus.actionState == ACTION_STATE_LAND ||
         gPlayerStatus.actionState == ACTION_STATE_STEP_DOWN_LAND || gPlayerStatus.actionState == ACTION_STATE_SPIN_POUND ||
         gPlayerStatus.actionState == ACTION_STATE_TORNADO_POUND || gPlayerStatus.actionState == ACTION_STATE_SPIN) {
-        return TRUE;
+        return true;
     }
-    return FALSE;
+    return false;
 }
 
 API_CALLABLE(WaitForPlayerTouchingFloor) {
@@ -608,7 +608,7 @@ API_CALLABLE(func_802D2484) {
 
 API_CALLABLE(IsPlayerOnValidFloor) {
     Bytecode* args = script->ptrReadPos;
-    s32 result = FALSE;
+    s32 result = false;
 
     if (gCollisionStatus.curFloor >= 0) {
         result = (func_802D23F8() != 0);
@@ -827,8 +827,6 @@ API_CALLABLE(func_802D2C14) {
 API_CALLABLE(SetPlayerPushVelocity) {
     Bytecode* args = script->ptrReadPos;
     f32 x = evt_get_variable(script, *args++);
-    f32 y;
-    f32 z;
 
     gPlayerStatus.pushVel.x = x;
     gPlayerStatus.pushVel.y = evt_get_variable(script, *args++);

@@ -1,6 +1,6 @@
 #include "flo_09.h"
 
-#include "common/foliage.inc.c"
+#include "foliage.h"
 
 EvtScript N(EVS_SpawnBzzap) = {
     Call(GetNpcPos, NPC_Bzzap_02, LVar0, LVar1, LVar2)
@@ -14,7 +14,7 @@ EvtScript N(EVS_SpawnBzzap) = {
 };
 
 EvtScript N(EVS_OnShakeTree1) = {
-    IfEq(GF_FLO09_Item_HappyFlowerB, FALSE)
+    IfEq(GF_FLO09_Item_HappyFlowerB, false)
         IfEq(AB_FLO_TreePuzzle_SecondCorrect, 1)
             Call(MakeItemEntity, ITEM_HAPPY_FLOWER_B, -250, 100, 0, ITEM_SPAWN_MODE_FALL_NEVER_VANISH, GF_FLO09_Item_HappyFlowerB)
         Else
@@ -29,7 +29,7 @@ EvtScript N(EVS_OnShakeTree1) = {
 };
 
 EvtScript N(EVS_OnShakeTree2) = {
-    IfEq(GF_FLO09_Item_HappyFlowerB, FALSE)
+    IfEq(GF_FLO09_Item_HappyFlowerB, false)
         Set(AB_FLO_TreePuzzle_FirstCorrect, 1)
         Set(AB_FLO_TreePuzzle_SecondCorrect, 0)
     EndIf
@@ -38,7 +38,7 @@ EvtScript N(EVS_OnShakeTree2) = {
 };
 
 EvtScript N(EVS_OnShakeTree3) = {
-    IfEq(GF_FLO09_Item_HappyFlowerB, FALSE)
+    IfEq(GF_FLO09_Item_HappyFlowerB, false)
         IfEq(AB_FLO_TreePuzzle_FirstCorrect, 1)
             IfEq(AB_FLO_TreePuzzle_SecondCorrect, 0)
                 Set(AB_FLO_TreePuzzle_SecondCorrect, 1)
@@ -100,14 +100,14 @@ EvtScript N(EVS_SetupFoliage) = {
     Set(AB_FLO_TreePuzzle_FirstCorrect, 0)
     Set(AB_FLO_TreePuzzle_SecondCorrect, 0)
     Set(LVar0, Ref(N(ShakeTree_Tree1)))
-    BindTrigger(Ref(N(EVS_ShakeTree)), TRIGGER_WALL_HAMMER, COLLIDER_o10, 1, 0)
-    BindTrigger(Ref(N(EVS_ShakeTree)), TRIGGER_POINT_BOMB, Ref(N(BombPos_Tree1)), 1, 0)
+    BindTrigger(Ref(EVS_ShakeTree), TRIGGER_WALL_HAMMER, COLLIDER_o10, 1, 0)
+    BindTrigger(Ref(EVS_ShakeTree), TRIGGER_POINT_BOMB, Ref(N(BombPos_Tree1)), 1, 0)
     Set(LVar0, Ref(N(ShakeTree_Tree2)))
-    BindTrigger(Ref(N(EVS_ShakeTree)), TRIGGER_WALL_HAMMER, COLLIDER_o3, 1, 0)
-    BindTrigger(Ref(N(EVS_ShakeTree)), TRIGGER_POINT_BOMB, Ref(N(BombPos_Tree2)), 1, 0)
+    BindTrigger(Ref(EVS_ShakeTree), TRIGGER_WALL_HAMMER, COLLIDER_o3, 1, 0)
+    BindTrigger(Ref(EVS_ShakeTree), TRIGGER_POINT_BOMB, Ref(N(BombPos_Tree2)), 1, 0)
     Set(LVar0, Ref(N(ShakeTree_Tree3)))
-    BindTrigger(Ref(N(EVS_ShakeTree)), TRIGGER_WALL_HAMMER, COLLIDER_o13, 1, 0)
-    BindTrigger(Ref(N(EVS_ShakeTree)), TRIGGER_POINT_BOMB, Ref(N(BombPos_Tree3)), 1, 0)
+    BindTrigger(Ref(EVS_ShakeTree), TRIGGER_WALL_HAMMER, COLLIDER_o13, 1, 0)
+    BindTrigger(Ref(EVS_ShakeTree), TRIGGER_POINT_BOMB, Ref(N(BombPos_Tree3)), 1, 0)
     Return
     End
 };

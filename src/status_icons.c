@@ -35,8 +35,8 @@ typedef struct HudComplexStatusIcon {
     /* 0x3 */ s8 removingTask;
     /* 0x4 */ s8 unk_04;
     /* 0x5 */ s8 frameCounter;
-    /* 0x8 */ s32 activeElementID;
-    /* 0xC */ s32 removingElementID;
+    /* 0x8 */ HudElemID activeElementHID;
+    /* 0xC */ HudElemID removingElementHID;
 } HudComplexStatusIcon; // size = 0x10
 
 typedef struct HudSimpleStatusIcon {
@@ -137,11 +137,11 @@ void func_80045AC0(void) {
 
     for (i = 0; i < ARRAY_COUNT(D_800A0BC0); i++) {
         PopupMessage* popup = &D_800A0BC0[i];
-        popup->active = FALSE;
-        popup->data.icons = NULL;
+        popup->active = false;
+        popup->data.icons = nullptr;
     }
 
-    create_worker_world(NULL, func_80045BC8);
+    create_worker_scene(nullptr, func_80045BC8);
     init_all_status_icons();
 }
 
@@ -150,10 +150,10 @@ void func_80045B10(void) {
 
     for (i = 0; i < ARRAY_COUNT(D_800A0BC0); i++) {
         PopupMessage* popup = &D_800A0BC0[i];
-        if (popup->data.icons != NULL) {
+        if (popup->data.icons != nullptr) {
             heap_free(popup->data.icons);
         }
-        popup->active = FALSE;
+        popup->active = false;
     }
 }
 
@@ -162,7 +162,7 @@ void update_merlee_messages(void) {
 
     for (i = 0; i < ARRAY_COUNT(D_800A0BC0); i++) {
         PopupMessage* popup = &D_800A0BC0[i];
-        if (popup->active && popup->updateFunc != NULL) {
+        if (popup->active && popup->updateFunc != nullptr) {
             popup->updateFunc(popup);
         }
     }
@@ -173,7 +173,7 @@ void func_80045BC8(void) {
 
     for (i = 0; i < ARRAY_COUNT(D_800A0BC0); i++) {
         PopupMessage* popup = &D_800A0BC0[i];
-        if (popup->active && popup->renderWorldFunc != NULL) {
+        if (popup->active && popup->renderWorldFunc != nullptr) {
             popup->renderWorldFunc(popup);
         }
     }
@@ -184,7 +184,7 @@ void draw_merlee_messages(void) {
 
     for (i = 0; i < ARRAY_COUNT(D_800A0BC0); i++) {
         PopupMessage* popup = &D_800A0BC0[i];
-        if (popup->active && popup->renderUIFunc != NULL) {
+        if (popup->active && popup->renderUIFunc != nullptr) {
             popup->renderUIFunc(popup);
         }
     }
@@ -196,31 +196,31 @@ PopupMessage* get_current_merlee_message(void) {
     for (i = 0; i < ARRAY_COUNT(D_800A0BC0); i++) {
         PopupMessage* popup = &D_800A0BC0[i];
         if (!popup->active) {
-            popup->active = TRUE;
+            popup->active = true;
             return popup;
         }
     }
 
-    return NULL;
+    return nullptr;
 }
 
 void dispose_merlee_message(PopupMessage* popup) {
-    if (popup->data.icons != NULL) {
+    if (popup->data.icons != nullptr) {
         heap_free(popup->data.icons);
-        popup->data.icons = NULL;
+        popup->data.icons = nullptr;
     }
-    popup->active = FALSE;
+    popup->active = false;
 }
 
 void show_merlee_message(s16 messageIndex, s16 duration) {
     PopupMessage* popup = get_current_merlee_message();
 
-    if (popup != NULL) {
+    if (popup != nullptr) {
         popup->updateFunc = update_merlee_message;
         popup->renderUIFunc = draw_merlee_message;
-        popup->needsInit = TRUE;
+        popup->needsInit = true;
         popup->unk_00 = 0;
-        popup->renderWorldFunc = NULL;
+        popup->renderWorldFunc = nullptr;
         popup->messageIndex = messageIndex;
         popup->duration = duration;
         popup->showMsgState = BTL_MSG_STATE_INIT;
@@ -230,7 +230,7 @@ void show_merlee_message(s16 messageIndex, s16 duration) {
 
 void update_merlee_message(void* data) {
     PopupMessage* popup = data;
-    s32 closeMessage = FALSE;
+    s32 closeMessage = false;
 
     switch (popup->showMsgState) {
         case BTL_MSG_STATE_INIT:
@@ -253,7 +253,7 @@ void update_merlee_message(void* data) {
             popup->showMsgState = BTL_MSG_STATE_POPUP_DISPOSE;
             break;
         case BTL_MSG_STATE_POPUP_DISPOSE:
-            closeMessage = TRUE;
+            closeMessage = true;
             break;
     }
 
@@ -299,7 +299,7 @@ void draw_merlee_message(void* data) {
     switch (popup->messageIndex) {
         case 0:
             if (popup->needsInit) {
-                popup->needsInit = FALSE;
+                popup->needsInit = false;
                 messageID = D_80078168[popup->messageIndex];
                 width = get_msg_width(messageID, 0) + 23;
                 xPos = 160 - (width / 2);
@@ -311,7 +311,7 @@ void draw_merlee_message(void* data) {
 
         case 1:
             if (popup->needsInit) {
-                popup->needsInit = FALSE;
+                popup->needsInit = false;
                 messageID = D_80078168[popup->messageIndex];
                 width = get_msg_width(messageID, 0) + 23;
                 xPos = 160 - (width / 2);
@@ -328,7 +328,7 @@ void draw_merlee_message(void* data) {
     s32 width;
 
     if (popup->needsInit) {
-        popup->needsInit = FALSE;
+        popup->needsInit = false;
         messageID = D_80078168[popup->messageIndex];
         width = get_msg_width(messageID, 0) + 30;
         xPos = 160 - (width / 2);
@@ -347,14 +347,14 @@ void init_all_status_icons(void) {
     HudStatusIcon* icons;
     PopupMessage* popup = get_current_merlee_message();
 
-    if (popup != NULL) {
+    if (popup != nullptr) {
         popup->updateFunc = update_all_status_icons;
         popup->unk_00 = 0;
-        popup->renderWorldFunc = NULL;
+        popup->renderWorldFunc = nullptr;
         popup->renderUIFunc = draw_all_status_icons;
         popup->data.icons = general_heap_malloc(MAX_ICONS * sizeof(HudStatusIcon));
         icons = D_800A0F44 = popup->data.icons;
-        ASSERT(icons != NULL);
+        ASSERT(icons != nullptr);
 
         for (i = 0; i < MAX_ICONS; i++, icons++)
             icons->flags = 0;
@@ -362,10 +362,9 @@ void init_all_status_icons(void) {
 }
 
 void update_all_status_icons(void* data) {
-    PopupMessage* popup = data;
     HudStatusIcon* icon;
-    int i;
     s32 elementID;
+    s32 i;
 
     for (i = 0, icon = D_800A0F44; i < MAX_ICONS; i++, icon++) {
         if (icon->flags == 0) {
@@ -375,35 +374,35 @@ void update_all_status_icons(void* data) {
         if (icon->status1.activeTask == STATUS_ICON_TASK_LOAD) {
             switch (icon->status1.active) {
                 case STATUS_KEY_SLEEP:
-                    elementID = icon->status1.activeElementID = hud_element_create(&HES_AsleepBegin);
+                    elementID = icon->status1.activeElementHID = hud_element_create(&HES_AsleepBegin);
                     break;
                 case STATUS_KEY_PARALYZE:
-                    elementID = icon->status1.activeElementID = hud_element_create(&HES_ParalyzedBegin);
+                    elementID = icon->status1.activeElementHID = hud_element_create(&HES_ParalyzedBegin);
                     break;
                 case STATUS_KEY_DIZZY:
-                    elementID = icon->status1.activeElementID = hud_element_create(&HES_DizzyBegin);
+                    elementID = icon->status1.activeElementHID = hud_element_create(&HES_DizzyBegin);
                     break;
-                case STATUS_KEY_FEAR:
-                    elementID = icon->status1.activeElementID = hud_element_create(&HES_WeakenedLoop);
+                case STATUS_KEY_UNUSED:
+                    elementID = icon->status1.activeElementHID = hud_element_create(&HES_WeakenedLoop);
                     break;
                 case STATUS_KEY_STOP:
-                    elementID = icon->status1.activeElementID = hud_element_create(&HES_StoppedBegin);
+                    elementID = icon->status1.activeElementHID = hud_element_create(&HES_StoppedBegin);
                     break;
                 case STATUS_KEY_POISON:
-                    elementID = icon->status1.activeElementID = hud_element_create(&HES_PoisonedBegin);
+                    elementID = icon->status1.activeElementHID = hud_element_create(&HES_PoisonedBegin);
                     break;
                 case STATUS_KEY_SHRINK:
-                    elementID = icon->status1.activeElementID = hud_element_create(&HES_ShrunkBegin);
+                    elementID = icon->status1.activeElementHID = hud_element_create(&HES_ShrunkBegin);
                     break;
                 case STATUS_KEY_FROZEN:
-                    elementID = icon->status1.activeElementID = hud_element_create(&HES_FrozenBegin);
+                    elementID = icon->status1.activeElementHID = hud_element_create(&HES_FrozenBegin);
                     break;
                 default:
-                    elementID = icon->status1.activeElementID = hud_element_create(&HES_Item_KeyGift);
+                    elementID = icon->status1.activeElementHID = hud_element_create(&HES_Item_KeyGift);
                     break;
             }
             hud_element_set_flags(elementID, HUD_ELEMENT_FLAG_DISABLED);
-            hud_element_set_flags(elementID, HUD_ELEMENT_FLAG_80);
+            hud_element_set_flags(elementID, HUD_ELEMENT_FLAG_MANUAL_RENDER);
             icon->status1.activeTask = STATUS_ICON_TASK_DRAW;
         }
 
@@ -413,31 +412,31 @@ void update_all_status_icons(void* data) {
             case STATUS_ICON_TASK_LOAD:
                 switch (icon->status1.removing) {
                     case STATUS_KEY_SLEEP:
-                        hud_element_set_script(icon->status1.removingElementID, &HES_AsleepEnd);
+                        hud_element_set_script(icon->status1.removingElementHID, &HES_AsleepEnd);
                         break;
                     case STATUS_KEY_PARALYZE:
-                        hud_element_set_script(icon->status1.removingElementID, &HES_ParalyzedEnd);
+                        hud_element_set_script(icon->status1.removingElementHID, &HES_ParalyzedEnd);
                         break;
                     case STATUS_KEY_DIZZY:
-                        hud_element_set_script(icon->status1.removingElementID, &HES_DizzyEnd);
+                        hud_element_set_script(icon->status1.removingElementHID, &HES_DizzyEnd);
                         break;
-                    case STATUS_KEY_FEAR:
-                        hud_element_set_script(icon->status1.removingElementID, &HES_WeakenedLoop);
+                    case STATUS_KEY_UNUSED:
+                        hud_element_set_script(icon->status1.removingElementHID, &HES_WeakenedLoop);
                         break;
                     case STATUS_KEY_STOP:
-                        hud_element_set_script(icon->status1.removingElementID, &HES_StoppedEnd);
+                        hud_element_set_script(icon->status1.removingElementHID, &HES_StoppedEnd);
                         break;
                     case STATUS_KEY_POISON:
-                        hud_element_set_script(icon->status1.removingElementID, &HES_PoisonedEnd);
+                        hud_element_set_script(icon->status1.removingElementHID, &HES_PoisonedEnd);
                         break;
                     case STATUS_KEY_SHRINK:
-                        hud_element_set_script(icon->status1.removingElementID, &HES_ShrunkEnd);
+                        hud_element_set_script(icon->status1.removingElementHID, &HES_ShrunkEnd);
                         break;
                     case STATUS_KEY_FROZEN:
-                        hud_element_set_script(icon->status1.removingElementID, &HES_FrozenEnd);
+                        hud_element_set_script(icon->status1.removingElementHID, &HES_FrozenEnd);
                         break;
                     default:
-                        hud_element_set_script(icon->status1.removingElementID, &HES_Item_KeyGift);
+                        hud_element_set_script(icon->status1.removingElementHID, &HES_Item_KeyGift);
                         break;
                 }
 
@@ -450,7 +449,7 @@ void update_all_status_icons(void* data) {
                     icon->status1.frameCounter--;
                 } else {
                     icon->status1.removing = 0;
-                    hud_element_free(icon->status1.removingElementID);
+                    hud_element_free(icon->status1.removingElementHID);
                     icon->status1.removingTask = STATUS_ICON_TASK_NONE;
                 }
                 break;
@@ -459,15 +458,15 @@ void update_all_status_icons(void* data) {
         if (icon->status2.activeTask == STATUS_ICON_TASK_LOAD) {
             switch (icon->status2.active) {
                 case STATUS_KEY_STATIC:
-                    elementID = icon->status2.activeElementID = hud_element_create(&HES_ElectrifiedBegin);
+                    elementID = icon->status2.activeElementHID = hud_element_create(&HES_ElectrifiedBegin);
                     break;
                 default:
-                    elementID = icon->status2.activeElementID = hud_element_create(&HES_Item_KeyGift);
+                    elementID = icon->status2.activeElementHID = hud_element_create(&HES_Item_KeyGift);
                     break;
             }
 
             hud_element_set_flags(elementID, HUD_ELEMENT_FLAG_DISABLED);
-            hud_element_set_flags(elementID, HUD_ELEMENT_FLAG_80);
+            hud_element_set_flags(elementID, HUD_ELEMENT_FLAG_MANUAL_RENDER);
             icon->status2.activeTask = STATUS_ICON_TASK_DRAW;
         }
 
@@ -477,10 +476,10 @@ void update_all_status_icons(void* data) {
             case STATUS_ICON_TASK_LOAD:
                 switch (icon->status2.removing) {
                     case STATUS_KEY_STATIC:
-                        hud_element_set_script(icon->status2.removingElementID, &HES_ElectrifiedEnd);
+                        hud_element_set_script(icon->status2.removingElementHID, &HES_ElectrifiedEnd);
                         break;
                     default:
-                        hud_element_set_script(icon->status2.removingElementID, &HES_Item_KeyGift);
+                        hud_element_set_script(icon->status2.removingElementHID, &HES_Item_KeyGift);
                         break;
                 }
 
@@ -492,7 +491,7 @@ void update_all_status_icons(void* data) {
                     icon->status2.frameCounter--;
                 } else {
                     icon->status2.removing = 0;
-                    hud_element_free(icon->status2.removingElementID);
+                    hud_element_free(icon->status2.removingElementHID);
                     icon->status2.removingTask = STATUS_ICON_TASK_NONE;
                 }
                 break;
@@ -501,15 +500,15 @@ void update_all_status_icons(void* data) {
         if (icon->status3.activeTask == STATUS_ICON_TASK_LOAD) {
             switch (icon->status3.active) {
                 case STATUS_KEY_TRANSPARENT:
-                    elementID = icon->status3.activeElementID = hud_element_create(&HES_TransparentBegin);
+                    elementID = icon->status3.activeElementHID = hud_element_create(&HES_TransparentBegin);
                     break;
                 default:
-                    elementID = icon->status3.activeElementID = hud_element_create(&HES_Item_KeyGift);
+                    elementID = icon->status3.activeElementHID = hud_element_create(&HES_Item_KeyGift);
                     break;
             }
 
             hud_element_set_flags(elementID, HUD_ELEMENT_FLAG_DISABLED);
-            hud_element_set_flags(elementID, HUD_ELEMENT_FLAG_80);
+            hud_element_set_flags(elementID, HUD_ELEMENT_FLAG_MANUAL_RENDER);
             icon->status3.activeTask = STATUS_ICON_TASK_DRAW;
         }
 
@@ -519,10 +518,10 @@ void update_all_status_icons(void* data) {
             case STATUS_ICON_TASK_LOAD:
                 switch (icon->status3.removing) {
                     case STATUS_KEY_TRANSPARENT:
-                        hud_element_set_script(icon->status3.removingElementID, &HES_TransparentEnd);
+                        hud_element_set_script(icon->status3.removingElementHID, &HES_TransparentEnd);
                         break;
                     default:
-                        hud_element_set_script(icon->status3.removingElementID, &HES_Item_KeyGift);
+                        hud_element_set_script(icon->status3.removingElementHID, &HES_Item_KeyGift);
                         break;
                 }
 
@@ -534,16 +533,16 @@ void update_all_status_icons(void* data) {
                     icon->status3.frameCounter--;
                 } else {
                     icon->status3.removing = 0;
-                    hud_element_free(icon->status3.removingElementID);
+                    hud_element_free(icon->status3.removingElementHID);
                     icon->status3.removingTask = STATUS_ICON_TASK_NONE;
                 }
                 break;
         }
 
         if (icon->status4.activeTask == STATUS_ICON_TASK_LOAD) {
-            elementID = icon->status4.activeElementID = hud_element_create(&HES_WeakenedBegin);
+            elementID = icon->status4.activeElementHID = hud_element_create(&HES_WeakenedBegin);
             hud_element_set_flags(elementID, HUD_ELEMENT_FLAG_DISABLED);
-            hud_element_set_flags(elementID, HUD_ELEMENT_FLAG_80);
+            hud_element_set_flags(elementID, HUD_ELEMENT_FLAG_MANUAL_RENDER);
             icon->status4.activeTask = STATUS_ICON_TASK_DRAW;
         }
 
@@ -551,7 +550,7 @@ void update_all_status_icons(void* data) {
             case STATUS_ICON_TASK_NONE:
                 break;
             case STATUS_ICON_TASK_LOAD:
-                hud_element_set_script(icon->status4.removingElementID, &HES_WeakenedEnd);
+                hud_element_set_script(icon->status4.removingElementHID, &HES_WeakenedEnd);
                 icon->status4.frameCounter = 20;
                 icon->status4.removingTask = STATUS_ICON_TASK_DRAW;
                 break;
@@ -560,7 +559,7 @@ void update_all_status_icons(void* data) {
                     icon->status4.frameCounter--;
                 } else {
                     icon->status4.removing = 0;
-                    hud_element_free(icon->status4.removingElementID);
+                    hud_element_free(icon->status4.removingElementHID);
                     icon->status4.removingTask = STATUS_ICON_TASK_NONE;
                 }
                 break;
@@ -593,7 +592,6 @@ void update_all_status_icons(void* data) {
 }
 
 void draw_all_status_icons(void* data) {
-    PopupMessage* popup = data;
     HudStatusIcon* icon;
     s32 elementId;
     f32 x, y, z;
@@ -603,7 +601,7 @@ void draw_all_status_icons(void* data) {
     Camera* camera = &gCameras[gCurrentCameraID];
     int i;
 
-    gDPSetScissor(gMainGfxPos++, G_SC_NON_INTERLACE, 12, 20, SCREEN_WIDTH - 12, SCREEN_HEIGHT - 20);
+    gDPSetScissor(gMainGfxPos++, G_SC_NON_INTERLACE, SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX);
     gDPPipeSync(gMainGfxPos++);
     gDPSetCycleType(gMainGfxPos++, G_CYC_1CYCLE);
     gDPSetTexturePersp(gMainGfxPos++, G_TP_NONE);
@@ -628,9 +626,9 @@ void draw_all_status_icons(void* data) {
         isActiveDrawn = 0;
         if (icon->status1.activeTask == STATUS_ICON_TASK_DRAW) {
             if (icon->flags & STATUS_ICON_FLAG_DEBUFF) {
-                hud_element_set_flags(icon->status1.activeElementID, HUD_ELEMENT_FLAG_DISABLED);
+                hud_element_set_flags(icon->status1.activeElementHID, HUD_ELEMENT_FLAG_DISABLED);
             } else if (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->context != CONTEXT_BATTLE) {
-                hud_element_clear_flags(icon->status1.activeElementID, HUD_ELEMENT_FLAG_DISABLED);
+                hud_element_clear_flags(icon->status1.activeElementHID, HUD_ELEMENT_FLAG_DISABLED);
 
                 x = icon->worldPos.x;
                 y = icon->worldPos.y + icon->status1OffsetY;
@@ -638,7 +636,7 @@ void draw_all_status_icons(void* data) {
 
                 add_vec2D_polar(&x, &z, icon->status1Radius, clamp_angle(camera->curYaw + 90));
                 get_screen_coords(gCurrentCameraID, x, y, z, &screenX, &screenY, &screenZ);
-                elementId = icon->status1.activeElementID;
+                elementId = icon->status1.activeElementHID;
                 hud_element_set_render_pos(elementId, screenX - 8, screenY - 8);
                 hud_element_draw_next(elementId);
                 iconCounter = 1;
@@ -649,7 +647,7 @@ void draw_all_status_icons(void* data) {
         if (icon->status1.removingTask == STATUS_ICON_TASK_DRAW
             && (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->context != CONTEXT_BATTLE)
         ) {
-            hud_element_clear_flags(icon->status1.removingElementID, HUD_ELEMENT_FLAG_DISABLED);
+            hud_element_clear_flags(icon->status1.removingElementHID, HUD_ELEMENT_FLAG_DISABLED);
 
             if (isActiveDrawn == 0) {
                 iconCounter++;
@@ -661,7 +659,7 @@ void draw_all_status_icons(void* data) {
 
             add_vec2D_polar(&x, &z, icon->status1Radius, clamp_angle(camera->curYaw + 90));
             get_screen_coords(gCurrentCameraID, x, y, z, &screenX, &screenY, &screenZ);
-            elementId = icon->status1.removingElementID;
+            elementId = icon->status1.removingElementHID;
             hud_element_set_render_pos(elementId, screenX - 8, screenY - 8);
             hud_element_draw_next(elementId);
         }
@@ -669,9 +667,9 @@ void draw_all_status_icons(void* data) {
         isActiveDrawn = 0;
         if (icon->status2.activeTask == STATUS_ICON_TASK_DRAW) {
             if (icon->flags & STATUS_ICON_FLAG_STATIC) {
-                hud_element_set_flags(icon->status2.activeElementID, HUD_ELEMENT_FLAG_DISABLED);
+                hud_element_set_flags(icon->status2.activeElementHID, HUD_ELEMENT_FLAG_DISABLED);
             } else if (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->context != CONTEXT_BATTLE) {
-                hud_element_clear_flags(icon->status2.activeElementID, HUD_ELEMENT_FLAG_DISABLED);
+                hud_element_clear_flags(icon->status2.activeElementHID, HUD_ELEMENT_FLAG_DISABLED);
 
                 offsetY = 0;
                 if (iconCounter == 0) {
@@ -684,7 +682,7 @@ void draw_all_status_icons(void* data) {
 
                 add_vec2D_polar(&x, &z, icon->status2Radius, clamp_angle(camera->curYaw + 90));
                 get_screen_coords(gCurrentCameraID, x, y, z, &screenX, &screenY, &screenZ);
-                elementId = icon->status2.activeElementID;
+                elementId = icon->status2.activeElementHID;
                 hud_element_set_render_pos(elementId, screenX - 8, screenY - 8);
                 hud_element_draw_next(elementId);
 
@@ -696,7 +694,7 @@ void draw_all_status_icons(void* data) {
         if (icon->status2.removingTask == STATUS_ICON_TASK_DRAW
             && (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->context != CONTEXT_BATTLE)
         ) {
-            hud_element_clear_flags(icon->status2.removingElementID, HUD_ELEMENT_FLAG_DISABLED);
+            hud_element_clear_flags(icon->status2.removingElementHID, HUD_ELEMENT_FLAG_DISABLED);
 
             offsetY = 0;
             if (iconCounter == 0) {
@@ -712,7 +710,7 @@ void draw_all_status_icons(void* data) {
 
             add_vec2D_polar(&x, &z, icon->status2Radius, clamp_angle(camera->curYaw + 90));
             get_screen_coords(gCurrentCameraID, x, y, z, &screenX, &screenY, &screenZ);
-            elementId = icon->status2.removingElementID;
+            elementId = icon->status2.removingElementHID;
             hud_element_set_render_pos(elementId, screenX - 8, screenY - 8);
             hud_element_draw_next(elementId);
         }
@@ -720,9 +718,9 @@ void draw_all_status_icons(void* data) {
         isActiveDrawn = 0;
         if (icon->status3.activeTask == STATUS_ICON_TASK_DRAW) {
             if (icon->flags & STATUS_ICON_FLAG_TRANSPARENT) {
-                hud_element_set_flags(icon->status3.activeElementID, HUD_ELEMENT_FLAG_DISABLED);
+                hud_element_set_flags(icon->status3.activeElementHID, HUD_ELEMENT_FLAG_DISABLED);
             } else if (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->context != CONTEXT_BATTLE) {
-                hud_element_clear_flags(icon->status3.activeElementID, HUD_ELEMENT_FLAG_DISABLED);
+                hud_element_clear_flags(icon->status3.activeElementHID, HUD_ELEMENT_FLAG_DISABLED);
 
                 offsetY = 0;
                 if (iconCounter == 1) {
@@ -737,7 +735,7 @@ void draw_all_status_icons(void* data) {
 
                 add_vec2D_polar(&x, &z, icon->status3Radius, clamp_angle(camera->curYaw + 90));
                 get_screen_coords(gCurrentCameraID, x, y, z, &screenX, &screenY, &screenZ);
-                elementId = icon->status3.activeElementID;
+                elementId = icon->status3.activeElementHID;
                 hud_element_set_render_pos(elementId, screenX - 8, screenY - 8);
                 hud_element_draw_next(elementId);
                 iconCounter++;
@@ -748,7 +746,7 @@ void draw_all_status_icons(void* data) {
         if (icon->status3.removingTask == STATUS_ICON_TASK_DRAW
             && (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->context != CONTEXT_BATTLE)
         ) {
-            hud_element_clear_flags(icon->status3.removingElementID, HUD_ELEMENT_FLAG_DISABLED);
+            hud_element_clear_flags(icon->status3.removingElementHID, HUD_ELEMENT_FLAG_DISABLED);
 
             offsetY = 0;
             if (iconCounter == 1) {
@@ -767,7 +765,7 @@ void draw_all_status_icons(void* data) {
 
             add_vec2D_polar(&x, &z, icon->status3Radius, clamp_angle(camera->curYaw + 90));
             get_screen_coords(gCurrentCameraID, x, y, z, &screenX, &screenY, &screenZ);
-            elementId = icon->status3.removingElementID;
+            elementId = icon->status3.removingElementHID;
             hud_element_set_render_pos(elementId, screenX - 8, screenY - 8);
             hud_element_draw_next(elementId);
         }
@@ -775,9 +773,9 @@ void draw_all_status_icons(void* data) {
         isActiveDrawn = 0;
         if (icon->status4.activeTask == STATUS_ICON_TASK_DRAW) {
             if (icon->flags & STATUS_ICON_FLAG_STATUS_CHILL_OUT) {
-                hud_element_set_flags(icon->status4.activeElementID, HUD_ELEMENT_FLAG_DISABLED);
+                hud_element_set_flags(icon->status4.activeElementHID, HUD_ELEMENT_FLAG_DISABLED);
             } else if (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->context != CONTEXT_BATTLE) {
-                hud_element_clear_flags(icon->status4.activeElementID, HUD_ELEMENT_FLAG_DISABLED);
+                hud_element_clear_flags(icon->status4.activeElementHID, HUD_ELEMENT_FLAG_DISABLED);
 
                 offsetY = 0;
                 if (iconCounter == 2) {
@@ -796,7 +794,7 @@ void draw_all_status_icons(void* data) {
 
                 add_vec2D_polar(&x, &z, icon->status4Radius, clamp_angle(camera->curYaw + 90));
                 get_screen_coords(gCurrentCameraID, x, y, z, &screenX, &screenY, &screenZ);
-                elementId = icon->status4.activeElementID;
+                elementId = icon->status4.activeElementHID;
                 hud_element_set_render_pos(elementId, screenX - 8, screenY - 8);
                 hud_element_draw_next(elementId);
                 iconCounter++;
@@ -807,7 +805,7 @@ void draw_all_status_icons(void* data) {
         if (icon->status4.removingTask == STATUS_ICON_TASK_DRAW
             && (icon->flags & STATUS_ICON_FLAG_BATTLE || gGameStatusPtr->context != CONTEXT_BATTLE)
         ) {
-            hud_element_clear_flags(icon->status4.removingElementID, HUD_ELEMENT_FLAG_DISABLED);
+            hud_element_clear_flags(icon->status4.removingElementHID, HUD_ELEMENT_FLAG_DISABLED);
 
             offsetY = 0;
             if (iconCounter == 2) {
@@ -829,7 +827,7 @@ void draw_all_status_icons(void* data) {
 
             add_vec2D_polar(&x, &z, icon->status4Radius, clamp_angle(camera->curYaw + 90));
             get_screen_coords(gCurrentCameraID, x, y, z, &screenX, &screenY, &screenZ);
-            elementId = icon->status4.removingElementID;
+            elementId = icon->status4.removingElementHID;
             hud_element_set_render_pos(elementId, screenX - 8, screenY - 8);
             hud_element_draw_next(elementId);
         }
@@ -1135,7 +1133,7 @@ void remove_status_debuff(s32 iconID) {
         statusIcon->status1.active = 0;
         statusIcon->status1.activeTask = STATUS_ICON_TASK_NONE;
         statusIcon->status1.frameCounter = 10;
-        statusIcon->status1.removingElementID = statusIcon->status1.activeElementID;
+        statusIcon->status1.removingElementHID = statusIcon->status1.activeElementHID;
     }
 }
 
@@ -1161,11 +1159,11 @@ void remove_status_static(s32 iconID) {
 
     if (statusIcon->status2.active && !statusIcon->status2.removing) {
         statusIcon->status2.removing = statusIcon->status2.active;
-        statusIcon->status2.removingTask = TRUE;
-        statusIcon->status2.active = FALSE;
-        statusIcon->status2.activeTask = FALSE;
+        statusIcon->status2.removingTask = true;
+        statusIcon->status2.active = false;
+        statusIcon->status2.activeTask = false;
         statusIcon->status2.frameCounter = 10;
-        statusIcon->status2.removingElementID = statusIcon->status2.activeElementID;
+        statusIcon->status2.removingElementHID = statusIcon->status2.activeElementHID;
     }
 }
 
@@ -1191,11 +1189,11 @@ void remove_status_transparent(s32 iconID) {
 
     if (statusIcon->status3.active && !statusIcon->status3.removing) {
         statusIcon->status3.removing = statusIcon->status3.active;
-        statusIcon->status3.removingTask = TRUE;
-        statusIcon->status3.active = FALSE;
-        statusIcon->status3.activeTask = FALSE;
+        statusIcon->status3.removingTask = true;
+        statusIcon->status3.active = false;
+        statusIcon->status3.activeTask = false;
         statusIcon->status3.frameCounter = 10;
-        statusIcon->status3.removingElementID = statusIcon->status3.activeElementID;
+        statusIcon->status3.removingElementHID = statusIcon->status3.activeElementHID;
     }
 }
 
@@ -1210,8 +1208,8 @@ void create_status_chill_out(s32 iconID) {
 
     statusIcon->flags &= ~STATUS_ICON_FLAG_STATUS_CHILL_OUT;
     if (!statusIcon->status4.active) {
-        statusIcon->status4.active = TRUE;
-        statusIcon->status4.activeTask = TRUE;
+        statusIcon->status4.active = true;
+        statusIcon->status4.activeTask = true;
     }
 }
 
@@ -1220,11 +1218,11 @@ void remove_status_chill_out(s32 iconID) {
 
     if (statusIcon->status4.active && !statusIcon->status4.removing) {
         statusIcon->status4.removing = statusIcon->status4.active;
-        statusIcon->status4.removingTask = TRUE;
-        statusIcon->status4.active = FALSE;
-        statusIcon->status4.activeTask = FALSE;
+        statusIcon->status4.removingTask = true;
+        statusIcon->status4.active = false;
+        statusIcon->status4.activeTask = false;
         statusIcon->status4.frameCounter = 10;
-        statusIcon->status4.removingElementID = statusIcon->status4.activeElementID;
+        statusIcon->status4.removingElementHID = statusIcon->status4.activeElementHID;
     }
 }
 
@@ -1236,15 +1234,15 @@ void enable_status_chill_out(s32 iconID) {
 
 void create_status_icon_boost_jump(s32 iconID) {
     HudStatusIcon* statusIcon = &D_800A0F44[iconID];
-    s32 hudElement;
+    HudElemID hid;
 
     statusIcon->flags &= ~STATUS_ICON_FLAG_BOOST_JUMP;
     if (!statusIcon->boostJump.active) {
-        statusIcon->boostJump.active = TRUE;
-        hudElement = hud_element_create(&HES_BoostJumpBegin);
-        hud_element_set_flags(hudElement, HUD_ELEMENT_FLAG_DISABLED);
-        hud_element_set_flags(hudElement, HUD_ELEMENT_FLAG_80);
-        statusIcon->boostJump.activeElementID = hudElement;
+        statusIcon->boostJump.active = true;
+        hid = hud_element_create(&HES_BoostJumpBegin);
+        hud_element_set_flags(hid, HUD_ELEMENT_FLAG_DISABLED);
+        hud_element_set_flags(hid, HUD_ELEMENT_FLAG_MANUAL_RENDER);
+        statusIcon->boostJump.activeElementID = hid;
     }
 }
 
@@ -1252,11 +1250,11 @@ void remove_status_icon_boost_jump(s32 iconID) {
     HudStatusIcon* statusIcon = &D_800A0F44[iconID];
 
     if (statusIcon->boostJump.active) {
-        s32 hudElemIndex = statusIcon->boostJump.activeElementID;
-        statusIcon->boostJump.active = FALSE;
-        statusIcon->boostJump.removing = TRUE;
-        statusIcon->prevIndexBoostJump = hudElemIndex;
-        hud_element_set_script(hudElemIndex, &HES_BoostJumpEnd);
+        HudElemID hid = statusIcon->boostJump.activeElementID;
+        statusIcon->boostJump.active = false;
+        statusIcon->boostJump.removing = true;
+        statusIcon->prevIndexBoostJump = hid;
+        hud_element_set_script(hid, &HES_BoostJumpEnd);
     }
 }
 
@@ -1268,15 +1266,15 @@ void enable_status_icon_boost_jump(s32 iconID) {
 
 void create_status_icon_boost_hammer(s32 iconID) {
     HudStatusIcon* statusIcon = &D_800A0F44[iconID];
-    s32 hudElement;
+    HudElemID hid;
 
     statusIcon->flags &= ~STATUS_ICON_FLAG_BOOST_HAMMER;
     if (!statusIcon->boostHammer.active) {
-        statusIcon->boostHammer.active = TRUE;
-        hudElement = hud_element_create(&HES_BoostHammerBegin);
-        hud_element_set_flags(hudElement, HUD_ELEMENT_FLAG_DISABLED);
-        hud_element_set_flags(hudElement, HUD_ELEMENT_FLAG_80);
-        statusIcon->boostHammer.activeElementID = hudElement;
+        statusIcon->boostHammer.active = true;
+        hid = hud_element_create(&HES_BoostHammerBegin);
+        hud_element_set_flags(hid, HUD_ELEMENT_FLAG_DISABLED);
+        hud_element_set_flags(hid, HUD_ELEMENT_FLAG_MANUAL_RENDER);
+        statusIcon->boostHammer.activeElementID = hid;
     }
 }
 
@@ -1284,11 +1282,11 @@ void remove_status_icon_boost_hammer(s32 iconID) {
     HudStatusIcon* statusIcon = &D_800A0F44[iconID];
 
     if (statusIcon->boostHammer.active) {
-        s32 hudElemIndex = statusIcon->boostHammer.activeElementID;
-        statusIcon->boostHammer.active = FALSE;
-        statusIcon->boostHammer.removing = FALSE;
-        statusIcon->prevIndexBoostHammer = hudElemIndex;
-        hud_element_set_script(hudElemIndex, &HES_BoostHammerEnd);
+        HudElemID hid = statusIcon->boostHammer.activeElementID;
+        statusIcon->boostHammer.active = false;
+        statusIcon->boostHammer.removing = false;
+        statusIcon->prevIndexBoostHammer = hid;
+        hud_element_set_script(hid, &HES_BoostHammerEnd);
     }
 }
 
@@ -1300,15 +1298,15 @@ void enable_status_icon_boost_hammer(s32 iconID) {
 
 void create_status_icon_boost_partner(s32 iconID) {
     HudStatusIcon* statusIcon = &D_800A0F44[iconID];
-    s32 hudElement;
+    HudElemID hid;
 
     statusIcon->flags &= ~STATUS_ICON_FLAG_BOOST_PARTNER;
     if (!statusIcon->boostPartner.active) {
-        statusIcon->boostPartner.active = TRUE;
-        hudElement = hud_element_create(&HES_BoostPartner);
-        hud_element_set_flags(hudElement, HUD_ELEMENT_FLAG_DISABLED);
-        hud_element_set_flags(hudElement, HUD_ELEMENT_FLAG_80);
-        statusIcon->boostPartner.activeElementID = hudElement;
+        statusIcon->boostPartner.active = true;
+        hid = hud_element_create(&HES_BoostPartner);
+        hud_element_set_flags(hid, HUD_ELEMENT_FLAG_DISABLED);
+        hud_element_set_flags(hid, HUD_ELEMENT_FLAG_MANUAL_RENDER);
+        statusIcon->boostPartner.activeElementID = hid;
     }
 }
 
@@ -1316,7 +1314,7 @@ void remove_status_icon_boost_partner(s32 iconID) {
     HudStatusIcon* statusIcon = &D_800A0F44[iconID];
 
     if (statusIcon->boostPartner.active) {
-        statusIcon->boostPartner.active = FALSE;
+        statusIcon->boostPartner.active = false;
         hud_element_free(statusIcon->boostPartner.activeElementID);
     }
 }
@@ -1329,15 +1327,15 @@ void enable_status_icon_boost_partner(s32 iconID) {
 
 void create_status_icon_surprise(s32 iconID) {
     HudStatusIcon* statusIcon = &D_800A0F44[iconID];
-    s32 hudElement;
+    HudElemID hid;
 
     statusIcon->flags &= ~STATUS_ICON_FLAG_SURPRISE;
     if (!statusIcon->surprise.active) {
-        statusIcon->surprise.active = TRUE;
-        hudElement = hud_element_create(&HES_Surprise);
-        hud_element_set_flags(hudElement, HUD_ELEMENT_FLAG_DISABLED);
-        hud_element_set_flags(hudElement, HUD_ELEMENT_FLAG_80);
-        statusIcon->surprise.activeElementID = hudElement;
+        statusIcon->surprise.active = true;
+        hid = hud_element_create(&HES_Surprise);
+        hud_element_set_flags(hid, HUD_ELEMENT_FLAG_DISABLED);
+        hud_element_set_flags(hid, HUD_ELEMENT_FLAG_MANUAL_RENDER);
+        statusIcon->surprise.activeElementID = hid;
     }
 }
 
@@ -1345,7 +1343,7 @@ void remove_status_icon_surprise(s32 iconID) {
     HudStatusIcon* statusIcon = &D_800A0F44[iconID];
 
     if (statusIcon->surprise.active) {
-        statusIcon->surprise.active = FALSE;
+        statusIcon->surprise.active = false;
         hud_element_free(statusIcon->surprise.activeElementID);
     }
 }
@@ -1358,15 +1356,15 @@ void enable_status_icon_surprise(s32 iconID) {
 
 void create_status_icon_peril(s32 iconID) {
     HudStatusIcon* statusIcon = &D_800A0F44[iconID];
-    s32 hudElement;
+    HudElemID hid;
 
     statusIcon->flags &= ~STATUS_ICON_FLAG_PERIL;
     if (!statusIcon->peril.active) {
-        statusIcon->peril.active = TRUE;
-        hudElement = hud_element_create(&HES_Peril);
-        hud_element_set_flags(hudElement, HUD_ELEMENT_FLAG_DISABLED);
-        hud_element_set_flags(hudElement, HUD_ELEMENT_FLAG_80);
-        statusIcon->peril.activeElementID = hudElement;
+        statusIcon->peril.active = true;
+        hid = hud_element_create(&HES_Peril);
+        hud_element_set_flags(hid, HUD_ELEMENT_FLAG_DISABLED);
+        hud_element_set_flags(hid, HUD_ELEMENT_FLAG_MANUAL_RENDER);
+        statusIcon->peril.activeElementID = hid;
     }
 }
 
@@ -1374,7 +1372,7 @@ void remove_status_icon_peril(s32 iconID) {
     HudStatusIcon* statusIcon = &D_800A0F44[iconID];
 
     if (statusIcon->peril.active) {
-        statusIcon->peril.active = FALSE;
+        statusIcon->peril.active = false;
         hud_element_free(statusIcon->peril.activeElementID);
     }
 }
@@ -1387,15 +1385,15 @@ void enable_status_icon_peril(s32 iconID) {
 
 void create_status_icon_danger(s32 iconID) {
     HudStatusIcon* statusIcon = &D_800A0F44[iconID];
-    s32 hudElement;
+    HudElemID hid;
 
     statusIcon->flags &= ~STATUS_ICON_FLAG_DANGER;
     if (!statusIcon->danger.active) {
-        statusIcon->danger.active = TRUE;
-        hudElement = hud_element_create(&HES_Danger);
-        hud_element_set_flags(hudElement, HUD_ELEMENT_FLAG_DISABLED);
-        hud_element_set_flags(hudElement, HUD_ELEMENT_FLAG_80);
-        statusIcon->danger.activeElementID = hudElement;
+        statusIcon->danger.active = true;
+        hid = hud_element_create(&HES_Danger);
+        hud_element_set_flags(hid, HUD_ELEMENT_FLAG_DISABLED);
+        hud_element_set_flags(hid, HUD_ELEMENT_FLAG_MANUAL_RENDER);
+        statusIcon->danger.activeElementID = hid;
     }
 }
 
@@ -1403,7 +1401,7 @@ void remove_status_icon_danger(s32 iconID) {
     HudStatusIcon* statusIcon = &D_800A0F44[iconID];
 
     if (statusIcon->danger.active) {
-        statusIcon->danger.active = FALSE;
+        statusIcon->danger.active = false;
         hud_element_free(statusIcon->danger.activeElementID);
     }
 }

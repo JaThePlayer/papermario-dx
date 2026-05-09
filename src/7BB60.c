@@ -1,7 +1,6 @@
 #include "common.h"
 #include "world/partners.h"
 #include "sprite/player.h"
-#include "dx/debug_menu.h"
 
 CollisionStatus gCollisionStatus;
 f32 JumpedOnSwitchX;
@@ -30,16 +29,16 @@ b32 can_trigger_loading_zone(void) {
         actionState == ACTION_STATE_USE_TWEESTER ||
         actionState == ACTION_STATE_SPIN
        ) {
-        return TRUE;
+        return true;
     }
 
     if (actionState == ACTION_STATE_RIDE) {
         if (playerData->curPartner == PARTNER_LAKILESTER || playerData->curPartner == PARTNER_BOW) {
             if (partnerStatus->partnerActionState != PARTNER_ACTION_NONE) {
-                return TRUE;
+                return true;
             } else {
                 gPlayerStatusPtr->animFlags |= PA_FLAG_INTERRUPT_USE_PARTNER;
-                return FALSE;
+                return false;
             }
         } else {
             if (partnerStatus->actingPartner == PARTNER_WATT || partnerStatus->actingPartner == PARTNER_SUSHIE) {
@@ -47,11 +46,11 @@ b32 can_trigger_loading_zone(void) {
             }
             if (partnerStatus->actingPartner == PARTNER_PARAKARRY) {
                 gPlayerStatusPtr->animFlags |= PA_FLAG_INTERRUPT_USE_PARTNER;
-                return FALSE;
+                return false;
             }
         }
     }
-    return FALSE;
+    return false;
 }
 
 void move_player(s32 duration, f32 heading, f32 speed) {
@@ -165,7 +164,7 @@ void handle_jumping_land_on_switch(void) {
 
 void handle_jumping_launch(void) {
     PlayerStatus* playerStatus = &gPlayerStatus;
-    s32 cond = FALSE;
+    s32 cond = false;
 
     if (playerStatus->pos.y < playerStatus->gravityIntegrator[3] + playerStatus->gravityIntegrator[2]) {
         f32 phi_f6 = (playerStatus->gravityIntegrator[3] - playerStatus->pos.y) / 777.0f;
@@ -179,12 +178,12 @@ void handle_jumping_launch(void) {
         playerStatus->gravityIntegrator[0] += phi_f6;
         playerStatus->pos.y += playerStatus->gravityIntegrator[0];
         if (playerStatus->gravityIntegrator[0] <= 0.0f) {
-            cond = TRUE;
+            cond = true;
         }
     } else {
         playerStatus->gravityIntegrator[0] += -1.2;
         if (playerStatus->gravityIntegrator[0] <= 0.0f) {
-            cond = TRUE;
+            cond = true;
         }
         playerStatus->pos.y += playerStatus->gravityIntegrator[0];
     }
@@ -752,14 +751,14 @@ void collision_main_lateral(void) {
     }
 }
 
-HitID collision_check_player_intersecting_world(s32 mode, s32 arg1, f32 yaw) {
+HitID collision_check_player_intersecting_world(s32 mode, s32 offsetY, f32 yaw) {
     HitID ret = NO_COLLIDER;
     f32 angle = 0.0f;
     s32 i;
 
     for (i = 0; i < 4; i++) {
         f32 x = gPlayerStatusPtr->pos.x;
-        f32 y = gPlayerStatusPtr->pos.y + arg1;
+        f32 y = gPlayerStatusPtr->pos.y + offsetY;
         f32 z = gPlayerStatusPtr->pos.z;
         s32 hitID, hitID2;
 
@@ -787,7 +786,8 @@ HitID collision_check_player_intersecting_world(s32 mode, s32 arg1, f32 yaw) {
     return ret;
 }
 
-HitID func_800E4404(s32 mode, s32 offsetY, f32 arg2, f32* outX, f32* outY, f32* outZ) {
+// unused
+HitID collision_check_pos_intersecting_world(s32 mode, s32 offsetY, f32 arg2, f32* outX, f32* outY, f32* outZ) {
     HitID ret = NO_COLLIDER;
     f32 angle = 0.0f;
     s32 i;
@@ -834,13 +834,13 @@ void collision_check_player_overlaps(void) {
     }
 }
 
-b32 (*PlayerSlidingCallback)(void) = NULL;
+b32 (*PlayerSlidingCallback)(void) = nullptr;
 
 s32 phys_should_player_be_sliding(void) {
-    if (PlayerSlidingCallback != NULL) {
+    if (PlayerSlidingCallback != nullptr) {
         return PlayerSlidingCallback();
     }
-    return FALSE;
+    return false;
 }
 
 void phys_set_player_sliding_check(b32 (*funcPtr)(void)) {
@@ -851,10 +851,10 @@ s32 phys_is_on_sloped_ground(void) {
     Shadow* playerShadow = get_shadow_by_index(gPlayerStatus.shadowID);
     f32 rotZ = playerShadow->rot.z + 180.0;
     f32 rotX = playerShadow->rot.x + 180.0;
-    s32 ret = TRUE;
+    s32 ret = true;
 
     if (fabsf(rotZ) < 20.0f && fabsf(rotX) < 20.0f) {
-        ret = FALSE;
+        ret = false;
     }
 
     return ret;
@@ -906,7 +906,7 @@ void phys_main_collision_below(void) {
         phys_adjust_cam_on_landing();
     }
 
-    if (playerStatus->flags & PS_FLAG_SLIDING && phys_should_player_be_sliding()) {
+    if ((playerStatus->flags & PS_FLAG_SLIDING) && phys_should_player_be_sliding()) {
         set_action_state(ACTION_STATE_SLIDING);
     }
 
@@ -942,7 +942,7 @@ void phys_main_collision_below(void) {
                 }
                 break;
             default:
-                cond = FALSE;
+                cond = false;
                 if (collisionStatus->curFloor & COLLISION_WITH_ENTITY_BIT) {
                     cond = get_entity_type(collisionStatus->curFloor) == ENTITY_TYPE_HIDDEN_PANEL;
                 }
@@ -984,7 +984,7 @@ void func_800E4AD8(s32 mode) {
 void func_800E4B40(s32 mode, f32* outX, f32* outY, f32* outZ) {
     f32 camYaw = gCameras[gCurrentCameraID].curYaw;
 
-    func_800E4404(mode, 0, gPlayerStatus.spriteFacingAngle - 90.0f + camYaw, outX, outY, outZ);
+    collision_check_pos_intersecting_world(mode, 0, gPlayerStatus.spriteFacingAngle - 90.0f + camYaw, outX, outY, outZ);
 }
 
 void collision_lava_reset_check_additional_overlaps(void) {
@@ -1056,7 +1056,7 @@ void collision_lava_reset_check_additional_overlaps(void) {
 
 void collision_lateral_peach(void) {
     PlayerStatus* playerStatus = &gPlayerStatus;
-    s32 climbableStep = FALSE;
+    s32 climbableStep = false;
     f32 yaw = playerStatus->targetYaw;
     f32 x = playerStatus->pos.x;
     f32 y = playerStatus->pos.y;
@@ -1084,13 +1084,13 @@ void check_input_midair_jump(void) {
         && gPlayerStatus.pressedButtons & BUTTON_A
     ) {
         switch (gPlayerData.bootsLevel) {
-            case 0:
+            case GEAR_RANK_NORMAL:
                 break;
-            case 1:
+            case GEAR_RANK_SUPER:
                 set_action_state(ACTION_STATE_SPIN_JUMP);
                 gPlayerStatus.flags |= PS_FLAG_FLYING;
                 break;
-            case 2:
+            case GEAR_RANK_ULTRA:
                 set_action_state(ACTION_STATE_TORNADO_JUMP);
                 gPlayerStatus.flags |= PS_FLAG_FLYING;
                 break;
@@ -1157,20 +1157,20 @@ HitID phys_check_interactable_collision(void) {
 }
 
 s32 phys_can_player_interact(void) {
-    s32 ret = TRUE;
+    s32 ret = true;
 
     if (gPartnerStatus.partnerActionState != PARTNER_ACTION_NONE) {
         if (gPartnerStatus.actingPartner == PARTNER_BOMBETTE) {
             if (gPartnerStatus.partnerActionState <= PARTNER_ACTION_BOMBETTE_2) {
-                ret = FALSE;
+                ret = false;
             }
         } else {
-            ret = FALSE;
+            ret = false;
         }
     } else if (!(gPlayerStatus.actionState == ACTION_STATE_IDLE ||
                  gPlayerStatus.actionState == ACTION_STATE_WALK ||
                  gPlayerStatus.actionState == ACTION_STATE_RUN)) {
-        ret = FALSE;
+        ret = false;
     }
     return ret;
 }

@@ -59,14 +59,14 @@ EffectInstance* lil_oink_main(s32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, 
     bp.unk_00 = 0;
     bp.init = lil_oink_init;
     bp.update = lil_oink_update;
-    bp.renderWorld = lil_oink_render;
-    bp.renderUI = NULL;
+    bp.renderScene = lil_oink_render;
+    bp.renderUI = nullptr;
     bp.effectID = EFFECT_LIL_OINK;
 
     effect = create_effect_instance(&bp);
     effect->numParts = numParts;
     data = effect->data.lilOink = general_heap_malloc(numParts * sizeof(*data));
-    ASSERT(data != NULL);
+    ASSERT(data != nullptr);
 
     data->lifetime = 0;
     data->timeLeft = 1000;
@@ -97,28 +97,28 @@ void lil_oink_update(EffectInstance* effect) {
 
     for (i = 0; i < MAX_LIL_OINKS; i++) {
         s32 time = data->animTime[i];
-        s32 animDone = FALSE;
+        s32 animDone = false;
 
         switch (data->anim[i]) {
             case LIL_OINK_ANIM_0:
-                animDone = TRUE;
+                animDone = true;
                 break;
             case LIL_OINK_ANIM_1:
                 data->gfxFrame[i] = 1;
-                animDone = TRUE;
+                animDone = true;
                 break;
             case LIL_OINK_ANIM_3:
                 data->gfxFrame[i] = lil_oink_AnimateGfxSelect[time % ARRAY_COUNT(lil_oink_AnimateGfxSelect)];
                 data->rot[i] = data->rot[i] + sin_deg(time * 10);
                 if (time >= 36) {
-                    animDone = TRUE;
+                    animDone = true;
                     data->animTime[i] = 0;
                 }
                 break;
             case LIL_OINK_ANIM_2:
                 data->gfxFrame[i] = lil_oink_AnimateGfxSelect[time % ARRAY_COUNT(lil_oink_AnimateGfxSelect)];
                 data->jumpOffset[i] = sin_deg(time * 20) * 2.0f;
-                animDone = TRUE;
+                animDone = true;
                 if (time >= 9) {
                     data->jumpOffset[i] = 0.0f;
                     data->animTime[i] = 0;
@@ -128,7 +128,7 @@ void lil_oink_update(EffectInstance* effect) {
                 data->gfxFrame[i] = lil_oink_AnimateGfxSelect[time % ARRAY_COUNT(lil_oink_AnimateGfxSelect)];
                 data->jumpOffset[i] = sin_deg(time * 20) * 4.0f;
                 if (!(time < 9)) {
-                    animDone = TRUE;
+                    animDone = true;
                     data->jumpOffset[i] = 0.0f;
                     data->animTime[i] = 0;
                 }
@@ -138,7 +138,7 @@ void lil_oink_update(EffectInstance* effect) {
                 data->gfxFrame[i] = lil_oink_AnimateGfxSelect[time % ARRAY_COUNT(lil_oink_AnimateGfxSelect)];
                 data->jumpOffset[i] = sin_deg(time * 5) * 12.0f;
                 if (!(time < 36)) {
-                    animDone = TRUE;
+                    animDone = true;
                     data->jumpOffset[i] = 0.0f;
                     data->animTime[i] = 0;
                 }
@@ -176,7 +176,7 @@ void lil_oink_appendGfx(void* effect) {
     s32 i;
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x9, VIRTUAL_TO_PHYSICAL(eff->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x9, VIRTUAL_TO_PHYSICAL(eff->shared->graphics));
 
     gSPDisplayList(gMainGfxPos++, D_09002D70_401FC0);
     gSPLookAt(gMainGfxPos++, &gDisplayContext->lookAt);

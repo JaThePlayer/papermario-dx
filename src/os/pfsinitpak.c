@@ -5,7 +5,6 @@
 s32 __osPfsCheckRamArea(OSPfs *pfs);
 
 s32 osPfsInitPak(OSMesgQueue *queue, OSPfs *pfs, int channel) {
-    int k;
     s32 ret;
     u16 sum;
     u16 isum;
@@ -66,11 +65,11 @@ s32 __osPfsCheckRamArea(OSPfs *pfs) {
     for (i = 0; i < ARRAY_COUNT(temp1); i++) {
         temp1[i] = i;
     }
-    ERRCK(__osContRamWrite(pfs->queue, pfs->channel, 0, temp1, FALSE));
+    ERRCK(__osContRamWrite(pfs->queue, pfs->channel, 0, temp1, false));
     ERRCK(__osContRamRead(pfs->queue, pfs->channel, 0, temp2));
     if (bcmp(temp1, temp2, ARRAY_COUNT(temp1)) != 0) {
         return PFS_ERR_DEVICE;
     }
-    ret = __osContRamWrite(pfs->queue, pfs->channel, 0, temp3, FALSE);
+    ret = __osContRamWrite(pfs->queue, pfs->channel, 0, temp3, false);
     return ret;
 }

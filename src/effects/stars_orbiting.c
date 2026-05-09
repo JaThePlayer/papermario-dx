@@ -31,7 +31,7 @@ void stars_orbiting_main(
 
     bp.init = stars_orbiting_init;
     bp.update = stars_orbiting_update;
-    bp.renderWorld = stars_orbiting_render;
+    bp.renderScene = stars_orbiting_render;
     bp.unk_00 = 0;
     bp.renderUI = func_E005E318;
     bp.effectID = EFFECT_STARS_ORBITING;
@@ -39,7 +39,7 @@ void stars_orbiting_main(
     effect = create_effect_instance(&bp);
     effect->numParts = numStars;
     part = effect->data.starsOrbiting = general_heap_malloc(numStars * sizeof(*part));
-    ASSERT(effect->data.starsOrbiting != NULL);
+    ASSERT(effect->data.starsOrbiting != nullptr);
 
     mem_clear(part, numStars * sizeof(*part));
 
@@ -50,7 +50,7 @@ void stars_orbiting_main(
     part->orbitRadius = 0;
     part->yaw = 0;
     part->targetRadius = radius;
-    part->enabled = TRUE;
+    part->enabled = true;
 
     part++;
     for (i = 1; i < numStars; i++, part++) {
@@ -113,7 +113,7 @@ void func_E005E334(EffectInstance* effect) {
         Gfx* dlist2 = D_E005E674[0];
 
         gDPPipeSync(gMainGfxPos++);
-        gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+        gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
         gSPDisplayList(gMainGfxPos++, dlist2);
 
         guTranslateF(sp18, part->pos.x, part->pos.y, part->pos.z);

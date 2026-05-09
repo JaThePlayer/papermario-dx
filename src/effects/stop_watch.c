@@ -60,15 +60,15 @@ EffectInstance* stop_watch_main(
 
     bp.init = stop_watch_init;
     bp.update = stop_watch_update;
-    bp.renderWorld = stop_watch_render;
+    bp.renderScene = stop_watch_render;
     bp.unk_00 = 0;
-    bp.renderUI = NULL;
+    bp.renderUI = nullptr;
     bp.effectID = EFFECT_STOP_WATCH;
 
     effect = create_effect_instance(&bp);
     effect->numParts = numParts;
     data = effect->data.stopWatch = general_heap_malloc(numParts * sizeof(*data));
-    ASSERT(effect->data.stopWatch != NULL);
+    ASSERT(effect->data.stopWatch != nullptr);
 
     data->unk_00 = arg0;
     data->unk_14 = 0;
@@ -189,7 +189,7 @@ void stop_watch_appendGfx(void* effect) {
     s32 i;
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
 
     guTranslateF(sp20, data->unk_04, data->unk_08, data->unk_0C);
     guScaleF(sp60, data->unk_28, data->unk_28, data->unk_28);

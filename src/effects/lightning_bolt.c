@@ -62,15 +62,15 @@ EffectInstance* lightning_bolt_main(
 
     bp.init = lightning_bolt_init;
     bp.update = lightning_bolt_update;
-    bp.renderWorld = lightning_bolt_render;
+    bp.renderScene = lightning_bolt_render;
     bp.unk_00 = 0;
-    bp.renderUI = NULL;
+    bp.renderUI = nullptr;
     bp.effectID = EFFECT_LIGHTNING_BOLT;
 
     effect = create_effect_instance(&bp);
     effect->numParts = numParts;
     data = effect->data.lightningBolt = general_heap_malloc(numParts * sizeof(*data));
-    ASSERT(effect->data.lightningBolt != NULL);
+    ASSERT(effect->data.lightningBolt != nullptr);
 
     data->type = type;
     data->lifetime = 0;
@@ -105,7 +105,7 @@ EffectInstance* lightning_bolt_main(
 
         return effect;
     } else {
-        return NULL;
+        return nullptr;
     }
 }
 
@@ -196,7 +196,6 @@ void lightning_bolt_appendGfx(void* effect) {
     f32 deltaX, deltaY, deltaZ;
     LightningBoltFXData* data = ((EffectInstance*)effect)->data.lightningBolt;
     Matrix4f sp10;
-    Matrix4f unused;
     s32 i;
     f32 edgeLength;
 
@@ -206,7 +205,7 @@ void lightning_bolt_appendGfx(void* effect) {
     widthScale = data->widthScale;
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
 
     guScaleF(sp10, 0.1f, 0.1f, 0.1f);
     guMtxF2L(sp10, &gDisplayContext->matrixStack[gMatrixListPos]);

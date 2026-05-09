@@ -55,15 +55,15 @@ void bulb_glow_main(s32 arg0, f32 posX, f32 posY, f32 posZ, f32 arg4, EffectInst
 
     bp.init = bulb_glow_init;
     bp.update = bulb_glow_update;
-    bp.renderWorld = bulb_glow_render;
+    bp.renderScene = bulb_glow_render;
     bp.unk_00 = 0;
-    bp.renderUI = NULL;
+    bp.renderUI = nullptr;
     bp.effectID = EFFECT_BULB_GLOW;
 
     effect = create_effect_instance(&bp);
     effect->numParts = numParts;
     data = effect->data.bulbGlow = general_heap_malloc(numParts * sizeof(*data));
-    ASSERT(effect->data.bulbGlow != NULL);
+    ASSERT(effect->data.bulbGlow != nullptr);
 
     data->type = arg0 & 255;
     if (arg0 < 256) {
@@ -183,7 +183,7 @@ void bulb_glow_appendGfx(void* effect) {
     }
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
 
     temp_s1 = &D_E0078918[type];
     glowExtent = temp_s1->unk_10;
@@ -192,7 +192,7 @@ void bulb_glow_appendGfx(void* effect) {
     isPointVisible = is_point_visible(data->pos.x, data->pos.y, data->pos.z, data->depthQueryID, &centerX, &centerY);
 
     if (type == 5) {
-        isPointVisible = TRUE;
+        isPointVisible = true;
     }
 
     if (!isPointVisible || centerX < 0.0f || centerY < 0.0f || centerX >= SCREEN_WIDTH || centerY >= SCREEN_HEIGHT) {

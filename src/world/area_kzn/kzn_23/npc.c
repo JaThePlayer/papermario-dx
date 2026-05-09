@@ -62,7 +62,7 @@ API_CALLABLE(N(AnimateChestSize)) {
     entity->rot.y = (1.0f - cos_rad(entity->scale.y * PI)) * 990.0 / 2.0;
 
     script->functionTemp[1]--;
-    if (~script->functionTemp[1] == 0) { //TODO remove ~ optimization
+    if (script->functionTemp[1] == -1) {
         return ApiStatus_DONE2;
     } else {
         return ApiStatus_BLOCK;
@@ -144,12 +144,12 @@ EvtScript N(EVS_PlayPyroclastSounds) = {
     Loop(LVar0)
         BufRead1(LVar1)
     EndLoop
-    IfEq(AF_KZN23_UseAlternateSound, FALSE)
+    IfEq(AF_KZN23_UseAlternateSound, false)
         Call(PlaySoundAt, SOUND_FLYING_PYROCLAST_1, SOUND_SPACE_DEFAULT, LVar1, 2800, 0)
-        Set(AF_KZN23_UseAlternateSound, TRUE)
+        Set(AF_KZN23_UseAlternateSound, true)
     Else
         Call(PlaySoundAt, SOUND_FLYING_PYROCLAST_2, SOUND_SPACE_DEFAULT, LVar1, 2800, 0)
-        Set(AF_KZN23_UseAlternateSound, FALSE)
+        Set(AF_KZN23_UseAlternateSound, false)
     EndIf
     Return
     End
@@ -200,11 +200,11 @@ EvtScript N(EVS_SpawnPyroclasts) = {
 };
 
 EvtScript N(EVS_Scene_Misstar) = {
-    Call(DisablePlayerInput, TRUE)
-    Call(DisablePlayerPhysics, TRUE)
+    Call(DisablePlayerInput, true)
+    Call(DisablePlayerPhysics, true)
     Call(SetPlayerActionState, ACTION_STATE_LAND)
     Call(DisablePartnerAI, 0)
-    Call(SetNpcFlagBits, NPC_PARTNER, NPC_FLAG_GRAVITY, FALSE)
+    Call(SetNpcFlagBits, NPC_PARTNER, NPC_FLAG_GRAVITY, false)
     Call(N(AllowCameraInterpY))
     Exec(N(EVS_CameraFollowMisstar))
     Call(SetSelfVar, 0, 0)

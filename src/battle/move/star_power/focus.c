@@ -21,7 +21,7 @@ s32 count_enemies() {
 
     for (i = 0; i < ARRAY_COUNT(battleStatus->enemyActors); i++) {
         Actor* targetActor = battleStatus->enemyActors[i];
-        if (targetActor == NULL)
+        if (targetActor == nullptr)
             continue;
         if ((targetActor->flags & (ACTOR_FLAG_NO_DMG_APPLY | ACTOR_FLAG_TARGET_ONLY)))
             continue;
@@ -80,16 +80,16 @@ ApiStatus RestoreStarPowerImpl(Evt* script, s32 isInitialCall, b32 isPartner) {
 }
 
 API_CALLABLE(N(RestoreStarPowerFromPlayer)) {
-    return RestoreStarPowerImpl(script, isInitialCall, FALSE);
+    return RestoreStarPowerImpl(script, isInitialCall, false);
 }
 
 API_CALLABLE(N(RestoreStarPowerFromPartner)) {
-    return RestoreStarPowerImpl(script, isInitialCall, TRUE);
+    return RestoreStarPowerImpl(script, isInitialCall, true);
 }
 
 EvtScript N(EVS_UsePower) = {
     ExecWait(N(EVS_StarPower_WishForSpirit))
-    Call(EnableBattleStatusBar, TRUE)
+    Call(EnableBattleStatusBar, true)
     Call(GetOwnerID, LVarA)
     IfEq(LVarA, ACTOR_PLAYER)
         Call(PlaySound, SOUND_STAR_POWER_RECOVERY)

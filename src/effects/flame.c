@@ -78,15 +78,15 @@ void flame_main(
 
     bpPtr->init = flame_init;
     bpPtr->update = flame_update;
-    bpPtr->renderWorld = flame_render;
+    bpPtr->renderScene = flame_render;
     bpPtr->unk_00 = 0;
-    bpPtr->renderUI = NULL;
+    bpPtr->renderUI = nullptr;
     bpPtr->effectID = EFFECT_FLAME;
 
     effect = create_effect_instance(bpPtr);
     effect->numParts = numParts;
     data = effect->data.flame = general_heap_malloc(numParts * sizeof(*data));
-    ASSERT(effect->data.flame != NULL);
+    ASSERT(effect->data.flame != nullptr);
 
     data->type = type;
     data->unk_18 = 0;
@@ -101,7 +101,7 @@ void flame_main(
     data->scaleH = 1.0f;
     data->unk_28 = 1.0f;
 
-    if (outEffect != NULL) {
+    if (outEffect != nullptr) {
         *outEffect = effect;
     }
 }
@@ -136,7 +136,6 @@ void flame_render(EffectInstance* effect) {
     FlameFXData* data = effect->data.flame;
     RenderTask renderTask;
     RenderTask* renderTaskPtr = &renderTask;
-    RenderTask* retTask;
     s32 outDist;
     f32 outX;
     f32 outY;
@@ -177,7 +176,7 @@ void flame_appendGfx(void* effect) {
     Matrix4f sp98;
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
 
     if (LastFlameRenderFrame != gGameStatusPtr->frameCounter) {
         LastFlameRenderFrame = gGameStatusPtr->frameCounter;

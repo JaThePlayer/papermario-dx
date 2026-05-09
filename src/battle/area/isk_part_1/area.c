@@ -52,14 +52,14 @@ Formation A(Formation_00) = { // isk_02
 Formation A(Formation_0B) = { // isk_02
     ACTOR_BY_IDX(A(pokey_mummy), BTL_POS_GROUND_A, 10),
     ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_B, 9),
-    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_C, 8, TRUE),
+    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_C, 8, true),
 };
 
 Formation A(Formation_01) = { // isk_02
     ACTOR_BY_IDX(A(pokey_mummy), BTL_POS_GROUND_A, 10),
     ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_B, 9),
-    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_B, 8, TRUE),
-    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_C, 7, TRUE),
+    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_B, 8, true),
+    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_C, 7, true),
 };
 
 
@@ -72,9 +72,9 @@ Formation A(Formation_09) = { // isk_04
 
 Formation A(Formation_0D) = { // isk_04
     ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_B, 10),
-    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_B, 9, TRUE),
+    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_B, 9, true),
     ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_C, 8),
-    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_C, 7, TRUE),
+    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_C, 7, true),
 };
 
 
@@ -83,7 +83,7 @@ Formation A(Formation_02) = { // isk_07
     ACTOR_BY_IDX(A(pokey_mummy), BTL_POS_GROUND_B, 9),
     ACTOR_BY_POS(A(swooper), A(vector3D_80224088), 8),
     ACTOR_BY_POS(A(buzzy_beetle), A(vector3D_80224094), 7, 1),
-    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_D, 6, TRUE),
+    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_D, 6, true),
 };
 
 Formation A(Formation_03) = { // isk_07
@@ -97,8 +97,8 @@ Formation A(Formation_06) = { // isk_07
     ACTOR_BY_IDX(A(pokey_mummy), BTL_POS_GROUND_A, 10),
     ACTOR_BY_IDX(A(pokey_mummy), BTL_POS_GROUND_B, 9),
     ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_C, 8),
-    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_C, 7, TRUE),
-    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_D, 6, TRUE),
+    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_C, 7, true),
+    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_D, 6, true),
 };
 
 
@@ -106,7 +106,7 @@ Formation A(Formation_0A) = { // isk_08
     ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_A, 10),
     ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_B, 9),
     ACTOR_BY_IDX_ITEM(A(buzzy_beetle), BTL_POS_GROUND_C, 8, ITEM_FIRE_FLOWER),
-    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_C, 7, TRUE),
+    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_C, 7, true),
 };
 
 
@@ -118,7 +118,7 @@ Formation A(Formation_0C) = { // isk_18
 Formation A(Formation_0F) = { // isk_18
     ACTOR_BY_POS(A(buzzy_beetle), A(vector3D_802240AC), 10, 1),
     ACTOR_BY_POS(A(buzzy_beetle), A(vector3D_802240B8), 9, 1),
-    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_D, 8, TRUE),
+    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_D, 8, true),
 };
 
 Formation A(Formation_13) = { // isk_18

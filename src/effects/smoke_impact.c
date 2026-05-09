@@ -37,15 +37,15 @@ void smoke_impact_main(
 
     bp.init = smoke_impact_init;
     bp.update = smoke_impact_update;
-    bp.renderWorld = smoke_impact_render;
+    bp.renderScene = smoke_impact_render;
     bp.unk_00 = 0;
-    bp.renderUI = NULL;
+    bp.renderUI = nullptr;
     bp.effectID = EFFECT_SMOKE_IMPACT;
 
     effect = create_effect_instance(&bp);
     effect->numParts = arg5;
     part = effect->data.smokeImpact = general_heap_malloc(arg5 * sizeof(*part));
-    ASSERT(effect->data.smokeImpact != NULL);
+    ASSERT(effect->data.smokeImpact != nullptr);
 
     mem_clear(part, arg5 * sizeof(*part));
 
@@ -131,7 +131,7 @@ void smoke_impact_appendGfx(void* effect) {
     s32 i;
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
     gSPDisplayList(gMainGfxPos++, dlist2);
 
     guTranslateF(sp18, part->unk_04, part->unk_08, part->unk_0C);

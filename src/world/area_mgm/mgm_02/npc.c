@@ -101,8 +101,8 @@ typedef struct SmashGameData {
     /* 0x000 */ s32 workerID;
     /* 0x004 */ s32 found;
     /* 0x008 */ s32 timeLeft; // num frames at 30fps
-    /* 0x00C */ s32 hudElemID_AButton;
-    /* 0x010 */ s32 hudElemID_Meter;
+    /* 0x00C */ HudElemID buttonHID;
+    /* 0x010 */ HudElemID meterHID;
     /* 0x014 */ s32 windowA_posX;
     /* 0x018 */ s32 windowB_posX;
     /* 0x01C */ s32 signpostEntity;
@@ -123,20 +123,20 @@ typedef struct SmashGameData {
 void N(appendGfx_score_display)(void* renderData) {
     Enemy* scorekeeper = get_enemy(SCOREKEEPER_ENEMY_IDX);
     SmashGameData* data = scorekeeper->varTablePtr[SMASH_DATA_VAR_IDX];
-    s32 hudElemA;
-    s32 hudElemMeter;
+    HudElemID buttonHID;
+    HudElemID meterHID;
     s32 timeLeft;
     s32 seconds;
     s32 deciseconds;
 
     // show mash meter while grabbed by a fuzzy
     if (data->stunFlags & STUN_FLAG_GRABBED) {
-        hudElemA = data->hudElemID_AButton;
-        hud_element_set_render_pos(hudElemA, 90, 90);
-        hud_element_draw_clipped(hudElemA);
-        hudElemMeter = data->hudElemID_Meter;
-        hud_element_set_render_pos(hudElemMeter, 90, 120);
-        hud_element_draw_clipped(hudElemMeter);
+        buttonHID = data->buttonHID;
+        hud_element_set_render_pos(buttonHID, 90, 90);
+        hud_element_draw_clipped(buttonHID);
+        meterHID = data->meterHID;
+        hud_element_set_render_pos(meterHID, 90, 120);
+        hud_element_draw_clipped(meterHID);
         startup_draw_prim_rect_COPY(62, 116, 62 + (s32)(((f32)data->mashProgress / 12.0) * 59.0), 116 + 5, 0, 228, 134, 255);
     }
 
@@ -172,7 +172,7 @@ void N(appendGfx_score_display)(void* renderData) {
         }
     }
 
-    draw_box(0, WINDOW_STYLE_9, data->windowA_posX, 23, 0, 80, 38, 180, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, NULL, NULL, NULL, SCREEN_WIDTH, SCREEN_HEIGHT, NULL);
+    draw_box(0, WINDOW_STYLE_9, data->windowA_posX, 23, 0, 80, 38, 180, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, nullptr, nullptr, nullptr, SCREEN_WIDTH, SCREEN_HEIGHT, nullptr);
     draw_msg(MSG_MGM_0047, data->windowA_posX + 42, TEXT_POS_Y, 255, MSG_PAL_WHITE, 0);
     draw_number(NUM_PANELS - data->found, data->windowA_posX + 65, COUNT_POS_Y, DRAW_NUMBER_CHARSET_THIN, MSG_PAL_WHITE, 255, DRAW_NUMBER_STYLE_MONOSPACE | DRAW_NUMBER_STYLE_ALIGN_RIGHT);
     draw_ci_image_with_clipping(&N(panel_peach_img), 32, 32, G_IM_FMT_CI, G_IM_SIZ_4b, &N(panel_peach_pal),
@@ -182,7 +182,7 @@ void N(appendGfx_score_display)(void* renderData) {
     deciseconds = ((f32)(timeLeft % FRAME_RATE) * 10.0) / FRAME_RATE;
     seconds = timeLeft / FRAME_RATE;
 
-    draw_box(0, WINDOW_STYLE_11, data->windowB_posX, 27, 0, 60, 20, 180, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, NULL, NULL, NULL, SCREEN_WIDTH, SCREEN_HEIGHT, NULL);
+    draw_box(0, WINDOW_STYLE_11, data->windowB_posX, 27, 0, 60, 20, 180, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, nullptr, nullptr, nullptr, SCREEN_WIDTH, SCREEN_HEIGHT, nullptr);
     // draw whole seconds
     draw_number(seconds, data->windowB_posX + 29, 31, DRAW_NUMBER_CHARSET_THIN, MSG_PAL_WHITE, 255, DRAW_NUMBER_STYLE_MONOSPACE | DRAW_NUMBER_STYLE_ALIGN_RIGHT);
     // draw tenths of seconds
@@ -204,22 +204,23 @@ void N(worker_draw_score)(void) {
 
 API_CALLABLE(N(CreateScoreDisplay)) {
     SmashGameData* data = get_enemy(SCOREKEEPER_ENEMY_IDX)->varTablePtr[SMASH_DATA_VAR_IDX];
-    s32 hudElemA, hudElemMeter;
+    HudElemID hidButton;
+    HudElemID hidMeter;
 
     if (isInitialCall) {
-        data->workerID = create_worker_world(NULL, &N(worker_draw_score));
+        data->workerID = create_worker_scene(nullptr, &N(worker_draw_score));
 
-        hudElemA = hud_element_create(&HES_AButton);
-        data->hudElemID_AButton = hudElemA;
-        hud_element_set_render_depth(hudElemA, 0);
-        hud_element_set_flags(hudElemA, HUD_ELEMENT_FLAG_80);
-        hud_element_set_tint(hudElemA, 255, 255, 255);
-        hud_element_set_script(hudElemA, &HES_AButton);
+        hidButton = hud_element_create(&HES_AButton);
+        data->buttonHID = hidButton;
+        hud_element_set_render_depth(hidButton, 0);
+        hud_element_set_flags(hidButton, HUD_ELEMENT_FLAG_MANUAL_RENDER);
+        hud_element_set_tint(hidButton, 255, 255, 255);
+        hud_element_set_script(hidButton, &HES_AButton);
 
-        hudElemMeter = hud_element_create(&HES_BlueMeter);
-        data->hudElemID_Meter = hudElemMeter;
-        hud_element_set_render_depth(hudElemMeter, 0);
-        hud_element_set_flags(hudElemMeter, HUD_ELEMENT_FLAG_80);
+        hidMeter = hud_element_create(&HES_BlueMeter);
+        data->meterHID = hidMeter;
+        hud_element_set_render_depth(hidMeter, 0);
+        hud_element_set_flags(hidMeter, HUD_ELEMENT_FLAG_MANUAL_RENDER);
     }
 
     return ApiStatus_BLOCK;
@@ -255,7 +256,7 @@ API_CALLABLE(N(CreateSignpost)) {
 API_CALLABLE(N(OnHitBox)) {
     SmashGameData* data = get_enemy(SCOREKEEPER_ENEMY_IDX)->varTablePtr[SMASH_DATA_VAR_IDX];
     s32 hitModelID = evt_get_variable(script, LVarA);
-    s32 hitColliderID = evt_get_variable(script, LVarB); // unused
+    s32 hitColliderID = evt_get_variable(script, LVarB);
     s32 i;
 
     for (i = 0; i < NUM_BOXES; i++) {
@@ -352,7 +353,7 @@ API_CALLABLE(N(SetBoxContents)) {
     }
 
     for (i = 0; i < ARRAY_COUNT(D_80248600); i++) {
-        D_80248600[i] = FALSE;
+        D_80248600[i] = false;
     }
 
     for (i = 0; i < NUM_BOXES; i++) {
@@ -401,7 +402,7 @@ API_CALLABLE(N(SetBoxContents)) {
                 // ARRAY BOUNDS ERROR IN ORIGINAL CODE!
                 for (j = 0; j <= ARRAY_COUNT(D_80248600); j++) {
                     if (!D_80248600[j]) {
-                        D_80248600[j] = TRUE;
+                        D_80248600[j] = true;
                         data->box[i].peachPanelModelID = N(PanelModelIDs[j]);
                         break;
                     }
@@ -436,8 +437,8 @@ API_CALLABLE(N(RunMinigame)) {
     s32 gameFinished;
     s32 hittingPeachBlock;
 
-    gameFinished = FALSE;
-    hittingPeachBlock = FALSE;
+    gameFinished = false;
+    hittingPeachBlock = false;
     data = get_enemy(SCOREKEEPER_ENEMY_IDX)->varTablePtr[SMASH_DATA_VAR_IDX];
 
     for (i = 0; i < NUM_BOXES; i++) {
@@ -490,9 +491,9 @@ API_CALLABLE(N(RunMinigame)) {
                     }
                     break;
                 case BOX_STATE_FUZZY_HIT:
-                    hud_element_set_script(data->hudElemID_AButton, &HES_AButton);
-                    hud_element_set_alpha(data->hudElemID_AButton, 160);
-                    hud_element_set_alpha(data->hudElemID_Meter, 160);
+                    hud_element_set_script(data->buttonHID, &HES_AButton);
+                    hud_element_set_alpha(data->buttonHID, 160);
+                    hud_element_set_alpha(data->meterHID, 160);
                     data->mashProgress = 0;
                     data->stunFlags |= STUN_FLAG_GRABBED;
                     enable_npc_shadow(npc);
@@ -534,9 +535,9 @@ API_CALLABLE(N(RunMinigame)) {
                         npc->pos.x = gPlayerStatusPtr->pos.x;
                         npc->pos.y = gPlayerStatusPtr->pos.y + 28.0;
                         npc->pos.z = gPlayerStatusPtr->pos.z + 2.0;
-                        hud_element_set_script(data->hudElemID_AButton, &HES_MashAButton);
-                        hud_element_set_alpha(data->hudElemID_AButton, 255);
-                        hud_element_set_alpha(data->hudElemID_Meter, 255);
+                        hud_element_set_script(data->buttonHID, &HES_MashAButton);
+                        hud_element_set_alpha(data->buttonHID, 255);
+                        hud_element_set_alpha(data->meterHID, 255);
                         data->box[i].state = BOX_STATE_FUZZY_GRAB;
                     }
                     break;
@@ -551,9 +552,9 @@ API_CALLABLE(N(RunMinigame)) {
                         data->stunFlags |= STUN_FLAG_CHANGED;
                         data->box[i].state = BOX_STATE_FUZZY_DETACH;
                         npc->duration = 10;
-                        hud_element_set_script(data->hudElemID_AButton, &HES_AButton);
-                        hud_element_set_alpha(data->hudElemID_AButton, 160);
-                        hud_element_set_alpha(data->hudElemID_Meter, 160);
+                        hud_element_set_script(data->buttonHID, &HES_AButton);
+                        hud_element_set_alpha(data->buttonHID, 160);
+                        hud_element_set_alpha(data->meterHID, 160);
                         npc->curAnim = ANIM_Fuzzy_Hurt;
                         npc->pos.y += 3.0;
                     }
@@ -739,7 +740,7 @@ API_CALLABLE(N(RunMinigame)) {
                     model->flags &= ~MODEL_FLAG_HIDDEN;
                     // fallthrough
                 case BOX_STATE_PEACH_EMERGE:
-                    hittingPeachBlock = TRUE;
+                    hittingPeachBlock = true;
                     model = get_model_from_list_index(get_model_list_index_from_tree_index(data->box[i].peachPanelModelID));
                     centerY = update_lerp(EASING_QUADRATIC_OUT, npc->moveToPos.y, npc->moveToPos.y + 30.0, npc->duration, 30);
                     if (!(model->flags & MODEL_FLAG_HAS_TRANSFORM)) {
@@ -757,6 +758,8 @@ API_CALLABLE(N(RunMinigame)) {
                     }
                     break;
                 case BOX_STATE_PEACH_DONE:
+                    break;
+                default:
                     break;
             }
         } else {
@@ -821,7 +824,7 @@ API_CALLABLE(N(RunMinigame)) {
     }
     if (!hittingPeachBlock && ((data->found == 10) || ((data->timeLeft == 0)
         && (gPlayerStatusPtr->actionState != ACTION_STATE_HAMMER)))) {
-        gameFinished = TRUE;
+        gameFinished = true;
     }
     if (gameFinished) {
         if (data->stunFlags & STUN_FLAG_STUNNED) {
@@ -964,6 +967,9 @@ API_CALLABLE(N(CleanupGame)) {
                         enable_npc_shadow(npc);
                     }
                     break;
+                case BOX_CONTENT_PEACH:
+                case BOX_CONTENT_EMPTY:
+                    break;
             }
         }
         return ApiStatus_BLOCK;
@@ -989,8 +995,8 @@ API_CALLABLE(N(DestroyMinigame)) {
     SmashGameData* data = get_enemy(SCOREKEEPER_ENEMY_IDX)->varTablePtr[SMASH_DATA_VAR_IDX];
 
     free_worker(data->workerID);
-    hud_element_free(data->hudElemID_AButton);
-    hud_element_free(data->hudElemID_Meter);
+    hud_element_free(data->buttonHID);
+    hud_element_free(data->meterHID);
 
     return ApiStatus_DONE2;
 }
@@ -1067,16 +1073,16 @@ EvtScript N(EVS_CreateScoreDisplay) = {
 };
 
 EvtScript N(read_sign_instructions) = {
-    Call(DisablePlayerInput, TRUE)
+    Call(DisablePlayerInput, true)
     Call(N(SetMsgImgs_Panel))
     Call(ShowMessageAtScreenPos, MSG_MGM_0046, 160, 40)
-    Call(DisablePlayerInput, FALSE)
+    Call(DisablePlayerInput, false)
     Return
     End
 };
 
 EvtScript N(EVS_ShowBox) = {
-    Call(EnableModel, LVar0, TRUE)
+    Call(EnableModel, LVar0, true)
     Call(ModifyColliderFlags, MODIFY_COLLIDER_FLAGS_CLEAR_BITS, LVar1, COLLIDER_FLAGS_UPPER_MASK)
     Call(TranslateModel, LVar0, 0, 0, 0)
     Return
@@ -1098,7 +1104,7 @@ EvtScript N(EVS_MakeBoxAppear) = {
 
 EvtScript N(EVS_HideBox) = {
     Call(TranslateModel, LVar0, 0, 0, 0)
-    Call(EnableModel, LVar0, FALSE)
+    Call(EnableModel, LVar0, false)
     Call(ModifyColliderFlags, MODIFY_COLLIDER_FLAGS_SET_BITS, LVar1, COLLIDER_FLAGS_UPPER_MASK)
     Return
     End
@@ -1445,16 +1451,16 @@ EvtScript N(EVS_MakeAllBoxesAppear) = {
 };
 
 EvtScript N(EVS_HidePeachPanels) = {
-    Call(EnableModel, MODEL_o50, FALSE)
-    Call(EnableModel, MODEL_o51, FALSE)
-    Call(EnableModel, MODEL_o52, FALSE)
-    Call(EnableModel, MODEL_o53, FALSE)
-    Call(EnableModel, MODEL_o54, FALSE)
-    Call(EnableModel, MODEL_o55, FALSE)
-    Call(EnableModel, MODEL_o56, FALSE)
-    Call(EnableModel, MODEL_o57, FALSE)
-    Call(EnableModel, MODEL_o58, FALSE)
-    Call(EnableModel, MODEL_o59, FALSE)
+    Call(EnableModel, MODEL_o50, false)
+    Call(EnableModel, MODEL_o51, false)
+    Call(EnableModel, MODEL_o52, false)
+    Call(EnableModel, MODEL_o53, false)
+    Call(EnableModel, MODEL_o54, false)
+    Call(EnableModel, MODEL_o55, false)
+    Call(EnableModel, MODEL_o56, false)
+    Call(EnableModel, MODEL_o57, false)
+    Call(EnableModel, MODEL_o58, false)
+    Call(EnableModel, MODEL_o59, false)
     Return
     End
 };
@@ -1475,7 +1481,7 @@ EvtScript N(EVS_OnHitBox) = {
             Wait(1)
             Call(TranslateModel, LVarA, 0, -21, 0)
             Wait(1)
-            Call(EnableModel, LVarA, FALSE)
+            Call(EnableModel, LVarA, false)
             Call(ModifyColliderFlags, MODIFY_COLLIDER_FLAGS_SET_BITS, LVarB, COLLIDER_FLAGS_UPPER_MASK)
             Wait(4)
             Sub(LVar1, 5)
@@ -1486,7 +1492,7 @@ EvtScript N(EVS_OnHitBox) = {
             PlayEffect(EFFECT_WALKING_DUST, 1, LVar0, LVar1, LVar2)
         EndCaseGroup
     EndSwitch
-    Call(EnableModel, LVarA, FALSE)
+    Call(EnableModel, LVarA, false)
     Call(ModifyColliderFlags, MODIFY_COLLIDER_FLAGS_SET_BITS, LVarB, COLLIDER_FLAGS_UPPER_MASK)
     Return
     End
@@ -1618,7 +1624,7 @@ EvtScript N(EVS_Toad_GovernGame) = {
     Call(N(DisableMenus))
     Call(N(RunMinigame))
     Call(N(EnableMenus))
-    Call(DisablePlayerInput, TRUE)
+    Call(DisablePlayerInput, true)
     Call(SetSelfVar, 3, 3)
     Call(PopSong)
     Exec(N(EVS_CleanupGame))
@@ -1633,17 +1639,17 @@ EvtScript N(EVS_Toad_GovernGame) = {
         Call(SetPanTarget, CAM_DEFAULT, 358, -20, 185)
         Call(SetCamDistance, CAM_DEFAULT, Float(400.0))
         Call(SetCamSpeed, CAM_DEFAULT, Float(2.0))
-        Call(PanToTarget, CAM_DEFAULT, 0, TRUE)
+        Call(PanToTarget, CAM_DEFAULT, 0, true)
         Call(WaitForCam, CAM_DEFAULT, Float(1.0))
     EndThread
-    Call(SetNpcFlagBits, NPC_Toad, NPC_FLAG_IGNORE_PLAYER_COLLISION, TRUE)
+    Call(SetNpcFlagBits, NPC_Toad, NPC_FLAG_IGNORE_PLAYER_COLLISION, true)
     Call(N(CreateSignpost))
     PlayEffect(EFFECT_WALKING_DUST, 1, 355, 45, -175)
     Thread
         Call(SetNpcPos, NPC_Toad, 358, -20, 185)
-        Call(EnableNpcShadow, NPC_Toad, TRUE)
+        Call(EnableNpcShadow, NPC_Toad, true)
         PlayEffect(EFFECT_WALKING_DUST, 1, 358, 5, 189)
-        Call(SetSelfEnemyFlagBits, ENEMY_FLAG_IGNORE_TOUCH | ENEMY_FLAG_CANT_INTERACT | ENEMY_FLAG_IGNORE_PARTNER, FALSE)
+        Call(SetSelfEnemyFlagBits, ENEMY_FLAG_IGNORE_TOUCH | ENEMY_FLAG_CANT_INTERACT | ENEMY_FLAG_IGNORE_PARTNER, false)
     EndThread
     Call(GetPlayerPos, LVar0, LVar1, LVar2)
     Call(GetNpcPos, NPC_Toad, LVar3, LVar4, LVar5)
@@ -1654,7 +1660,7 @@ EvtScript N(EVS_Toad_GovernGame) = {
     EndIf
     Call(PlayerMoveTo, 330, 185, LVarA)
     Call(WaitForPlayerMoveToComplete)
-    Call(SetNpcFlagBits, NPC_Toad, NPC_FLAG_IGNORE_PLAYER_COLLISION, FALSE)
+    Call(SetNpcFlagBits, NPC_Toad, NPC_FLAG_IGNORE_PLAYER_COLLISION, false)
     Wait(5)
     Call(SetSelfVar, 3, 5)
     Call(N(UpdateRecords))
@@ -1668,22 +1674,22 @@ EvtScript N(EVS_Toad_GovernGame) = {
 #if VERSION_PAL
         CaseEq(1)
             Call(SpeakToPlayer, NPC_SELF, ANIM_Toad_Red_Talk, ANIM_Toad_Red_Idle, 0, MSG_PAL_MGM_0046)
-            Call(ShowCoinCounter, TRUE)
+            Call(ShowCoinCounter, true)
             Wait(10)
             Call(N(GiveCoinReward))
             Wait(15)
-            Call(ShowCoinCounter, FALSE)
+            Call(ShowCoinCounter, false)
             Call(SetSelfVar, 3, 0)
             Wait(5)
             Call(ContinueSpeech, NPC_Toad, ANIM_Toad_Red_Talk, ANIM_Toad_Red_Idle, 0, MSG_MGM_0045)
 #endif
         CaseDefault
             Call(SpeakToPlayer, NPC_SELF, ANIM_Toad_Red_Talk, ANIM_Toad_Red_Idle, 0, MSG_MGM_0042)
-            Call(ShowCoinCounter, TRUE)
+            Call(ShowCoinCounter, true)
             Wait(10)
             Call(N(GiveCoinReward))
             Wait(15)
-            Call(ShowCoinCounter, FALSE)
+            Call(ShowCoinCounter, false)
             Call(SetSelfVar, 3, 0)
             Wait(5)
             Call(ContinueSpeech, NPC_Toad, ANIM_Toad_Red_Talk, ANIM_Toad_Red_Idle, 0, MSG_MGM_0045)
@@ -1694,10 +1700,10 @@ EvtScript N(EVS_Toad_GovernGame) = {
     Call(SetPanTarget, CAM_DEFAULT, LVar0, LVar1, LVar2)
     Call(SetCamDistance, CAM_DEFAULT, Float(450.0))
     Call(SetCamSpeed, CAM_DEFAULT, Float(3.0))
-    Call(PanToTarget, CAM_DEFAULT, 0, TRUE)
+    Call(PanToTarget, CAM_DEFAULT, 0, true)
     Call(WaitForCam, CAM_DEFAULT, Float(1.0))
-    Call(PanToTarget, CAM_DEFAULT, 0, FALSE)
-    Call(DisablePlayerInput, FALSE)
+    Call(PanToTarget, CAM_DEFAULT, 0, false)
+    Call(DisablePlayerInput, false)
     Return
     End
 };
@@ -1720,14 +1726,14 @@ EvtScript N(EVS_DestroyMinigame) = {
 };
 
 EvtScript N(EVS_NpcInteract_Toad) = {
-    IfEq(GF_MGM_Met_SmashAttack, FALSE)
+    IfEq(GF_MGM_Met_SmashAttack, false)
         Call(N(SetMsgImgs_Panel))
-        Set(GF_MGM_Met_SmashAttack, TRUE)
+        Set(GF_MGM_Met_SmashAttack, true)
         Call(SpeakToPlayer, NPC_SELF, ANIM_Toad_Red_Talk, ANIM_Toad_Red_Idle, 0, MSG_MGM_003C)
     Else
         Call(SpeakToPlayer, NPC_SELF, ANIM_Toad_Red_Talk, ANIM_Toad_Red_Idle, 0, MSG_MGM_003D)
     EndIf
-    Call(ShowCoinCounter, TRUE)
+    Call(ShowCoinCounter, true)
     Call(N(GetCoinCount))
     IfLt(LVarA, 10)
         Call(ContinueSpeech, NPC_Toad, ANIM_Toad_Red_Talk, ANIM_Toad_Red_Idle, 0, MSG_MGM_003E)
@@ -1776,7 +1782,7 @@ EvtScript N(EVS_NpcInteract_Toad) = {
         Wait(12)
         PlayEffect(EFFECT_WALKING_DUST, 1, 358, -10, 185)
         Call(SetNpcPos, NPC_Toad, 358, 500, 185)
-        Call(EnableNpcShadow, NPC_Toad, FALSE)
+        Call(EnableNpcShadow, NPC_Toad, false)
         Call(N(DestroySignpost))
         PlayEffect(EFFECT_WALKING_DUST, 1, 355, 30, -180)
     EndThread
@@ -1828,9 +1834,9 @@ EvtScript N(EVS_NpcInit_Fuzzy) = {
         CaseDefault
             Call(SetSelfVar, 8, SOUND_FUZZY_HOP_B)
     EndSwitch
-    Call(SetNpcFlagBits, NPC_SELF, NPC_FLAG_FLYING | NPC_FLAG_JUMPING, TRUE)
-    Call(SetNpcFlagBits, NPC_SELF, NPC_FLAG_GRAVITY, FALSE)
-    Call(EnableNpcShadow, NPC_SELF, FALSE)
+    Call(SetNpcFlagBits, NPC_SELF, NPC_FLAG_FLYING | NPC_FLAG_JUMPING, true)
+    Call(SetNpcFlagBits, NPC_SELF, NPC_FLAG_GRAVITY, false)
+    Call(EnableNpcShadow, NPC_SELF, false)
     Call(RandInt, 100, LVar0)
     IfLt(LVar0, 50)
         Call(InterpNpcYaw, NPC_SELF, 90, 0)
@@ -1844,9 +1850,9 @@ EvtScript N(EVS_NpcInit_Fuzzy) = {
 EvtScript N(EVS_NpcInit_Bobomb) = {
     Call(SetNpcAnimation, NPC_SELF, ANIM_Bobomb_AngryIdle)
     Call(SetSelfVar, 0, 0)
-    Call(SetNpcFlagBits, NPC_SELF, NPC_FLAG_FLYING | NPC_FLAG_JUMPING, TRUE)
-    Call(SetNpcFlagBits, NPC_SELF, NPC_FLAG_GRAVITY, FALSE)
-    Call(EnableNpcShadow, NPC_SELF, FALSE)
+    Call(SetNpcFlagBits, NPC_SELF, NPC_FLAG_FLYING | NPC_FLAG_JUMPING, true)
+    Call(SetNpcFlagBits, NPC_SELF, NPC_FLAG_GRAVITY, false)
+    Call(EnableNpcShadow, NPC_SELF, false)
     Call(GetSelfNpcID, LVar0)
     Switch(LVar0)
         CaseEq(NPC_Bobomb_01)
@@ -1871,9 +1877,9 @@ EvtScript N(EVS_NpcInit_Bobomb) = {
 EvtScript N(EVS_NpcInit_Luigi) = {
     Call(SetNpcAnimation, NPC_SELF, ANIM_Luigi_Jump)
     Call(SetSelfVar, 0, 0)
-    Call(SetNpcFlagBits, NPC_SELF, NPC_FLAG_FLYING | NPC_FLAG_JUMPING, TRUE)
-    Call(SetNpcFlagBits, NPC_SELF, NPC_FLAG_GRAVITY, FALSE)
-    Call(EnableNpcShadow, NPC_SELF, FALSE)
+    Call(SetNpcFlagBits, NPC_SELF, NPC_FLAG_FLYING | NPC_FLAG_JUMPING, true)
+    Call(SetNpcFlagBits, NPC_SELF, NPC_FLAG_GRAVITY, false)
+    Call(EnableNpcShadow, NPC_SELF, false)
     Call(RandInt, 100, LVar0)
     IfLt(LVar0, 50)
         Call(InterpNpcYaw, NPC_SELF, 90, 0)

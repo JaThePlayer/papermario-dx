@@ -1,5 +1,5 @@
-/// @file mac_01.h
-/// @brief Toad Town - Plaza District
+/// Toad Town - Plaza District
+#pragma once
 
 #include "common.h"
 #include "message_ids.h"
@@ -102,6 +102,17 @@ enum {
 };
 
 #define NAMESPACE mac_01
+
+
+typedef struct RowfBadgeOption {
+    u32 itemID;
+    s32 price;
+    s32 story;
+} RowfBadgeOption;
+
+#define ROWF_BADGE_INVENTORY_LENGTH 15
+
+extern RowfBadgeOption N(RowfBadgeInventory)[ROWF_BADGE_INVENTORY_LENGTH];
 
 extern EvtScript N(EVS_Main);
 extern EvtScript N(EVS_SetupMusic);

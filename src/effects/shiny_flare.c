@@ -28,15 +28,15 @@ EffectInstance* shiny_flare_main(s32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg
 
     effectBp.init = shiny_flare_init;
     effectBp.update = shiny_flare_update;
-    effectBp.renderWorld = shiny_flare_render;
+    effectBp.renderScene = shiny_flare_render;
     effectBp.unk_00 = 0;
-    effectBp.renderUI = NULL;
+    effectBp.renderUI = nullptr;
     effectBp.effectID = EFFECT_SHINY_FLARE;
     effect = create_effect_instance(&effectBp);
     effect->numParts = numParts;
 
     data = effect->data.shinyFlare = general_heap_malloc(numParts * sizeof(*data));
-    ASSERT(data != NULL);
+    ASSERT(data != nullptr);
 
     data->unk_00 = arg0;
     data->lifeTime = 0;
@@ -107,7 +107,7 @@ void shiny_flare_appendGfx(void* effect) {
     Matrix4f sp50;
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
 
     guTranslateF(sp10, data->pos.x, data->pos.y, data->pos.z);
     guScaleF(sp50, scale, scale, scale);

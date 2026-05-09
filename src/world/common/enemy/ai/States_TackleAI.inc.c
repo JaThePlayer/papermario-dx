@@ -17,7 +17,6 @@ void N(set_script_owner_npc_anim)(Evt* script, MobileAISettings* aiSettings, Ene
     script->AI_TEMP_STATE = 13;
 }
 
-
 ApiStatus N(UnkDistFunc)(Evt* script, MobileAISettings* aiSettings, EnemyDetectVolume* territory) {
     Enemy* enemy = script->owner1.enemy;
     Npc* npc = get_npc_unsafe(enemy->npcID);
@@ -38,6 +37,7 @@ ApiStatus N(UnkDistFunc)(Evt* script, MobileAISettings* aiSettings, EnemyDetectV
             script->functionTemp[0] = 14;
         }
     }
+    return ApiStatus_BLOCK;
 }
 
 void N(UnkNpcAIFunc12)(Evt* script, MobileAISettings* aiSettings, EnemyDetectVolume* territory) {
@@ -52,7 +52,7 @@ void N(UnkNpcAIFunc12)(Evt* script, MobileAISettings* aiSettings, EnemyDetectVol
         enemy->unk_10.x = npc->pos.x;
         enemy->unk_10.y = npc->pos.y;
         enemy->unk_10.z = npc->pos.z;
-        enemy->hitboxIsActive = TRUE;
+        enemy->hitboxIsActive = true;
     }
 
     f1 = npc->pos.x;
@@ -65,7 +65,7 @@ void N(UnkNpcAIFunc12)(Evt* script, MobileAISettings* aiSettings, EnemyDetectVol
     }
 
     if ((npc->duration <= 0) || (--npc->duration <= 0) || (temp != 0)) {
-        enemy->hitboxIsActive = FALSE;
+        enemy->hitboxIsActive = false;
         npc->curAnim = enemy->animList[10];
         npc->duration = 0;
         script->functionTemp[0] = 15;

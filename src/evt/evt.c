@@ -1,5 +1,8 @@
 #include "common.h"
 #include "vars_access.h"
+#include "dx/config.h"
+#include "dx/debug_menu.h"
+#include "dx/backtrace.h"
 
 extern u32* gMapFlags;
 extern s32* gMapVars;
@@ -88,7 +91,7 @@ ApiStatus evt_handle_end_loop(Evt* script) {
 ApiStatus evt_handle_break_loop(Evt* script) {
     ASSERT(script->loopDepth >= 0);
     script->ptrNextLine = evt_goto_end_loop(script);
-    script->loopDepth -= 1;
+    script->loopDepth--;
     return ApiStatus_DONE2;
 }
 
@@ -104,7 +107,7 @@ ApiStatus evt_handle_wait(Evt* script) {
         return ApiStatus_DONE2;
     }
 
-    script->functionTemp[0] -= 1;
+    script->functionTemp[0]--;
     return !script->functionTemp[0];
 }
 
@@ -539,7 +542,7 @@ ApiStatus evt_handle_end_switch(Evt* script) {
     ASSERT(switchDepth >= 0);
 
     script->switchBlockState[switchDepth] = 0;
-    script->switchDepth -= 1;
+    script->switchDepth--;
 
     return ApiStatus_DONE2;
 }
@@ -891,20 +894,20 @@ ApiStatus evt_handle_call(Evt* script) {
     EvtCallingLine = script->ptrCurLine;
 
     if (script->blocked) {
-        isInitialCall = FALSE;
+        isInitialCall = false;
         func = script->callFunction;
         ret = func(script, isInitialCall);
     } else {
         script->callFunction = (ApiFunc)evt_get_variable(script, *args++);
         script->ptrReadPos = args;
         script->curArgc--;
-        script->blocked = TRUE;
-        isInitialCall = TRUE;
+        script->blocked = true;
+        isInitialCall = true;
         func = script->callFunction;
         ret = func(script, isInitialCall);
     }
 
-    EvtCallingLine = NULL;
+    EvtCallingLine = nullptr;
     return ret;
 }
 
@@ -932,7 +935,6 @@ ApiStatus evt_handle_exec1(Evt* script) {
 
     return ApiStatus_DONE2;
 }
-
 
 ApiStatus evt_handle_exec1_get_id(Evt* script) {
     Bytecode* args = script->ptrReadPos;
@@ -983,7 +985,7 @@ s32 evt_trigger_on_activate_exec_script(Trigger* trigger) {
     EvtScript* scriptStart;
     Evt* script;
 
-    if (trigger->runningScript == NULL) {
+    if (trigger->runningScript == nullptr) {
         scriptStart = trigger->onTriggerEvt;
         if (is_another_trigger_bound(trigger, scriptStart)) {
             return 0;
@@ -999,7 +1001,7 @@ s32 evt_trigger_on_activate_exec_script(Trigger* trigger) {
     }
 
     if (!does_script_exist(trigger->runningScriptID)) {
-        trigger->runningScript = NULL;
+        trigger->runningScript = nullptr;
         return 0; // stop calling this function
     }
 
@@ -1025,7 +1027,7 @@ ApiStatus evt_handle_bind(Evt* script) {
 
     trigger = create_trigger(&bp);
     trigger->onTriggerEvt = (EvtScript*)triggerScript;
-    trigger->runningScript = NULL;
+    trigger->runningScript = nullptr;
     trigger->priority = script->priority;
     trigger->varTable[0] = evt_get_variable(script, script->varTable[0]);
     trigger->varTable[1] = evt_get_variable(script, script->varTable[1]);
@@ -1108,7 +1110,7 @@ ApiStatus evt_handle_does_script_exist(Evt* script) {
 }
 
 s32 evt_trigger_on_activate_lock(Trigger* trigger) {
-    if (trigger->runningScript == NULL) {
+    if (trigger->runningScript == nullptr) {
         Evt* newScript = start_script(trigger->onTriggerEvt, trigger->priority, EVT_FLAG_RUN_IMMEDIATELY);
         trigger->runningScript = newScript;
         trigger->runningScriptID = newScript->id;
@@ -1119,9 +1121,10 @@ s32 evt_trigger_on_activate_lock(Trigger* trigger) {
     }
 
     if (!does_script_exist(trigger->runningScriptID)) {
-        trigger->runningScript = NULL;
+        trigger->runningScript = nullptr;
         trigger->flags &= ~TRIGGER_ACTIVATED;
     }
+    return 0;
 }
 
 ApiStatus evt_handle_bind_lock(Evt* script) {
@@ -1145,7 +1148,7 @@ ApiStatus evt_handle_bind_lock(Evt* script) {
 
     trigger = create_trigger(&bp);
     trigger->onTriggerEvt = (EvtScript*)triggerScript;
-    trigger->runningScript = NULL;
+    trigger->runningScript = nullptr;
     trigger->priority = script->priority;
     trigger->varTable[0] = evt_get_variable(script, script->varTable[0]);
     trigger->varTable[1] = evt_get_variable(script, script->varTable[1]);
@@ -1196,7 +1199,6 @@ ApiStatus evt_handle_child_thread(Evt* script) {
     Evt* newScript;
     s32 nargs;
     s32 opcode;
-    s32 i;
 
     Bytecode* startLine = script->ptrNextLine;
     Bytecode* endLine = startLine;
@@ -1207,7 +1209,7 @@ ApiStatus evt_handle_child_thread(Evt* script) {
     } while (opcode != EVT_OP_END_CHILD_THREAD);
 
     script->ptrNextLine = endLine;
-    newScript = func_802C39F8(script, startLine, EVT_FLAG_RUN_IMMEDIATELY | EVT_FLAG_THREAD);
+    newScript = start_child_thread(script, startLine, EVT_FLAG_RUN_IMMEDIATELY | EVT_FLAG_THREAD);
     newScript->owner1.enemyID = script->owner1.enemyID;
     newScript->owner2.npcID = script->owner2.npcID;
     newScript->groupFlags = script->groupFlags;
@@ -1235,13 +1237,13 @@ s32 evt_handle_print_debug_var(Evt* script) {
     s32 flagBitPos;
 
     if (var <= EVT_LIMIT) {
-        sprintf(evtDebugPrintBuffer, "ADDR     [%08X]", var);
+        sprintf(evtDebugPrintBuffer, "ADDR     [%08lX]", var);
     } else if (var <= EVT_FIXED_CUTOFF) {
         sprintf(evtDebugPrintBuffer, "FLOAT    [%4.2f]", evt_fixed_var_to_float(var));
     } else if (var <= EVT_ARRAY_FLAG_CUTOFF) {
         var = EVT_INDEX_OF_ARRAY_FLAG(var);
         flagBitPos = var % 32;
-        sprintf(evtDebugPrintBuffer, "UF(%3d)  [%d]", var, script->flagArray[var / 32] & (1 << flagBitPos));
+        sprintf(evtDebugPrintBuffer, "UF(%3ld)  [%ld]", var, script->flagArray[var / 32] & (1 << flagBitPos));
     } else if (var <= EVT_ARRAY_VAR_CUTOFF) {
         s32 arrayVal;
 
@@ -1249,11 +1251,11 @@ s32 evt_handle_print_debug_var(Evt* script) {
         arrayVal = script->array[var];
 
         if (script->array[var] <= EVT_LIMIT) {
-            sprintf(evtDebugPrintBuffer, "UW(%3d)  [%08X]", arrayVal);
+            sprintf(evtDebugPrintBuffer, "UW(%3ld)  [%08lX]", var, arrayVal);
         } else if (arrayVal <= EVT_FIXED_CUTOFF) {
-            sprintf(evtDebugPrintBuffer, "UW(%3d)  [%4.2f]", var, evt_fixed_var_to_float(arrayVal));
+            sprintf(evtDebugPrintBuffer, "UW(%3ld)  [%4.2f]", var, evt_fixed_var_to_float(arrayVal));
         } else {
-            sprintf(evtDebugPrintBuffer, "UW(%3d)  [%d]", var, arrayVal);
+            sprintf(evtDebugPrintBuffer, "UW(%3ld)  [%ld]", var, arrayVal);
         }
     } else if (var <= EVT_GAME_BYTE_CUTOFF) {
         s32 globalByte;
@@ -1262,11 +1264,11 @@ s32 evt_handle_print_debug_var(Evt* script) {
         globalByte = get_global_byte(var);
 
         if (globalByte <= EVT_LIMIT) {
-            sprintf(evtDebugPrintBuffer, "GSW(%3d) [%08X]", globalByte);
+            sprintf(evtDebugPrintBuffer, "GSW(%3ld) [%08lX]", var, globalByte);
         } else if (globalByte <= EVT_FIXED_CUTOFF) {
-            sprintf(evtDebugPrintBuffer, "GSW(%3d) [%4.2f]", var, evt_fixed_var_to_float(globalByte));
+            sprintf(evtDebugPrintBuffer, "GSW(%3ld) [%4.2f]", var, evt_fixed_var_to_float(globalByte));
         } else {
-            sprintf(evtDebugPrintBuffer, "GSW(%3d) [%d]", var, globalByte);
+            sprintf(evtDebugPrintBuffer, "GSW(%3ld) [%ld]", var, globalByte);
         }
     } else if (var <= EVT_AREA_BYTE_CUTOFF) {
         s32 areaByte;
@@ -1275,26 +1277,26 @@ s32 evt_handle_print_debug_var(Evt* script) {
         areaByte = get_area_byte(var);
 
         if (areaByte <= EVT_LIMIT) {
-            sprintf(evtDebugPrintBuffer, "LSW(%3d) [%08X]", areaByte);
+            sprintf(evtDebugPrintBuffer, "LSW(%3ld) [%08lX]", var, areaByte);
         } else if (areaByte <= EVT_FIXED_CUTOFF) {
-            sprintf(evtDebugPrintBuffer, "LSW(%3d)  [%4.2f]", var, evt_fixed_var_to_float(areaByte));
+            sprintf(evtDebugPrintBuffer, "LSW(%3ld)  [%4.2f]", var, evt_fixed_var_to_float(areaByte));
         } else {
-            sprintf(evtDebugPrintBuffer, "LSW(%3d) [%d]", var, areaByte);
+            sprintf(evtDebugPrintBuffer, "LSW(%3ld) [%ld]", var, areaByte);
         }
     } else if (var <= EVT_GAME_FLAG_CUTOFF) {
         var = EVT_INDEX_OF_GAME_FLAG(var);
-        sprintf(evtDebugPrintBuffer, "GSWF(%3d)[%d]", var, get_global_flag(var));
+        sprintf(evtDebugPrintBuffer, "GSWF(%3ld)[%ld]", var, get_global_flag(var));
     } else if (var <= EVT_AREA_FLAG_CUTOFF) {
         var = EVT_INDEX_OF_AREA_FLAG(var);
-        sprintf(evtDebugPrintBuffer, "LSWF(%3d)[%d]", var, get_area_flag(var));
+        sprintf(evtDebugPrintBuffer, "LSWF(%3ld)[%ld]", var, get_area_flag(var));
     } else if (var <= EVT_MAP_FLAG_CUTOFF) {
         var = EVT_INDEX_OF_MAP_FLAG(var);
         flagBitPos = var % 32;
-        sprintf(evtDebugPrintBuffer, "GF(%3d)  [%d]", var, gMapFlags[var / 32] & (1 << flagBitPos));
+        sprintf(evtDebugPrintBuffer, "GF(%3ld)  [%ld]", var, gMapFlags[var / 32] & (1 << flagBitPos));
     } else if (var <= EVT_LOCAL_FLAG_CUTOFF) {
         var = EVT_INDEX_OF_LOCAL_FLAG(var);
         flagBitPos = var % 32;
-        sprintf(evtDebugPrintBuffer, "LF(%3d)  [%d]", var, script->varFlags[var / 32] & (1 << flagBitPos));
+        sprintf(evtDebugPrintBuffer, "LF(%3ld)  [%ld]", var, script->varFlags[var / 32] & (1 << flagBitPos));
     } else if (var <= EVT_MAP_VAR_CUTOFF) {
         s32 mapVar;
 
@@ -1302,11 +1304,11 @@ s32 evt_handle_print_debug_var(Evt* script) {
         mapVar = gMapVars[var];
 
         if (mapVar <= EVT_LIMIT) {
-            sprintf(evtDebugPrintBuffer, "GW(%3d)  [%08X]", mapVar);
+            sprintf(evtDebugPrintBuffer, "GW(%3ld)  [%08lX]", var, mapVar);
         } else if (mapVar <= EVT_FIXED_CUTOFF) {
-            sprintf(evtDebugPrintBuffer, "GW(%3d)  [%4.2f]", var, evt_fixed_var_to_float(mapVar));
+            sprintf(evtDebugPrintBuffer, "GW(%3ld)  [%4.2f]", var, evt_fixed_var_to_float(mapVar));
         } else {
-            sprintf(evtDebugPrintBuffer, "GW(%3d)  [%d]", var, mapVar);
+            sprintf(evtDebugPrintBuffer, "GW(%3ld)  [%ld]", var, mapVar);
         }
     } else if (var <= EVT_LOCAL_VAR_CUTOFF) {
         s32 tableVar;
@@ -1315,14 +1317,14 @@ s32 evt_handle_print_debug_var(Evt* script) {
         tableVar = script->varTable[var];
 
         if (tableVar <= EVT_LIMIT) {
-            sprintf(evtDebugPrintBuffer, "LW(%3d)  [%08X]", tableVar);
+            sprintf(evtDebugPrintBuffer, "LW(%3ld)  [%08lX]", var, tableVar);
         } else if (tableVar <= EVT_FIXED_CUTOFF) {
-            sprintf(evtDebugPrintBuffer, "LW(%3d)  [%4.2f]", var, evt_fixed_var_to_float(tableVar));
+            sprintf(evtDebugPrintBuffer, "LW(%3ld)  [%4.2f]", var, evt_fixed_var_to_float(tableVar));
         } else {
-            sprintf(evtDebugPrintBuffer, "LW(%3d)  [%d]", var, tableVar);
+            sprintf(evtDebugPrintBuffer, "LW(%3ld)  [%ld]", var, tableVar);
         }
     } else {
-        sprintf(evtDebugPrintBuffer, "         [%d]", var);
+        sprintf(evtDebugPrintBuffer, "         [%ld]", var);
     }
 
     return ApiStatus_DONE2;
@@ -1348,16 +1350,42 @@ ApiStatus func_802C73B8(Evt* script) {
     return ApiStatus_DONE1;
 }
 
+ApiStatus evt_handle_debug_breakpoint(Evt* script) {
+    #if DX_DEBUG_MENU
+    script->debugPaused = true;
+    #endif
+    return ApiStatus_DONE2;
+}
+
 s32 evt_execute_next_command(Evt* script) {
     s32 commandsExecuted = 0;
 
-    while (TRUE) {
+    while (true) {
         s32 status = ApiStatus_DONE2;
         s32* lines;
         s32 nargs;
 
+        #if DX_DEBUG_MENU
+        if (script->debugPaused && script->curOpcode != EVT_OP_INTERNAL_FETCH) {
+            switch (script->debugStep) {
+                case DEBUG_EVT_STEP_NONE:
+                    return EVT_CMD_RESULT_YIELD;
+                case DEBUG_EVT_STEP_ONCE:
+                    script->debugStep = DEBUG_EVT_STEP_NONE;
+                    break;
+                case DEBUG_EVT_STEP_OVER:
+                    // do not pause execution until we get a block
+                    break;
+            }
+        }
+        #endif
+
         commandsExecuted++;
-        ASSERT_MSG(commandsExecuted < 10000, "Script %x is blocking for ages (infinite loop?)", script->ptrFirstLine);
+        if (commandsExecuted >= 10000) {
+            char scriptName[0x80];
+            backtrace_address_to_string((u32)script->ptrFirstLine, scriptName);
+            PANIC_MSG("Script %s is blocking for ages (infinite loop?)", scriptName);
+        }
 
         switch (script->curOpcode) {
             case EVT_OP_INTERNAL_FETCH:
@@ -1366,7 +1394,7 @@ s32 evt_execute_next_command(Evt* script) {
                 script->curOpcode = *lines++;
                 nargs = *lines++;
                 script->ptrReadPos = lines;
-                script->blocked = FALSE;
+                script->blocked = false;
                 script->curArgc = nargs;
                 lines = &lines[nargs];
                 script->ptrNextLine = lines;
@@ -1650,6 +1678,10 @@ s32 evt_execute_next_command(Evt* script) {
                 break;
             case EVT_OP_94:
                 status = func_802C73B8(script);
+                break;
+            case EVT_OP_DEBUG_BREAKPOINT:
+                status = evt_handle_debug_breakpoint(script);
+                break;
             case EVT_OP_END:
                 break;
             default:
@@ -1657,6 +1689,7 @@ s32 evt_execute_next_command(Evt* script) {
         }
 
         if (status == ApiStatus_REPEAT) {
+            // execute command after a fetch operation
             continue;
         }
 
@@ -1668,22 +1701,29 @@ s32 evt_execute_next_command(Evt* script) {
             return EVT_CMD_RESULT_ERROR;
         }
 
-        // TODO: this may be able to be a switch but I couldn't get it
         if (status == ApiStatus_BLOCK) {
-            // return 0
-        } else if (status == ApiStatus_DONE1) {
+            return EVT_CMD_RESULT_CONTINUE;
+        }
+
+        #if DX_DEBUG_MENU
+        // pause again now that the current command is done blocking
+        if (script->debugStep == DEBUG_EVT_STEP_OVER) {
+            script->debugStep = DEBUG_EVT_STEP_NONE;
+        }
+        #endif
+
+        if (status == ApiStatus_DONE1) {
             script->curOpcode = EVT_OP_INTERNAL_FETCH;
-            // return 0
-        } else if (status == ApiStatus_DONE2) {
+            return EVT_CMD_RESULT_CONTINUE;
+        }
+
+        if (status == ApiStatus_DONE2) {
             script->curOpcode = EVT_OP_INTERNAL_FETCH;
             if (gGameStatusPtr->debugScripts != DEBUG_SCRIPTS_BLOCK_FUNC_DONE) {
                 continue;
             }
-            // return 0
-        } else {
-            continue;
+            return EVT_CMD_RESULT_CONTINUE;
         }
-        return EVT_CMD_RESULT_CONTINUE;
     }
 }
 
@@ -2075,7 +2115,7 @@ Bytecode* evt_skip_if(Evt* script) {
                 }
             break;
         }
-    } while (TRUE);
+    } while (true);
 }
 
 Bytecode* evt_skip_else(Evt* script) {
@@ -2123,7 +2163,7 @@ Bytecode* evt_skip_else(Evt* script) {
                 nestedIfDepth++;
                 break;
         }
-    } while (TRUE);
+    } while (true);
 }
 
 Bytecode* evt_goto_end_case(Evt* script) {
@@ -2151,7 +2191,7 @@ Bytecode* evt_goto_end_case(Evt* script) {
                 }
                 break;
         }
-    } while (TRUE);
+    } while (true);
 }
 
 Bytecode* evt_goto_next_case(Evt* script) {
@@ -2194,7 +2234,7 @@ Bytecode* evt_goto_next_case(Evt* script) {
                 }
                 break;
         }
-    } while (TRUE);
+    } while (true);
 }
 
 Bytecode* evt_goto_end_loop(Evt* script) {
@@ -2222,5 +2262,5 @@ Bytecode* evt_goto_end_loop(Evt* script) {
                 loopDepth++;
                 break;
         }
-    } while (TRUE);
+    } while (true);
 }

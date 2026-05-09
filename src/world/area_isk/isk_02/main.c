@@ -1,13 +1,13 @@
 #include "isk_02.h"
 
-b32 N(CamAdjustReady) = FALSE;
+b32 N(CamAdjustReady) = false;
 
 s32 N(adjust_cam_on_landing)(void) {
     s32 ret = LANDING_CAM_CHECK_SURFACE;
 
     if (!N(CamAdjustReady)) {
         if (gPlayerStatus.pos.y <= 0.0f) {
-            N(CamAdjustReady) = TRUE;
+            N(CamAdjustReady) = true;
         }
         ret = LANDING_CAM_ALWAYS_ADJUST;
     } else if (gPlayerStatus.pos.y > 0.0f) {
@@ -39,20 +39,20 @@ EvtScript N(EVS_Main) = {
     Call(SetSpriteShading, SHADING_NONE)
     Call(N(SetupLandingCamAdjust))
     EVT_SETUP_CAMERA_NO_LEAD(0, 0, 0)
-    Call(MakeNpcs, TRUE, Ref(N(DefaultNPCs)))
+    Call(MakeNpcs, true, Ref(N(DefaultNPCs)))
     ExecWait(N(EVS_MakeEntities))
     ExecWait(N(EVS_SetupLock))
     Exec(N(EVS_SetupSarcophagi))
 #if VERSION_PAL
-    Call(SetMusicTrack, 0, SONG_DRY_DRY_RUINS, 0, 8)
+    Call(SetMusic, 0, SONG_DRY_DRY_RUINS, 0, VOL_LEVEL_FULL)
 #else
     Switch(GB_StoryProgress)
         CaseLt(STORY_CH2_SOLVED_ARTIFACT_PUZZLE)
-            Call(SetMusicTrack, 0, SONG_DRY_DRY_RUINS, 0, 8)
+            Call(SetMusic, 0, SONG_DRY_DRY_RUINS, 0, VOL_LEVEL_FULL)
         CaseLt(STORY_CH2_DEFEATED_TUTANKOOPA)
-            Call(SetMusicTrack, 0, SONG_RUINS_BASEMENT, 0, 8)
+            Call(SetMusic, 0, SONG_RUINS_BASEMENT, 0, VOL_LEVEL_FULL)
         CaseGe(STORY_CH2_DEFEATED_TUTANKOOPA)
-            Call(SetMusicTrack, 0, SONG_DRY_DRY_RUINS, 0, 8)
+            Call(SetMusic, 0, SONG_DRY_DRY_RUINS, 0, VOL_LEVEL_FULL)
     EndSwitch
 #endif
     Set(LVar0, Ref(N(EVS_BindExitTriggers)))

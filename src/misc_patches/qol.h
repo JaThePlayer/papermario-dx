@@ -12,9 +12,9 @@
         Call(PlaySoundAtActor, actor, SOUND_MAGIKOOPA_POWER_UP) \
     EndThread \
     Thread \
-        Call(FreezeBattleState, TRUE) \
+        Call(FreezeBattleState, true) \
         Call(BoostAttack, actor, amt) \
-        Call(FreezeBattleState, FALSE) \
+        Call(FreezeBattleState, false) \
     EndThread \
     Call(WaitForBuffDone)
 
@@ -24,9 +24,9 @@
         Call(PlaySoundAtActor, actor, SOUND_MAGIKOOPA_POWER_UP) \
     EndThread \
     Thread \
-        Call(FreezeBattleState, TRUE) \
+        Call(FreezeBattleState, true) \
         Call(BoostDefense, actor, amt) \
-        Call(FreezeBattleState, FALSE) \
+        Call(FreezeBattleState, false) \
     EndThread \
     Call(WaitForBuffDone)
 

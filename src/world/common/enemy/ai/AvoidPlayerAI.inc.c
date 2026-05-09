@@ -11,7 +11,6 @@ void N(AvoidPlayerAI_ChaseInit)(Evt* script, MobileAISettings* npcAISettings, En
     f32 distFwd;
     f32 distCW;
     f32 distCCW;
-    f32 distToPlayer;
     s32 detectedPlayer;
 
     f32 posXFwd;
@@ -27,7 +26,7 @@ void N(AvoidPlayerAI_ChaseInit)(Evt* script, MobileAISettings* npcAISettings, En
     npc->duration = npcAISettings->chaseUpdateInterval / 2 + rand_int(npcAISettings->chaseUpdateInterval / 2 + 1);
     npc->curAnim = enemy->animList[ENEMY_ANIM_INDEX_CHASE];
     npc->moveSpeed = npcAISettings->chaseSpeed;
-    detectedPlayer = FALSE;
+    detectedPlayer = false;
 
     yawFwd = clamp_angle(atan2(npc->pos.x, npc->pos.z, gPlayerStatusPtr->pos.x,
                                  gPlayerStatusPtr->pos.z) + 180.0f);
@@ -77,12 +76,9 @@ void N(AvoidPlayerAI_ChaseInit)(Evt* script, MobileAISettings* npcAISettings, En
             distCCW = dist2D(npc->pos.x, npc->pos.z, posXCCW, posZCCW);
         }
 
-        // unused
-        distToPlayer = dist2D(npc->pos.x, npc->pos.z, gPlayerStatusPtr->pos.x, gPlayerStatusPtr->pos.z);
-
         if ((distFwd < npc->moveSpeed * 1.5) && (distCW < npc->moveSpeed * 1.5) && (distCCW < npc->moveSpeed * 1.5) &&
             (basic_ai_check_player_dist(territory, enemy, npcAISettings->alertRadius, npcAISettings->alertOffsetDist, 0))) {
-            detectedPlayer = TRUE;
+            detectedPlayer = true;
         }
 
         if (!detectedPlayer) {

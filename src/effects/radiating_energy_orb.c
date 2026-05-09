@@ -36,14 +36,14 @@ EffectInstance* radiating_energy_orb_main(
     bp.unk_00 = 0;
     bp.init = radiating_energy_orb_init;
     bp.update = radiating_energy_orb_update;
-    bp.renderWorld = radiating_energy_orb_render;
-    bp.renderUI = NULL;
+    bp.renderScene = radiating_energy_orb_render;
+    bp.renderUI = nullptr;
     bp.effectID = EFFECT_RADIATING_ENERGY_ORB;
 
     effect = create_effect_instance(&bp);
     effect->numParts = numParts;
     part = effect->data.radiatingEnergyOrb = general_heap_malloc(numParts * sizeof(*part));
-    ASSERT(effect->data.radiatingEnergyOrb != NULL);
+    ASSERT(effect->data.radiatingEnergyOrb != nullptr);
 
     part->unk_04 = arg0;
     part->unk_1C = 0;
@@ -136,7 +136,6 @@ void radiating_energy_orb_appendGfx(void* effect) {
     s32 temp_s2 = unk_1C & 1;
     Matrix4f sp18;
     Matrix4f sp58;
-    Matrix4f unused;
     s32 i;
 
     if (temp_s2) {
@@ -144,7 +143,7 @@ void radiating_energy_orb_appendGfx(void* effect) {
     }
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
 
     guTranslateF(sp18, part->unk_08, part->unk_0C, part->unk_10);
     guMtxF2L(sp18, &gDisplayContext->matrixStack[gMatrixListPos]);

@@ -31,15 +31,14 @@ EffectInstance* purple_ring_main(
     f32 var_f24;
     f32 var_f20;
     f32 var_f22;
-    Matrix4f unused;
 
     if (arg4 == 0.0f && arg5 == 0.0f && arg6 == 0.0f) {
-        return NULL;
+        return nullptr;
     }
 
     temp_f12 = SQ(arg4) + SQ(arg5) + SQ(arg6);
     if (temp_f12 == 0.0f) {
-        return NULL;
+        return nullptr;
     }
 
     temp_f12 = 1.0f / sqrtf(temp_f12);
@@ -63,7 +62,7 @@ EffectInstance* purple_ring_main(
 
     temp_f12 = SQ(var_f22) + SQ(var_f24) + SQ(var_f20);
     if (temp_f12 == 0.0f) {
-        return NULL;
+        return nullptr;
     }
 
     temp_f12 = 1.0f / sqrtf(temp_f12);
@@ -77,7 +76,7 @@ EffectInstance* purple_ring_main(
 
     temp_f12 = SQ(sp68) + SQ(sp6C) + SQ(sp70);
     if (temp_f12 == 0.0f) {
-        return NULL;
+        return nullptr;
     }
 
     temp_f12 = 1.0f / sqrtf(temp_f12);
@@ -87,15 +86,15 @@ EffectInstance* purple_ring_main(
 
     bpPtr->init = purple_ring_init;
     bpPtr->update = purple_ring_update;
-    bpPtr->renderWorld = purple_ring_render;
+    bpPtr->renderScene = purple_ring_render;
     bpPtr->unk_00 = 0;
-    bpPtr->renderUI = NULL;
+    bpPtr->renderUI = nullptr;
     bpPtr->effectID = EFFECT_PURPLE_RING;
 
     effect = create_effect_instance(bpPtr);
     effect->numParts = numParts;
     data = effect->data.purpleRing = general_heap_malloc(numParts * sizeof(*data));
-    ASSERT(effect->data.purpleRing != NULL);
+    ASSERT(effect->data.purpleRing != nullptr);
 
     data->unk_00 = arg0;
     data->unk_04 = arg1;
@@ -196,7 +195,7 @@ void purple_ring_appendGfx(void* effect) {
     Matrix4f sp50;
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
     gSPDisplayList(gMainGfxPos++, D_09000200_352EE0);
     gDPSetPrimColor(gMainGfxPos++, 0, 0, data->unk_74, data->unk_75, data->unk_76, data->unk_68);
 

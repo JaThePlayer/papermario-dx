@@ -20,15 +20,15 @@ EffectInstance* energy_orb_wave_main(s32 arg0, f32 arg1, f32 arg2, f32 arg3, f32
 
     bp.init = energy_orb_wave_init;
     bp.update = energy_orb_wave_update;
-    bp.renderWorld = energy_orb_wave_render;
+    bp.renderScene = energy_orb_wave_render;
     bp.unk_00 = 0;
-    bp.renderUI = NULL;
+    bp.renderUI = nullptr;
     bp.effectID = EFFECT_ENERGY_ORB_WAVE;
 
     effect = create_effect_instance(&bp);
     effect->numParts = numParts;
     data = effect->data.energyOrbWave = general_heap_malloc(numParts * sizeof(*data));
-    ASSERT(effect->data.energyOrbWave != NULL);
+    ASSERT(effect->data.energyOrbWave != nullptr);
 
     data->unk_00 = arg0;
     data->unk_14 = 0;
@@ -234,7 +234,7 @@ void energy_orb_wave_appendGfx(void* effect) {
     Matrix4f sp58;
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
 
     guTranslateF(sp18, data->pos.x, data->pos.y, data->pos.z);
     guScaleF(sp58, data->scale, data->scale, data->scale);

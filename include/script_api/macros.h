@@ -2,7 +2,7 @@
 #define _SCRIPT_API_MACROS_H_
 
 #include "evt.h"
-#include "stdlib/stdarg.h"
+#include <stdarg.h>
 
 #ifdef _LANGUAGE_C_PLUS_PLUS
 extern "C" {
@@ -43,6 +43,7 @@ extern "C" {
 #define EVT_ARRAY_FLAG_OFFSET    210000000
 #define EVT_FIXED_CUTOFF        -220000000
 #define EVT_FIXED_OFFSET         230000000
+#define EVT_FIXED_END           -240000000
 #define EVT_IGNORE_ARG          -250000000 // used by a couple functions to selectively ignore args
 #define EVT_LIMIT               -270000000 // TODO better name
 
@@ -536,7 +537,7 @@ extern "C" {
 /// Resumes a thread by its thread ID.
 #define ResumeThread(TID)                  EVT_CMD(EVT_OP_RESUME_THREAD, TID),
 
-/// Sets OUTVAR to TRUE/FALSE depending on whether a thread with the given ID exists (i.e. has not been killed).
+/// Sets OUTVAR to true/false depending on whether a thread with the given ID exists (i.e. has not been killed).
 #define IsThreadRunning(TID, OUTVAR)      EVT_CMD(EVT_OP_IS_THREAD_RUNNING, TID, OUTVAR),
 
 /// Marks the start of a thread block. Commands between this and a matching EndThread
@@ -579,7 +580,10 @@ extern "C" {
 #define EVT_DEBUG_LOG(STRING)                   EVT_CMD(EVT_OP_DEBUG_LOG, STRING),
 
 /// Prints variable name and value
-#define DebugPrintVar(VAR)                EVT_CMD(EVT_OP_DEBUG_PRINT_VAR, VAR),
+#define DebugPrintVar(VAR)                  EVT_CMD(EVT_OP_DEBUG_PRINT_VAR, VAR),
+
+/// Halt execution after this command
+#define BreakPoint(TEXT)                    EVT_CMD(EVT_OP_DEBUG_BREAKPOINT, Ref(TEXT)),
 
 /****** VECTOR OPERATIONS *********************************************************************************************/
 
@@ -648,7 +652,7 @@ extern "C" {
 #define EVT_EXIT_WALK(walkDistance, exitIdx, map, entryIdx) \
     { \
         SetGroup(EVT_GROUP_EXIT_MAP) \
-        Call(DisablePlayerInput, TRUE) \
+        Call(DisablePlayerInput, true) \
         Call(UseExitHeading, walkDistance, exitIdx) \
         Exec(ExitWalk) \
         Call(GotoMap, Ref(map), entryIdx) \
@@ -671,7 +675,7 @@ extern "C" {
 #define EVT_EXIT_SINGLE_DOOR(exitIdx, map, entryIdx, colliderID, modelID, swingDir) \
     { \
         SetGroup(EVT_GROUP_EXIT_MAP) \
-        Call(DisablePlayerInput, TRUE) \
+        Call(DisablePlayerInput, true) \
         Set(LVar0, exitIdx) \
         Set(LVar1, colliderID) \
         Set(LVar2, modelID) \
@@ -687,7 +691,7 @@ extern "C" {
 #define EVT_EXIT_SINGLE_DOOR_SET_SOUNDS(exitIdx, map, entryIdx, colliderID, modelID, swingDir, sounds) \
     { \
         SetGroup(EVT_GROUP_EXIT_MAP) \
-        Call(DisablePlayerInput, TRUE) \
+        Call(DisablePlayerInput, true) \
         Call(UseDoorSounds, sounds) \
         Set(LVar0, exitIdx) \
         Set(LVar1, colliderID) \
@@ -704,7 +708,7 @@ extern "C" {
 #define EVT_EXIT_SPLIT_SINGLE_DOOR(exitIdx, map, entryIdx, colliderID, topModelID, bottomModelID, swingDir) \
     { \
         SetGroup(EVT_GROUP_EXIT_MAP) \
-        Call(DisablePlayerInput, TRUE) \
+        Call(DisablePlayerInput, true) \
         Set(LVar0, exitIdx) \
         Set(LVar1, colliderID) \
         Set(LVar2, topModelID) \
@@ -721,7 +725,7 @@ extern "C" {
 #define EVT_EXIT_DOUBLE_DOOR(exitIdx, map, entryIdx, colliderID, leftDoorModelID, rightDoorModelID) \
     { \
         SetGroup(EVT_GROUP_EXIT_MAP) \
-        Call(DisablePlayerInput, TRUE) \
+        Call(DisablePlayerInput, true) \
         Set(LVar0, exitIdx) \
         Set(LVar1, colliderID) \
         Set(LVar2, leftDoorModelID) \
@@ -737,7 +741,7 @@ extern "C" {
 #define EVT_EXIT_DOUBLE_DOOR_SET_SOUNDS(exitIdx, map, entryIdx, colliderID, leftDoorModelID, rightDoorModelID, sounds) \
     { \
         SetGroup(EVT_GROUP_EXIT_MAP) \
-        Call(DisablePlayerInput, TRUE) \
+        Call(DisablePlayerInput, true) \
         Call(UseDoorSounds, sounds) \
         Set(LVar0, exitIdx) \
         Set(LVar1, colliderID) \
@@ -751,31 +755,33 @@ extern "C" {
         End \
     }
 
-/// Enable camera using standard parameters for clip distances and FOV
-/// @param r background red color
-/// @param g background green color
-/// @param b background blue color
+/// Enable camera using standard parameters for clip distances and FOV.
+/// `r`, `g`, and `b` are the background color.
+/// @param r
+/// @param g
+/// @param b
 #define EVT_SETUP_CAMERA_DEFAULT(r, g, b) \
     Call(SetCamPerspective, CAM_DEFAULT, CAM_UPDATE_FROM_ZONE, 25, 16, 4096) \
     Call(SetCamBGColor, CAM_DEFAULT, r, g, b) \
-    Call(SetCamEnabled, CAM_DEFAULT, TRUE)
+    Call(SetCamEnabled, CAM_DEFAULT, true)
 
-/// Enable camera using standard parameters for clip distances and FOV with LeadPlayer disabled
-/// @param r background red color
-/// @param g background green color
-/// @param b background blue color
+/// Enable camera using standard parameters for clip distances and FOV with LeadPlayer disabled.
+/// `r`, `g`, and `b` are the background color.
+/// @param r
+/// @param g
+/// @param b
 #define EVT_SETUP_CAMERA_NO_LEAD(r, g, b) \
     Call(SetCamPerspective, CAM_DEFAULT, CAM_UPDATE_FROM_ZONE, 25, 16, 4096) \
     Call(SetCamBGColor, CAM_DEFAULT, r, g, b) \
-    Call(SetCamLeadPlayer, CAM_DEFAULT, FALSE) \
-    Call(SetCamEnabled, CAM_DEFAULT, TRUE)
+    Call(SetCamLeadPlayer, CAM_DEFAULT, false) \
+    Call(SetCamEnabled, CAM_DEFAULT, true)
 
 /// Enable camera for `AREA_MIM` using a closer far clip distance and appropriate background color
 #define EVT_SETUP_CAMERA_MIM() \
     Call(SetCamPerspective, CAM_DEFAULT, CAM_UPDATE_FROM_ZONE, 25, 16, 650) \
     Call(SetCamBGColor, CAM_DEFAULT, 0, 0, 0) \
-    Call(SetCamLeadPlayer, CAM_DEFAULT, FALSE) \
-    Call(SetCamEnabled, CAM_DEFAULT, TRUE)
+    Call(SetCamLeadPlayer, CAM_DEFAULT, false) \
+    Call(SetCamEnabled, CAM_DEFAULT, true)
 
 // allow macros with variable number of arguments
 // see https://stackoverflow.com/questions/11761703/overloading-macro-on-number-of-arguments
@@ -835,7 +841,7 @@ extern "C" {
     Call(PlayEffect_impl, effect, subtype, a, b, c, d, e, f, g, h, i, j, k, l)
 
 #ifdef _LANGUAGE_C_PLUS_PLUS
-}
+} // extern "C"
 #endif
 
 #endif

@@ -84,7 +84,7 @@ API_CALLABLE(N(TryEnchantPlayer)) {
     u8 casts = N(MerleeSpellCasts)[tier];
 
     if (playerData->coins < coins) {
-        evt_set_variable(script, outPrevented, TRUE);
+        evt_set_variable(script, outPrevented, true);
     } else {
         playerData->coins = playerData->coins - coins;
         if (playerData->merleeCastsLeft < casts) {
@@ -105,7 +105,7 @@ API_CALLABLE(N(TryEnchantPlayer)) {
                 playerData->merleeSpellType = MERLEE_SPELL_COIN_BOOST;
                 break;
         }
-        evt_set_variable(script, outPrevented, FALSE);
+        evt_set_variable(script, outPrevented, false);
     }
 
     return ApiStatus_DONE2;
@@ -159,7 +159,7 @@ API_CALLABLE(N(UndarkenWorld)) {
         for (i = 0; i < MAX_NPCS; i++) {
             Npc* npc = get_npc_by_index(i);
 
-            if (npc != NULL && npc->flags != 0 && npc->npcID != NPC_PARTNER && npc->npcID != NPC_Merlee) {
+            if (npc != nullptr && npc->flags != 0 && npc->npcID != NPC_PARTNER && npc->npcID != NPC_Merlee) {
                 npc->flags &= ~NPC_FLAG_HIDING;
             }
         }
@@ -186,7 +186,7 @@ API_CALLABLE(N(CreateRitualCards)) {
     imgfx_update(imgfxIdx, IMGFX_SET_ANIM, IMGFX_ANIM_FLIP_CARD_3, 1, 1, 0, IMGFX_FLAG_800);
     evt_set_variable(script, RITUAL_VAR_FILP3_IMGFX, imgfxIdx);
 
-    evt_set_variable(script, RITUAL_VAR_WORKER, create_worker_world(
+    evt_set_variable(script, RITUAL_VAR_WORKER, create_worker_scene(
         N(card_worker_update),
         N(card_worker_render)));
     return ApiStatus_DONE2;
@@ -316,9 +316,8 @@ void N(card_worker_update)(void) {
     f32 sp48, sp4C, sp50, sp54;
     f32 sp58, sp5C, sp60, sp64;
     f32 sp68, sp6C, sp70, sp74;
-    EffectInstance* effect;
     EnergyInOutFXData* data;
-    s32 i, j;
+    s32 j;
 
     switch (evt_get_variable(N(CreatorScript), RITUAL_VAR_STATE)) {
         case RITUAL_STATE_INIT:
@@ -343,7 +342,6 @@ void N(card_worker_update)(void) {
             N(RitualCards)[1].spriteID = 1;
             N(RitualCards)[1].rasterIndex = 48;
             N(RitualCards)[1].xoffset = 0;
-
 
             N(RitualCards)[2].spriteID = 8;
             N(RitualCards)[2].rasterIndex = 5;
@@ -650,7 +648,7 @@ EvtScript N(EVS_PerformRitual) = {
         Call(DismissEffect, RITUAL_VAR_ORB_EFFECT)
     EndThread
     Call(N(DarkenWorld))
-    Call(DisablePlayerPhysics, TRUE)
+    Call(DisablePlayerPhysics, true)
     Call(InterpPlayerYaw, 0, 0)
     Call(N(CreateRitualCards))
     Thread
@@ -731,7 +729,7 @@ EvtScript N(EVS_PerformRitual) = {
     Wait(1)
     Call(SetPlayerPos, RITUAL_VAR_POS_X, RITUAL_VAR_POS_Y, RITUAL_VAR_POS_Z)
     Wait(1)
-    Call(DisablePlayerPhysics, FALSE)
+    Call(DisablePlayerPhysics, false)
     Call(N(DestroyRitualCards))
     Thread
         Call(N(UndarkenWorld))
@@ -747,20 +745,19 @@ EvtScript N(EVS_BeginMerleeCamera) = {
     Call(SetPanTarget, CAM_DEFAULT, LVar0, LVar1, LVar2)
     Call(SetCamSpeed, CAM_DEFAULT, Float(8.0))
     Call(SetCamPitch, CAM_DEFAULT, 20, -15)
-    Call(PanToTarget, CAM_DEFAULT, 0, TRUE)
+    Call(PanToTarget, CAM_DEFAULT, 0, true)
     Call(WaitForCam, CAM_DEFAULT, Float(1.0))
     Return
     End
 };
 
 EvtScript N(EVS_EndMerleeCamera) = {
-    Call(PanToTarget, CAM_DEFAULT, 0, FALSE)
+    Call(PanToTarget, CAM_DEFAULT, 0, false)
     Call(SetCamSpeed, CAM_DEFAULT, Float(3.0))
     Call(WaitForCam, CAM_DEFAULT, Float(1.0))
     Return
     End
 };
-
 
 EvtScript N(EVS_NpcInteract_Merlee) = {
     Call(func_802D2C14, 1)
@@ -810,7 +807,7 @@ EvtScript N(EVS_NpcInteract_Merlee) = {
         Return
     EndIf
     Call(ContinueSpeech, -1, ANIM_WorldMerlee_Talk, ANIM_WorldMerlee_Idle, 0, MSG_CH2_00DA)
-    Call(SetMusicTrack, 0, SONG_MERLEE_SPELL, 0, 8)
+    Call(SetMusic, 0, SONG_MERLEE_SPELL, 0, VOL_LEVEL_FULL)
     Call(DisablePartnerAI, 0)
     Call(SetNpcAnimation, NPC_PARTNER, PARTNER_ANIM_IDLE)
     ExecGetTID(N(EVS_PerformRitual), LVar9)

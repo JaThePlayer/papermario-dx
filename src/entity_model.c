@@ -58,7 +58,7 @@ void clear_entity_models(void) {
     }
 
     for (i = 0; i < MAX_ENTITY_MODELS; i++) {
-        (*gCurrentEntityModelList)[i] = NULL;
+        (*gCurrentEntityModelList)[i] = nullptr;
     }
 
     gEntityModelCount = 0;
@@ -72,7 +72,6 @@ void clear_entity_models(void) {
 }
 
 void init_entity_models(void) {
-    s32 i;
 
     if (gGameStatusPtr->context == CONTEXT_WORLD) {
         gCurrentEntityModelList = &gWorldEntityModelList;
@@ -96,7 +95,7 @@ s32 load_entity_model(EntityModelScript* cmdList) {
     s32 i;
 
     for (i = 0; i < MAX_ENTITY_MODELS; i++) {
-        if ((*gCurrentEntityModelList)[i] == NULL) {
+        if ((*gCurrentEntityModelList)[i] == nullptr) {
             break;
         }
     }
@@ -106,19 +105,19 @@ s32 load_entity_model(EntityModelScript* cmdList) {
     entityModelCount = &gEntityModelCount;
     (*entityModelCount)++;
 
-    ASSERT(newEntityModel != NULL);
+    ASSERT(newEntityModel != nullptr);
 
     newEntityModel->flags = (ENTITY_MODEL_FLAG_CAM0 | ENTITY_MODEL_FLAG_CAM1 | ENTITY_MODEL_FLAG_CAM2 | ENTITY_MODEL_FLAG_ENABLED);
     newEntityModel->renderMode = 1;
-    newEntityModel->gfx.displayList = NULL;
+    newEntityModel->gfx.displayList = nullptr;
     newEntityModel->cmdListReadPos = cmdList;
     newEntityModel->nextFrameTime = 1.0f;
     newEntityModel->timeScale = 1.0f;
-    if (cmdList == NULL) {
+    if (cmdList == nullptr) {
         newEntityModel->cmdListReadPos = &D_8014C260;
     }
-    newEntityModel->vertexArray = NULL;
-    newEntityModel->fpSetupGfxCallback = NULL;
+    newEntityModel->vertexArray = nullptr;
+    newEntityModel->fpSetupGfxCallback = nullptr;
     newEntityModel->cmdListSavedPos = newEntityModel->cmdListReadPos;
 
     if (gGameStatusPtr->context != CONTEXT_WORLD) {
@@ -133,7 +132,7 @@ s32 ALT_load_entity_model(EntityModelScript* cmdList) {
     s32 i;
 
     for (i = 0; i < MAX_ENTITY_MODELS; i++) {
-        if ((*gCurrentEntityModelList)[i] == NULL) {
+        if ((*gCurrentEntityModelList)[i] == nullptr) {
             break;
         }
     }
@@ -146,21 +145,21 @@ s32 ALT_load_entity_model(EntityModelScript* cmdList) {
         (*entityModelCount)++;
     }
 
-    ASSERT(newEntityModel != NULL);
+    ASSERT(newEntityModel != nullptr);
 
     newEntityModel->gfx.imageData = imageData = heap_malloc(sizeof(*imageData));
-    ASSERT(imageData != NULL);
+    ASSERT(imageData != nullptr);
 
     newEntityModel->flags = (ENTITY_MODEL_FLAG_CAM0 | ENTITY_MODEL_FLAG_CAM1 | ENTITY_MODEL_FLAG_CAM2 | ENTITY_MODEL_FLAG_ENABLED | ENTITY_MODEL_FLAG_USE_IMAGE);
     newEntityModel->renderMode = 1;
     newEntityModel->cmdListReadPos = cmdList;
     newEntityModel->nextFrameTime = 1.0f;
     newEntityModel->timeScale = 1.0f;
-    if (cmdList == NULL) {
+    if (cmdList == nullptr) {
         newEntityModel->cmdListReadPos = &D_8014C260;
     }
-    newEntityModel->vertexArray = NULL;
-    newEntityModel->fpSetupGfxCallback = NULL;
+    newEntityModel->vertexArray = nullptr;
+    newEntityModel->fpSetupGfxCallback = nullptr;
     newEntityModel->cmdListSavedPos = newEntityModel->cmdListReadPos;
 
     if (gGameStatusPtr->context != CONTEXT_WORLD) {
@@ -175,7 +174,7 @@ void exec_entity_model_commandlist(s32 idx) {
     if (gGameStatusPtr->context == CONTEXT_WORLD || (idx & BATTLE_ENTITY_ID_BIT)) {
         idx &= ~BATTLE_ENTITY_ID_BIT;
         entityModel = (*gCurrentEntityModelList)[idx];
-        if (entityModel != NULL && (entityModel->flags)) {
+        if (entityModel != nullptr && (entityModel->flags)) {
             if (!(entityModel->flags & ENTITY_MODEL_FLAG_HIDDEN)) {
                 if (!(entityModel->flags & ENTITY_MODEL_FLAG_DISABLE_SCRIPT)) {
                     entityModel->flags &= ~ENTITY_MODEL_FLAG_100;
@@ -259,7 +258,7 @@ void appendGfx_entity_model(EntityModel* model) {
             gSPSetOtherMode(gMainGfxPos++, G_SETOTHERMODE_H, G_MDSFT_ALPHADITHER, 18, G_AD_DISABLE | G_CD_DISABLE | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE);
 
             switch (entity_fog_enabled && !(model->flags & ENTITY_MODEL_FLAG_FOG_DISABLED)) {
-                case FALSE:
+                case false:
                     switch (model->renderMode) {
                         case RENDER_MODE_SURFACE_OPA:
                             gSPDisplayList(gMainGfxPos++, Gfx_RM1_SURFACE_OPA);
@@ -315,7 +314,7 @@ void appendGfx_entity_model(EntityModel* model) {
                             break;
                     }
                     break;
-                case TRUE:
+                case true:
                     switch (model->renderMode) {
                         case RENDER_MODE_SURFACE_OPA:
                             gSPDisplayList(gMainGfxPos++, Gfx_RM3_SURFACE_OPA);
@@ -350,12 +349,12 @@ void appendGfx_entity_model(EntityModel* model) {
                 gDPSetCombineMode(gMainGfxPos++, PM_CC_42, PM_CC2_MULTIPLY_SHADE);
             }
         }
-        if (model->vertexArray != NULL) {
+        if (model->vertexArray != nullptr) {
             gSPSegment(gMainGfxPos++, D_80154374, VIRTUAL_TO_PHYSICAL(model->vertexArray));
         }
         gDPPipeSync(gMainGfxPos++);
 
-        if (model->fpSetupGfxCallback != NULL) {
+        if (model->fpSetupGfxCallback != nullptr) {
             model->fpSetupGfxCallback(model->setupGfxCallbackArg0);
         }
         gDPPipeSync(gMainGfxPos++);
@@ -402,7 +401,6 @@ void appendGfx_entity_model(EntityModel* model) {
     gDPPipeSync(gMainGfxPos++);
 }
 
-
 void draw_entity_model_A(s32 modelIdx, Mtx* transformMtx) {
     EntityModel* model;
     RenderTask rt;
@@ -416,13 +414,13 @@ void draw_entity_model_A(s32 modelIdx, Mtx* transformMtx) {
         modelIdx &= ~BATTLE_ENTITY_ID_BIT;
         model = (*gCurrentEntityModelList)[modelIdx];
 
-        if (model != NULL) {
+        if (model != nullptr) {
             if (model->flags != 0) {
                 if (!(model->flags & ENTITY_MODEL_FLAG_100)) {
                     if (!(model->flags & ENTITY_MODEL_FLAG_HIDDEN)) {
                         if (!(model->flags & ENTITY_MODEL_FLAG_40) && (model->flags & (1 << gCurrentCamID))) {
                             model->transform = *transformMtx;
-                            model->vertexArray = NULL;
+                            model->vertexArray = nullptr;
                             guMtxL2F(mtx, transformMtx);
                             inX = mtx[3][0];
                             inY = mtx[3][1];
@@ -454,7 +452,7 @@ void draw_entity_model_B(s32 modelIdx, Mtx* transformMtx, s32 vertexSegment, Vec
         modelIdx &= ~BATTLE_ENTITY_ID_BIT;
         model = (*gCurrentEntityModelList)[modelIdx];
 
-        if (model != NULL) {
+        if (model != nullptr) {
             if (model->flags != 0) {
                 if (!(model->flags & ENTITY_MODEL_FLAG_100)) {
                     if (!(model->flags & ENTITY_MODEL_FLAG_HIDDEN)) {
@@ -489,14 +487,14 @@ void draw_entity_model_C(s32 modelIdx, Mtx* transformMtx) {
         modelIdx &= ~BATTLE_ENTITY_ID_BIT;
         model = (*gCurrentEntityModelList)[modelIdx];
 
-        if (model != NULL) {
+        if (model != nullptr) {
             if (model->flags != 0) {
                 if (!(model->flags & ENTITY_MODEL_FLAG_100)) {
                     if (!(model->flags & ENTITY_MODEL_FLAG_HIDDEN)) {
                         if (!(model->flags & ENTITY_MODEL_FLAG_40) && (model->flags & (1 << gCurrentCamID))) {
                             model->flags |= ENTITY_MODEL_FLAG_REFLECT;
                             model->transform = *transformMtx;
-                            model->vertexArray = NULL;
+                            model->vertexArray = nullptr;
                             rtPtr->renderMode = model->renderMode;
                             rtPtr->appendGfxArg = model;
                             rtPtr->appendGfx = (void(*)(void*))appendGfx_entity_model;
@@ -519,7 +517,7 @@ void draw_entity_model_D(s32 modelIdx, Mtx* transformMtx, s32 arg2, Vec3s* verte
         modelIdx &= ~BATTLE_ENTITY_ID_BIT;
         model = (*gCurrentEntityModelList)[modelIdx];
 
-        if (model != NULL) {
+        if (model != nullptr) {
             if (model->flags != 0) {
                 if (!(model->flags & ENTITY_MODEL_FLAG_100)) {
                     if (!(model->flags & ENTITY_MODEL_FLAG_HIDDEN)) {
@@ -548,7 +546,7 @@ void draw_entity_model_E(s32 modelIdx, Mtx* transformMtx) {
     ImgFXTexture ifxImg;
     Matrix4f imgfxMtx;
 
-    if (model == NULL) {
+    if (model == nullptr) {
         return;
     }
     if (model->flags == 0) {
@@ -568,12 +566,12 @@ void draw_entity_model_E(s32 modelIdx, Mtx* transformMtx) {
     }
 
     model->transform = *transformMtx;
-    model->vertexArray = NULL;
+    model->vertexArray = nullptr;
     gDisplayContext->matrixStack[gMatrixListPos] = model->transform;
     gSPMatrix(gMainGfxPos++, &gDisplayContext->matrixStack[gMatrixListPos++], G_MTX_PUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     if (!(model->flags & ENTITY_MODEL_FLAG_USE_IMAGE)) {
         switch (entity_fog_enabled && !(model->flags & ENTITY_MODEL_FLAG_FOG_DISABLED)) {
-            case FALSE:
+            case false:
                 switch (model->renderMode) {
                     case RENDER_MODE_SURFACE_OPA:
                         gSPDisplayList(gMainGfxPos++, Gfx_RM1_SURFACE_OPA);
@@ -629,7 +627,7 @@ void draw_entity_model_E(s32 modelIdx, Mtx* transformMtx) {
                         break;
                 }
                 break;
-            case TRUE:
+            case true:
                 switch (model->renderMode) {
                     case RENDER_MODE_SURFACE_OPA:
                         gSPDisplayList(gMainGfxPos++, Gfx_RM3_SURFACE_OPA);
@@ -663,7 +661,7 @@ void draw_entity_model_E(s32 modelIdx, Mtx* transformMtx) {
         } else {
             gDPSetCombineMode(gMainGfxPos++, PM_CC_42, PM_CC2_MULTIPLY_SHADE);
         }
-        if (model->vertexArray != NULL) {
+        if (model->vertexArray != nullptr) {
             gSPSegment(gMainGfxPos++, D_80154374, VIRTUAL_TO_PHYSICAL(model->vertexArray));
         }
         gSPDisplayList(gMainGfxPos++, model->gfx.displayList);
@@ -710,8 +708,8 @@ void draw_entity_model_E(s32 modelIdx, Mtx* transformMtx) {
 void set_entity_model_render_command_list(s32 idx, EntityModelScript* cmdList) {
     EntityModel* entityModel = (*gCurrentEntityModelList)[idx & ~BATTLE_ENTITY_ID_BIT];
 
-    if (entityModel != NULL && entityModel->flags) {
-        if (cmdList == NULL) {
+    if (entityModel != nullptr && entityModel->flags) {
+        if (cmdList == nullptr) {
             cmdList = &D_8014C260;
         }
         entityModel->cmdListReadPos = cmdList;
@@ -729,14 +727,14 @@ void free_entity_model_by_index(s32 idx) {
     s32 index = idx & ~BATTLE_ENTITY_ID_BIT;
     EntityModel* entityModel = (*gCurrentEntityModelList)[index];
 
-    if (entityModel != NULL && entityModel->flags) {
+    if (entityModel != nullptr && entityModel->flags) {
         if (entityModel->flags & ENTITY_MODEL_FLAG_USE_IMAGE) {
             heap_free(entityModel->gfx.imageData);
         }
         {
             s32* modelCount = &gEntityModelCount;
             heap_free((*gCurrentEntityModelList)[index]);
-            (*gCurrentEntityModelList)[index] = NULL;
+            (*gCurrentEntityModelList)[index] = nullptr;
             (*modelCount)--;
         }
     }
@@ -759,7 +757,7 @@ void free_entity_model_by_ref(EntityModel* entityModel) {
 void set_entity_model_flags(s32 idx, s32 newFlags) {
     EntityModel* entityModel = (*gCurrentEntityModelList)[idx & ~BATTLE_ENTITY_ID_BIT];
 
-    if (entityModel != NULL && entityModel->flags) {
+    if (entityModel != nullptr && entityModel->flags) {
         entityModel->flags |= newFlags;
     }
 }
@@ -767,7 +765,7 @@ void set_entity_model_flags(s32 idx, s32 newFlags) {
 void clear_entity_model_flags(s32 idx, s32 newFlags) {
     EntityModel* entityModel = (*gCurrentEntityModelList)[idx & ~BATTLE_ENTITY_ID_BIT];
 
-    if (entityModel != NULL && entityModel->flags) {
+    if (entityModel != nullptr && entityModel->flags) {
         entityModel->flags &= ~newFlags;
     }
 }

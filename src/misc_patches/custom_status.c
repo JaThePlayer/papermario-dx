@@ -26,16 +26,16 @@
 
 StatusType gCustomStatusTypes[CUSTOM_STATUS_AMT] = {
     [NONE_CUSTOM_STATUS] = {},
-    [ATK_DOWN_TEMP_STATUS] = STATUS_ENTRY(temp_atk_down, TRUE, TRUE, STATUS_STACKING_OVERRIDE),
-    [DEF_DOWN_TEMP_STATUS] = STATUS_ENTRY(temp_def_down, TRUE, TRUE, STATUS_STACKING_OVERRIDE),
-    [ATK_UP_TEMP_STATUS] = STATUS_ENTRY(temp_atk_up, FALSE, TRUE, STATUS_STACKING_OVERRIDE),
-    [DEF_UP_TEMP_STATUS] = STATUS_ENTRY(temp_def_up, FALSE, TRUE, STATUS_STACKING_OVERRIDE),
-    [CLOSE_CALL_STATUS] = STATUS_ENTRY(close_call, FALSE, TRUE, STATUS_STACKING_OVERRIDE),
-    [BURN_STATUS] = STATUS_ENTRY(burn_status, TRUE, TRUE, STATUS_STACKING_BURN),
-    [FP_COST_STATUS] = STATUS_ENTRY(fp_cost_status, FALSE, TRUE, STATUS_STACKING_OVERRIDE),
-    [CHARGE_STATUS] = STATUS_ENTRY(charge_status, FALSE, FALSE, STATUS_STACKING_ADD_POTENCY),
-    [POISON_STATUS] = STATUS_ENTRY(poison_status, TRUE, TRUE, STATUS_STACKING_OVERRIDE),
-    [PAIN_FOCUS_STATUS] = STATUS_ENTRY(pain_focus_status, FALSE, TRUE, STATUS_STACKING_ADD_POTENCY),
+    [ATK_DOWN_TEMP_STATUS] = STATUS_ENTRY(temp_atk_down, true, true, STATUS_STACKING_OVERRIDE),
+    [DEF_DOWN_TEMP_STATUS] = STATUS_ENTRY(temp_def_down, true, true, STATUS_STACKING_OVERRIDE),
+    [ATK_UP_TEMP_STATUS] = STATUS_ENTRY(temp_atk_up, false, true, STATUS_STACKING_OVERRIDE),
+    [DEF_UP_TEMP_STATUS] = STATUS_ENTRY(temp_def_up, false, true, STATUS_STACKING_OVERRIDE),
+    [CLOSE_CALL_STATUS] = STATUS_ENTRY(close_call, false, true, STATUS_STACKING_OVERRIDE),
+    [BURN_STATUS] = STATUS_ENTRY(burn_status, true, true, STATUS_STACKING_BURN),
+    [FP_COST_STATUS] = STATUS_ENTRY(fp_cost_status, false, true, STATUS_STACKING_OVERRIDE),
+    [CHARGE_STATUS] = STATUS_ENTRY(charge_status, false, false, STATUS_STACKING_ADD_POTENCY),
+    [POISON_STATUS] = STATUS_ENTRY(poison_status, true, true, STATUS_STACKING_OVERRIDE),
+    [PAIN_FOCUS_STATUS] = STATUS_ENTRY(pain_focus_status, false, true, STATUS_STACKING_ADD_POTENCY),
 };
 
 StatusInfo* custom_status_get_info(Actor* actor, s8 customStatusId) {
@@ -84,18 +84,18 @@ static void custom_status_decrement_impl(Actor* actor, s8 isLate) {
             if (status->turns < decrement)
                 decrement = status->turns;
 
-            custom_status_decrease_turn_count_impl(actor, status->turns - decrement, status, statusType, TRUE);
+            custom_status_decrease_turn_count_impl(actor, status->turns - decrement, status, statusType, true);
         }
     }
 }
 
 // Decrements all custom statuses for the given actor
 void custom_status_decrement(Actor* actor) {
-    custom_status_decrement_impl(actor, FALSE);
+    custom_status_decrement_impl(actor, false);
 }
 
 void custom_status_decrement_late(Actor* actor) {
-    custom_status_decrement_impl(actor, TRUE);
+    custom_status_decrement_impl(actor, true);
 }
 
 void custom_status_zero_initialize(Actor* actor) {
@@ -132,7 +132,7 @@ s32 try_inflict_custom_status(Actor* actor, Vec3f position, s8 customStatusId, u
     chance = (chance * actorChance) / 100;
 
     if (chance <= 0 || chance < rand_int(100)) {
-        return FALSE;
+        return false;
     }
 
     turns += actorTurnMod;
@@ -180,7 +180,7 @@ s32 try_inflict_custom_status(Actor* actor, Vec3f position, s8 customStatusId, u
 
     actor->flags |= ACTOR_FLAG_SHOW_STATUS_ICONS;
 
-    return TRUE;
+    return true;
 }
 
 NextAttackStatus gNextAttackStatuses[CUSTOM_STATUS_AMT];
@@ -203,7 +203,7 @@ void set_next_attack_custom_status(s8 customStatusId, u8 turns, u8 potency, u8 c
 }
 
 s32 inflict_next_attack_statuses(Actor* attacker, Actor* target, Vec3f position) {
-    s32 inflicted = FALSE;
+    s32 inflicted = false;
     while (gNextAttackStatusCount > 0) {
         NextAttackStatus* st = &gNextAttackStatuses[gNextAttackStatusCount - 1];
         inflicted |= try_inflict_custom_status(target,
@@ -217,7 +217,7 @@ s32 inflict_next_attack_statuses(Actor* attacker, Actor* target, Vec3f position)
         gNextAttackStatusCount--;
     }
 
-    if (attacker != NULL) {
+    if (attacker != nullptr) {
         // Koopa Curse - poison spreading
         if (badge_count_by_move_id_in_both_teams(MOVE_SLOW_GO) > 0 && !(gBattleStatus.curAttackElement & DAMAGE_TYPE_NO_CONTACT)) {
             StatusInfo* attackerPoison = custom_status_get_info(attacker, POISON_STATUS);
@@ -361,7 +361,7 @@ void custom_status_clear(Actor* actor, s8 customStatusId) {
     StatusType* statusType = &gCustomStatusTypes[customStatusId];
 
     if (status->turns > 0)
-        custom_status_decrease_turn_count_impl(actor, 0, status, statusType, FALSE);
+        custom_status_decrease_turn_count_impl(actor, 0, status, statusType, false);
 }
 
 s32 custom_status_clear_debuffs(Actor* actor) {
@@ -374,7 +374,7 @@ s32 custom_status_clear_debuffs(Actor* actor) {
 
         if (status->turns > 0 && statusType->isDebuff) {
             amt += 1;
-            custom_status_decrease_turn_count_impl(actor, 0, status, statusType, FALSE);
+            custom_status_decrease_turn_count_impl(actor, 0, status, statusType, false);
         }
     }
 

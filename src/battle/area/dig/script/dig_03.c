@@ -8,8 +8,8 @@ API_CALLABLE(N(SetupDemoPlayerMove)) {
     SelectableTarget* selectableTarget;
 
     battleStatus->moveCategory = BTL_MENU_TYPE_ABILITY;
-    battleStatus->moveArgument = 0;
     battleStatus->selectedMoveID = MOVE_SHELL_SHOT;
+    battleStatus->moveArgument = 0;
     battleStatus->curTargetListFlags = gMoveTable[MOVE_SHELL_SHOT].flags;
 
     create_current_pos_target_list(partner);
@@ -26,7 +26,7 @@ EvtScript NAMESPACE = {
     Call(MoveBattleCamOver, 1)
     Wait(3)
     Call(SetCamViewport, CAM_BATTLE, 29, 20, 262, 177)
-    Call(EnableBattleStatusBar, FALSE)
+    Call(EnableBattleStatusBar, false)
     Call(WaitForState, BATTLE_STATE_PLAYER_MENU)
     Call(N(SetupDemoPlayerMove))
     Call(SetBattleState, BATTLE_STATE_PARTNER_MOVE)

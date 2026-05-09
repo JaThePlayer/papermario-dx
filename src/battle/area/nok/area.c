@@ -178,7 +178,7 @@ Formation A(Formation_00) = { // Boo Trial - ch1, part 1
 
 Formation A(Formation_15) = { // Boo Trial - ch1, part 2
     ACTOR_BY_IDX(A(fuzzy), BTL_POS_GROUND_A, 10),
-    ACTOR_BY_IDX_ARG(A(koopa_troopa), BTL_POS_GROUND_B, 9, TRUE),
+    ACTOR_BY_IDX_ARG(A(koopa_troopa), BTL_POS_GROUND_B, 9, true),
     ACTOR_BY_IDX_ITEM(A(fuzzy), BTL_POS_GROUND_C, 9, ITEM_HP_PLUS_A),
 };
 

@@ -47,15 +47,15 @@ void shattering_stones_main(s32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4) {
 
     bp.init = shattering_stones_init;
     bp.update = shattering_stones_update;
-    bp.renderWorld = shattering_stones_render;
+    bp.renderScene = shattering_stones_render;
     bp.unk_00 = 0;
-    bp.renderUI = NULL;
+    bp.renderUI = nullptr;
     bp.effectID = EFFECT_SHATTERING_STONES;
 
     effect = create_effect_instance(&bp);
     effect->numParts = numParts;
     part = effect->data.shatteringStones = general_heap_malloc(numParts * sizeof(*part));
-    ASSERT(effect->data.shatteringStones != NULL);
+    ASSERT(effect->data.shatteringStones != nullptr);
 
     part->unk_24 = 0;
     part->unk_00 = arg1;
@@ -146,7 +146,7 @@ void shattering_stones_appendGfx(void* effect) {
     Matrix4f spE0;
     s32 i;
 
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
     gSPDisplayList(gMainGfxPos++, D_09000C00_341480);
 
     if (part->unk_24 == 0) {

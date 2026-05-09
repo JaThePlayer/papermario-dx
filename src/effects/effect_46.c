@@ -30,15 +30,15 @@ EffectInstance* effect_46_main(s32 type, PlayerStatus* player, f32 scale, s32 du
 
     bp.init = effect_46_init;
     bp.update = effect_46_update;
-    bp.renderWorld = effect_46_render;
+    bp.renderScene = effect_46_render;
     bp.unk_00 = 0;
-    bp.renderUI = NULL;
+    bp.renderUI = nullptr;
     bp.effectID = EFFECT_46;
 
     effect = create_effect_instance(&bp);
     effect->numParts = numParts;
     part = effect->data.spin = general_heap_malloc(numParts * sizeof(*part));
-    ASSERT(effect->data.spin != NULL);
+    ASSERT(effect->data.spin != nullptr);
 
     part->type = type;
     part->player = player;
@@ -212,7 +212,7 @@ void effect_46_appendGfx(void* effect) {
     type = part->type;
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
     gSPDisplayList(gMainGfxPos++, D_09000420_38EDB0);
 
     guTranslateF(mtxTransform, part->pos.x, part->pos.y, part->pos.z);

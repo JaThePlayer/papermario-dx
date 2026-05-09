@@ -38,7 +38,7 @@ EvtScript N(EVS_UseItem_Enemy) = {
     Add(LVar3, LVar0)
 
     Thread
-        Call(N(func_802A123C_716E9C), LVar3, LVar4, LVar5, TRUE)
+        Call(N(func_802A123C_716E9C), LVar3, LVar4, LVar5, true)
         Wait(25)
         Loop(12)
             Wait(1)
@@ -127,7 +127,7 @@ EvtScript N(EVS_UseItem) = {
         Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_Mario1_Idle)
     EndThread
     Thread
-        Call(N(func_802A123C_716E9C), LVar3, LVar4, LVar5, FALSE)
+        Call(N(func_802A123C_716E9C), LVar3, LVar4, LVar5, false)
         Wait(25)
         Loop(12)
             Wait(1)

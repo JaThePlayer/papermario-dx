@@ -34,7 +34,7 @@ s32 N(StatusTable)[] = {
     STATUS_KEY_POISON,              0,
     STATUS_KEY_FROZEN,              0,
     STATUS_KEY_DIZZY,             100,
-    STATUS_KEY_FEAR,                0,
+    STATUS_KEY_UNUSED,              0,
     STATUS_KEY_STATIC,              0,
     STATUS_KEY_PARALYZE,          100,
     STATUS_KEY_SHRINK,            100,
@@ -44,7 +44,7 @@ s32 N(StatusTable)[] = {
     STATUS_TURN_MOD_POISON,         0,
     STATUS_TURN_MOD_FROZEN,         0,
     STATUS_TURN_MOD_DIZZY,          0,
-    STATUS_TURN_MOD_FEAR,           0,
+    STATUS_TURN_MOD_UNUSED,         0,
     STATUS_TURN_MOD_STATIC,         0,
     STATUS_TURN_MOD_PARALYZE,       0,
     STATUS_TURN_MOD_SHRINK,         0,
@@ -99,7 +99,7 @@ s32 N(DefaultAnims)[] = {
     STATUS_KEY_STATIC,    ANIM_GoombaBros_Blue_Idle,
     STATUS_KEY_PARALYZE,  ANIM_GoombaBros_Blue_Still,
     STATUS_KEY_DIZZY,     ANIM_GoombaBros_Blue_Dizzy,
-    STATUS_KEY_FEAR,      ANIM_GoombaBros_Blue_Dizzy,
+    STATUS_KEY_UNUSED,    ANIM_GoombaBros_Blue_Dizzy,
     STATUS_END,
 };
 
@@ -113,7 +113,7 @@ s32 N(ShuffleAnims)[] = {
     STATUS_KEY_STATIC,    ANIM_GoombaBros_Blue_Run,
     STATUS_KEY_PARALYZE,  ANIM_GoombaBros_Blue_Still,
     STATUS_KEY_DIZZY,     ANIM_GoombaBros_Blue_Dizzy,
-    STATUS_KEY_FEAR,      ANIM_GoombaBros_Blue_Dizzy,
+    STATUS_KEY_UNUSED,    ANIM_GoombaBros_Blue_Dizzy,
     STATUS_END,
 };
 
@@ -185,7 +185,7 @@ EvtScript N(EVS_TakeTurn_Inner) = {
 
 EvtScript N(EVS_Init) = {
     ExecWait(N(EVS_Init_Inner))
-    Call(SetActorVar, ACTOR_SELF, AVAR_UsedTaunt, FALSE)
+    Call(SetActorVar, ACTOR_SELF, AVAR_UsedTaunt, false)
     Call(SetActorVar, ACTOR_SELF, AVAR_Unused, 0)
     Call(BindTakeTurn, ACTOR_SELF, Ref(N(EVS_TakeTurn)))
     Return
@@ -194,12 +194,12 @@ EvtScript N(EVS_Init) = {
 
 EvtScript N(EVS_TakeTurn) = {
     Call(GetActorVar, ACTOR_SELF, AVAR_UsedTaunt, LVar0)
-    IfEq(LVar0, FALSE)
+    IfEq(LVar0, false)
         Call(UseBattleCamPreset, BTL_CAM_ACTOR)
         Call(BattleCamTargetActor, ACTOR_SELF)
         Call(MoveBattleCamOver, 30)
         Wait(30)
-        Call(SetActorVar, ACTOR_SELF, AVAR_UsedTaunt, TRUE)
+        Call(SetActorVar, ACTOR_SELF, AVAR_UsedTaunt, true)
         Call(ActorSpeak, MSG_CH0_00BF, ACTOR_SELF, PRT_MAIN, -1, -1)
     EndIf
     ExecWait(N(EVS_TakeTurn_Inner))

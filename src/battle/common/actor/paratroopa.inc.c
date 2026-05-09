@@ -35,7 +35,7 @@ enum N(ActorPartIDs) {
 };
 
 enum N(ActorVars) {
-    AVAR_AerialFlip     = 7, // TRUE if current hit should trigger a flip event when KnockDown is done
+    AVAR_AerialFlip     = 7, // true if current hit should trigger a flip event when KnockDown is done
     AVAR_IsFlipped      = 8,
     AVAR_FlippedTurns   = 9,
 };
@@ -62,7 +62,7 @@ s32 N(FlyingStatusTable)[] = {
     STATUS_KEY_POISON,             60,
     STATUS_KEY_FROZEN,            100,
     STATUS_KEY_DIZZY,              90,
-    STATUS_KEY_FEAR,                0,
+    STATUS_KEY_UNUSED,              0,
     STATUS_KEY_STATIC,             80,
     STATUS_KEY_PARALYZE,           90,
     STATUS_KEY_SHRINK,             90,
@@ -72,7 +72,7 @@ s32 N(FlyingStatusTable)[] = {
     STATUS_TURN_MOD_POISON,         0,
     STATUS_TURN_MOD_FROZEN,         0,
     STATUS_TURN_MOD_DIZZY,          1,
-    STATUS_TURN_MOD_FEAR,           0,
+    STATUS_TURN_MOD_UNUSED,         0,
     STATUS_TURN_MOD_STATIC,         0,
     STATUS_TURN_MOD_PARALYZE,       1,
     STATUS_TURN_MOD_SHRINK,         0,
@@ -152,7 +152,7 @@ s32 N(FlyingAnims)[] = {
     STATUS_KEY_STATIC,    ANIM_ParaTroopa_Idle,
     STATUS_KEY_PARALYZE,  ANIM_ParaTroopa_Still,
     STATUS_KEY_DIZZY,     ANIM_ParaTroopa_Stunned,
-    STATUS_KEY_FEAR,      ANIM_ParaTroopa_Stunned,
+    STATUS_KEY_UNUSED,    ANIM_ParaTroopa_Stunned,
     STATUS_END,
 };
 
@@ -165,7 +165,7 @@ s32 N(FlyingShuffleAnims)[] = {
     STATUS_KEY_STATIC,    ANIM_ParaTroopa_Idle,
     STATUS_KEY_PARALYZE,  ANIM_ParaTroopa_Still,
     STATUS_KEY_DIZZY,     ANIM_ParaTroopa_Stunned,
-    STATUS_KEY_FEAR,      ANIM_ParaTroopa_Stunned,
+    STATUS_KEY_UNUSED,    ANIM_ParaTroopa_Stunned,
     STATUS_END,
 };
 
@@ -178,12 +178,12 @@ s32 N(WingAnims)[] = {
     STATUS_KEY_STATIC,    ANIM_ParaTroopa_WingsStill,
     STATUS_KEY_PARALYZE,  ANIM_ParaTroopa_Still,
     STATUS_KEY_DIZZY,     ANIM_ParaTroopa_Stunned,
-    STATUS_KEY_FEAR,      ANIM_ParaTroopa_Stunned,
+    STATUS_KEY_UNUSED,    ANIM_ParaTroopa_Stunned,
     STATUS_END,
 };
 
 EvtScript N(EVS_Flying_HandlePhase) = {
-    Call(SetActorVar, ACTOR_SELF, AVAR_AerialFlip, FALSE)
+    Call(SetActorVar, ACTOR_SELF, AVAR_AerialFlip, false)
     Return
     End
 };
@@ -193,7 +193,7 @@ EvtScript N(EVS_Flying_Init) = {
     Call(BindIdle, ACTOR_SELF, Ref(N(EVS_Flying_Idle)))
     Call(BindHandleEvent, ACTOR_SELF, Ref(N(EVS_Flying_HandleEvent)))
     Call(BindHandlePhase, ACTOR_SELF, Ref(N(EVS_Flying_HandlePhase)))
-    Call(SetActorVar, ACTOR_SELF, AVAR_AerialFlip, FALSE)
+    Call(SetActorVar, ACTOR_SELF, AVAR_AerialFlip, false)
     Return
     End
 };
@@ -276,12 +276,12 @@ EvtScript N(EVS_FlyHome) = {
 };
 
 EvtScript N(EVS_Flying_HandleEvent) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(GetLastEvent, ACTOR_SELF, LVar0)
     Switch(LVar0)
         CaseEq(EVENT_HIT_COMBO)
-            Call(SetActorVar, ACTOR_SELF, AVAR_AerialFlip, TRUE)
+            Call(SetActorVar, ACTOR_SELF, AVAR_AerialFlip, true)
             SetConst(LVar0, PRT_FLYING)
             SetConst(LVar1, ANIM_ParaTroopa_Hurt)
             ExecWait(EVS_Enemy_Hit)
@@ -350,7 +350,7 @@ EvtScript N(EVS_Flying_HandleEvent) = {
             ExecWait(EVS_Enemy_Death)
             Return
         CaseEq(EVENT_ZERO_DAMAGE)
-            Call(SetActorVar, ACTOR_SELF, AVAR_AerialFlip, TRUE)
+            Call(SetActorVar, ACTOR_SELF, AVAR_AerialFlip, true)
             SetConst(LVar0, PRT_FLYING)
             SetConst(LVar1, ANIM_ParaTroopa_ShellEnter)
             ExecWait(EVS_Enemy_NoDamageHit)
@@ -387,7 +387,7 @@ EvtScript N(EVS_Flying_HandleEvent) = {
             SetConst(LVar1, ANIM_ParaTroopa_Idle)
             ExecWait(EVS_Enemy_Recover)
         CaseEq(EVENT_SCARE_AWAY)
-            Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_FLYING, FALSE)
+            Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_FLYING, false)
             SetConst(LVar0, PRT_FLYING)
             SetConst(LVar1, ANIM_ParaTroopa_Run)
             SetConst(LVar2, ANIM_ParaTroopa_Hurt)
@@ -405,7 +405,7 @@ EvtScript N(EVS_Flying_HandleEvent) = {
         CaseDefault
     EndSwitch
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_RESTART)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };
@@ -413,7 +413,7 @@ EvtScript N(EVS_Flying_HandleEvent) = {
 EvtScript N(EVS_Flying_TakeTurn) = {
     STANDARD_ITEM_USE_AI()
 
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
     Call(SetGoalToTarget, ACTOR_SELF)
@@ -468,19 +468,19 @@ EvtScript N(EVS_Flying_TakeTurn) = {
                 Call(SetActorRotation, ACTOR_SELF, 0, 0, 0)
                 Call(SetActorRotationOffset, ACTOR_SELF, 0, -10, 0)
             EndThread
-            Call(JumpToGoal, ACTOR_SELF, 6, FALSE, TRUE, FALSE)
+            Call(JumpToGoal, ACTOR_SELF, 6, false, true, false)
             Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
             Sub(LVar0, 30)
             Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
             Call(SetActorJumpGravity, ACTOR_SELF, Float(4.0))
             Call(SetAnimation, ACTOR_SELF, PRT_FLYING, ANIM_ParaTroopa_Hurt)
-            Call(JumpToGoal, ACTOR_SELF, 6, FALSE, TRUE, FALSE)
+            Call(JumpToGoal, ACTOR_SELF, 6, false, true, false)
             Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
             Sub(LVar0, 30)
             Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
             Call(SetActorJumpGravity, ACTOR_SELF, Float(4.0))
             Call(SetAnimation, ACTOR_SELF, PRT_FLYING, ANIM_ParaTroopa_Hurt)
-            Call(JumpToGoal, ACTOR_SELF, 6, FALSE, TRUE, FALSE)
+            Call(JumpToGoal, ACTOR_SELF, 6, false, true, false)
             IfEq(LVarA, HIT_RESULT_LUCKY)
                 Call(EnemyTestTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_TRIGGER_LUCKY, 0, 0, 0)
             EndIf
@@ -497,7 +497,7 @@ EvtScript N(EVS_Flying_TakeTurn) = {
             Call(SetActorYaw, ACTOR_SELF, 0)
             Call(RemoveActorDecoration, ACTOR_SELF, PRT_FLYING, 0)
             Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_RESTART)
-            Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+            Call(UseIdleAnimation, ACTOR_SELF, true)
             Return
         EndCaseGroup
     EndSwitch
@@ -549,7 +549,7 @@ EvtScript N(EVS_Flying_TakeTurn) = {
         EndCaseGroup
     EndSwitch
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_RESTART)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };
@@ -572,37 +572,37 @@ EvtScript N(EVS_KnockDown) = {
         Set(LVar1, 0)
         Call(SetActorJumpGravity, ACTOR_SELF, Float(0.8))
         Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-        Call(JumpToGoal, ACTOR_SELF, 15, FALSE, TRUE, FALSE)
+        Call(JumpToGoal, ACTOR_SELF, 15, false, true, false)
         Call(N(StartRumbleWithParams), 128, 7)
         Thread
             Call(ShakeCam, CAM_BATTLE, 0, 5, Float(0.3))
         EndThread
         Call(ResetActorSounds, ACTOR_SELF, ACTOR_SOUND_JUMP)
         Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-        Call(JumpToGoal, ACTOR_SELF, 10, FALSE, TRUE, FALSE)
+        Call(JumpToGoal, ACTOR_SELF, 10, false, true, false)
         Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-        Call(JumpToGoal, ACTOR_SELF, 5, FALSE, TRUE, FALSE)
+        Call(JumpToGoal, ACTOR_SELF, 5, false, true, false)
         Loop(10)
-            Call(SetPartFlagBits, ACTOR_SELF, PRT_DUMMY_WINGS, ACTOR_PART_FLAG_INVISIBLE, TRUE)
+            Call(SetPartFlagBits, ACTOR_SELF, PRT_DUMMY_WINGS, ACTOR_PART_FLAG_INVISIBLE, true)
             Wait(1)
-            Call(SetPartFlagBits, ACTOR_SELF, PRT_DUMMY_WINGS, ACTOR_PART_FLAG_INVISIBLE, FALSE)
+            Call(SetPartFlagBits, ACTOR_SELF, PRT_DUMMY_WINGS, ACTOR_PART_FLAG_INVISIBLE, false)
             Wait(1)
         EndLoop
-        Call(SetPartFlagBits, ACTOR_SELF, PRT_DUMMY_WINGS, ACTOR_PART_FLAG_INVISIBLE, TRUE)
+        Call(SetPartFlagBits, ACTOR_SELF, PRT_DUMMY_WINGS, ACTOR_PART_FLAG_INVISIBLE, true)
     Else
         Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
         Set(LVar1, 0)
         Call(SetActorJumpGravity, ACTOR_SELF, Float(0.8))
         Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-        Call(JumpToGoal, ACTOR_SELF, 15, FALSE, TRUE, FALSE)
+        Call(JumpToGoal, ACTOR_SELF, 15, false, true, false)
         Thread
             Loop(10)
-                Call(SetPartFlagBits, ACTOR_SELF, PRT_DUMMY_WINGS, ACTOR_PART_FLAG_INVISIBLE, TRUE)
+                Call(SetPartFlagBits, ACTOR_SELF, PRT_DUMMY_WINGS, ACTOR_PART_FLAG_INVISIBLE, true)
                 Wait(1)
-                Call(SetPartFlagBits, ACTOR_SELF, PRT_DUMMY_WINGS, ACTOR_PART_FLAG_INVISIBLE, FALSE)
+                Call(SetPartFlagBits, ACTOR_SELF, PRT_DUMMY_WINGS, ACTOR_PART_FLAG_INVISIBLE, false)
                 Wait(1)
             EndLoop
-            Call(SetPartFlagBits, ACTOR_SELF, PRT_DUMMY_WINGS, ACTOR_PART_FLAG_INVISIBLE, TRUE)
+            Call(SetPartFlagBits, ACTOR_SELF, PRT_DUMMY_WINGS, ACTOR_PART_FLAG_INVISIBLE, true)
         EndThread
         Call(N(StartRumbleWithParams), 150, 7)
         Thread
@@ -616,12 +616,12 @@ EvtScript N(EVS_KnockDown) = {
     Call(GetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
     Call(SetHomePos, ACTOR_SELF, LVar0, LVar1, LVar2)
     Call(SetAnimation, ACTOR_SELF, PRT_DOWNED, ANIM_KoopaTroopa_Idle)
-    Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_FLYING, FALSE)
+    Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_FLYING, false)
     Call(SetStatusTable, ACTOR_SELF, Ref(A(koopa_troopa_StatusTable)))
     Call(BindHandlePhase, ACTOR_SELF, 0)
     ExecWait(A(koopa_troopa_EVS_Init))
     Call(SetActorType, ACTOR_SELF, ACTOR_TYPE_KOOPA_TROOPA)
-    Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_TYPE_CHANGED, TRUE)
+    Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_TYPE_CHANGED, true)
     Call(HPBarToHome, ACTOR_SELF)
     Call(ResetAllActorSounds, ACTOR_SELF)
     IfTrue(LVarA)

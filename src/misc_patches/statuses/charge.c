@@ -4,7 +4,7 @@
 
 #define NAMESPACE charge_status
 
-#define charge_status_DECREMENT_LATE TRUE
+#define charge_status_DECREMENT_LATE true
 
 extern EvtScript EVS_PlaySleepHitFX;
 

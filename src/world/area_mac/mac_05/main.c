@@ -2,23 +2,35 @@
 
 #include "world/common/atomic/TexturePan.inc.c"
 
-#define NAMESPACE dup_mac_05
-#include "world/common/todo/UnkFloatFunc001.inc.c"
-#define NAMESPACE mac_05
+API_CALLABLE(N(WaveScaleInterp)) {
+    Bytecode* args = script->ptrReadPos;
+    s32 tvar = *args++;
+    s32 time = evt_get_variable(script, tvar);
+    s32 out = *args++;
+    f32 min = evt_get_float_variable(script, *args++);
+    f32 max = evt_get_float_variable(script, *args++);
+    s32 period = evt_get_variable(script, *args++);
+    b32 oneshot = evt_get_variable(script, *args++);
+    f32 phase = evt_get_float_variable(script, *args++);
+    f32 diff = (max - min) / 2;
 
-API_CALLABLE(N(func_8024047C_8525EC)) {
-    gGameStatusPtr->exitTangent = 0.0f;
-    return ApiStatus_BLOCK;
+    if (oneshot && period < time) {
+        time = period;
+        evt_set_variable(script, tvar, period);
+    }
+
+    evt_set_float_variable(script, out, (min + diff) - (diff * cos_deg(((time * 180.0f) / period) + phase)));
+    return ApiStatus_DONE2;
 }
 
-EvtScript N(D_8024457C_8566EC) = {
+EvtScript N(EVS_AnimateWaves) = {
     SetGroup(EVT_GROUP_NEVER_PAUSE)
     Set(LVarC, 0)
     Label(0)
         IfGe(LVarC, 60)
             Set(LVarC, 0)
         EndIf
-        Call(dup_mac_05_UnkFloatFunc001, LVarC, LVar0, Float(-1.0), Float(1.0), 30, 0, 0)
+        Call(N(WaveScaleInterp), LVarC, LVar0, Float(-1.0), Float(1.0), 30, false, 0)
         Call(ScaleModel, MODEL_kaimen, 1, LVar0, 1)
         Add(LVarC, 1)
         Wait(1)
@@ -27,7 +39,7 @@ EvtScript N(D_8024457C_8566EC) = {
     End
 };
 
-EvtScript N(D_80244648_8567B8) = {
+EvtScript N(EVS_AnimateFish) = {
     Loop(0)
         Call(MakeLerp, 600, -240, 320, EASING_LINEAR)
         Loop(0)
@@ -56,7 +68,7 @@ EvtScript N(D_80244648_8567B8) = {
 
 EvtScript N(EVS_ExitWalk_mac_04_1) = EVT_EXIT_WALK(60, mac_05_ENTRY_0, "mac_04", mac_04_ENTRY_1);
 
-EvtScript N(D_80244810_856980) = {
+EvtScript N(EVS_ExitWalk_kgr_01_0) = {
     SetGroup(EVT_GROUP_EXIT_MAP)
     Call(UseExitHeading, 60, mac_05_ENTRY_3)
     Exec(ExitWalk)
@@ -69,12 +81,12 @@ EvtScript N(D_80244810_856980) = {
 
 EvtScript N(EVS_BindExitTriggers) = {
     BindTrigger(Ref(N(EVS_ExitWalk_mac_04_1)), TRIGGER_FLOOR_ABOVE, COLLIDER_deiline, 1, 0)
-    BindTrigger(Ref(N(D_80244810_856980)), TRIGGER_FLOOR_TOUCH, COLLIDER_deilit9, 1, 0)
+    BindTrigger(Ref(N(EVS_ExitWalk_kgr_01_0)), TRIGGER_FLOOR_TOUCH, COLLIDER_deilit9, 1, 0)
     Return
     End
 };
 
-EvtScript N(D_802448C4_856A34) = {
+EvtScript N(EVS_EnterMap) = {
     Call(GetLoadType, LVar1)
     IfEq(LVar1, LOAD_FROM_FILE_SELECT)
         Exec(EnterSavePoint)
@@ -93,11 +105,11 @@ EvtScript N(D_802448C4_856A34) = {
             Exec(N(EVS_80248878))
             Exec(N(EVS_BindExitTriggers))
         CaseEq(mac_05_ENTRY_3)
-            Call(DisablePlayerInput, TRUE)
-            Call(DisablePlayerPhysics, TRUE)
+            Call(DisablePlayerInput, true)
+            Call(DisablePlayerPhysics, true)
             Call(SetPlayerPos, -160, -10, 371)
             Call(SetNpcPos, NPC_PARTNER, -160, -10, 371)
-            Call(SetEnemyFlagBits, NPC_Whale, ENEMY_FLAG_CANT_INTERACT, TRUE)
+            Call(SetEnemyFlagBits, NPC_Whale, ENEMY_FLAG_CANT_INTERACT, true)
             Call(DisablePartnerAI, 0)
             Call(InterruptUsePartner)
             Wait(10)
@@ -117,12 +129,12 @@ EvtScript N(D_802448C4_856A34) = {
             Wait(30)
             Call(SetPlayerPos, -280, -10, 371)
             Call(EnablePartnerAI)
-            Call(DisablePlayerPhysics, FALSE)
-            Call(DisablePlayerInput, FALSE)
+            Call(DisablePlayerPhysics, false)
+            Call(DisablePlayerInput, false)
             Set(LVar0, Ref(N(EVS_BindExitTriggers)))
             ExecWait(EnterWalk)
             Call(SetNpcPos, NPC_Whale, -220, 10, 372)
-            Call(SetEnemyFlagBits, NPC_Whale, ENEMY_FLAG_CANT_INTERACT, FALSE)
+            Call(SetEnemyFlagBits, NPC_Whale, ENEMY_FLAG_CANT_INTERACT, false)
     EndSwitch
     Return
     End
@@ -140,7 +152,7 @@ EvtScript N(EVS_Main) = {
         CaseLt(STORY_CH5_RETURNED_TO_TOAD_TOWN)
             Call(GetEntryID, LVar1)
             IfEq(LVar1, mac_05_ENTRY_1)
-                IfEq(GF_MAC01_Defeated_JrTroopa4, FALSE)
+                IfEq(GF_MAC01_Defeated_JrTroopa4, false)
                     Set(LVar0, Ref(N(NpcSetC)))
                 Else
                     Set(LVar0, Ref(N(NpcSetB)))
@@ -153,16 +165,16 @@ EvtScript N(EVS_Main) = {
         CaseDefault
             Set(LVar0, Ref(N(NpcSetA)))
     EndSwitch
-    Call(MakeNpcs, FALSE, LVar0)
+    Call(MakeNpcs, false, LVar0)
     ExecWait(N(EVS_MakeEntities))
     Exec(N(EVS_SetupWhale))
     Call(GetEntryID, LVar0)
     Exec(N(EVS_SetupRooms))
     Exec(N(EVS_SetupMusic))
     Call(ModifyColliderFlags, MODIFY_COLLIDER_FLAGS_SET_BITS, COLLIDER_deilitne, COLLIDER_FLAGS_UPPER_MASK)
-    Exec(N(D_802448C4_856A34))
+    Exec(N(EVS_EnterMap))
     Wait(1)
-    Exec(N(D_8024457C_8566EC))
+    Exec(N(EVS_AnimateWaves))
     Call(SetTexPanner, MODEL_kaimen, TEX_PANNER_1)
     Thread
         TEX_PAN_PARAMS_ID(TEX_PANNER_1)
@@ -171,7 +183,7 @@ EvtScript N(EVS_Main) = {
         TEX_PAN_PARAMS_INIT(    0,    0,    0,    0)
         Exec(N(EVS_UpdateTexturePan))
     EndThread
-    Exec(N(D_80244648_8567B8))
+    Exec(N(EVS_AnimateFish))
     Exec(N(EVS_AnimateClub64Sign))
     Return
     End

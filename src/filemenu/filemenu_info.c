@@ -32,7 +32,7 @@ MenuWindowBP filemenu_info_windowBPs[] = {
         .height = 0,
         .priority = WINDOW_PRIORITY_64,
         .fpDrawContents = &filemenu_info_draw_message_contents,
-        .tab = NULL,
+        .tab = nullptr,
         .parentID = -1,
         .fpUpdate = { WINDOW_UPDATE_HIDE },
         .extraFlags = 0,
@@ -41,7 +41,7 @@ MenuWindowBP filemenu_info_windowBPs[] = {
 };
 
 MenuPanel filemenu_info_menuBP = {
-    .initialized = FALSE,
+    .initialized = false,
     .col = 0,
     .row = 0,
     .selected = 0,
@@ -96,7 +96,7 @@ void filemenu_info_draw_message_contents(
             xOffset += D_filemenu_802508FC[gCurrentLanguage];
             draw_number(filemenu_menus[FILE_MENU_MAIN]->selected + 1, baseX + xOffset, baseY + 6, 0, 0, 255, 3);
             xOffset++;
-            filemenu_draw_message(filemenu_get_menu_message(0x1F), baseX + xOffset, baseY + 4, 255, 0, 0);
+            filemenu_draw_message(filemenu_get_menu_message(FILE_MESSAGE_PAL_UNK1), baseX + xOffset, baseY + 4, 255, 0, 0);
             break;
     }
 #else
@@ -143,7 +143,7 @@ void filemenu_info_init(MenuPanel* tab) {
     }
 
     setup_pause_menu_tab(filemenu_info_windowBPs, ARRAY_COUNT(filemenu_info_windowBPs));
-    tab->initialized = TRUE;
+    tab->initialized = true;
 }
 
 void filemenu_info_handle_input(MenuPanel* menu) {

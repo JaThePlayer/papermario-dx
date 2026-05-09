@@ -4,7 +4,7 @@
 
 #define NAMESPACE temp_def_down
 
-#define temp_def_down_DECREMENT_LATE TRUE
+#define temp_def_down_DECREMENT_LATE true
 
 extern EvtScript EVS_PlaySleepHitFX;
 

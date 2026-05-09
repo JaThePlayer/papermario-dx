@@ -61,7 +61,6 @@ EffectInstance* confetti_main(s32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, 
     f32 temp_f30;
     s32 temp_fp;
     s32 np;
-    s32 var_v0;
     s32 i;
 
     switch (arg0) {
@@ -103,15 +102,15 @@ EffectInstance* confetti_main(s32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, 
 
     bpPtr->init = confetti_init;
     bpPtr->update = confetti_update;
-    bpPtr->renderWorld = confetti_render;
+    bpPtr->renderScene = confetti_render;
     bpPtr->unk_00 = 0;
-    bpPtr->renderUI = NULL;
+    bpPtr->renderUI = nullptr;
     bpPtr->effectID = EFFECT_CONFETTI;
 
     effect = create_effect_instance(bpPtr);
     effect->numParts = numParts;
     data = effect->data.confetti = (ConfettiFXData*)general_heap_malloc(numParts * sizeof(*data));
-    ASSERT(effect->data.confetti != NULL);
+    ASSERT(effect->data.confetti != nullptr);
 
     data->unk_04 = arg1;
     data->unk_08 = arg2;
@@ -256,7 +255,6 @@ void confetti_appendGfx(void* effect) {
     s32 unk_28;
     s32 unk_2C;
     Gfx* spA0;
-    s32 spA4;
     Gfx* savedGfxPos;
     s32 unk_24;
     Color_RGB8* color;
@@ -267,7 +265,7 @@ void confetti_appendGfx(void* effect) {
     spA0 = D_E0088CC0[part->unk_00];
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
     gSPDisplayList(gMainGfxPos++, D_09000940_38C4E0);
 
     guTranslateF(sp18, part->unk_04, part->unk_08, part->unk_0C);

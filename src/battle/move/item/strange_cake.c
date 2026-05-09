@@ -10,7 +10,6 @@
 #include "battle/common/move/ItemRefund.inc.c"
 #include "battle/common/move/UseItem.inc.c"
 
-static s32 _pad = 0; // XXX
 
 #include "battle/move/item/strange_cake1.png.h"
 INCLUDE_IMG("battle/move/item/strange_cake1.png", battle_item_strange_cake1_png);
@@ -47,13 +46,12 @@ BSS s32 D_802A2DFC;
 BSS s32 D_802A2E00;
 
 void N(func_802A123C_73153C(void)) {
-    s32 var_s3;
     s32 id;
     s32 i;
 
     if (D_802A2DEC < 6) {
         if (D_802A2DEC > 0) {
-            draw_box(0, WINDOW_STYLE_7, 106, 86, 0, 36, 36, 255, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, NULL, NULL, NULL, SCREEN_WIDTH, SCREEN_HEIGHT, NULL);
+            draw_box(0, WINDOW_STYLE_7, 106, 86, 0, 36, 36, 255, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, nullptr, nullptr, nullptr, SCREEN_WIDTH, SCREEN_HEIGHT, nullptr);
             gDPSetScissor(gMainGfxPos++, G_SC_NON_INTERLACE, 108, 90, 139, 118);
 
             for (i = 0; i < ARRAY_COUNT(D_802A2DD8); i++) {
@@ -74,7 +72,7 @@ API_CALLABLE(N(func_802A13E4_7316E4)) {
     s32 temp_v1_3;
     s32 var_v0_2;
     s32 var_v0_3;
-    s32 id;
+    HudElemID hid;
     s32 i;
 
     if (isInitialCall) {
@@ -83,14 +81,14 @@ API_CALLABLE(N(func_802A13E4_7316E4)) {
 
     switch (D_802A2DEC) {
         case 0:
-            D_802A2E00 = create_worker_frontUI(NULL, N(func_802A123C_73153C));
+            D_802A2E00 = create_worker_frontUI(nullptr, N(func_802A123C_73153C));
             D_802A2DF4 = rand_int(13000);
             D_802A2DF8 = 1000;
 
             for (i = 0; i < ARRAY_COUNT(D_802A2DD8); i++) {
-                id = hud_element_create(N(D_802A2848_732B48)[N(D_802A2858_732B58)[i]]);
-                D_802A2DD8[i] = id;
-                hud_element_set_flags(id, HUD_ELEMENT_FLAG_80);
+                hid = hud_element_create(N(D_802A2848_732B48)[N(D_802A2858_732B58)[i]]);
+                D_802A2DD8[i] = hid;
+                hud_element_set_flags(hid, HUD_ELEMENT_FLAG_MANUAL_RENDER);
             }
             D_802A2DEC = 1;
 

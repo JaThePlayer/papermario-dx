@@ -15,7 +15,7 @@ API_CALLABLE(N(SpawnStarsOrbitingKammy2)) {
 API_CALLABLE(N(DismissStarsOrbitingKammy2)) {
     EffectInstance* effect = (EffectInstance*) script->varTablePtr[0];
 
-    effect->data.starsOrbiting->enabled = FALSE;
+    effect->data.starsOrbiting->enabled = false;
     return ApiStatus_DONE2;
 }
 
@@ -55,12 +55,12 @@ EvtScript N(AddStarSpiritHovering) = {
 };
 
 EvtScript N(EVS_Scene_KammyDefeated) = {
-    Call(DisablePlayerInput, TRUE)
+    Call(DisablePlayerInput, true)
     Call(DisablePartnerAI, 0)
     Call(SetPlayerAnimation, ANIM_Mario1_BeforeJump)
     Call(SetPlayerPos, 100, 0, 0)
     Call(PartnerIsFlying, LVar0)
-    IfEq(LVar0, FALSE)
+    IfEq(LVar0, false)
         Call(SetNpcPos, NPC_PARTNER, 60, 10, 0)
     Else
         Call(SetNpcPos, NPC_PARTNER, 60, 0, 0)
@@ -74,7 +74,7 @@ EvtScript N(EVS_Scene_KammyDefeated) = {
     Call(SetCamSpeed, CAM_DEFAULT, Float(90.0))
     Call(SetCamPitch, CAM_DEFAULT, Float(17.0), Float(-8.5))
     Call(SetCamDistance, CAM_DEFAULT, 300)
-    Call(PanToTarget, CAM_DEFAULT, 0, TRUE)
+    Call(PanToTarget, CAM_DEFAULT, 0, true)
     Call(GetNpcPos, NPC_Kammy_04, LVar0, LVar1, LVar2)
     Add(LVar1, 30)
     Set(LVar3, 20)
@@ -95,7 +95,7 @@ EvtScript N(EVS_Scene_KammyDefeated) = {
     Call(SpeakToPlayer, NPC_Twink_01, ANIM_Twink_Talk, ANIM_Twink_Idle, 0, MSG_CH8_009D)
     Wait(10)
     Call(StopSound, SOUND_LRAW_KPA_ARENA_ACTIVE)
-    Call(SetMusicTrack, 0, SONG_PEACH_WISHES, 0, 8)
+    Call(SetMusic, 0, SONG_PEACH_WISHES, 0, VOL_LEVEL_FULL)
     Call(InterpNpcYaw, NPC_Peach_01, 270, 0)
     Wait(10)
     Call(SpeakToPlayer, NPC_Peach_01, ANIM_Peach2_Talk, ANIM_Peach2_TalkIdle, 5, MSG_CH8_009E)
@@ -122,7 +122,7 @@ EvtScript N(EVS_Scene_KammyDefeated) = {
     Call(SetCamDistance, CAM_DEFAULT, 245)
     Call(SetCamPitch, CAM_DEFAULT, Float(17.0), Float(-11.0))
     Call(SetCamSpeed, CAM_DEFAULT, Float(0.6))
-    Call(PanToTarget, CAM_DEFAULT, 0, TRUE)
+    Call(PanToTarget, CAM_DEFAULT, 0, true)
     Call(WaitForCam, CAM_DEFAULT, Float(1.0))
     Call(GetNpcPos, NPC_Peach_01, LVar0, LVar1, LVar2)
     Add(LVar1, 10)
@@ -142,7 +142,7 @@ EvtScript N(EVS_Scene_KammyDefeated) = {
     Call(SetCamDistance, CAM_DEFAULT, 400)
     Call(SetCamPitch, CAM_DEFAULT, Float(16.0), Float(-10.0))
     Call(SetCamSpeed, CAM_DEFAULT, Float(90.0))
-    Call(PanToTarget, CAM_DEFAULT, 0, TRUE)
+    Call(PanToTarget, CAM_DEFAULT, 0, true)
     Set(LVar0, MV_OrbitingEffectBIdx)
     Call(N(DismissStarsOrbitingKammy2))
     Wait(20)
@@ -262,7 +262,7 @@ EvtScript N(EVS_Scene_KammyDefeated) = {
     Call(SetCamDistance, CAM_DEFAULT, 250)
     Call(SetCamPitch, CAM_DEFAULT, Float(17.0), Float(-8.5))
     Call(SetCamSpeed, CAM_DEFAULT, Float(0.8))
-    Call(PanToTarget, CAM_DEFAULT, 0, TRUE)
+    Call(PanToTarget, CAM_DEFAULT, 0, true)
     Wait(10)
     Call(SpeakToPlayer, NPC_Twink_01, ANIM_Twink_Talk, ANIM_Twink_Idle, 0, MSG_CH8_00A2)
     Wait(10)
@@ -273,7 +273,7 @@ EvtScript N(EVS_Scene_KammyDefeated) = {
     Call(SetCamDistance, CAM_DEFAULT, 350)
     Call(SetCamPitch, CAM_DEFAULT, Float(17.0), Float(-10.0))
     Call(SetCamSpeed, CAM_DEFAULT, Float(4.0))
-    Call(PanToTarget, CAM_DEFAULT, 0, TRUE)
+    Call(PanToTarget, CAM_DEFAULT, 0, true)
     Call(WaitForCam, CAM_DEFAULT, Float(1.0))
     Wait(10)
     Call(SpeakToPlayer, NPC_Eldstar, ANIM_WorldEldstar_Wave, ANIM_WorldEldstar_Idle, 512, MSG_CH8_00A4)
@@ -282,7 +282,7 @@ EvtScript N(EVS_Scene_KammyDefeated) = {
     Call(SetPlayerAnimation, ANIM_Mario1_LookUp)
     Wait(5)
     Thread
-        Call(SetNpcFlagBits, NPC_Eldstar, NPC_FLAG_TOUCHES_GROUND, FALSE)
+        Call(SetNpcFlagBits, NPC_Eldstar, NPC_FLAG_TOUCHES_GROUND, false)
         Call(SetNpcJumpscale, NPC_Eldstar, Float(3.2))
         Call(GetNpcPos, NPC_Eldstar, LVar6, LVar7, LVar8)
         Call(NpcJump0, NPC_Eldstar, LVar6, LVar7, LVar8, 5)
@@ -293,49 +293,49 @@ EvtScript N(EVS_Scene_KammyDefeated) = {
     EndThread
     Thread
         Wait(20)
-        Call(SetNpcFlagBits, NPC_Mamar, NPC_FLAG_TOUCHES_GROUND, FALSE)
+        Call(SetNpcFlagBits, NPC_Mamar, NPC_FLAG_TOUCHES_GROUND, false)
         Call(SetNpcJumpscale, NPC_Mamar, Float(3.2))
         Call(GetNpcPos, NPC_Mamar, LVar6, LVar7, LVar8)
         Call(NpcJump0, NPC_Mamar, LVar6, LVar7, LVar8, 5)
     EndThread
     Thread
         Wait(21)
-        Call(SetNpcFlagBits, NPC_Skolar, NPC_FLAG_TOUCHES_GROUND, FALSE)
+        Call(SetNpcFlagBits, NPC_Skolar, NPC_FLAG_TOUCHES_GROUND, false)
         Call(SetNpcJumpscale, NPC_Skolar, Float(3.2))
         Call(GetNpcPos, NPC_Skolar, LVar6, LVar7, LVar8)
         Call(NpcJump0, NPC_Skolar, LVar6, LVar7, LVar8, 5)
     EndThread
     Thread
         Wait(22)
-        Call(SetNpcFlagBits, NPC_Muskular, NPC_FLAG_TOUCHES_GROUND, FALSE)
+        Call(SetNpcFlagBits, NPC_Muskular, NPC_FLAG_TOUCHES_GROUND, false)
         Call(SetNpcJumpscale, NPC_Muskular, Float(3.2))
         Call(GetNpcPos, NPC_Muskular, LVar6, LVar7, LVar8)
         Call(NpcJump0, NPC_Muskular, LVar6, LVar7, LVar8, 5)
     EndThread
     Thread
         Wait(20)
-        Call(SetNpcFlagBits, NPC_Misstar, NPC_FLAG_TOUCHES_GROUND, FALSE)
+        Call(SetNpcFlagBits, NPC_Misstar, NPC_FLAG_TOUCHES_GROUND, false)
         Call(SetNpcJumpscale, NPC_Misstar, Float(3.2))
         Call(GetNpcPos, NPC_Misstar, LVar6, LVar7, LVar8)
         Call(NpcJump0, NPC_Misstar, LVar6, LVar7, LVar8, 5)
     EndThread
     Thread
         Wait(21)
-        Call(SetNpcFlagBits, NPC_Klevar, NPC_FLAG_TOUCHES_GROUND, FALSE)
+        Call(SetNpcFlagBits, NPC_Klevar, NPC_FLAG_TOUCHES_GROUND, false)
         Call(SetNpcJumpscale, NPC_Klevar, Float(3.2))
         Call(GetNpcPos, NPC_Klevar, LVar6, LVar7, LVar8)
         Call(NpcJump0, NPC_Klevar, LVar6, LVar7, LVar8, 5)
     EndThread
     Thread
         Wait(22)
-        Call(SetNpcFlagBits, NPC_Kalmar, NPC_FLAG_TOUCHES_GROUND, FALSE)
+        Call(SetNpcFlagBits, NPC_Kalmar, NPC_FLAG_TOUCHES_GROUND, false)
         Call(SetNpcJumpscale, NPC_Kalmar, Float(3.2))
         Call(GetNpcPos, NPC_Kalmar, LVar6, LVar7, LVar8)
         Call(NpcJump0, NPC_Kalmar, LVar6, LVar7, LVar8, 5)
     EndThread
     Thread
         Wait(23)
-        Call(SetNpcFlagBits, NPC_Twink_01, NPC_FLAG_TOUCHES_GROUND, FALSE)
+        Call(SetNpcFlagBits, NPC_Twink_01, NPC_FLAG_TOUCHES_GROUND, false)
         Call(SetNpcJumpscale, NPC_Twink_01, Float(3.2))
         Call(GetNpcPos, NPC_Twink_01, LVar6, LVar7, LVar8)
         Call(NpcJump0, NPC_Twink_01, LVar6, LVar7, LVar8, 5)
@@ -385,7 +385,7 @@ EvtScript N(EVS_Scene_KammyDefeated) = {
     Call(SetCamDistance, CAM_DEFAULT, 450)
     Call(SetCamPitch, CAM_DEFAULT, Float(17.0), Float(-10.0))
     Call(SetCamSpeed, CAM_DEFAULT, Float(5.0))
-    Call(PanToTarget, CAM_DEFAULT, 0, TRUE)
+    Call(PanToTarget, CAM_DEFAULT, 0, true)
     Thread
         Call(SpeakToPlayer, NPC_Bowser_02, ANIM_WorldBowser_Talk, ANIM_WorldBowser_Idle, 0, MSG_CH8_00A5)
     EndThread

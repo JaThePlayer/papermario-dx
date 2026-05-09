@@ -21,7 +21,6 @@ extern Gfx Entity_Tweester_RenderInnerWhirl[];
 extern Gfx Entity_Tweester_RenderOuterWhirl[];
 extern Gfx Entity_Tweester_Render[];
 
-
 void entity_Tweester_render_inner_whirl(s32 entityIndex) {
     Entity* entity = get_entity_by_index(entityIndex);
     TweesterData* data = entity->dataBuf.tweester;
@@ -108,7 +107,6 @@ void entity_Tweester_setupGfx(s32 entityIndex) {
     entity_Tweester_render_outer_whirl(entityIndex);
     entity_Tweester_render_face(entityIndex);
 }
-
 
 void entity_Tweester_update_face_anim(Entity* entity) {
     TweesterData* data = entity->dataBuf.tweester;
@@ -268,7 +266,7 @@ void entity_Tweester_idle(Entity* entity) {
     if (partnerStatus->partnerActionState == PARTNER_ACTION_NONE || partnerStatus->actingPartner != PARTNER_BOW) {
         if (playerStatus->actionState == ACTION_STATE_USE_TWEESTER) {
             Npc* npc = npc_find_closest_simple(entity->pos.x, entity->pos.y, entity->pos.z, 50.0f);
-            if (npc != NULL && (npc->flags & NPC_FLAG_PARTNER)) {
+            if (npc != nullptr && (npc->flags & NPC_FLAG_PARTNER)) {
                 TweesterTouchingPartner = entity;
             }
         }
@@ -321,7 +319,7 @@ EntityBlueprint Entity_Tweester = {
     .modelAnimationNodes = 0,
     .fpInit = entity_Tweester_init,
     .updateEntityScript = Entity_Tweester_Script,
-    .fpHandleCollision = NULL,
+    .fpHandleCollision = nullptr,
     { .dma = ENTITY_ROM(Tweester) },
     .entityType = ENTITY_TYPE_TWEESTER,
     .aabbSize = { 50, 70, 50 }

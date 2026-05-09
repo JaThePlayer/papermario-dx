@@ -2,7 +2,6 @@
 #define _MACROS_H_
 
 #include "types.h"
-#include "include_asm.h"
 
 #define BSS __attribute__ ((nocommon, section (".bss")))
 #define TRANSPARENT_UNION __attribute__ ((__transparent_union__))
@@ -49,7 +48,7 @@
 //#ifdef DEBUG
 #define IS_DEBUG_PANIC(statement) is_debug_panic(statement)
 /*#else
-#define IS_DEBUG_PANIC(statement) do {} while(TRUE)
+#define IS_DEBUG_PANIC(statement) do {} while(true)
 #endif*/
 
 #define PANIC() IS_DEBUG_PANIC("Panic")
@@ -102,8 +101,20 @@
 #define SP_PER_BAR 256
 #define SP_PER_SEG 32
 
+#define AC_DIFFICULTY_LEN 8
+typedef s32 Difficulty1D[AC_DIFFICULTY_LEN];
+typedef s32 Difficulty2D[AC_DIFFICULTY_LEN][2];
+
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 240
+
+#define SCREEN_INSET_X 12
+#define SCREEN_INSET_Y 20
+
+#define SCREEN_XMIN (SCREEN_INSET_X)
+#define SCREEN_XMAX (SCREEN_WIDTH - SCREEN_INSET_X)
+#define SCREEN_YMIN (SCREEN_INSET_Y)
+#define SCREEN_YMAX (SCREEN_HEIGHT - SCREEN_INSET_Y)
 
 #define LAST_DEMO_SCENE_IDX 18
 
@@ -221,8 +232,8 @@
 
 #define STATUS_KEY_IGNORE_RES 0xFE
 #define STATUS_KEY_NEVER 0xFF
-#define DMG_STATUS_KEY(typeFlag, duration, chance) (STATUS_FLAG_80000000 | typeFlag | (duration << 8) | chance)
-#define DMG_STATUS_ALWAYS(typeFlag, duration) (STATUS_FLAG_80000000 | STATUS_FLAG_RIGHT_ON | typeFlag | (duration << 8))
+#define DMG_STATUS_KEY(typeFlag, duration, chance) (STATUS_FLAG_USE_DURATION | typeFlag | (duration << 8) | chance)
+#define DMG_STATUS_ALWAYS(typeFlag, duration) (STATUS_FLAG_USE_DURATION | STATUS_FLAG_RIGHT_ON | typeFlag | (duration << 8))
 #define DMG_STATUS_IGNORE_RES(typeFlag, duration) (STATUS_KEY_IGNORE_RES | typeFlag | (duration << 8))
 
 #define _RDP_WHOLE(x) (((s32)(x * 65536.0) >> 16) & 0xFFFF)
@@ -275,6 +286,7 @@
 
 #define PM_CC_01        0, 0, 0, TEXEL0, PRIMITIVE, 0, TEXEL0, 0
 #define PM_CC_02        0, 0, 0, TEXEL0, TEXEL0, 0, PRIMITIVE, 0
+
 #define PM_CC_03        TEXEL0, 0, SHADE, 0, PRIMITIVE, 0, SHADE, 0
 #define PM_CC_04        PRIMITIVE, 0, SHADE, 0, PRIMITIVE, 0, SHADE, 0
 #define PM_CC_05        TEXEL0, 0, SHADE, 0, TEXEL0, 0, PRIMITIVE, 0

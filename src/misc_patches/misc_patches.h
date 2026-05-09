@@ -10,6 +10,14 @@
 #define MAX_CURR_FP 75
 #define MAX_BP 30
 
+#define DEDUCT_FP_COST(fpCost, player) \
+    if (fpCost != 0) { \
+        fpCost += getFpCostChange(player); \
+        if (fpCost < 1) { \
+            fpCost = 1; \
+        } \
+    }
+
 // returns how much fp costs are changed by
 s32 getFpCostChange(Actor* player);
 
@@ -51,6 +59,10 @@ s32 player_count_badges_with_move_id(s32 moveId);
 s8 getMaxStarEnergy();
 
 void render_se_bar(s32 id, s32 x, s32 y, s32 startSegment, s32 limit);
+
+void setup_move_cost_reductions(Actor* playerActor, s32 i);
+
+s32 fixed_star_power_index(s32 moveId);
 
 // EVENTS
 

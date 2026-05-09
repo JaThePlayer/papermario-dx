@@ -1,6 +1,6 @@
 #include "dx/versioning.h"
 #include "dx/config.h"
-#include "gcc/string.h"
+#include <string.h>
 
 void ver_deserialize_standard();
 void ver_deserialize_vanilla_save(SaveData* save);
@@ -51,9 +51,9 @@ void fio_deserialize_state() {
     }
 
     gGameStatus.debugEnemyContact = DEBUG_CONTACT_NONE;
-    gGameStatus.debugUnused1 = FALSE;
-    gGameStatus.debugUnused2 = FALSE;
-    gGameStatus.musicEnabled = TRUE;
+    gGameStatus.debugUnused1 = false;
+    gGameStatus.debugUnused2 = false;
+    gGameStatus.musicEnabled = true;
 }
 
 /// Load save file data from a supported save version

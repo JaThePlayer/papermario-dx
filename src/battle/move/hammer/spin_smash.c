@@ -35,24 +35,24 @@ extern EvtScript N(EVS_UseMoveSuper_Impl);
 extern EvtScript N(EVS_UseMoveUltra_Impl);
 
 EvtScript N(EVS_UseMove) = {
-    Call(ShowActionHud, TRUE)
+    Call(ShowActionHud, true)
     Call(SetDamageSource, DMG_SRC_SPIN_SMASH)
     Call(GetMenuSelection, LVar0, LVar1, LVar2)
     Switch(LVar1)
         CaseEq(0)
-            Set(LVarD, 60)
-            Set(LVarE, 1)
-            Set(LVarF, 2)
+            Set(LVarD, 60) // duration
+            Set(LVarE, BASIC_HAMMER_DMG_BAD)
+            Set(LVarF, BASIC_HAMMER_DMG_GOOD)
             ExecWait(N(EVS_UseMoveBasic_Impl))
         CaseEq(1)
-            Set(LVarD, 60)
-            Set(LVarE, 2)
-            Set(LVarF, 4)
+            Set(LVarD, 60) // duration
+            Set(LVarE, SUPER_HAMMER_DMG_BAD)
+            Set(LVarF, SUPER_HAMMER_DMG_GOOD)
             ExecWait(N(EVS_UseMoveSuper_Impl))
         CaseEq(2)
-            Set(LVarD, 60)
-            Set(LVarE, 3)
-            Set(LVarF, 6)
+            Set(LVarD, 60) // duration
+            Set(LVarE, ULTRA_HAMMER_DMG_BAD)
+            Set(LVarF, ULTRA_HAMMER_DMG_GOOD)
             ExecWait(N(EVS_UseMoveUltra_Impl))
     EndSwitch
     Return
@@ -67,7 +67,7 @@ EvtScript N(EVS_UseMoveBasic_Impl) = {
     Set(LVar1, 0)
     Loop(10)
         Call(CheckButtonDown, BUTTON_STICK_LEFT, LVar0)
-        IfEq(LVar0, TRUE)
+        IfEq(LVar0, true)
             Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_Mario1_Idle)
             BreakLoop
         EndIf
@@ -102,17 +102,17 @@ EvtScript N(EVS_UseMoveBasic_Impl) = {
         Loop(45)
             Wait(1)
             Call(CheckButtonDown, BUTTON_STICK_LEFT, LVar0)
-            IfNe(LVar0, FALSE)
+            IfNe(LVar0, false)
                 BreakLoop
             EndIf
         EndLoop
     EndIf
-    Call(action_command_hammer_start, 0, LVarD, 3)
-    Call(SetActionQuality, 0)
+    Call(action_command_hammer_start, 0, LVarD, AC_DIFFICULTY_3)
+    Call(SetActionProgress, 0)
     Set(LVar1, 0)
     Loop(30)
         Wait(1)
-        Call(GetActionQuality, LVar0)
+        Call(GetActionProgress, LVar0)
         IfNe(LVar0, 0)
             IfNe(LVar1, 1)
                 Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_MarioB2_SpinSmash1_Hold2)
@@ -120,13 +120,13 @@ EvtScript N(EVS_UseMoveBasic_Impl) = {
             EndIf
         EndIf
         Call(CheckButtonDown, BUTTON_STICK_LEFT, LVar0)
-        IfEq(LVar0, FALSE)
+        IfEq(LVar0, false)
             BreakLoop
         EndIf
     EndLoop
     Label(0)
     Wait(1)
-    Call(GetActionSuccess, LVar0)
+    Call(GetSmashActionQuality, LVar0)
     IfEq(LVar0, 0)
         Goto(0)
     EndIf
@@ -142,12 +142,12 @@ EvtScript N(EVS_UseMoveBasic_Impl) = {
         Wait(10)
         Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_Mario1_Idle)
         Wait(25)
-        ExecWait(N(EVS_HammerSupport_ReturnHome_Miss))
+        ExecWait(N(EVS_HammerSupport_ReturnHome_SmashMiss))
         Return
     EndIf
-    Call(GetPlayerActionSuccess, LVar0)
+    Call(GetPlayerActionQuality, LVar0)
     Switch(LVar0)
-        CaseGt(FALSE)
+        CaseGt(false)
             Call(func_802A1000_737890)
             Call(PlayerDamageEnemy, LVar0, DAMAGE_TYPE_SMASH | DAMAGE_TYPE_SPIN_SMASH | DAMAGE_TYPE_MULTIPLE_POPUPS, SUPPRESS_EVENTS_HAMMER, 0, LVarF, BS_FLAGS1_TRIGGER_EVENTS | BS_FLAGS1_INCLUDE_POWER_UPS | BS_FLAGS1_NICE_HIT)
         CaseDefault
@@ -159,7 +159,7 @@ EvtScript N(EVS_UseMoveBasic_Impl) = {
         CaseOrEq(HIT_RESULT_NO_DAMAGE)
             Wait(10)
             Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_Mario1_Idle)
-            ExecWait(N(EVS_Hammer_ReturnHome_B))
+            ExecWait(N(EVS_HammerSupport_ReturnHome_Quake))
             Return
         EndCaseGroup
         CaseOrEq(HIT_RESULT_NICE)
@@ -177,7 +177,7 @@ EvtScript N(EVS_UseMoveBasic_Impl) = {
     Wait(10)
     Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_Mario1_Idle)
     Call(SetActorYaw, ACTOR_PLAYER, 0)
-    ExecWait(N(EVS_Hammer_ReturnHome_B))
+    ExecWait(N(EVS_HammerSupport_ReturnHome_Quake))
     Return
     End
 };
@@ -190,7 +190,7 @@ EvtScript N(EVS_UseMoveSuper_Impl) = {
     Set(LVar1, 0)
     Loop(10)
         Call(CheckButtonDown, BUTTON_STICK_LEFT, LVar0)
-        IfEq(LVar0, TRUE)
+        IfEq(LVar0, true)
             Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_Mario1_Idle)
             BreakLoop
         EndIf
@@ -220,21 +220,21 @@ EvtScript N(EVS_UseMoveSuper_Impl) = {
     Wait(8)
     Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_MarioB2_SpinSmash2_Hold1)
     Call(N(ShouldMovesAutoSucceed))
-    IfEq(LVar0, FALSE)
+    IfEq(LVar0, false)
         Loop(45)
             Wait(1)
             Call(CheckButtonDown, BUTTON_STICK_LEFT, LVar0)
-            IfNe(LVar0, FALSE)
+            IfNe(LVar0, false)
                 BreakLoop
             EndIf
         EndLoop
     EndIf
-    Call(action_command_hammer_start, 0, LVarD, 3)
-    Call(SetActionQuality, 0)
+    Call(action_command_hammer_start, 0, LVarD, AC_DIFFICULTY_3)
+    Call(SetActionProgress, 0)
     Set(LVar1, 0)
     Loop(30)
         Wait(1)
-        Call(GetActionQuality, LVar0)
+        Call(GetActionProgress, LVar0)
         IfNe(LVar0, 0)
             IfNe(LVar1, 1)
                 Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_MarioB2_SpinSmash2_Hold2)
@@ -242,13 +242,13 @@ EvtScript N(EVS_UseMoveSuper_Impl) = {
             EndIf
         EndIf
         Call(CheckButtonDown, BUTTON_STICK_LEFT, LVar0)
-        IfEq(LVar0, FALSE)
+        IfEq(LVar0, false)
             BreakLoop
         EndIf
     EndLoop
     Label(0)
     Wait(1)
-    Call(GetActionSuccess, LVar0)
+    Call(GetSmashActionQuality, LVar0)
     IfEq(LVar0, 0)
         Goto(0)
     EndIf
@@ -264,12 +264,12 @@ EvtScript N(EVS_UseMoveSuper_Impl) = {
         Wait(10)
         Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_Mario1_Idle)
         Wait(25)
-        ExecWait(N(EVS_HammerSupport_ReturnHome_Miss))
+        ExecWait(N(EVS_HammerSupport_ReturnHome_SmashMiss))
         Return
     EndIf
-    Call(GetPlayerActionSuccess, LVar0)
+    Call(GetPlayerActionQuality, LVar0)
     Switch(LVar0)
-        CaseGt(FALSE)
+        CaseGt(false)
             Call(func_802A1000_737890)
             Call(PlayerDamageEnemy, LVar0, DAMAGE_TYPE_SMASH | DAMAGE_TYPE_SPIN_SMASH | DAMAGE_TYPE_MULTIPLE_POPUPS, SUPPRESS_EVENTS_HAMMER, 0, LVarF, BS_FLAGS1_TRIGGER_EVENTS | BS_FLAGS1_INCLUDE_POWER_UPS | BS_FLAGS1_NICE_HIT)
         CaseDefault
@@ -281,7 +281,7 @@ EvtScript N(EVS_UseMoveSuper_Impl) = {
         CaseOrEq(HIT_RESULT_NO_DAMAGE)
             Wait(10)
             Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_Mario1_Idle)
-            ExecWait(N(EVS_Hammer_ReturnHome_B))
+            ExecWait(N(EVS_HammerSupport_ReturnHome_Quake))
             Return
         EndCaseGroup
         CaseOrEq(HIT_RESULT_NICE)
@@ -299,7 +299,7 @@ EvtScript N(EVS_UseMoveSuper_Impl) = {
     Wait(10)
     Call(SetActorYaw, ACTOR_PLAYER, 0)
     Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_Mario1_Idle)
-    ExecWait(N(EVS_Hammer_ReturnHome_B))
+    ExecWait(N(EVS_HammerSupport_ReturnHome_Quake))
     Return
     End
 };
@@ -312,7 +312,7 @@ EvtScript N(EVS_UseMoveUltra_Impl) = {
     Set(LVar1, 0)
     Loop(10)
         Call(CheckButtonDown, BUTTON_STICK_LEFT, LVar0)
-        IfEq(LVar0, TRUE)
+        IfEq(LVar0, true)
             Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_Mario1_Idle)
             BreakLoop
         EndIf
@@ -340,21 +340,21 @@ EvtScript N(EVS_UseMoveUltra_Impl) = {
     Wait(8)
     Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_MarioB2_SpinSmash3_Hold1)
     Call(N(ShouldMovesAutoSucceed))
-    IfEq(LVar0, FALSE)
+    IfEq(LVar0, false)
         Loop(45)
             Wait(1)
             Call(CheckButtonDown, BUTTON_STICK_LEFT, LVar0)
-            IfNe(LVar0, FALSE)
+            IfNe(LVar0, false)
                 BreakLoop
             EndIf
         EndLoop
     EndIf
-    Call(action_command_hammer_start, 0, LVarD, 3)
-    Call(SetActionQuality, 0)
+    Call(action_command_hammer_start, 0, LVarD, AC_DIFFICULTY_3)
+    Call(SetActionProgress, 0)
     Set(LVar1, 0)
     Loop(30)
         Wait(1)
-        Call(GetActionQuality, LVar0)
+        Call(GetActionProgress, LVar0)
         IfNe(LVar0, 0)
             IfNe(LVar1, 1)
                 Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_MarioB2_SpinSmash3_Hold2)
@@ -362,13 +362,13 @@ EvtScript N(EVS_UseMoveUltra_Impl) = {
             EndIf
         EndIf
         Call(CheckButtonDown, BUTTON_STICK_LEFT, LVar0)
-        IfEq(LVar0, FALSE)
+        IfEq(LVar0, false)
             BreakLoop
         EndIf
     EndLoop
     Label(0)
         Wait(1)
-        Call(GetActionSuccess, LVar0)
+        Call(GetSmashActionQuality, LVar0)
         IfEq(LVar0, 0)
             Goto(0)
         EndIf
@@ -384,12 +384,12 @@ EvtScript N(EVS_UseMoveUltra_Impl) = {
         Wait(10)
         Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_Mario1_Idle)
         Wait(25)
-        ExecWait(N(EVS_HammerSupport_ReturnHome_Miss))
+        ExecWait(N(EVS_HammerSupport_ReturnHome_SmashMiss))
         Return
     EndIf
-    Call(GetPlayerActionSuccess, LVar0)
+    Call(GetPlayerActionQuality, LVar0)
     Switch(LVar0)
-        CaseGt(FALSE)
+        CaseGt(false)
             Call(func_802A1000_737890)
             Call(PlayerDamageEnemy, LVar0, DAMAGE_TYPE_SMASH | DAMAGE_TYPE_SPIN_SMASH | DAMAGE_TYPE_MULTIPLE_POPUPS, SUPPRESS_EVENTS_HAMMER, 0, LVarF, BS_FLAGS1_TRIGGER_EVENTS | BS_FLAGS1_INCLUDE_POWER_UPS | BS_FLAGS1_NICE_HIT)
         CaseDefault
@@ -401,7 +401,7 @@ EvtScript N(EVS_UseMoveUltra_Impl) = {
         CaseOrEq(HIT_RESULT_NO_DAMAGE)
             Wait(10)
             Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_Mario1_Idle)
-            ExecWait(N(EVS_Hammer_ReturnHome_B))
+            ExecWait(N(EVS_HammerSupport_ReturnHome_Quake))
             Return
         EndCaseGroup
         CaseOrEq(HIT_RESULT_NICE)
@@ -419,7 +419,7 @@ EvtScript N(EVS_UseMoveUltra_Impl) = {
     Wait(10)
     Call(SetActorYaw, ACTOR_PLAYER, 0)
     Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_Mario1_Idle)
-    ExecWait(N(EVS_Hammer_ReturnHome_B))
+    ExecWait(N(EVS_HammerSupport_ReturnHome_Quake))
     Return
     End
 };

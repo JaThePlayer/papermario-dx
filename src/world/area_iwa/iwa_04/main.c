@@ -21,7 +21,7 @@ EvtScript N(EVS_Main) = {
     Set(GB_WorldLocation, LOCATION_MT_RUGGED)
     Call(SetSpriteShading, SHADING_NONE)
     EVT_SETUP_CAMERA_NO_LEAD(0, 0, 0)
-    Call(MakeNpcs, TRUE, Ref(N(DefaultNPCs)))
+    Call(MakeNpcs, true, Ref(N(DefaultNPCs)))
     ExecWait(N(EVS_MakeEntities))
     Exec(N(EVS_SetupMusic))
     Call(ParentColliderToModel, COLLIDER_o962, MODEL_o962)
@@ -35,7 +35,7 @@ EvtScript N(EVS_Main) = {
     Call(ParentColliderToModel, COLLIDER_o992, MODEL_o992)
     Call(ParentColliderToModel, COLLIDER_o993, MODEL_o993)
 
-    IfEq(GF_IWA04_Defeated_Buzzar, TRUE)
+    IfEq(GF_IWA04_Defeated_Buzzar, true)
         // NEW: Drop Ember Emblem
         Call(N(has_ember_emblem), LVar0)
         IfFalse(LVar0)

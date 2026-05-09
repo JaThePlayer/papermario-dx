@@ -79,7 +79,7 @@ typedef struct Model {
 typedef struct ModelTransformGroup {
     /* 0x00 */ u16 flags;
     /* 0x02 */ u16 groupModelID;
-    /* 0x04 */ Mtx* bakedMtx; // would point to copy of matrix from shape file, but seems to always be NULL.
+    /* 0x04 */ Mtx* bakedMtx; // would point to copy of matrix from shape file, but seems to always be nullptr.
     /* 0x08 */ ModelNode* baseModelNode;
     /* 0x0C */ Mtx* finalMtx; // the matrix actually used while building the display list
     /* 0x10 */ Mtx savedMtx;
@@ -186,6 +186,10 @@ typedef struct ShapeFile {
 
 typedef ModelTreeInfo ModelTreeInfoList[0x200];
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern ModelTreeInfoList* gCurrentModelTreeNodeInfo;
 extern ModelList* gCurrentModels;
 
@@ -223,5 +227,9 @@ void mdl_make_local_vertex_copy(s32 arg0, u16 treeIdx, s32);
 void play_model_animation_starting_from(s32 index, s16* animPos, s32 framesToSkip);
 
 void mdl_set_shroud_tint_params(u8 r, u8 g, u8 b, u8 a);
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
 
 #endif

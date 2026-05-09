@@ -4,9 +4,11 @@
 
 #define NAMESPACE poison_status
 
-#define poison_status_DECREMENT_LATE FALSE
+#define poison_status_DECREMENT_LATE false
 
 extern EvtScript EVS_PlaySleepHitFX;
+
+extern void set_actor_pal_adjustment(Actor* actor, s32 palAdjust);
 
 void N(on_apply)(Actor* actor, Vec3f position, u8 potency) {
     set_actor_pal_adjustment(actor, ACTOR_PAL_ADJUST_POISON);
@@ -36,7 +38,7 @@ void N(on_decrement)(Actor* target) {
     target->state.goalPos = target->curPos;
 
     if (target == gBattleStatus.playerActor) {
-        dispatch_damage_event_player(dmg, EVENT_HIT, FALSE);
+        dispatch_damage_event_player(dmg, EVENT_HIT, false);
     } else {
         dispatch_damage_event_actor_1(target, dmg, EVENT_HIT);
     }

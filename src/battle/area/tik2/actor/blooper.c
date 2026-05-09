@@ -154,7 +154,7 @@ s32 N(StatusTable)[] = {
     STATUS_KEY_POISON,              0,
     STATUS_KEY_FROZEN,              0,
     STATUS_KEY_DIZZY,              80,
-    STATUS_KEY_FEAR,                0,
+    STATUS_KEY_UNUSED,              0,
     STATUS_KEY_STATIC,              0,
     STATUS_KEY_PARALYZE,           90,
     STATUS_KEY_SHRINK,             90,
@@ -164,7 +164,7 @@ s32 N(StatusTable)[] = {
     STATUS_TURN_MOD_POISON,         0,
     STATUS_TURN_MOD_FROZEN,         0,
     STATUS_TURN_MOD_DIZZY,         -1,
-    STATUS_TURN_MOD_FEAR,           0,
+    STATUS_TURN_MOD_UNUSED,         0,
     STATUS_TURN_MOD_STATIC,         0,
     STATUS_TURN_MOD_PARALYZE,      -1,
     STATUS_TURN_MOD_SHRINK,        -1,
@@ -191,7 +191,7 @@ ActorPartBlueprint N(ActorParts)[] = {
         .posOffset = { 0, 20, 0 },
         .targetOffset = { 0, 30 },
         .opacity = 255,
-        .idleAnimations = NULL,
+        .idleAnimations = nullptr,
         .defenseTable = N(DefenseTable),
         .eventFlags = 0,
         .elementImmunityFlags = 0,
@@ -233,7 +233,7 @@ EvtScript N(EVS_Init) = {
     Call(BindHandleEvent, ACTOR_SELF, Ref(N(EVS_HandleEvent)))
     Call(BindHandlePhase, ACTOR_SELF, N(EVS_HandlePhase))
     SET_ACTOR_VAR(AVAR_TurnCount, 0)
-    SET_ACTOR_VAR(AVAR_PhaseTwo, FALSE)
+    SET_ACTOR_VAR(AVAR_PhaseTwo, false)
     Return
     End
 };
@@ -303,7 +303,7 @@ EvtScript N(EVS_Idle) = {
 };
 
 EvtScript N(EVS_HandleEvent) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(GetLastEvent, ACTOR_SELF, LVar0)
     Switch(LVar0)
@@ -380,7 +380,7 @@ EvtScript N(EVS_HandleEvent) = {
         CaseDefault
     EndSwitch
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_RESTART)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };
@@ -393,7 +393,7 @@ EvtScript N(EVS_Death) = {
 };
 
 EvtScript N(EVS_HandlePhase) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(GetBattlePhase, LVar0)
     Switch(LVar0)
@@ -405,7 +405,7 @@ EvtScript N(EVS_HandlePhase) = {
             EndIf
     EndSwitch
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };
@@ -464,10 +464,10 @@ EvtScript N(EVS_TakeTurn) = {
             SET_ACTOR_VAR(AVAR_PhaseTwo, 1)
 
             ExecWait(N(ZoomInOnBlooper))
-            Call(EnableActorPaletteEffects, ACTOR_SELF, PRT_MAIN, TRUE)
+            Call(EnableActorPaletteEffects, ACTOR_SELF, PRT_MAIN, true)
             Call(SetActorPaletteSwapParams, ACTOR_SELF, PRT_MAIN, SPR_PAL_Blooper, SPR_PAL_Blooper_Supercharged, 0, 6, 12, 6, 0, 0)
             Call(SetActorPaletteEffect, ACTOR_SELF, PRT_MAIN, ACTOR_PAL_ADJUST_BLEND_PALETTES_VARYING_INTERVALS)
-            Call(SetPartEventBits, ACTOR_SELF, PRT_TARGET, ACTOR_EVENT_FLAG_ATTACK_CHARGED, TRUE)
+            Call(SetPartEventBits, ACTOR_SELF, PRT_TARGET, ACTOR_EVENT_FLAG_ATTACK_CHARGED, true)
             Wait(2)
             ExecWait(N(EVS_Move_MakeBabies))
 
@@ -493,7 +493,7 @@ EvtScript N(EVS_TakeTurn) = {
 };
 
 EvtScript N(EVS_Attack_SpinDrop) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
     Call(GetStatusFlags, ACTOR_SELF, LVar0)
@@ -538,7 +538,7 @@ EvtScript N(EVS_Attack_SpinDrop) = {
                 Call(GetActorPos, ACTOR_PLAYER, LVar0, LVar1, LVar2)
                 Call(SetActorJumpGravity, ACTOR_SELF, Float(1.5))
                 Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-                Call(JumpToGoal, ACTOR_SELF, 16, FALSE, TRUE, FALSE)
+                Call(JumpToGoal, ACTOR_SELF, 16, false, true, false)
                 Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
                 Call(MoveBattleCamOver, 20)
                 IfEq(LVarF, HIT_RESULT_LUCKY)
@@ -546,13 +546,13 @@ EvtScript N(EVS_Attack_SpinDrop) = {
                 EndIf
                 Add(LVar0, 30)
                 Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-                Call(JumpToGoal, ACTOR_SELF, 12, FALSE, TRUE, FALSE)
+                Call(JumpToGoal, ACTOR_SELF, 12, false, true, false)
                 Add(LVar0, 20)
                 Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-                Call(JumpToGoal, ACTOR_SELF, 8, FALSE, TRUE, FALSE)
+                Call(JumpToGoal, ACTOR_SELF, 8, false, true, false)
                 ExecWait(N(EVS_FloatToHome))
                 Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_RESTART)
-                Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+                Call(UseIdleAnimation, ACTOR_SELF, true)
                 Return
             EndCaseGroup
         EndSwitch
@@ -570,7 +570,7 @@ EvtScript N(EVS_Attack_SpinDrop) = {
         Call(GetActorPos, ACTOR_PLAYER, LVar0, LVar1, LVar2)
         Add(LVar1, 30)
         Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-        Call(JumpToGoal, ACTOR_SELF, 16, FALSE, TRUE, FALSE)
+        Call(JumpToGoal, ACTOR_SELF, 16, false, true, false)
         Wait(2)
         Call(EnemyDamageTarget, ACTOR_SELF, LVar0, 0, 0, 0, DMG_SPIN_DROP, BS_FLAGS1_TRIGGER_EVENTS)
         IfEq(LVarB, 1)
@@ -588,12 +588,12 @@ EvtScript N(EVS_Attack_SpinDrop) = {
         Sub(LVar1, 15)
         Call(SetActorJumpGravity, ACTOR_SELF, Float(1.2))
         Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-        Call(JumpToGoal, ACTOR_SELF, 10, FALSE, TRUE, FALSE)
+        Call(JumpToGoal, ACTOR_SELF, 10, false, true, false)
     EndLoop
 
     ExecWait(N(EVS_FloatToHome))
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_RESTART)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };
@@ -602,7 +602,7 @@ EvtScript N(EVS_Attack_SpinDrop) = {
 #include "common/SpitInk.inc.c"
 
 EvtScript N(EVS_Attack_InkBlast) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
     Call(SetGoalToTarget, ACTOR_SELF)
@@ -684,7 +684,7 @@ EvtScript N(EVS_Attack_InkBlast) = {
             Call(SetActorRotationOffset, ACTOR_SELF, 0, 0, 0)
             ExecWait(N(EVS_FloatToHome))
             Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_RESTART)
-            Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+            Call(UseIdleAnimation, ACTOR_SELF, true)
             Return
         EndCaseGroup
     EndSwitch
@@ -704,7 +704,7 @@ EvtScript N(EVS_Attack_InkBlast) = {
     Call(SetActorRotationOffset, ACTOR_SELF, 0, 0, 0)
     ExecWait(N(EVS_FloatToHome))
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_RESTART)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };
@@ -723,7 +723,7 @@ Formation N(BabyFormation2) = {
 };
 
 EvtScript N(ZoomInOnBlooper) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
     Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
@@ -781,18 +781,18 @@ EvtScript N(EVS_Move_MakeBabies) = {
     Call(ActorExists, ACTOR_ENEMY1, LVar1)
     IfFalse(LVar1)
         Call(PlaySoundAtActor, ACTOR_SELF, SOUND_LIGHT_THROW)
-        Call(SummonEnemy, Ref(N(BabyFormation1)), FALSE)
+        Call(SummonEnemy, Ref(N(BabyFormation1)), false)
     EndIf
     Call(ActorExists, ACTOR_ENEMY2, LVar1)
     IfFalse(LVar1)
         Call(PlaySoundAtActor, ACTOR_SELF, SOUND_LIGHT_THROW)
-        Call(SummonEnemy, Ref(N(BabyFormation2)), FALSE)
+        Call(SummonEnemy, Ref(N(BabyFormation2)), false)
     EndIf
     Wait(2)
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Blooper_Anim0C)
     Call(N(FadeBackgroundLighten))
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_RESTART)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };

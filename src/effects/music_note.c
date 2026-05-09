@@ -44,8 +44,8 @@ void music_note_main(s32 type, f32 posX, f32 posY, f32 posZ) {
     bp.unk_00 = 0;
     bp.init = music_note_init;
     bp.update = music_note_update;
-    bp.renderWorld = music_note_render;
-    bp.renderUI = NULL;
+    bp.renderScene = music_note_render;
+    bp.renderUI = nullptr;
     bp.effectID = EFFECT_MUSIC_NOTE;
 
     effect = create_effect_instance(bpPtr);
@@ -53,7 +53,7 @@ void music_note_main(s32 type, f32 posX, f32 posY, f32 posZ) {
 
     part = effect->data.musicNote = general_heap_malloc(numParts * sizeof(*part));
 
-    ASSERT(effect->data.musicNote != NULL);
+    ASSERT(effect->data.musicNote != nullptr);
 
     part->type = type;
     part->pos.x = posX;
@@ -141,7 +141,7 @@ void music_note_appendGfx(void* data) {
     rgbOffset = (colorIdx * 3) % ARRAY_COUNT(D_E004C67C);
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
     gSPDisplayList(gMainGfxPos++, D_09000FC0_35B5A0);
     gDPSetPrimColor(gMainGfxPos++, 0, 0,
         D_E004C67C[rgbOffset], D_E004C67C[rgbOffset + 1], D_E004C67C[rgbOffset + 2], fxData->alpha

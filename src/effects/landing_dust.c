@@ -75,7 +75,6 @@ void landing_dust_main(s32 type, f32 x, f32 y, f32 z, f32 angle) {
     EffectInstance* effect;
     LandingDustFXData* data;
     f32 theta;
-    f32 temp_f20_2;
     s32 numParts;
     s32 i;
 
@@ -96,9 +95,9 @@ void landing_dust_main(s32 type, f32 x, f32 y, f32 z, f32 angle) {
 
     bpPtr->init = landing_dust_init;
     bpPtr->update = landing_dust_update;
-    bpPtr->renderWorld = landing_dust_render;
+    bpPtr->renderScene = landing_dust_render;
     bpPtr->unk_00 = 0;
-    bpPtr->renderUI = NULL;
+    bpPtr->renderUI = nullptr;
     bpPtr->effectID = EFFECT_LANDING_DUST;
 
     effect = create_effect_instance(bpPtr);
@@ -106,7 +105,7 @@ void landing_dust_main(s32 type, f32 x, f32 y, f32 z, f32 angle) {
 
     data = general_heap_malloc(numParts * sizeof(*data));
     effect->data.landingDust = data;
-    ASSERT(effect->data.landingDust != NULL);
+    ASSERT(effect->data.landingDust != nullptr);
 
     mem_clear(data, numParts * sizeof(*data));
 
@@ -280,7 +279,7 @@ void landing_dust_appendGfx(void* effect) {
     dlist2 = sDlists2[type];
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
     gSPDisplayList(gMainGfxPos++, dlist2);
 
     spD8 = temp_t0 & 7;

@@ -1,7 +1,7 @@
 #include "common.h"
 #include "hud_element.h"
 
-static s32 itemIcon;
+static HudElemID itemHID;
 
 // out LVar0: time caller should wait for coin spawns
 API_CALLABLE(N(GiveRefund)) {
@@ -13,7 +13,6 @@ API_CALLABLE(N(GiveRefund)) {
     f32 posZ;
     f32 angle = 0.0f;
     s32 delayTime = 0;
-    s32 tempIcon;
 
     if (player_team_is_ability_active(player, ABILITY_REFUND) && sellValue > 0) {
         s32 iconX;
@@ -45,22 +44,22 @@ API_CALLABLE(N(GiveRefund)) {
 #if VERSION_PAL
         switch (gCurrentLanguage) {
             case LANGUAGE_EN:
-                itemIcon = tempIcon = hud_element_create(&HES_Refund);
+                itemIcon = hid = hud_element_create(&HES_Refund);
                 break;
             case LANGUAGE_DE:
-                itemIcon = tempIcon = hud_element_create(&HES_Refund_de);
+                itemIcon = hid = hud_element_create(&HES_Refund_de);
                 break;
             case LANGUAGE_FR:
-                itemIcon = tempIcon = hud_element_create(&HES_Refund_fr);
+                itemIcon = hid = hud_element_create(&HES_Refund_fr);
                 break;
             case LANGUAGE_ES:
-                itemIcon = tempIcon = hud_element_create(&HES_Refund_es);
+                itemIcon = hid = hud_element_create(&HES_Refund_es);
                 break;
         }
-        hud_element_set_render_pos(tempIcon, iconX + 36, iconY - 63);
+        hud_element_set_render_pos(hid, iconX + 36, iconY - 63);
 #else
-        itemIcon = hud_element_create(&HES_Refund);
-        hud_element_set_render_pos(itemIcon, iconX + 36, iconY - 63);
+        itemHID = hud_element_create(&HES_Refund);
+        hud_element_set_render_pos(itemHID, iconX + 36, iconY - 63);
 #endif
     }
 
@@ -74,7 +73,7 @@ API_CALLABLE(N(GiveRefundCleanup)) {
     s32 sellValue = gItemTable[battleStatus->moveArgument].sellValue;
 
     if (player_team_is_ability_active(battleStatus->playerActor, ABILITY_REFUND) && sellValue > 0) {
-        hud_element_free(itemIcon);
+        hud_element_free(itemHID);
     }
 
     return ApiStatus_DONE2;

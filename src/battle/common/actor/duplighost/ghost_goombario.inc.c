@@ -18,7 +18,7 @@ s32 N(DefaultAnims)[] = {
     STATUS_KEY_STATIC,    ANIM_BattleGoombario_Idle,
     STATUS_KEY_PARALYZE,  ANIM_BattleGoombario_Still,
     STATUS_KEY_DIZZY,     ANIM_BattleGoombario_Injured,
-    STATUS_KEY_FEAR,      ANIM_BattleGoombario_Injured,
+    STATUS_KEY_UNUSED,    ANIM_BattleGoombario_Injured,
     STATUS_END,
 };
 
@@ -34,7 +34,7 @@ s32 N(StatusTable)[] = {
     STATUS_KEY_POISON,              0,
     STATUS_KEY_FROZEN,              0,
     STATUS_KEY_DIZZY,              75,
-    STATUS_KEY_FEAR,                0,
+    STATUS_KEY_UNUSED,              0,
     STATUS_KEY_STATIC,              0,
     STATUS_KEY_PARALYZE,           75,
     STATUS_KEY_SHRINK,             75,
@@ -44,7 +44,7 @@ s32 N(StatusTable)[] = {
     STATUS_TURN_MOD_POISON,         0,
     STATUS_TURN_MOD_FROZEN,         0,
     STATUS_TURN_MOD_DIZZY,         -1,
-    STATUS_TURN_MOD_FEAR,           0,
+    STATUS_TURN_MOD_UNUSED,         0,
     STATUS_TURN_MOD_STATIC,         0,
     STATUS_TURN_MOD_PARALYZE,       0,
     STATUS_TURN_MOD_SHRINK,         0,
@@ -105,7 +105,7 @@ EvtScript N(EVS_Idle) = {
 };
 
 EvtScript N(EVS_HandleEvent) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(GetLastEvent, ACTOR_SELF, LVar0)
     Switch(LVar0)
@@ -206,7 +206,7 @@ EvtScript N(EVS_HandleEvent) = {
         CaseDefault
     EndSwitch
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };
@@ -235,7 +235,7 @@ EvtScript N(EVS_HeadbonkFollowthrough) = {
     Set(LVar1, 0)
     Call(SetActorJumpGravity, ACTOR_SELF, Float(1.0))
     Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-    Call(JumpToGoal, ACTOR_SELF, 15, FALSE, TRUE, FALSE)
+    Call(JumpToGoal, ACTOR_SELF, 15, false, true, false)
     Call(GetStatusFlags, ACTOR_SELF, LVarA)
     IfFlag(LVarA, STATUS_FLAG_SHRINK)
         SetF(LVar5, Float(7.2))
@@ -250,7 +250,7 @@ EvtScript N(EVS_HeadbonkFollowthrough) = {
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_BattleGoombario_Idle)
     Add(LVar0, 20)
     Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-    Call(JumpToGoal, ACTOR_SELF, 6, FALSE, TRUE, FALSE)
+    Call(JumpToGoal, ACTOR_SELF, 6, false, true, false)
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_BattleGoombario_PreHeadbonk)
     Call(SetActorDispOffset, ACTOR_SELF, 0, LVar5, 0)
     Wait(1)
@@ -258,7 +258,7 @@ EvtScript N(EVS_HeadbonkFollowthrough) = {
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_BattleGoombario_Idle)
     Call(SetActorDispOffset, ACTOR_SELF, 0, 0, 0)
     Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-    Call(JumpToGoal, ACTOR_SELF, 4, FALSE, TRUE, FALSE)
+    Call(JumpToGoal, ACTOR_SELF, 4, false, true, false)
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_BattleGoombario_PreHeadbonk)
     Call(SetActorDispOffset, ACTOR_SELF, 0, LVar5, 0)
     Wait(1)
@@ -268,7 +268,7 @@ EvtScript N(EVS_HeadbonkFollowthrough) = {
     Call(SetGoalToHome, ACTOR_SELF)
     Call(SetActorSpeed, ACTOR_SELF, Float(8.0))
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_BattleGoombario_Run)
-    Call(RunToGoal, ACTOR_SELF, 0, FALSE)
+    Call(RunToGoal, ACTOR_SELF, 0, false)
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_BattleGoombario_Idle)
     Return
     End
@@ -277,13 +277,13 @@ EvtScript N(EVS_HeadbonkFollowthrough) = {
 EvtScript N(EVS_ApproachPlayer) = {
     Call(UseBattleCamPreset, BTL_CAM_ENEMY_APPROACH)
     Call(BattleCamTargetActor, ACTOR_SELF)
-    Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_TARGET, BTL_CAM_XADJ_AVG, FALSE)
+    Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_TARGET, BTL_CAM_XADJ_AVG, false)
     Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
     Call(SetGoalToTarget, ACTOR_SELF)
     Call(AddGoalPos, ACTOR_SELF, 70, 0, 0)
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_BattleGoombario_Run)
     Call(SetActorSpeed, ACTOR_SELF, Float(5.0))
-    Call(RunToGoal, ACTOR_SELF, 0, FALSE)
+    Call(RunToGoal, ACTOR_SELF, 0, false)
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_BattleGoombario_Idle)
     Return
     End
@@ -309,7 +309,7 @@ EvtScript N(EVS_CalculateJumpTime) = {
 };
 
 EvtScript N(EVS_Attack_Headbonk) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     ExecWait(N(EVS_ApproachPlayer))
     ExecWait(N(EVS_CalculateJumpTime))
@@ -353,7 +353,7 @@ EvtScript N(EVS_Attack_Headbonk) = {
             Call(YieldTurn)
             ExecWait(N(EVS_HeadbonkFollowthrough))
             Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-            Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+            Call(UseIdleAnimation, ACTOR_SELF, true)
             Return
         EndCaseGroup
     EndSwitch
@@ -465,7 +465,7 @@ EvtScript N(EVS_Attack_Headbonk) = {
         EndCaseGroup
     EndSwitch
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };
@@ -511,21 +511,21 @@ API_CALLABLE(N(CloseTattleWindow)) {
 }
 
 EvtScript N(EVS_Move_Tattle) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(SetActorJumpGravity, ACTOR_SELF, Float(1.8))
     Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
     Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-    Call(JumpToGoal, ACTOR_SELF, 10, FALSE, TRUE, FALSE)
+    Call(JumpToGoal, ACTOR_SELF, 10, false, true, false)
     Wait(10)
     Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
     Call(SetGoalToTarget, ACTOR_SELF)
-    Call(SetBattleFlagBits, BS_FLAGS1_TATTLE_OPEN, TRUE)
+    Call(SetBattleFlagBits, BS_FLAGS1_TATTLE_OPEN, true)
     Call(N(OpenTattleWindow), LVar5)
     Wait(12)
-    Call(EnableBattleStatusBar, FALSE)
-    Call(SetCamEnabled, CAM_TATTLE, TRUE)
-    Call(SetCamNoDraw, CAM_TATTLE, FALSE)
+    Call(EnableBattleStatusBar, false)
+    Call(SetCamEnabled, CAM_TATTLE, true)
+    Call(SetCamNoDraw, CAM_TATTLE, false)
     Call(SetCamPerspective, CAM_TATTLE, CAM_UPDATE_NO_INTERP, 25, 16, 1024)
     Call(SetCamViewport, CAM_TATTLE, 37, 95, 138, 99)
     Call(SetGoalToTarget, ACTOR_SELF)
@@ -535,21 +535,21 @@ EvtScript N(EVS_Move_Tattle) = {
     Call(N(CalculateTattleCamBoomLength))
     Wait(1)
     Call(SetCamLookTarget, CAM_TATTLE, LVar0, LVar1, LVar2)
-    Call(SetNoInterpCamParams, CAM_TATTLE, FALSE, LVar3, 100, 4)
+    Call(SetNoInterpCamParams, CAM_TATTLE, false, LVar3, 100, 4)
     Wait(2)
     Call(PlaySoundAtActor, ACTOR_SELF, SOUND_TATTLE_WINDOW_OPEN)
-    Call(SetCamNoDraw, CAM_TATTLE, TRUE)
+    Call(SetCamNoDraw, CAM_TATTLE, true)
     Wait(10)
     Call(ActorSpeak, MSG_EnemyTattle_Mario, ACTOR_SELF, PRT_MAIN, ANIM_BattleGoombario_Talk, ANIM_BattleGoombario_Idle)
     Call(N(CloseTattleWindow), LVar5)
     Wait(12)
-    Call(SetCamEnabled, CAM_TATTLE, FALSE)
+    Call(SetCamEnabled, CAM_TATTLE, false)
     Wait(32)
-    Call(EnableBattleStatusBar, TRUE)
+    Call(EnableBattleStatusBar, true)
     Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
-    Call(SetBattleFlagBits, BS_FLAGS1_TATTLE_OPEN, FALSE)
+    Call(SetBattleFlagBits, BS_FLAGS1_TATTLE_OPEN, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };

@@ -1,8 +1,5 @@
 #include "jan_08.h"
-
-#define NAME_SUFFIX _Bushes
-#include "common/foliage.inc.c"
-#define NAME_SUFFIX
+#include "foliage.h"
 
 #include "../common/MoveBush.inc.c"
 #include "../common/MoveBushTemplates.h"
@@ -13,7 +10,7 @@ EvtScript N(EVS_MoveBush_Separate) = EVT_MOVE_BUSHES(COLLIDER_o70,
 EvtScript N(EVS_Inspect_SeparateBushes) = {
     Call(ModifyColliderFlags, MODIFY_COLLIDER_FLAGS_SET_BITS, COLLIDER_o70, COLLIDER_FLAGS_UPPER_MASK)
     Exec(N(EVS_MoveBush_Separate))
-    Call(DisablePlayerInput, TRUE)
+    Call(DisablePlayerInput, true)
     Call(MakeLerp, 0, 45, 30, EASING_CUBIC_OUT)
     Loop(0)
         Call(UpdateLerp)
@@ -25,13 +22,13 @@ EvtScript N(EVS_Inspect_SeparateBushes) = {
             BreakLoop
         EndIf
     EndLoop
-    Call(DisablePlayerInput, FALSE)
+    Call(DisablePlayerInput, false)
     Return
     End
 };
 
 EvtScript N(EVS_Inspect_FlipBush) = {
-    Call(DisablePlayerInput, TRUE)
+    Call(DisablePlayerInput, true)
     Call(PlaySoundAtCollider, COLLIDER_o88, SOUND_SEARCH_BUSH, 0)
     Loop(3)
         Call(N(MoveBush_AnimateShearing), LVar1, 1)
@@ -43,18 +40,18 @@ EvtScript N(EVS_Inspect_FlipBush) = {
     EndLoop
     Call(TranslateModel, LVar1, 0, 0, 0)
     IfEq(GB_StoryProgress, STORY_CH5_SUSHIE_JOINED_PARTY)
-        IfEq(GF_JAN08_SavedYoshi, FALSE)
+        IfEq(GF_JAN08_SavedYoshi, false)
             Call(GetPlayerPos, LVar3, LVar4, LVar5)
             Thread
                 Call(DisablePartnerAI, 0)
-                Call(SetNpcFlagBits, NPC_PARTNER, NPC_FLAG_IGNORE_WORLD_COLLISION | NPC_FLAG_IGNORE_PLAYER_COLLISION | NPC_FLAG_IGNORE_ENTITY_COLLISION, TRUE)
+                Call(SetNpcFlagBits, NPC_PARTNER, NPC_FLAG_IGNORE_WORLD_COLLISION | NPC_FLAG_IGNORE_PLAYER_COLLISION | NPC_FLAG_IGNORE_ENTITY_COLLISION, true)
                 Call(NpcMoveTo, NPC_PARTNER, -315, LVar5, 20)
                 Call(NpcFaceNpc, NPC_PARTNER, NPC_YoshiKid, 0)
-                Call(SetNpcFlagBits, NPC_PARTNER, NPC_FLAG_IGNORE_WORLD_COLLISION | NPC_FLAG_IGNORE_PLAYER_COLLISION | NPC_FLAG_IGNORE_ENTITY_COLLISION, FALSE)
+                Call(SetNpcFlagBits, NPC_PARTNER, NPC_FLAG_IGNORE_WORLD_COLLISION | NPC_FLAG_IGNORE_PLAYER_COLLISION | NPC_FLAG_IGNORE_ENTITY_COLLISION, false)
                 Call(EnablePartnerAI)
             EndThread
             Call(PlayerMoveTo, -340, LVar5, 20)
-            Call(PlayerFaceNpc, NPC_YoshiKid, FALSE)
+            Call(PlayerFaceNpc, NPC_YoshiKid, false)
             Wait(10)
             Call(PlaySoundAtCollider, COLLIDER_o88, SOUND_SEPARATE_BUSHES, 0)
             Set(LVar3, 0)
@@ -66,7 +63,7 @@ EvtScript N(EVS_Inspect_FlipBush) = {
             Set(LVar4, 270)
             Call(SetNpcRotation, NPC_YoshiKid, 0, LVar4, 0)
             Call(SetNpcPos, NPC_YoshiKid, -391, 0, -144)
-            Call(SetNpcFlagBits, NPC_YoshiKid, NPC_FLAG_INVISIBLE | NPC_FLAG_IGNORE_PLAYER_COLLISION, FALSE)
+            Call(SetNpcFlagBits, NPC_YoshiKid, NPC_FLAG_INVISIBLE | NPC_FLAG_IGNORE_PLAYER_COLLISION, false)
             Loop(10)
                 Add(LVar3, 9)
                 Call(RotateModel, LVar1, LVar3, 0, 1, 0)
@@ -74,13 +71,13 @@ EvtScript N(EVS_Inspect_FlipBush) = {
                 Call(SetNpcRotation, NPC_YoshiKid, 0, LVar4, 0)
                 Wait(1)
             EndLoop
-            Call(EnableNpcShadow, NPC_YoshiKid, TRUE)
-            Call(PlayerFaceNpc, NPC_YoshiKid, FALSE)
+            Call(EnableNpcShadow, NPC_YoshiKid, true)
+            Call(PlayerFaceNpc, NPC_YoshiKid, false)
             Wait(20)
             Call(SetNpcVar, NPC_YoshiKid, 0, 1)
         EndIf
     EndIf
-    Call(DisablePlayerInput, FALSE)
+    Call(DisablePlayerInput, false)
     Return
     End
 };
@@ -284,29 +281,29 @@ EvtScript N(EVS_SetupBushes) = {
     Set(LVar1, MODEL_o64)
     BindPadlock(Ref(N(EVS_Inspect_FlipBush)), TRIGGER_WALL_PRESS_A, COLLIDER_o88, 0, 0, 1)
     Set(LVar0, Ref(N(SearchBush_Bush1)))
-    BindTrigger(Ref(N(EVS_SearchBush_Bushes)), TRIGGER_WALL_PRESS_A, COLLIDER_o59, 1, 0)
+    BindTrigger(Ref(EVS_SearchBush), TRIGGER_WALL_PRESS_A, COLLIDER_o59, 1, 0)
     Set(LVar0, Ref(N(SearchBush_Bush2)))
-    BindTrigger(Ref(N(EVS_SearchBush_Bushes)), TRIGGER_WALL_PRESS_A, COLLIDER_o209, 1, 0)
+    BindTrigger(Ref(EVS_SearchBush), TRIGGER_WALL_PRESS_A, COLLIDER_o209, 1, 0)
     Set(LVar0, Ref(N(SearchBush_Bush3)))
-    BindTrigger(Ref(N(EVS_SearchBush_Bushes)), TRIGGER_WALL_PRESS_A, COLLIDER_o210, 1, 0)
+    BindTrigger(Ref(EVS_SearchBush), TRIGGER_WALL_PRESS_A, COLLIDER_o210, 1, 0)
     Set(LVar0, Ref(N(SearchBush_Bush4)))
-    BindTrigger(Ref(N(EVS_SearchBush_Bushes)), TRIGGER_WALL_PRESS_A, COLLIDER_o211, 1, 0)
+    BindTrigger(Ref(EVS_SearchBush), TRIGGER_WALL_PRESS_A, COLLIDER_o211, 1, 0)
     Set(LVar0, Ref(N(SearchBush_Bush5)))
-    BindTrigger(Ref(N(EVS_SearchBush_Bushes)), TRIGGER_WALL_PRESS_A, COLLIDER_o212, 1, 0)
+    BindTrigger(Ref(EVS_SearchBush), TRIGGER_WALL_PRESS_A, COLLIDER_o212, 1, 0)
     Set(LVar0, Ref(N(SearchBush_Bush6)))
-    BindTrigger(Ref(N(EVS_SearchBush_Bushes)), TRIGGER_WALL_PRESS_A, COLLIDER_o213, 1, 0)
+    BindTrigger(Ref(EVS_SearchBush), TRIGGER_WALL_PRESS_A, COLLIDER_o213, 1, 0)
     Set(LVar0, Ref(N(SearchBush_Bush7)))
-    BindTrigger(Ref(N(EVS_SearchBush_Bushes)), TRIGGER_WALL_PRESS_A, COLLIDER_o214, 1, 0)
+    BindTrigger(Ref(EVS_SearchBush), TRIGGER_WALL_PRESS_A, COLLIDER_o214, 1, 0)
     Set(LVar0, Ref(N(SearchBush_Bush8)))
-    BindTrigger(Ref(N(EVS_SearchBush_Bushes)), TRIGGER_WALL_PRESS_A, COLLIDER_o215, 1, 0)
+    BindTrigger(Ref(EVS_SearchBush), TRIGGER_WALL_PRESS_A, COLLIDER_o215, 1, 0)
     Set(LVar0, Ref(N(SearchBush_Bush9)))
-    BindTrigger(Ref(N(EVS_SearchBush_Bushes)), TRIGGER_WALL_PRESS_A, COLLIDER_o216, 1, 0)
+    BindTrigger(Ref(EVS_SearchBush), TRIGGER_WALL_PRESS_A, COLLIDER_o216, 1, 0)
     Set(LVar0, Ref(N(SearchBush_Bush10)))
-    BindTrigger(Ref(N(EVS_SearchBush_Bushes)), TRIGGER_WALL_PRESS_A, COLLIDER_o217, 1, 0)
+    BindTrigger(Ref(EVS_SearchBush), TRIGGER_WALL_PRESS_A, COLLIDER_o217, 1, 0)
     Set(LVar0, Ref(N(SearchBush_Bush11)))
-    BindTrigger(Ref(N(EVS_SearchBush_Bushes)), TRIGGER_WALL_PRESS_A, COLLIDER_o218, 1, 0)
+    BindTrigger(Ref(EVS_SearchBush), TRIGGER_WALL_PRESS_A, COLLIDER_o218, 1, 0)
     Set(LVar0, Ref(N(SearchBush_Bush12)))
-    BindTrigger(Ref(N(EVS_SearchBush_Bushes)), TRIGGER_WALL_PRESS_A, COLLIDER_o219, 1, 0)
+    BindTrigger(Ref(EVS_SearchBush), TRIGGER_WALL_PRESS_A, COLLIDER_o219, 1, 0)
     Return
     End
 };

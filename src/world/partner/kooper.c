@@ -1,5 +1,5 @@
 #include "common.h"
-#include "../src/world/partners.h"
+#include "world/partners.h"
 #include "sprite/npc/WorldKooper.h"
 #include "sprite/player.h"
 #include "effects.h"
@@ -34,11 +34,11 @@ s32 ShellTossHitboxState = SHELL_TOSS_HITBOX_DISABLED;
 
 s32 N(lateral_hit_interactable_entity)(Npc* npc) {
     if (NpcHitQueryColliderID < 0) {
-        return FALSE;
+        return false;
     }
 
     if (!(NpcHitQueryColliderID & COLLISION_WITH_ENTITY_BIT)) {
-        return FALSE;
+        return false;
     }
 
     return entity_try_partner_interaction_trigger(NpcHitQueryColliderID & ~COLLISION_WITH_ENTITY_BIT);
@@ -60,20 +60,20 @@ s32 N(check_for_item_collision)(Npc* kooper) {
     N(HeldItemIdx) = test_item_entity_position(kooper->pos.x, kooper->pos.y, kooper->pos.z, kooper->collisionDiameter);
 
     if (N(HeldItemIdx) < 0) {
-        return FALSE;
+        return false;
     }
 
-    N(HasItem) = TRUE;
+    N(HasItem) = true;
     gOverrideFlags |= GLOBAL_OVERRIDES_40;
     set_item_entity_flags(N(HeldItemIdx), ITEM_ENTITY_FLAG_CANT_COLLECT);
-    return TRUE;
+    return true;
 }
 
 void N(init)(Npc* kooper) {
     kooper->collisionHeight = 37;
     kooper->collisionDiameter = 24;
     kooper->collisionChannel = COLLIDER_FLAG_IGNORE_PLAYER;
-    N(TriggeredBattle) = FALSE;
+    N(TriggeredBattle) = false;
 }
 
 API_CALLABLE(N(TakeOut)) {
@@ -108,12 +108,12 @@ API_CALLABLE(N(Update)) {
     if (isInitialCall) {
         partner_walking_enable(kooper, 1);
         mem_clear(N(TweesterPhysicsPtr), sizeof(TweesterPhysics));
-        TweesterTouchingPartner = NULL;
+        TweesterTouchingPartner = nullptr;
     }
 
     entity = TweesterTouchingPartner;
 
-    if (entity == NULL) {
+    if (entity == nullptr) {
         partner_walking_update_player_tracking(kooper);
         partner_walking_update_motion(kooper);
         return ApiStatus_BLOCK;
@@ -174,7 +174,7 @@ API_CALLABLE(N(Update)) {
 
             if (--N(TweesterPhysicsPtr)->countdown == 0) {
                 N(TweesterPhysicsPtr)->state = TWEESTER_PARTNER_INIT;
-                TweesterTouchingPartner = NULL;
+                TweesterTouchingPartner = nullptr;
             }
             break;
     }
@@ -182,8 +182,8 @@ API_CALLABLE(N(Update)) {
 }
 
 void N(try_cancel_tweester)(Npc* kooper) {
-    if (TweesterTouchingPartner != NULL) {
-        TweesterTouchingPartner = NULL;
+    if (TweesterTouchingPartner != nullptr) {
+        TweesterTouchingPartner = nullptr;
         kooper->flags = N(TweesterPhysicsPtr)->prevFlags;
         N(TweesterPhysicsPtr)->state = TWEESTER_PARTNER_INIT;
         partner_clear_player_tracking(kooper);
@@ -197,7 +197,6 @@ EvtScript EVS_WorldKooper_Update = {
 };
 
 API_CALLABLE(N(UseAbility)) {
-    Camera* cam;
     ItemEntity* heldItem;
     EncounterStatus* currentEncounter = &gCurrentEncounter;
     PlayerStatus* playerStatus = &gPlayerStatus;
@@ -208,7 +207,6 @@ API_CALLABLE(N(UseAbility)) {
     f32 testLength;
     s32 actionState;
     f32 moveAngle;
-    f32 colheight;
     f32 angleToStartPos;
 
     #define USE_STATE functionTemp[0]
@@ -263,9 +261,9 @@ API_CALLABLE(N(UseAbility)) {
 
             disable_player_input();
             script->functionTemp[2] = playerStatus->inputDisabledCount;
-            N(LockingPlayerInput) = TRUE;
+            N(LockingPlayerInput) = true;
             ShellTossHitboxState = SHELL_TOSS_HITBOX_DISABLED;
-            N(HasItem) = FALSE;
+            N(HasItem) = false;
             kooper->flags &= ~(NPC_FLAG_GRAVITY | NPC_FLAG_JUMPING | NPC_FLAG_FLYING);
             kooper->flags |= (NPC_FLAG_IGNORE_PLAYER_COLLISION | NPC_FLAG_IGNORE_WORLD_COLLISION);
             partnerStatus->actingPartner = PARTNER_KOOPER;
@@ -338,7 +336,7 @@ API_CALLABLE(N(UseAbility)) {
 #endif
 
             suggest_player_anim_allow_backward(ANIM_Mario1_Jump);
-            N(ShellTossKickFalling) = FALSE;
+            N(ShellTossKickFalling) = false;
             sfx_play_sound_at_npc(SOUND_QUICK_PLAYER_JUMP, SOUND_SPACE_DEFAULT, NPC_PARTNER);
             script->USE_STATE = SHELL_TOSS_STATE_JUMP;
             // fallthrough
@@ -356,7 +354,7 @@ API_CALLABLE(N(UseAbility)) {
             playerStatus->pos.y += kooper->jumpVel;
             if (kooper->jumpVel < 0.0f) {
                 if (!N(ShellTossKickFalling)) {
-                    N(ShellTossKickFalling) = TRUE;
+                    N(ShellTossKickFalling) = true;
                     suggest_player_anim_allow_backward(ANIM_Mario1_Fall);
                 }
             }
@@ -388,11 +386,11 @@ API_CALLABLE(N(UseAbility)) {
 
                 if (N(LockingPlayerInput)) {
                     enable_player_input();
-                    N(LockingPlayerInput) = FALSE;
+                    N(LockingPlayerInput) = false;
                 }
 
                 script->USE_STATE = SHELL_TOSS_STATE_KICK;
-                N(ShellTossKickFalling) = FALSE;
+                N(ShellTossKickFalling) = false;
                 gCameras[CAM_DEFAULT].moveFlags |= CAMERA_MOVE_IGNORE_PLAYER_Y;
                 sfx_play_sound_at_npc(SOUND_KOOPER_SHELL_KICK, SOUND_SPACE_DEFAULT, NPC_PARTNER);
                 sfx_play_sound_at_npc(SOUND_KOOPER_SHELL_SWIRL, SOUND_SPACE_DEFAULT, NPC_PARTNER);
@@ -497,7 +495,6 @@ API_CALLABLE(N(UseAbility)) {
                 kooper->moveSpeed = 0.0f;
             } else {
                 if (kooper->planarFlyDist > 140.0f) {
-                    label2:
                     script->USE_STATE = SHELL_TOSS_STATE_RETURN;
                     kooper->moveSpeed = 0.0f;
                     sfx_play_sound_at_npc(SOUND_NONE, SOUND_SPACE_DEFAULT, NPC_PARTNER);
@@ -616,7 +613,7 @@ API_CALLABLE(N(UseAbility)) {
     if (script->USE_STATE == SHELL_TOSS_STATE_FINISH) {
         if (N(LockingPlayerInput)) {
             enable_player_input();
-            N(LockingPlayerInput) = FALSE;
+            N(LockingPlayerInput) = false;
         }
 
         ShellTossHitboxState = SHELL_TOSS_HITBOX_DISABLED;
@@ -632,10 +629,10 @@ API_CALLABLE(N(UseAbility)) {
 
         if (N(HasItem)) {
             auto_collect_item_entity(N(HeldItemIdx));
-            N(HasItem) = FALSE;
+            N(HasItem) = false;
         }
 
-        N(TriggeredBattle) = FALSE;
+        N(TriggeredBattle) = false;
         partner_clear_player_tracking(kooper);
         return ApiStatus_DONE2;
     }
@@ -703,15 +700,15 @@ s32 N(test_first_strike)(Npc* kooper, Npc* enemy) {
         if (npc_test_move_taller_with_slipping(0, &xTemp, &yTemp, &zTemp, distToEnemy, angleToEnemy,
             kooperCollHeight, kooperCollRadius + enemyCollRadius)
         ) {
-            return FALSE;
+            return false;
         }
 
         if (kooperY > enemyY + enemyCollHeight) {
-            return FALSE;
+            return false;
         }
 
         if (enemyY > kooperY + kooperCollHeight) {
-            return FALSE;
+            return false;
         }
 
         kooperX = enemyX - kooperX;
@@ -720,25 +717,25 @@ s32 N(test_first_strike)(Npc* kooper, Npc* enemy) {
 
         if (!(SQ(kooperCollRadius) + SQ(enemyCollRadius) <= distToEnemy)) {
             ShellTossHitboxState = SHELL_TOSS_HITBOX_HIT_ENEMY;
-            return TRUE;
+            return true;
         }
     }
-    return FALSE;
+    return false;
 }
 
 void N(pre_battle)(Npc* kooper) {
     PlayerStatus* playerStatus = &gPlayerStatus;
     PartnerStatus* partnerStatus = &gPartnerStatus;
-    N(TriggeredBattle) = FALSE;
+    N(TriggeredBattle) = false;
 
     if (partnerStatus->partnerActionState != PARTNER_ACTION_NONE) {
         if (partnerStatus->partnerActionState == PARTNER_ACTION_KOOPER_TOSS) {
-            N(TriggeredBattle) = TRUE;
+            N(TriggeredBattle) = true;
         }
 
         if (N(LockingPlayerInput)) {
             enable_player_input();
-            N(LockingPlayerInput) = FALSE;
+            N(LockingPlayerInput) = false;
         }
 
         ShellTossHitboxState = SHELL_TOSS_HITBOX_DISABLED;

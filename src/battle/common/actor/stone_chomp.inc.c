@@ -95,7 +95,7 @@ s32 N(StatusTable)[] = {
     STATUS_KEY_POISON,              0,
     STATUS_KEY_FROZEN,              0,
     STATUS_KEY_DIZZY,              25,
-    STATUS_KEY_FEAR,                0,
+    STATUS_KEY_UNUSED,              0,
     STATUS_KEY_STATIC,              0,
     STATUS_KEY_PARALYZE,           50,
     STATUS_KEY_SHRINK,             75,
@@ -105,7 +105,7 @@ s32 N(StatusTable)[] = {
     STATUS_TURN_MOD_POISON,         0,
     STATUS_TURN_MOD_FROZEN,         0,
     STATUS_TURN_MOD_DIZZY,         -1,
-    STATUS_TURN_MOD_FEAR,           0,
+    STATUS_TURN_MOD_UNUSED,         0,
     STATUS_TURN_MOD_STATIC,         0,
     STATUS_TURN_MOD_PARALYZE,       0,
     STATUS_TURN_MOD_SHRINK,         0,
@@ -294,13 +294,13 @@ EvtScript N(EVS_Chomp_HopToPos) = {
             Sub(LVar4, LVar3)
             IfLt(LVar4, 30)
                 Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-                Call(JumpToGoal, ACTOR_SELF, 5, FALSE, TRUE, FALSE)
+                Call(JumpToGoal, ACTOR_SELF, 5, false, true, false)
                 Call(PlaySoundAtActor, ACTOR_SELF, STONE_STONE_CHOMP_STEP)
             Else
                 Set(LVar4, LVar3)
                 Add(LVar3, 30)
                 Call(SetGoalPos, ACTOR_SELF, LVar3, LVar1, LVar2)
-                Call(JumpToGoal, ACTOR_SELF, 0, FALSE, TRUE, FALSE)
+                Call(JumpToGoal, ACTOR_SELF, 0, false, true, false)
                 Call(PlaySoundAtActor, ACTOR_SELF, STONE_STONE_CHOMP_STEP)
             EndIf
         Else
@@ -308,12 +308,12 @@ EvtScript N(EVS_Chomp_HopToPos) = {
             Sub(LVar4, LVar0)
             IfLt(LVar4, 30)
                 Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-                Call(JumpToGoal, ACTOR_SELF, 5, FALSE, TRUE, FALSE)
+                Call(JumpToGoal, ACTOR_SELF, 5, false, true, false)
                 Call(PlaySoundAtActor, ACTOR_SELF, STONE_STONE_CHOMP_STEP)
             Else
                 Sub(LVar3, 30)
                 Call(SetGoalPos, ACTOR_SELF, LVar3, LVar1, LVar2)
-                Call(JumpToGoal, ACTOR_SELF, 0, FALSE, TRUE, FALSE)
+                Call(JumpToGoal, ACTOR_SELF, 0, false, true, false)
                 Call(PlaySoundAtActor, ACTOR_SELF, STONE_STONE_CHOMP_STEP)
             EndIf
         EndIf
@@ -324,7 +324,7 @@ EvtScript N(EVS_Chomp_HopToPos) = {
 };
 
 EvtScript N(EVS_Init) = {
-    Call(SetActorVar, ACTOR_SELF, AVAR_EnableChainSounds, FALSE)
+    Call(SetActorVar, ACTOR_SELF, AVAR_EnableChainSounds, false)
     Call(BindTakeTurn, ACTOR_SELF, Ref(N(EVS_TakeTurn)))
     Call(BindIdle, ACTOR_SELF, Ref(N(EVS_Idle)))
     Call(BindHandleEvent, ACTOR_SELF, Ref(N(EVS_HandleEvent)))
@@ -468,7 +468,7 @@ EvtScript N(EVS_UpdateChain) = {
 };
 
 EvtScript N(EVS_HandleEvent) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(SetActorScale, ACTOR_SELF, Float(1.0), Float(1.0), Float(1.0))
     Call(GetLastEvent, ACTOR_SELF, LVar0)
@@ -514,7 +514,7 @@ EvtScript N(EVS_HandleEvent) = {
             SetConst(LVar1, ANIM_StoneChomp_Hurt)
             ExecWait(EVS_Enemy_SpinSmashHit)
             Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_RESTART)
-            Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+            Call(UseIdleAnimation, ACTOR_SELF, true)
             Return
         CaseEq(EVENT_SHOCK_HIT)
             SetConst(LVar0, PRT_MAIN)
@@ -529,21 +529,21 @@ EvtScript N(EVS_HandleEvent) = {
             Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
             Call(SetActorJumpGravity, ACTOR_SELF, Float(1.4))
             Call(AddGoalPos, ACTOR_SELF, 30, 0, 0)
-            Call(JumpToGoal, ACTOR_SELF, 15, FALSE, TRUE, FALSE)
+            Call(JumpToGoal, ACTOR_SELF, 15, false, true, false)
             Call(PlaySoundAtActor, ACTOR_SELF, STONE_STONE_CHOMP_STEP)
             Call(AddGoalPos, ACTOR_SELF, 15, 0, 0)
-            Call(JumpToGoal, ACTOR_SELF, 8, FALSE, TRUE, FALSE)
+            Call(JumpToGoal, ACTOR_SELF, 8, false, true, false)
             Call(PlaySoundAtActor, ACTOR_SELF, STONE_STONE_CHOMP_STEP)
             Call(AddGoalPos, ACTOR_SELF, 5, 0, 0)
-            Call(JumpToGoal, ACTOR_SELF, 5, FALSE, TRUE, FALSE)
+            Call(JumpToGoal, ACTOR_SELF, 5, false, true, false)
             Call(PlaySoundAtActor, ACTOR_SELF, STONE_STONE_CHOMP_STEP)
-            Call(JumpToGoal, ACTOR_SELF, 5, FALSE, TRUE, FALSE)
+            Call(JumpToGoal, ACTOR_SELF, 5, false, true, false)
             Call(PlaySoundAtActor, ACTOR_SELF, STONE_STONE_CHOMP_STEP)
             SetConst(LVar0, PRT_MAIN)
             SetConst(LVar1, ANIM_StoneChomp_SlowBite)
             ExecWait(N(EVS_Chomp_HopHome))
             Call(SetActorJumpGravity, ACTOR_SELF, Float(1.6))
-            Call(JumpToGoal, ACTOR_SELF, 5, FALSE, TRUE, FALSE)
+            Call(JumpToGoal, ACTOR_SELF, 5, false, true, false)
             Call(PlaySoundAtActor, ACTOR_SELF, STONE_STONE_CHOMP_STEP)
             Thread
                 Call(ShakeCam, CAM_BATTLE, 0, 1, Float(0.5))
@@ -551,7 +551,7 @@ EvtScript N(EVS_HandleEvent) = {
             Call(SetGoalToHome, ACTOR_SELF)
             Call(GetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
             Call(SetPartPos, ACTOR_SELF, PRT_TARGET, LVar0, LVar1, LVar2)
-            Call(SetActorVar, ACTOR_SELF, AVAR_EnableChainSounds, FALSE)
+            Call(SetActorVar, ACTOR_SELF, AVAR_EnableChainSounds, false)
         CaseOrEq(EVENT_ZERO_DAMAGE)
         CaseOrEq(EVENT_IMMUNE)
             SetConst(LVar0, PRT_MAIN)
@@ -562,7 +562,7 @@ EvtScript N(EVS_HandleEvent) = {
             SetConst(LVar0, PRT_MAIN)
             SetConst(LVar1, ANIM_StoneChomp_Hurt)
             ExecWait(EVS_Enemy_ShockHit)
-            Call(SetActorVar, ACTOR_SELF, AVAR_EnableChainSounds, FALSE)
+            Call(SetActorVar, ACTOR_SELF, AVAR_EnableChainSounds, false)
             SetConst(LVar0, PRT_MAIN)
             SetConst(LVar1, ANIM_StoneChomp_Hurt)
             ExecWait(EVS_Enemy_Death)
@@ -612,7 +612,7 @@ EvtScript N(EVS_HandleEvent) = {
             SetConst(LVar1, ANIM_StoneChomp_Hurt)
             ExecWait(EVS_Enemy_AirLift)
             Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_RESTART)
-            Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+            Call(UseIdleAnimation, ACTOR_SELF, true)
             Return
         CaseEq(EVENT_BLOW_AWAY)
             SetConst(LVar0, PRT_MAIN)
@@ -638,7 +638,7 @@ EvtScript N(EVS_HandleEvent) = {
         EndIf
     EndIf
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };
@@ -646,19 +646,19 @@ EvtScript N(EVS_HandleEvent) = {
 extern API_CALLABLE(ClearChargesOn);
 
 EvtScript N(EVS_TakeTurn) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
-    Call(SetActorVar, ACTOR_SELF, AVAR_EnableChainSounds, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
+    Call(SetActorVar, ACTOR_SELF, AVAR_EnableChainSounds, true)
     Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(UseBattleCamPreset, BTL_CAM_ENEMY_APPROACH)
     Call(BattleCamTargetActor, ACTOR_SELF)
-    Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_TARGET, BTL_CAM_XADJ_AVG, FALSE)
+    Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_TARGET, BTL_CAM_XADJ_AVG, false)
     Call(SetActorJumpGravity, ACTOR_SELF, Float(0.5))
     Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
     Set(LVar1, 0)
     Add(LVar0, 45)
     Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-    Call(JumpToGoal, ACTOR_SELF, 15, FALSE, TRUE, FALSE)
+    Call(JumpToGoal, ACTOR_SELF, 15, false, true, false)
     Call(PlaySoundAtActor, ACTOR_SELF, STONE_STONE_CHOMP_STEP)
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_StoneChomp_SlowBite)
     Wait(15)
@@ -675,7 +675,7 @@ EvtScript N(EVS_TakeTurn) = {
             Set(LVar1, 0)
             Call(SetActorJumpGravity, ACTOR_SELF, Float(1.8))
             Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Call(JumpToGoal, ACTOR_SELF, 10, FALSE, TRUE, FALSE)
+            Call(JumpToGoal, ACTOR_SELF, 10, false, true, false)
             Call(PlaySoundAtActor, ACTOR_SELF, STONE_STONE_CHOMP_STEP)
             IfEq(LVarA, HIT_RESULT_LUCKY)
                 Call(EnemyTestTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_TRIGGER_LUCKY, 0, 0, 0)
@@ -684,11 +684,11 @@ EvtScript N(EVS_TakeTurn) = {
             Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
             Sub(LVar0, 25)
             Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Call(JumpToGoal, ACTOR_SELF, 6, FALSE, TRUE, FALSE)
+            Call(JumpToGoal, ACTOR_SELF, 6, false, true, false)
             Call(PlaySoundAtActor, ACTOR_SELF, STONE_STONE_CHOMP_STEP)
             Sub(LVar0, 15)
             Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Call(JumpToGoal, ACTOR_SELF, 4, FALSE, TRUE, FALSE)
+            Call(JumpToGoal, ACTOR_SELF, 4, false, true, false)
             Call(PlaySoundAtActor, ACTOR_SELF, STONE_STONE_CHOMP_STEP)
             Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_StoneChomp_Bite)
             Wait(20)
@@ -705,7 +705,7 @@ EvtScript N(EVS_TakeTurn) = {
             Call(SetActorYaw, ACTOR_SELF, 0)
             Call(HPBarToHome, ACTOR_SELF)
             Call(RemoveActorDecoration, ACTOR_SELF, PRT_MAIN, 0)
-            Call(SetActorVar, ACTOR_SELF, AVAR_EnableChainSounds, FALSE)
+            Call(SetActorVar, ACTOR_SELF, AVAR_EnableChainSounds, false)
             Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_RESTART)
             Return
         EndCaseGroup
@@ -722,7 +722,7 @@ EvtScript N(EVS_TakeTurn) = {
     Set(LVar1, 27)
     Call(SetActorJumpGravity, ACTOR_SELF, Float(0.2))
     Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-    Call(JumpToGoal, ACTOR_SELF, 5, FALSE, TRUE, FALSE)
+    Call(JumpToGoal, ACTOR_SELF, 5, false, true, false)
     Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
     Call(SetPartPos, ACTOR_SELF, PRT_TARGET, LVar0, LVar1, LVar2)
     Wait(2)
@@ -746,18 +746,18 @@ EvtScript N(EVS_TakeTurn) = {
             Set(LVar1, 0)
             Call(SetActorJumpGravity, ACTOR_SELF, Float(1.8))
             Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Call(JumpToGoal, ACTOR_SELF, 10, FALSE, TRUE, FALSE)
+            Call(JumpToGoal, ACTOR_SELF, 10, false, true, false)
             Call(PlaySoundAtActor, ACTOR_SELF, STONE_STONE_CHOMP_STEP)
             Add(LVar0, 30)
             Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Call(JumpToGoal, ACTOR_SELF, 8, FALSE, TRUE, FALSE)
+            Call(JumpToGoal, ACTOR_SELF, 8, false, true, false)
             Call(PlaySoundAtActor, ACTOR_SELF, STONE_STONE_CHOMP_STEP)
             Add(LVar0, 20)
             Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Call(JumpToGoal, ACTOR_SELF, 6, FALSE, TRUE, FALSE)
+            Call(JumpToGoal, ACTOR_SELF, 6, false, true, false)
             Call(PlaySoundAtActor, ACTOR_SELF, STONE_STONE_CHOMP_STEP)
             Sub(LVar0, 10)
-            Call(JumpToGoal, ACTOR_SELF, 4, FALSE, TRUE, FALSE)
+            Call(JumpToGoal, ACTOR_SELF, 4, false, true, false)
             Call(PlaySoundAtActor, ACTOR_SELF, STONE_STONE_CHOMP_STEP)
             Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_StoneChomp_Idle)
             Wait(8)
@@ -773,10 +773,10 @@ EvtScript N(EVS_TakeTurn) = {
             Call(SetActorYaw, ACTOR_SELF, 0)
         EndCaseGroup
     EndSwitch
-    Call(SetActorVar, ACTOR_SELF, AVAR_EnableChainSounds, FALSE)
+    Call(SetActorVar, ACTOR_SELF, AVAR_EnableChainSounds, false)
     Call(HPBarToHome, ACTOR_SELF)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_RESTART)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };

@@ -2,6 +2,7 @@
 #include "script_api/battle.h"
 #include "effects.h"
 #include "misc_patches/custom_status.h"
+#include "misc_patches/misc_patches.h"
 
 HitResult calc_item_check_hit(void) {
     BattleStatus* battleStatus = &gBattleStatus;
@@ -17,12 +18,12 @@ HitResult calc_item_check_hit(void) {
     battleStatus->curTargetPart2 = currentTargetPartS8;
 
     actor = get_actor(actorID);
-    if (actor == NULL) {
+    if (actor == nullptr) {
         return HIT_RESULT_HIT;
     }
 
     actorPart = get_actor_part(actor, currentTargetPart);
-    ASSERT(actorPart != NULL);
+    ASSERT(actorPart != nullptr);
 
     if (actorPart->eventFlags & ACTOR_EVENT_FLAG_ILLUSORY) {
         return HIT_RESULT_MISS;
@@ -54,37 +55,36 @@ HitResult calc_item_damage_enemy(void) {
     Actor* partner = battleStatus->partnerActor;
     s32 currentTargetPartID = battleStatus->curTargetPart;
     s32 partImmuneToElement;
-    s32 wasSpecialHit = FALSE;
+    s32 wasSpecialHit = false;
     s32 actorClass;
-    s32 isFireDamage = FALSE;
-    s32 isWaterDamage = FALSE;
-    s32 isShockDamage = FALSE;
-    s32 isIceDamage = FALSE;
+    s32 isFireDamage = false;
+    s32 isWaterDamage = false;
+    s32 isShockDamage = false;
+    s32 isIceDamage = false;
     Actor* target;
     ActorPart* targetPart;
     Evt* script;
     s32 attackDamage;
     s32 temp;
-    s32 targetDefense;
     ActorState* state;
     s32 dispatchEvent;
     s32 wasStatusInflicted;
     s32 hitResult;
 
-    battleStatus->wasStatusInflicted = FALSE;
+    battleStatus->wasStatusInflicted = false;
     battleStatus->lastAttackDamage = 0;
     battleStatus->attackerActorID = player->actorID;
     battleStatus->curTargetID2 = battleStatus->curTargetID;
     battleStatus->curTargetPart2 = battleStatus->curTargetPart;
     target = get_actor(currentTargetID);
-    wasStatusInflicted = FALSE;
+    wasStatusInflicted = false;
 
-    if (target == NULL) {
+    if (target == nullptr) {
         return HIT_RESULT_HIT;
     }
 
     targetPart = get_actor_part(target, currentTargetPartID);
-    if (targetPart == NULL) {
+    if (targetPart == nullptr) {
         PANIC();
     }
 
@@ -98,19 +98,19 @@ HitResult calc_item_damage_enemy(void) {
 
     if (battleStatus->curAttackElement & DAMAGE_TYPE_FIRE) {
         fx_ring_blast(0, state->goalPos.x, state->goalPos.y, state->goalPos.z + 5.0f, 1.0f, 24);
-        isFireDamage = TRUE;
+        isFireDamage = true;
     }
     if (battleStatus->curAttackElement & DAMAGE_TYPE_SHOCK) {
         apply_shock_effect(target);
-        isShockDamage = TRUE;
+        isShockDamage = true;
     }
     if (battleStatus->curAttackElement & DAMAGE_TYPE_WATER) {
         fx_water_splash(0, state->goalPos.x, state->goalPos.y, state->goalPos.z + 5.0f, 1.0f, 24);
-        isWaterDamage = TRUE;
+        isWaterDamage = true;
     }
     if (battleStatus->curAttackElement & DAMAGE_TYPE_ICE) {
         fx_big_snowflakes(0, state->goalPos.x, state->goalPos.y, state->goalPos.z + 5.0f);
-        isIceDamage = TRUE;
+        isIceDamage = true;
     }
 
     if (!(battleStatus->curAttackElement & DAMAGE_TYPE_REMOVE_BUFFS)) {
@@ -133,9 +133,9 @@ HitResult calc_item_damage_enemy(void) {
     }
 
     if (targetPart->elementalImmunities & battleStatus->curAttackElement) {
-        partImmuneToElement = TRUE;
+        partImmuneToElement = true;
     } else {
-        partImmuneToElement = FALSE;
+        partImmuneToElement = false;
     }
 
     if (targetPart->eventFlags & (ACTOR_EVENT_FLAG_ENCHANTED | ACTOR_EVENT_FLAG_STAR_ROD_ENCHANTED)) {
@@ -228,11 +228,11 @@ HitResult calc_item_damage_enemy(void) {
             dispatchEvent = EVENT_IMMUNE;
             if (targetPart->eventFlags & ACTOR_EVENT_FLAG_ENCHANTED) {
                 dispatchEvent = EVENT_STAR_BEAM;
-                wasStatusInflicted = TRUE;
+                wasStatusInflicted = true;
             }
             if (targetPart->eventFlags & ACTOR_EVENT_FLAG_ATTACK_CHARGED) {
                 dispatchEvent = EVENT_STAR_BEAM;
-                wasStatusInflicted = TRUE;
+                wasStatusInflicted = true;
             }
             if (targetPart->eventFlags & ACTOR_EVENT_FLAG_STAR_ROD_ENCHANTED) {
                 dispatchEvent = EVENT_INVUNERABLE_TAUNT;
@@ -248,7 +248,7 @@ HitResult calc_item_damage_enemy(void) {
             {
                 target->attackBoost = 0;
                 target->defenseBoost = 0;
-                target->isGlowing = FALSE;
+                target->isGlowing = false;
                 dispatchEvent = EVENT_HIT;
                 if (target->staticStatus != 0) {
                     target->staticStatus = 0;
@@ -260,7 +260,7 @@ HitResult calc_item_damage_enemy(void) {
                     target->transparentDuration = 0;
                     remove_status_transparent(target->hudElementDataIndex);
                 }
-                wasStatusInflicted = TRUE;
+                wasStatusInflicted = true;
                 hitResult = HIT_RESULT_HIT;
             }
         }
@@ -271,11 +271,11 @@ HitResult calc_item_damage_enemy(void) {
             dispatchEvent = EVENT_IMMUNE;
             if (targetPart->eventFlags & ACTOR_EVENT_FLAG_ENCHANTED) {
                 dispatchEvent = EVENT_PEACH_BEAM;
-                wasStatusInflicted = TRUE;
+                wasStatusInflicted = true;
             }
             if (targetPart->eventFlags & ACTOR_EVENT_FLAG_STAR_ROD_ENCHANTED) {
                 dispatchEvent = EVENT_PEACH_BEAM;
-                wasStatusInflicted = TRUE;
+                wasStatusInflicted = true;
             }
         }
     }
@@ -335,7 +335,7 @@ HitResult calc_item_damage_enemy(void) {
             if (dispatchEvent == EVENT_DEATH) {
                 dispatchEvent = EVENT_BURN_DEATH;
             }
-            isFireDamage = TRUE;
+            isFireDamage = true;
         }
     }
 
@@ -350,7 +350,7 @@ HitResult calc_item_damage_enemy(void) {
         #define INFLICT_STATUS(STATUS_TYPE) \
             if ((battleStatus->curAttackStatus & STATUS_FLAG_##STATUS_TYPE) && \
                 try_inflict_status(target, STATUS_KEY_##STATUS_TYPE, STATUS_TURN_MOD_##STATUS_TYPE)) { \
-                wasStatusInflicted = TRUE; \
+                wasStatusInflicted = true; \
             } \
 
         INFLICT_STATUS(SHRINK);
@@ -359,15 +359,19 @@ HitResult calc_item_damage_enemy(void) {
         INFLICT_STATUS(SLEEP);
         INFLICT_STATUS(STOP);
         INFLICT_STATUS(STATIC);
-        INFLICT_STATUS(FEAR);
         INFLICT_STATUS(PARALYZE);
         INFLICT_STATUS(DIZZY);
 
-        if (inflict_next_attack_statuses(NULL, target, state->goalPos)) {
-            wasStatusInflicted = TRUE;
+        if (inflict_next_attack_statuses(nullptr, target, state->goalPos)) {
+            wasStatusInflicted = true;
         }
 
         #undef INFLICT_STATUS
+
+        if ((battleStatus->curAttackStatus & STATUS_FLAG_UNUSED) &&
+            try_inflict_status(target, STATUS_KEY_UNUSED, STATUS_TURN_MOD_UNUSED)) {
+            wasStatusInflicted = true;
+        }
 
         if (wasStatusInflicted) {
             if (dispatchEvent == EVENT_ZERO_DAMAGE) {
@@ -384,7 +388,7 @@ HitResult calc_item_damage_enemy(void) {
 
     if ((gBattleStatus.flags1 & BS_FLAGS1_TRIGGER_EVENTS) && (battleStatus->curAttackElement & DAMAGE_TYPE_FEAR)) {
         if (rand_int(99) < temp
-            && (target->debuff != STATUS_KEY_FEAR
+            && (target->debuff != STATUS_KEY_UNUSED
                 && target->debuff != STATUS_KEY_DIZZY
                 && target->debuff != STATUS_KEY_PARALYZE
                 && target->debuff != STATUS_KEY_SLEEP
@@ -394,10 +398,10 @@ HitResult calc_item_damage_enemy(void) {
         {
             dispatchEvent = EVENT_SCARE_AWAY;
             hitResult = HIT_RESULT_HIT;
-            wasSpecialHit = TRUE;
+            wasSpecialHit = true;
             gBattleStatus.flags1 |= BS_FLAGS1_TRIGGER_EVENTS | BS_FLAGS1_INCLUDE_POWER_UPS | BS_FLAGS1_SHOW_PLAYER_DECORATIONS | BS_FLAGS1_ACTORS_VISIBLE;
             sfx_play_sound_at_position(SOUND_DAMAGE_STARS, SOUND_SPACE_DEFAULT, state->goalPos.x, state->goalPos.y, state->goalPos.z);
-            wasStatusInflicted = TRUE;
+            wasStatusInflicted = true;
             gBattleStatus.flags1 |= BS_FLAGS1_NICE_HIT;
         } else {
             dispatchEvent = EVENT_IMMUNE;
@@ -414,7 +418,7 @@ HitResult calc_item_damage_enemy(void) {
             sfx_play_sound_at_position(SOUND_DAMAGE_STARS, SOUND_SPACE_DEFAULT, state->goalPos.x, state->goalPos.y, state->goalPos.z);
         }
 
-        if (battleStatus->lastAttackDamage > 0 || (battleStatus->curAttackElement & DAMAGE_TYPE_STATUS_ALWAYS_HITS) && wasSpecialHit) {
+        if (battleStatus->lastAttackDamage > 0 || ((battleStatus->curAttackElement & DAMAGE_TYPE_STATUS_ALWAYS_HITS) && wasSpecialHit)) {
             if (gBattleStatus.flags1 & BS_FLAGS1_NICE_HIT) {
                 show_action_rating(ACTION_RATING_NICE, target, state->goalPos.x, state->goalPos.y, state->goalPos.z);
             } else {
@@ -424,14 +428,14 @@ HitResult calc_item_damage_enemy(void) {
     }
 
     if (gBattleStatus.flags1 & BS_FLAGS1_TRIGGER_EVENTS) {
-        func_80266970(target);
+        cancel_action_rating_combo(target);
     }
 
     dispatch_event_actor(target, dispatchEvent);
 
     if (actorClass == ACTOR_PARTNER) {
         if ((battleStatus->lastAttackDamage > 0) && (gBattleStatus.flags1 & BS_FLAGS1_TRIGGER_EVENTS)) {
-            inflict_status(target, STATUS_KEY_DAZE, battleStatus->lastAttackDamage);
+            inflict_status(target, STATUS_KEY_KO, battleStatus->lastAttackDamage);
         }
     }
 

@@ -35,7 +35,7 @@ s32 N(DefaultAnims)[] = {
     STATUS_KEY_STATIC,    ANIM_Bandit_Leader_Idle,
     STATUS_KEY_PARALYZE,  ANIM_Bandit_Leader_Still,
     STATUS_KEY_DIZZY,     ANIM_Bandit_Leader_Dizzy,
-    STATUS_KEY_FEAR,      ANIM_Bandit_Leader_Dizzy,
+    STATUS_KEY_UNUSED,      ANIM_Bandit_Leader_Dizzy,
     STATUS_END,
 };
 
@@ -48,7 +48,7 @@ s32 N(HoldingAnims)[] = {
     STATUS_KEY_STATIC,    ANIM_Bandit_Leader_IdleHolding,
     STATUS_KEY_PARALYZE,  ANIM_Bandit_Leader_StillHolding,
     STATUS_KEY_DIZZY,     ANIM_Bandit_Leader_Dizzy,
-    STATUS_KEY_FEAR,      ANIM_Bandit_Leader_Dizzy,
+    STATUS_KEY_UNUSED,      ANIM_Bandit_Leader_Dizzy,
     STATUS_END,
 };
 
@@ -64,7 +64,7 @@ s32 N(StatusTable)[] = {
     STATUS_KEY_POISON,            100,
     STATUS_KEY_FROZEN,             40,
     STATUS_KEY_DIZZY,              40,
-    STATUS_KEY_FEAR,                0,
+    STATUS_KEY_UNUSED,                0,
     STATUS_KEY_STATIC,             30,
     STATUS_KEY_PARALYZE,           40,
     STATUS_KEY_SHRINK,             75,
@@ -74,7 +74,7 @@ s32 N(StatusTable)[] = {
     STATUS_TURN_MOD_POISON,         0,
     STATUS_TURN_MOD_FROZEN,        -1,
     STATUS_TURN_MOD_DIZZY,         -2,
-    STATUS_TURN_MOD_FEAR,           0,
+    STATUS_TURN_MOD_UNUSED,           0,
     STATUS_TURN_MOD_STATIC,        -1,
     STATUS_TURN_MOD_PARALYZE,      -1,
     STATUS_TURN_MOD_SHRINK,         0,
@@ -139,7 +139,7 @@ EvtScript N(EVS_Idle) = {
 };
 
 EvtScript N(EVS_HandleEvent) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(GetLastEvent, ACTOR_SELF, LVar0)
     Switch(LVar0)
@@ -190,7 +190,7 @@ EvtScript N(EVS_HandleEvent) = {
             SetConst(LVar1, ANIM_Bandit_Leader_Run)
             ExecWait(EVS_Enemy_ReturnHome)
             Call(SetActorJumpGravity, ACTOR_SELF, Float(1.6))
-            Call(JumpToGoal, ACTOR_SELF, 5, FALSE, TRUE, FALSE)
+            Call(JumpToGoal, ACTOR_SELF, 5, false, true, false)
         CaseEq(EVENT_SHOCK_DEATH)
             SetConst(LVar0, PRT_MAIN)
             SetConst(LVar1, ANIM_Bandit_Leader_Hurt)
@@ -241,7 +241,7 @@ EvtScript N(EVS_HandleEvent) = {
     EndSwitch
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Bandit_Leader_Idle)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };
@@ -283,7 +283,7 @@ EvtScript N(EVS_TryFindLocation) = {
     EndIf
 
 EvtScript N(EVS_Summon) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(PlaySoundAtActor, ACTOR_SELF, SOUND_GENERAL_WHISTLE)
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Bandit_Leader_Relief)
@@ -303,7 +303,7 @@ EvtScript N(EVS_Summon) = {
             EVT_VEC3I_SET(LVarA, 45, 0, -5)
     EndSwitch
 
-    Call(SummonEnemy, Ref(N(SummonFormation)), FALSE)
+    Call(SummonEnemy, Ref(N(SummonFormation)), false)
     Set(LVarF, LVar0)
     Call(OverrideActorLevel, LVarF, 0)
     Set(LVarD, ANIM_Bandit_Run)
@@ -325,27 +325,27 @@ EvtScript N(EVS_Summon) = {
     Call(HPBarToHome, LVarF)
 
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
 
     Return
     End
 };
 
 EvtScript N(EVS_Tackle) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
 
     Call(UseBattleCamPreset, BTL_CAM_ENEMY_APPROACH)
     Call(BattleCamTargetActor, ACTOR_SELF)
-    Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_TARGET, BTL_CAM_XADJ_AVG, FALSE)
+    Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_TARGET, BTL_CAM_XADJ_AVG, false)
     Call(GetBattlePhase, LVar0)
 
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Bandit_Leader_Run)
     Call(SetGoalToTarget, ACTOR_SELF)
     Call(AddGoalPos, ACTOR_SELF, 50, 0, 0)
     Call(SetActorSpeed, ACTOR_SELF, Float(6.0))
-    Call(RunToGoal, ACTOR_SELF, 0, FALSE)
+    Call(RunToGoal, ACTOR_SELF, 0, false)
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Bandit_Leader_Idle)
     Wait(6)
 
@@ -353,7 +353,7 @@ EvtScript N(EVS_Tackle) = {
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Bandit_Leader_Walk)
     Call(SetGoalToTarget, ACTOR_SELF)
     Call(AddGoalPos, ACTOR_SELF, 35, 0, 0)
-    Call(RunToGoal, ACTOR_SELF, 0, FALSE)
+    Call(RunToGoal, ACTOR_SELF, 0, false)
     Call(PlaySoundAtActor, ACTOR_SELF, SOUND_BANDIT_STEAL)
     Call(SetActorSounds, ACTOR_SELF, ACTOR_SOUND_WALK, SOUND_NONE, SOUND_NONE)
     Call(EnemyTestTarget, ACTOR_SELF, LVar0, 0, 0, 1, BS_FLAGS1_INCLUDE_POWER_UPS)
@@ -364,17 +364,17 @@ EvtScript N(EVS_Tackle) = {
             Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Bandit_Leader_Tackle)
             Call(SetGoalToTarget, ACTOR_SELF)
             Call(SetActorSpeed, ACTOR_SELF, Float(8.0))
-            Call(RunToGoal, ACTOR_SELF, 0, FALSE)
+            Call(RunToGoal, ACTOR_SELF, 0, false)
             Call(ResetAllActorSounds, ACTOR_SELF)
             Call(SetActorSpeed, ACTOR_SELF, Float(6.0))
             Call(SetActorJumpGravity, ACTOR_SELF, Float(0.5))
             Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
             Sub(LVar0, 30)
             Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Call(JumpToGoal, ACTOR_SELF, 8, FALSE, TRUE, FALSE)
+            Call(JumpToGoal, ACTOR_SELF, 8, false, true, false)
             Sub(LVar0, 20)
             Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Call(JumpToGoal, ACTOR_SELF, 8, FALSE, TRUE, FALSE)
+            Call(JumpToGoal, ACTOR_SELF, 8, false, true, false)
             Wait(5)
             IfEq(LVarA, HIT_RESULT_LUCKY)
                 Call(EnemyTestTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_TRIGGER_LUCKY, 0, 0, 0)
@@ -387,19 +387,19 @@ EvtScript N(EVS_Tackle) = {
             Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Bandit_Leader_Run)
             Call(SetGoalToHome, ACTOR_SELF)
             Call(SetActorSpeed, ACTOR_SELF, Float(8.0))
-            Call(RunToGoal, ACTOR_SELF, 0, FALSE)
+            Call(RunToGoal, ACTOR_SELF, 0, false)
             Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Bandit_Leader_Idle)
             Call(RemoveActorDecoration, ACTOR_SELF, PRT_MAIN, 0)
             Call(SetActorYaw, ACTOR_SELF, 0)
             Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-            Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+            Call(UseIdleAnimation, ACTOR_SELF, true)
             Return
         EndCaseGroup
     EndSwitch
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Bandit_Leader_Tackle)
     Call(SetGoalToTarget, ACTOR_SELF)
     Call(SetActorSpeed, ACTOR_SELF, Float(8.0))
-    Call(RunToGoal, ACTOR_SELF, 0, FALSE)
+    Call(RunToGoal, ACTOR_SELF, 0, false)
     Call(ResetAllActorSounds, ACTOR_SELF)
     Wait(2)
     Call(EnemyDamageTarget, ACTOR_SELF, LVar0, 0, 0, 0, DMG_LD_TACKLE, BS_FLAGS1_TRIGGER_EVENTS)
@@ -438,7 +438,7 @@ EvtScript N(EVS_Tackle) = {
             Set(LVar1, 0)
             Call(SetActorJumpGravity, ACTOR_SELF, Float(1.8))
             Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Call(JumpToGoal, ACTOR_SELF, 10, FALSE, TRUE, FALSE)
+            Call(JumpToGoal, ACTOR_SELF, 10, false, true, false)
             Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Bandit_Leader_Idle)
             Wait(20)
             Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Bandit_Leader_Run)
@@ -447,11 +447,11 @@ EvtScript N(EVS_Tackle) = {
             Call(YieldTurn)
             Call(SetGoalToHome, ACTOR_SELF)
             Call(SetActorSpeed, ACTOR_SELF, Float(8.0))
-            Call(RunToGoal, ACTOR_SELF, 0, FALSE)
+            Call(RunToGoal, ACTOR_SELF, 0, false)
         EndCaseGroup
     EndSwitch
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };

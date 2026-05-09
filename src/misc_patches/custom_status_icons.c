@@ -62,7 +62,7 @@ void custom_icons_update(CustomHudComplexStatusIcon customIcons[CUSTOM_ICON_AMT]
         if (icon->activeTask == STATUS_ICON_TASK_LOAD) {
             s32 elementID = icon->activeElementID = hud_element_create(iconType->beginHudScript);
             hud_element_set_flags(elementID, HUD_ELEMENT_FLAG_DISABLED);
-            hud_element_set_flags(elementID, HUD_ELEMENT_FLAG_80);
+            hud_element_set_flags(elementID, HUD_ELEMENT_FLAG_MANUAL_RENDER);
             icon->activeTask = STATUS_ICON_TASK_DRAW;
         }
 
@@ -96,8 +96,8 @@ void create_custom_status_icon(Actor* target, s32 customIconId) {
     StatusInfo* customStatus = &target->customStatuses[customStatusId];
 
     if (!icon->active) {
-        icon->active = TRUE;
-        icon->activeTask = TRUE;
+        icon->active = true;
+        icon->activeTask = true;
     }
 
     if (gCustomStatusTypes[customStatusId].hasTurnCount &&
@@ -117,9 +117,9 @@ void remove_custom_status_icon(s32 iconId, s32 customIconId) {
 
     if (statusIcon->active && !statusIcon->removing) {
         statusIcon->removing = statusIcon->active;
-        statusIcon->removingTask = TRUE;
-        statusIcon->active = FALSE;
-        statusIcon->activeTask = FALSE;
+        statusIcon->removingTask = true;
+        statusIcon->active = false;
+        statusIcon->activeTask = false;
         statusIcon->frameCounter = 10;
         statusIcon->removingElementID = statusIcon->activeElementID;
     }

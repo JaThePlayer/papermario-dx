@@ -1,5 +1,6 @@
-#include "gcc/stdlib.h"
-#include "gcc/string.h"
+#include "common.h"
+#include <stdlib.h>
+#include <string.h>
 #include "libc/xstdio.h"
 
 #define BUFF_LEN 0x20
@@ -182,7 +183,7 @@ void _Genld(_Pft* px, char code, u8* p, s16 nsig, s16 xexp) {
         nsig = 1, p = "0";
     }
 
-    if (code == 'f' || (code == 'g' || code == 'G') && xexp >= -4 && xexp < px->prec) {
+    if (code == 'f' || ((code == 'g' || code == 'G') && xexp >= -4 && xexp < px->prec)) {
         xexp++;
         if (code != 'f') {
             if (((px->flags & 8) == 0) && nsig < px->prec) {

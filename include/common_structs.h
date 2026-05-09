@@ -21,6 +21,7 @@ typedef ApiStatus(*ApiFunc)(struct Evt*, s32);
 typedef Bytecode EvtScript[];
 
 typedef void NoArgCallback(void*);
+typedef void (*AuCallback)(void);
 
 #define MSG_PTR u8*
 #define IMG_PTR u8*
@@ -36,6 +37,8 @@ typedef s8 b8;
 
 typedef s32 HitID;
 typedef u32 AnimID;
+typedef s32 HudElemID;
+typedef s32 MsgID;
 
 typedef struct {
     u8 r, g, b, a;
@@ -475,7 +478,9 @@ typedef struct Evt {
     /* 0x15C */ Bytecode* ptrFirstLine;
     /* 0x160 */ Bytecode* ptrSavedPos;
     /* 0x164 */ Bytecode* ptrCurLine;
-} Evt; // size = 0x168
+    /* 0x168 */ b8 debugPaused;
+    /* 0x169 */ s8 debugStep;
+} Evt; // size = 0x16C
 
 typedef Evt* ScriptList[MAX_SCRIPTS];
 
@@ -600,7 +605,7 @@ typedef struct ShadowBlueprint {
     /* 0x02 */ s16 typeDataSize;
     /* 0x04 */ UNK_PTR renderCommandList;
     /* 0x08 */ struct StaticAnimatorNode** animModelNode;
-    /* 0x0C */ ShadowCallback(onCreateCallback);
+    /* 0x0C */ ShadowCallback onCreateCallback;
     /* 0x10 */ char unk_10[0x10];
     /* 0x20 */ u8 entityType;
     /* 0x21 */ char aabbSize[3];
@@ -632,22 +637,22 @@ typedef struct Worker {
 
 typedef Worker* WorkerList[MAX_WORKERS];
 
-typedef struct MusicSettings {
+typedef struct MusicControlData {
     /* 0x00 */ u16 flags;
     /* 0x02 */ s16 state;
     /* 0x04 */ s32 fadeOutTime;
     /* 0x08 */ s32 fadeInTime;
     /* 0x0C */ s16 fadeStartVolume;
     /* 0x0E */ s16 fadeEndVolume;
-    /* 0x10 */ s32 songID;
+    /* 0x10 */ s32 requestedSongID;
     /* 0x14 */ s32 variation;
-    /* 0x18 */ s32 songName;
+    /* 0x18 */ s32 songName; /// name or handle of currently playing song
     /* 0x1C */ s32 battleSongID;
     /* 0x20 */ s32 battleVariation;
     /* 0x24 */ s32 savedSongID;
     /* 0x28 */ s32 savedVariation;
     /* 0x2C */ s32 savedSongName;
-} MusicSettings; // size = 0x30
+} MusicControlData; // size = 0x30
 
 typedef struct MusicProximityTrigger {
     /* 0x00 */ VecXZf pos;
@@ -658,26 +663,26 @@ typedef struct MusicProximityTrigger {
 } MusicProximityTrigger; // size = 0x18
 
 typedef struct StatusBar {
-    /* 0x00 */ s32 hpIconHIDs[2];
-    /* 0x08 */ s32 fpIconHIDs[2];
-    /* 0x10 */ s32 coinIconHID;
-    /* 0x14 */ s32 coinSparkleHID;
-    /* 0x18 */ s32 spIconHID;
-    /* 0x1C */ s32 spShineHID;
-    /* 0x20 */ s32 hpTimesHID;
-    /* 0x24 */ s32 fpTimesHID;
-    /* 0x28 */ s32 spTimesHID;
-    /* 0x2C */ s32 coinTimesHID;
-    /* 0x30 */ s32 starIconHID;
+    /* 0x00 */ HudElemID hpIconHIDs[2];
+    /* 0x08 */ HudElemID fpIconHIDs[2];
+    /* 0x10 */ HudElemID coinIconHID;
+    /* 0x14 */ HudElemID coinSparkleHID;
+    /* 0x18 */ HudElemID spIconHID;
+    /* 0x1C */ HudElemID spShineHID;
+    /* 0x20 */ HudElemID hpTimesHID;
+    /* 0x24 */ HudElemID fpTimesHID;
+    /* 0x28 */ HudElemID spTimesHID;
+    /* 0x2C */ HudElemID coinTimesHID;
+    /* 0x30 */ HudElemID starIconHID;
     /* 0x34 */ s16 drawPosX; // base position of the whole bar
     /* 0x36 */ s16 drawPosY; // base position of the whole bar, animated when it appears
     /* 0x38 */ s16 showTimer;
-    /* 0x3A */ b8 hidden;
+    /* 0x3A */ b8 hidden; // current state of the status bar's visiblity
     /* 0x3B */ b8 unk_3B;
     /* 0x3C */ b8 unk_3C;
     /* 0x3D */ s8 displayHP;
     /* 0x3E */ s8 displayFP;
-    /* 0x3F */ char unk_3F;
+    /* 0x3F */ char pad_3F;
     /* 0x40 */ s16 displayCoins;
     /* 0x42 */ s16 displayStarpoints;
     /* 0x44 */ s8 ignoreChanges; /* set != 0 to prevent automatic opening from HP/FP changes */
@@ -685,32 +690,32 @@ typedef struct StatusBar {
     /* 0x45 */ s8 alwaysShown; // when set, the status bar will always be shown. used while browsing a shop.
     /* 0x47 */ s8 disabled; /* set != 0 for menu to be disabled completely */
     /* 0x48 */ s16 displayStarPower;
-    /* 0x4A */ s8 hpBlinking; /* bool */
-    /* 0x4B */ s8 hpBlinkCounter;
-    /* 0x4C */ s8 hpBlinkTimer; /* until stop */
-    /* 0x4D */ s8 fpBlinking; /* bool */
-    /* 0x4E */ s8 fpBlinkCounter;
-    /* 0x4F */ s8 fpBlinkTimer; /* until stop */
-    /* 0x50 */ s8 spBlinking;
-    /* 0x51 */ s8 spBlinkCounter;
-    /* 0x52 */ s8 starpointsBlinking; /* bool */
-    /* 0x53 */ s8 starpointsBlinkCounter;
-    /* 0x54 */ s8 coinsBlinking; /* bool */
-    /* 0x55 */ s8 coinsBlinkCounter;
-    /* 0x56 */ s8 coinsBlinkTimer; /* until stop */
-    /* 0x57 */ s8 unk_57;
-    /* 0x58 */ s8 unk_58;
-    /* 0x59 */ s8 unk_59;
-    /* 0x5A */ s8 spBarsToBlink; /* how many sp bars to blink */
-    /* 0x5B */ char unk_5B;
-    /* 0x5C */ s32 coinCountTimesHID;
-    /* 0x60 */ s32 coinCountIconHID;
-    /* 0x64 */ s32 iconIndex12;
-    /* 0x68 */ s32 iconIndex13;
-    /* 0x6C */ s8 coinCounterHideTime;
-    /* 0x6D */ s8 unk_6D;
-    /* 0x6E */ s8 unk_6E;
-    /* 0x6F */ char unk_6F;
+    /* 0x4A */ b8 hpBlinking;
+    /* 0x4B */ s8 hpBlinkAnimTime;
+    /* 0x4C */ s8 hpBlinkTimeLeft;
+    /* 0x4D */ b8 fpBlinking;
+    /* 0x4E */ s8 fpBlinkAnimTime;
+    /* 0x4F */ s8 fpBlinkTimeLeft;
+    /* 0x50 */ b8 starPowerBlinking;
+    /* 0x51 */ s8 starPowerBlinkCounter;
+    /* 0x52 */ b8 starpointsBlinking;
+    /* 0x53 */ s8 starpointsBlinkAnimTime;
+    /* 0x54 */ b8 coinsBlinking;
+    /* 0x55 */ s8 coinsBlinkAnimTime;
+    /* 0x56 */ s8 coinsBlinkTimeLeft;
+    /* 0x57 */ s8 shimmerState;
+    /* 0x58 */ s8 shimmerTime;
+    /* 0x59 */ s8 shimmerLimit;
+    /* 0x5A */ s8 powBarsToBlink; // how many star power bars to blink
+    /* 0x5B */ char pad_5B;
+    /* 0x5C */ HudElemID coinCountTimesHID;
+    /* 0x60 */ HudElemID coinCountIconHID;
+    /* 0x64 */ HudElemID iconIndex12;
+    /* 0x68 */ HudElemID iconIndex13;
+    /* 0x6C */ s8 coinCounterHideDelay;
+    /* 0x6D */ s8 coinCountDisposeTime;
+    /* 0x6E */ s8 prevIgnoreChanges; // while the coin counter is open, ignoreChanges count is pushed here
+    /* 0x6F */ char pad_6F;
 } StatusBar; // size = 0x70
 
 typedef struct CameraInitData {
@@ -869,9 +874,9 @@ typedef struct BattleStatus {
     /*       */     void* varTablePtr[16];
     /*       */ };
     /* 0x048 */ s8 curSubmenu;
-    /* 0x049 */ s8 unk_49;
+    /* 0x049 */ s8 lastSelectedAbility;
     /* 0x04A */ s8 curPartnerSubmenu;
-    /* 0x04B */ s8 unk_4B;
+    /* 0x04B */ s8 lastPartnerPowerSelection;
     /* 0x04C */ s8 lastPlayerMenuSelection[16];
     /* 0x05C */ s8 lastPartnerMenuSelection[16];
     /* 0x06C */ s16 cancelTargetMenuSubstate; // might be more generally for returning from nested 'inner' state
@@ -885,11 +890,11 @@ typedef struct BattleStatus {
     /* 0x07B */ u8 damageTaken;
     /* 0x07C */ s8 changePartnerAllowed;
     /* 0x07D */ s8 menuStatus[4]; ///< -1 = automatically pick the first move, 0 = disabled, 1 = enabled
-    /* 0x081 */ s8 actionSuccess;
-    /* 0x082 */ char unk_82;
+    /* 0x081 */ s8 actionQuality; // degree of success for action command, -1 indicates failure, 0 is in progress, >0 is some degree of success
+    /* 0x082 */ s8 maxActionQuality; // seems to indicate the maximum positive value for actionQuality; never read and inconsistently used between various action commands
     /* 0x083 */ s8 actionCommandMode;
-    /* 0x084 */ s8 actionQuality; // actionCommandVar1 ?
-    /* 0x085 */ s8 unk_85; // actionCommandVar2 ?
+    /* 0x084 */ s8 actionProgress;
+    /* 0x085 */ s8 resultTier;
     /* 0x086 */ s8 actionResult; // see enum ActionResult
     /* 0x087 */ s8 blockResult; // see enum BlockResult
     /* 0x088 */ s8 itemUsesLeft; /* set to 2 for double dip, 3 for triple dip */
@@ -902,8 +907,8 @@ typedef struct BattleStatus {
     /* 0x08F */ char unk_8F[1];
     /* 0x090 */ s16 unk_90;
     /* 0x092 */ s8 reflectFlags;
-    /* 0x093 */ s8 unk_93;
-    /* 0x094 */ s8 unk_94;
+    /* 0x093 */ s8 nextActorOrdinal;
+    /* 0x094 */ s8 cancelTurnMode;
     /* 0x095 */ s8 waitForState;
     /* 0x096 */ s8 hammerCharge;
     /* 0x097 */ s8 jumpCharge;
@@ -967,12 +972,12 @@ typedef struct BattleStatus {
     /* 0x1A6 */ s8 curTargetPart2;
     /* 0x1A7 */ s8 battlePhase;
     /* 0x1A8 */ s16 attackerActorID;
-    /* 0x1AA */ s16 unk_1AA;
-    /* 0x1AC */ s8 unk_1AC;
+    /* 0x1AA */ s16 lastSelectedItem; // itemID of most recently selected item
+    /* 0x1AC */ s8 lastSelectedPartner; // partnerID of most recently selected partner
     /* 0x1AD */ char unk_1AD;
     /* 0x1AE */ s16 submenuIcons[24]; /* icon IDs */
     /* 0x1DE */ u8 submenuMoves[24]; /* move IDs */
-    /* 0x1F6 */ s8 submenuStatus[24]; ///< @see enum BattleSubmenuStatus
+    /* 0x1F6 */ s8 submenuStatus[24]; ///< See [`BattleSubmenuStatus`].
     /* 0x20E */ u8 submenuMoveCount;
     /* 0x20F */ char unk_20F;
     /* 0x210 */ s32 curButtonsDown;
@@ -1024,7 +1029,7 @@ typedef struct MoveData {
     /* 0x04 */ s32 flags;
     /* 0x08 */ s32 shortDescMsg;
     /* 0x0C */ s32 fullDescMsg;
-    /* 0x10 */ s8 category; ///< @see enum MoveType
+    /* 0x10 */ s8 category; ///< See [`MoveType`].
     /* 0x11 */ s8 costFP;
     /* 0x12 */ s8 costBP;
     /* 0x13 */ u8 actionTip;
@@ -1393,11 +1398,11 @@ typedef struct GameStatus {
     /* 0x030 */ u32 prevButtons[4]; /* from previous frame */
     /* 0x040 */ s8 stickX[4]; /* with deadzone */
     /* 0x044 */ s8 stickY[4]; /* with deadzone */
-    /* 0x048 */ s16 unk_48[4];
-    /* 0x050 */ s16 unk_50[4];
-    /* 0x058 */ s16 unk_58;
+    /* 0x048 */ s16 holdDelayTime[4];
+    /* 0x050 */ s16 holdRepeatInterval[4];
+    /* 0x058 */ s16 holdDelayCounter;
     /* 0x05A */ char unk_5A[6];
-    /* 0x060 */ s16 unk_60;
+    /* 0x060 */ s16 holdRepeatCounter;
     /* 0x062 */ char unk_62[6];
     /* 0x068 */ s16 demoButtonInput;
     /* 0x06A */ s8 demoStickX;
@@ -1419,7 +1424,7 @@ typedef struct GameStatus {
     /* 0x07D */ b8 keepUsingPartnerOnMapChange;
     /* 0x07E */ u8 peachFlags; // see PeachFlags enum
     /* 0x07F */ s8 peachDisguise; // see PeachDisguises enum
-    /* 0x080 */ u8 peachBakingIngredient; ///< @see PeachBakingItems enum
+    /* 0x080 */ u8 peachBakingIngredient; ///< See [`PeachBakingItems`]. enum
     /* 0x081 */ b8 multiplayerEnabled;
     /* 0x082 */ Vec2b altViewportOffset;
     /* 0x084 */ s8 playerSpriteSet;
@@ -1497,7 +1502,7 @@ typedef struct PushBlockGrid {
     /* 0x05 */ u8 numCellsZ;
     /* 0x06 */ char unk_06[2];
     /* 0x08 */ Vec3i centerPos;
-    /* 0x14 */ PushBlockFallCallback(dropCallback);
+    /* 0x14 */ PushBlockFallCallback dropCallback;
     /* 0x18 */ char unk_18[4];
 } PushBlockGrid; // size = 0x1C
 
@@ -1869,7 +1874,7 @@ typedef struct Actor {
     /* 0x00C */ ActorState state;
     /* 0x0C8 */ ActorMovement fly;
     /* 0x124 */ char unk_124[16];
-    /* 0x134 */ u8 unk_134;
+    /* 0x134 */ u8 ordinal; // unique identifier for actor, holds a value of N for the Nth actor spawned
     /* 0x135 */ u8 footStepCounter;
     /* 0x136 */ u8 actorType;
     /* 0x137 */ char unk_137;
@@ -1908,7 +1913,7 @@ typedef struct Actor {
     /* 0x1E0 */ s32 idleScriptID;
     /* 0x1E4 */ s32 takeTurnScriptID;
     /* 0x1E8 */ s32 handleEventScriptID;
-    /* 0x1EC */ s32 handleBatttlePhaseScriptID;
+    /* 0x1EC */ s32 handlePhaseScriptID;
     /* 0x1F0 */ s8 lastEventType;
     /* 0x1F1 */ s8 turnPriority;
     /* 0x1F2 */ s8 enemyIndex; /* actorID = this | 200 */
@@ -1968,7 +1973,7 @@ typedef struct Actor {
     /* new   */ StatusInfo customStatuses[CUSTOM_STATUS_AMT];
     /* new   */ u8 attackedThisTurn;
     /* new   */ s8 overridenLevel; // set to -1 by default, when > 0, overrides the `level` in the Blueprint for star point dropping purposes.
-    /* new   */ struct EvtScript* onEnemyDamagedScript; // Invoked when any damage in the battle got damaged.
+    /* new   */ EvtScript* onEnemyDamagedScript; // Invoked when any damage in the battle got damaged.
     /* new   */ u8 inflictedImmobilisingStatusFlags; // Each bit indicates whether a specific immobilising status has been inflicted on this actor, to implement the status cap.
 } Actor; // size = 0x444
 

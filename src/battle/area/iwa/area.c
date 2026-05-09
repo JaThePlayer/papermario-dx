@@ -13,7 +13,7 @@ extern Stage A(iwa_01);
 extern Stage A(iwa_01b);
 extern Stage A(iwa_02);
 
-Vec3i A(vector3D_8021853C) = { 90, 70, 0 };
+Vec3i A(BossPos) = { 90, 70, 0 };
 
 Formation A(Formation_07) = { // iwa_00
     ACTOR_BY_IDX(A(monty_mole), BTL_POS_GROUND_B, 10),
@@ -125,7 +125,7 @@ Formation A(Formation_0A) = { // iwa_04
 };
 
 Formation A(Formation_0C) = {
-    ACTOR_BY_POS(A(buzzar), A(vector3D_8021853C), 10),
+    ACTOR_BY_POS(A(buzzar), A(BossPos), 10),
 };
 
 Formation A(Formation_0D) = { // unused
@@ -136,13 +136,13 @@ Formation A(Formation_0D) = { // unused
 
 API_CALLABLE(A(make_unescapable)) {
     gBattleStatus.flags2 &= ~BS_FLAGS2_CAN_FLEE;
-    gCurrentEncounter.forbidFleeing = TRUE;
+    gCurrentEncounter.forbidFleeing = true;
 
     return ApiStatus_DONE2;
 }
 
 EvtScript A(slide_ambush_script) = {
-    Set(GF_IWA_01_SlideAmbush, TRUE)
+    Set(GF_IWA_01_SlideAmbush, true)
     Call(A(make_unescapable))
     Return
     End

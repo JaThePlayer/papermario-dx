@@ -54,15 +54,15 @@ EffectInstance* static_status_main(
 
     bp.init = static_status_init;
     bp.update = static_status_update;
-    bp.renderWorld = static_status_render;
+    bp.renderScene = static_status_render;
     bp.unk_00 = 0;
-    bp.renderUI = NULL;
+    bp.renderUI = nullptr;
     bp.effectID = EFFECT_STATIC_STATUS;
 
     effect = create_effect_instance(&bp);
     effect->numParts = numBolts;
     part = effect->data.staticStatus = general_heap_malloc(numBolts * sizeof(*part));
-    ASSERT(effect->data.staticStatus != NULL);
+    ASSERT(effect->data.staticStatus != nullptr);
 
     part->type = type;
     part->lifetime = 0;
@@ -93,7 +93,6 @@ void static_status_init(EffectInstance* effect) {
 void static_status_update(EffectInstance* effect) {
     StaticStatusFXData* part = effect->data.staticStatus;
     s32 type = part->type;
-    s32 unk_28;
     s32 time;
     f32 interpAmt;
     f32 initialAmt;
@@ -198,7 +197,7 @@ void static_status_appendGfx(void* effect) {
     s32 i;
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
 
     guTranslateF(mtxTransform, part->pos.x, part->pos.y, part->pos.z);
     guScaleF(mtxTemp, part->scale, part->scale, part->scale);

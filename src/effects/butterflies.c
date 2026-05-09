@@ -34,19 +34,18 @@ EffectInstance* butterflies_main(s32 arg0, f32 arg1, f32 arg2, f32 arg3) {
     EffectInstance* effect;
     ButterfliesFXData* part;
     s32 numParts = 1;
-    s32 i;
 
     bp.unk_00 = 0;
     bp.init = butterflies_init;
     bp.update = butterflies_update;
-    bp.renderWorld = butterflies_render;
-    bp.renderUI = NULL;
+    bp.renderScene = butterflies_render;
+    bp.renderUI = nullptr;
     bp.effectID = EFFECT_BUTTERFLIES;
 
     effect = create_effect_instance(&bp);
     effect->numParts = numParts;
     part = effect->data.butterflies = general_heap_malloc(numParts * sizeof(*part));
-    ASSERT(effect->data.butterflies != NULL);
+    ASSERT(effect->data.butterflies != nullptr);
 
     part->unk_04 = 1000;
     part->unk_00 = arg0;
@@ -91,7 +90,7 @@ void butterflies_update(EffectInstance* effect) {
     if (temp_s0->unk_04 < 1000) {
         temp_s0->unk_04--;
     }
-    temp_s0->unk_08 += 1;
+    temp_s0->unk_08++;
     if (temp_s0->unk_04 < 0) {
         remove_effect(effect);
         return;
@@ -160,7 +159,6 @@ void butterflies_render(EffectInstance* effect) {
     retTask->renderMode |= RENDER_TASK_FLAG_REFLECT_FLOOR;
 }
 
-
 void butterflies_appendGfx(void* effect) {
     EffectInstance* effectTemp = effect;
     ButterfliesFXData* data = effectTemp->data.butterflies;
@@ -171,7 +169,7 @@ void butterflies_appendGfx(void* effect) {
     s32 type = data->unk_00;
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(effectTemp->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(effectTemp->shared->graphics));
 
     guTranslateF(sp18, data->unk_0C, data->unk_10 + D_E00AA6EC[data->unk_2C] * 0.3f, data->unk_14);
     guRotateF(sp58, data->unk_28, 0.0f, 1.0f, 0.0f);

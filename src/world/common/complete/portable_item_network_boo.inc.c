@@ -21,7 +21,7 @@ EvtScript N(EVS_PINBoo_Empty) = {
 };
 
 EvtScript N(EVS_PINBoo_OtherAI) = {
-    Call(SetNpcFlagBits, NPC_SELF, NPC_FLAG_HAS_NO_SPRITE, FALSE)
+    Call(SetNpcFlagBits, NPC_SELF, NPC_FLAG_HAS_NO_SPRITE, false)
     Call(SetNpcSprite, -1, ANIM_Boo_Idle)
     Return
     End
@@ -54,11 +54,11 @@ s32 N(PINBoo_ShopMessages)[] = {
 };
 
 API_CALLABLE(N(PINBoo_SetupGreeting)) {
-    s32 hasSeen = evt_get_variable(NULL, GF_PortableItemNetworkIntro);
+    s32 hasSeen = evt_get_variable(nullptr, GF_PortableItemNetworkIntro);
 
     N(PINBoo_ShopMessages)[SHOP_MSG_GREETING] = hasSeen ? MSG_Shop_PortableStorage_Greeting_Normal : MSG_Shop_PortableStorage_Greeting_FirstTime;
 
-    evt_set_variable(NULL, GF_PortableItemNetworkIntro, TRUE);
+    evt_set_variable(nullptr, GF_PortableItemNetworkIntro, true);
 
     return ApiStatus_DONE2;
 }

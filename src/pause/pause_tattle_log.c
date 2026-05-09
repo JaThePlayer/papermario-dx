@@ -1,5 +1,9 @@
-#include "pause_common.h"
+#include "pause/pause_common.h"
 #include "message_ids.h"
+
+s32 pause_items_scroll_offset_x(s32 beforeX);
+s32 pause_items_scroll_offset_y(s32 beforeY);
+
 //#include "battle/actor_types.inc.c"
 static s32 bActorNames[] = {
     [ACTOR_TYPE_RED_GOOMBA]                 MSG_EnemyName_RedGoomba,
@@ -246,7 +250,7 @@ MenuWindowBP gPauseTattleLogWindowBPs[] = {
         .height = 154,
         .priority = WINDOW_PRIORITY_1,
         .fpDrawContents = &pause_tattle_log_draw_contents,
-        .tab = NULL,
+        .tab = nullptr,
         .parentID = WINDOW_ID_PAUSE_MAIN,
         .fpUpdate = { WINDOW_UPDATE_HIDE },
         .extraFlags = 0,
@@ -258,7 +262,7 @@ MenuWindowBP gPauseTattleLogWindowBPs[] = {
         .height = 154,
         .priority = WINDOW_PRIORITY_1,
         .fpDrawContents = &pause_tattle_log_draw_contents,
-        .tab = NULL,
+        .tab = nullptr,
         .parentID = WIN_PAUSE_MAIN,
         .fpUpdate = { WINDOW_UPDATE_HIDE },
         .extraFlags = 0,
@@ -267,7 +271,7 @@ MenuWindowBP gPauseTattleLogWindowBPs[] = {
 };
 
 MenuPanel gPausePanelTattleLog = {
-    .initialized = FALSE,
+    .initialized = false,
     .col = 0,
     .row = 0,
     .selected = 0,
@@ -275,7 +279,7 @@ MenuPanel gPausePanelTattleLog = {
     .numCols = 0,
     .numRows = 0,
     .numPages = 0,
-    .gridData = NULL,
+    .gridData = nullptr,
     .fpInit = &pause_tattle_log_init,
     .fpHandleInput = &pause_tattle_log_handle_input,
     .fpUpdate = &pause_tattle_log_update,
@@ -300,11 +304,11 @@ void pause_tattle_log_init(MenuPanel* panel) {
     /*
     gPauseItemsLevel = 0;
     gPauseItemsCurrentTab = 0;
-    pause_items_load_items(FALSE);
+    pause_items_load_items(false);
 
     for (i = 0; i < ARRAY_COUNT(gPauseItemsIconIDs); i++) {
         gPauseItemsIconIDs[i] = hud_element_create(gPauseItemsElements[i]);
-        hud_element_set_flags(gPauseItemsIconIDs[i], HUD_ELEMENT_FLAG_80);
+        hud_element_set_flags(gPauseItemsIconIDs[i], HUD_ELEMENT_FLAG_MANUAL_RENDER);
     }
     */
     for (i = 0; i < ARRAY_COUNT(gPauseTattleLogWindowBPs); i++) {
@@ -313,7 +317,7 @@ void pause_tattle_log_init(MenuPanel* panel) {
 
     setup_pause_menu_tab(gPauseTattleLogWindowBPs, ARRAY_COUNT(gPauseTattleLogWindowBPs));
 
-    panel->initialized = TRUE;
+    panel->initialized = true;
 }
 
 void pause_tattle_log_update(MenuPanel* panel) {
@@ -339,7 +343,7 @@ s32 pause_log_get_pos_y(s32 itemIndex) {
 }
 
 void pause_tattle_log_draw_contents(MenuPanel* menu, s32 baseX, s32 baseY, s32 width, s32 height, s32 opacity, s32 darkening) {
-    //ASSERT_MSG(FALSE, "HELLO!?!?!@?!")
+    //ASSERT_MSG(false, "HELLO!?!?!@?!")
     s32 style = DRAW_MSG_STYLE_MENU;
     s32 palette = MSG_PAL_STANDARD;
     s32 i, startI;
@@ -382,7 +386,7 @@ void pause_tattle_log_draw_contents(MenuPanel* menu, s32 baseX, s32 baseY, s32 w
 
     for (i = startI; i < startI + 10 && i < ARRAY_COUNT(entries); i++) {
         LogEntry* entry = &entries[i];
-        s32 isSelected = FALSE;
+        s32 isSelected = false;
 
         s32 posX = pause_log_get_pos_x(i);
         s32 posY = pause_log_get_pos_y(i);

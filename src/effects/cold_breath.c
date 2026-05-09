@@ -84,15 +84,15 @@ EffectInstance* cold_breath_main(s32 type, f32 posX, f32 posY, f32 posZ, f32 sca
 
     bp.init = cold_breath_init;
     bp.update = cold_breath_update;
-    bp.renderWorld = cold_breath_render;
+    bp.renderScene = cold_breath_render;
     bp.unk_00 = 0;
-    bp.renderUI = NULL;
+    bp.renderUI = nullptr;
     bp.effectID = EFFECT_COLD_BREATH;
 
     effect = create_effect_instance(&bp);
     effect->numParts = numParts;
     data = effect->data.coldBreath = general_heap_malloc(numParts * sizeof(*data));
-    ASSERT(effect->data.coldBreath != NULL);
+    ASSERT(effect->data.coldBreath != nullptr);
 
     data->type = type;
     data->lifetime = 0;
@@ -194,7 +194,7 @@ void cold_breath_appendGfx(void* effect) {
     s32 cond;
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
 
     guTranslateF(sp20, data->pos.x, data->pos.y, data->pos.z);
     guScaleF(sp60, data->scale, data->scale, data->scale);

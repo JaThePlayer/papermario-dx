@@ -30,7 +30,7 @@ s32 N(StatusTable)[] = {
     STATUS_KEY_POISON,            0,
     STATUS_KEY_FROZEN,            0,
     STATUS_KEY_DIZZY,              0,
-    STATUS_KEY_FEAR,              0,
+    STATUS_KEY_UNUSED,              0,
     STATUS_KEY_STATIC,            0,
     STATUS_KEY_PARALYZE,           0,
     STATUS_KEY_SHRINK,             0,
@@ -40,7 +40,7 @@ s32 N(StatusTable)[] = {
     STATUS_TURN_MOD_POISON,         0,
     STATUS_TURN_MOD_FROZEN,         0,
     STATUS_TURN_MOD_DIZZY,          0,
-    STATUS_TURN_MOD_FEAR,           0,
+    STATUS_TURN_MOD_UNUSED,           0,
     STATUS_TURN_MOD_STATIC,         0,
     STATUS_TURN_MOD_PARALYZE,       0,
     STATUS_TURN_MOD_SHRINK,         0,
@@ -55,7 +55,7 @@ ActorPartBlueprint N(ActorParts)[] = {
         .posOffset = { 0, 0, 0 },
         .targetOffset = { 0, 20 },
         .opacity = 255,
-        .idleAnimations = NULL,
+        .idleAnimations = nullptr,
         .defenseTable = N(DefenseTable),
         .eventFlags = 0,
         .elementImmunityFlags = 0,
@@ -90,7 +90,7 @@ ActorBlueprint NAMESPACE = {
 };
 
 EvtScript N(EVS_HandlePhase) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
 
     // Start of battle popup
@@ -104,14 +104,14 @@ EvtScript N(EVS_HandlePhase) = {
                 Label(0)
                 Wait(1)
                 Call(IsMessageBoxDisplayed, LVar0)
-                IfEq(LVar0, TRUE)
+                IfEq(LVar0, true)
                     Goto(0)
                 EndIf
             EndIf
     EndSwitch
 
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };
@@ -135,13 +135,13 @@ EvtScript N(EVS_Idle) = {
 };
 
 EvtScript N(EVS_HandleEvent) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(GetLastEvent, ACTOR_SELF, LVar0)
     Switch(LVar0)
     EndSwitch
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };
@@ -155,7 +155,7 @@ API_CALLABLE(N(AllEnemiesDefeated)) {
 }
 
 EvtScript N(EVS_OnSummonEnemy) = {
-    Call(SummonEnemy, LVarA, FALSE)
+    Call(SummonEnemy, LVarA, false)
     Call(GetCurrentActorType, LVar0, LVar1)
     IfEq(LVar1, WAVE_BATTLE_CONTROLLER_TYPE)
         Call(GetActorVar, ACTOR_SELF, AVAR_Index, LVar1)
@@ -205,12 +205,12 @@ API_CALLABLE(N(SummonAllEnemies)) {
 }
 
 EvtScript N(EVS_TakeTurn) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
 
-    Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_NO_DMG_APPLY, TRUE)
+    Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_NO_DMG_APPLY, true)
     Call(N(AllEnemiesDefeated), LVar0)
-    Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_NO_DMG_APPLY, FALSE)
+    Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_NO_DMG_APPLY, false)
     IfTrue(LVar0)
         Call(GetActorVar, ACTOR_SELF, AVAR_Formation, LVar0)
         Call(GetActorVar, ACTOR_SELF, AVAR_FormationCount, LVar1)
@@ -220,7 +220,7 @@ EvtScript N(EVS_TakeTurn) = {
         Label(0)
         Wait(1)
         Call(IsMessageBoxDisplayed, LVar0)
-        IfEq(LVar0, TRUE)
+        IfEq(LVar0, true)
             Goto(0)
         EndIf
 
@@ -229,7 +229,7 @@ EvtScript N(EVS_TakeTurn) = {
     EndIf
 
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };

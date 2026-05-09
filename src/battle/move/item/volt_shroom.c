@@ -41,10 +41,10 @@ EvtScript N(EVS_UseItem_Enemy) = {
         EndLoop
     EndThread
     Thread
-        Call(FreezeBattleState, TRUE)
+        Call(FreezeBattleState, true)
         Call(GetItemPower, ITEM_VOLT_SHROOM, LVar0, LVar1)
         Call(ElectrifyActor, LVar8, LVar0)
-        Call(FreezeBattleState, FALSE)
+        Call(FreezeBattleState, false)
     EndThread
     Call(WaitForBuffDone)
 

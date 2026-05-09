@@ -26,15 +26,15 @@ void stars_spread_main(
 
     bp.init = stars_spread_init;
     bp.update = stars_spread_update;
-    bp.renderWorld = stars_spread_render;
+    bp.renderScene = stars_spread_render;
     bp.unk_00 = 0;
-    bp.renderUI = NULL;
+    bp.renderUI = nullptr;
     bp.effectID = EFFECT_STARS_SPREAD;
 
     effect = create_effect_instance(&bp);
     effect->numParts = arg4;
     part = effect->data.starsSpread = general_heap_malloc(arg4 * sizeof(*part));
-    ASSERT(effect->data.starsSpread != NULL);
+    ASSERT(effect->data.starsSpread != nullptr);
 
     mem_clear(part, arg4 * sizeof(*part));
 
@@ -127,7 +127,7 @@ void stars_spread_appendGfx(void* effect) {
     s32 i;
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
     gSPDisplayList(gMainGfxPos++, D_09000440_360E70);
 
     guTranslateF(sp18, part->unk_04, part->unk_08, part->unk_0C);

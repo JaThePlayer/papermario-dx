@@ -9,7 +9,7 @@ EvtScript N(EVS_LoadPondAnimation) = {
     End
 };
 
-#include "common/foliage.inc.c"
+#include "foliage.h"
 
 FoliageModelList N(Tree1_LeafModels)  = FOLIAGE_MODEL_LIST(MODEL_o558);
 FoliageModelList N(Tree1_TrunkModels) = FOLIAGE_MODEL_LIST(MODEL_miki3);
@@ -68,7 +68,7 @@ EvtScript N(EVS_ExitWalk_sam_03_0) = {
     IfLt(GB_StoryProgress, STORY_CH7_MAYOR_MURDER_SOLVED)
         Return
     EndIf
-    Set(GF_SAM11_LeftTown, TRUE)
+    Set(GF_SAM11_LeftTown, true)
     Call(UseExitHeading, 60, sam_11_ENTRY_1)
     Exec(ExitWalk)
     Call(GotoMap, Ref("sam_03"), sam_03_ENTRY_0)
@@ -94,17 +94,17 @@ EvtScript N(EVS_Main) = {
     IfNe(LVar0, sam_11_ENTRY_2)
         Goto(10)
     EndIf
-        Call(MakeNpcs, FALSE, Ref(N(EpilogueNPCs)))
+        Call(MakeNpcs, false, Ref(N(EpilogueNPCs)))
         Call(FadeInMusic, 0, SONG_SHIVER_CITY, 0, 3000, 0, 127)
         Return
     Label(10)
     Switch(GB_StoryProgress)
         CaseLt(STORY_CH7_MAYOR_MURDER_MYSTERY)
-            Call(MakeNpcs, FALSE, Ref(N(BeforeNPCs)))
+            Call(MakeNpcs, false, Ref(N(BeforeNPCs)))
         CaseLt(STORY_CH7_MAYOR_MURDER_SOLVED)
-            Call(MakeNpcs, FALSE, Ref(N(MysteryNPCs)))
+            Call(MakeNpcs, false, Ref(N(MysteryNPCs)))
         CaseGe(STORY_CH7_MAYOR_MURDER_SOLVED)
-            Call(MakeNpcs, FALSE, Ref(N(AfterNPCs)))
+            Call(MakeNpcs, false, Ref(N(AfterNPCs)))
             Call(ModifyColliderFlags, MODIFY_COLLIDER_FLAGS_SET_BITS, COLLIDER_o621, COLLIDER_FLAGS_UPPER_MASK)
     EndSwitch
     ExecWait(N(EVS_MakeEntities))
@@ -125,13 +125,13 @@ EvtScript N(EVS_Main) = {
     Call(ModifyColliderFlags, MODIFY_COLLIDER_FLAGS_SET_SURFACE, COLLIDER_deilie, SURFACE_TYPE_SNOW)
     Call(ModifyColliderFlags, MODIFY_COLLIDER_FLAGS_SET_SURFACE, COLLIDER_deiliw, SURFACE_TYPE_SNOW)
     Set(LVar0, Ref(N(ShakeTree_Tree1)))
-    BindTrigger(Ref(N(EVS_ShakeTree)), TRIGGER_POINT_BOMB, Ref(N(BombPos_Tree1)), 1, 0)
+    BindTrigger(Ref(EVS_ShakeTree), TRIGGER_POINT_BOMB, Ref(N(BombPos_Tree1)), 1, 0)
     Set(LVar0, Ref(N(ShakeTree_Tree2)))
-    BindTrigger(Ref(N(EVS_ShakeTree)), TRIGGER_WALL_HAMMER, COLLIDER_miki4, 1, 0)
-    BindTrigger(Ref(N(EVS_ShakeTree)), TRIGGER_POINT_BOMB, Ref(N(BombPos_Tree2)), 1, 0)
+    BindTrigger(Ref(EVS_ShakeTree), TRIGGER_WALL_HAMMER, COLLIDER_miki4, 1, 0)
+    BindTrigger(Ref(EVS_ShakeTree), TRIGGER_POINT_BOMB, Ref(N(BombPos_Tree2)), 1, 0)
     Set(LVar0, Ref(N(ShakeTree_Tree3)))
-    BindTrigger(Ref(N(EVS_ShakeTree)), TRIGGER_WALL_HAMMER, COLLIDER_miki5, 1, 0)
-    BindTrigger(Ref(N(EVS_ShakeTree)), TRIGGER_POINT_BOMB, Ref(N(BombPos_Tree3)), 1, 0)
+    BindTrigger(Ref(EVS_ShakeTree), TRIGGER_WALL_HAMMER, COLLIDER_miki5, 1, 0)
+    BindTrigger(Ref(EVS_ShakeTree), TRIGGER_POINT_BOMB, Ref(N(BombPos_Tree3)), 1, 0)
     Call(InitAnimatedModels)
     Call(GetEntryID, LVar0)
     IfNe(LVar0, sam_11_ENTRY_2)

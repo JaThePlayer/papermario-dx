@@ -54,7 +54,7 @@ s32 N(StatusTable)[] = {
     STATUS_KEY_POISON,             60,
     STATUS_KEY_FROZEN,            100,
     STATUS_KEY_DIZZY,              50,
-    STATUS_KEY_FEAR,                0,
+    STATUS_KEY_UNUSED,              0,
     STATUS_KEY_STATIC,             80,
     STATUS_KEY_PARALYZE,           90,
     STATUS_KEY_SHRINK,             75,
@@ -64,7 +64,7 @@ s32 N(StatusTable)[] = {
     STATUS_TURN_MOD_POISON,         0,
     STATUS_TURN_MOD_FROZEN,         0,
     STATUS_TURN_MOD_DIZZY,         -1,
-    STATUS_TURN_MOD_FEAR,           0,
+    STATUS_TURN_MOD_UNUSED,         0,
     STATUS_TURN_MOD_STATIC,         0,
     STATUS_TURN_MOD_PARALYZE,       1,
     STATUS_TURN_MOD_SHRINK,         0,
@@ -120,7 +120,7 @@ s32 N(KoopaAnims)[] = {
     STATUS_KEY_STATIC,    ANIM_KoopaTroopa_Dark_Idle,
     STATUS_KEY_PARALYZE,  ANIM_KoopaTroopa_Dark_Still,
     STATUS_KEY_DIZZY,     ANIM_KoopaTroopa_Dark_Stunned,
-    STATUS_KEY_FEAR,      ANIM_KoopaTroopa_Dark_Stunned,
+    STATUS_KEY_UNUSED,    ANIM_KoopaTroopa_Dark_Stunned,
     STATUS_END,
 };
 
@@ -133,7 +133,7 @@ s32 N(ShuffleAnims)[] = {
     STATUS_KEY_STATIC,    ANIM_KoopaTroopa_Dark_Walk,
     STATUS_KEY_PARALYZE,  ANIM_KoopaTroopa_Dark_Still,
     STATUS_KEY_DIZZY,     ANIM_KoopaTroopa_Dark_Stunned,
-    STATUS_KEY_FEAR,      ANIM_KoopaTroopa_Dark_Stunned,
+    STATUS_KEY_UNUSED,    ANIM_KoopaTroopa_Dark_Stunned,
     STATUS_END,
 };
 
@@ -146,7 +146,7 @@ s32 N(HyperAnims)[] = {
     STATUS_KEY_STATIC,    ANIM_KoopaTroopa_Dark_Scramble,
     STATUS_KEY_PARALYZE,  ANIM_KoopaTroopa_Dark_Still,
     STATUS_KEY_DIZZY,     ANIM_KoopaTroopa_Dark_Stunned,
-    STATUS_KEY_FEAR,      ANIM_KoopaTroopa_Dark_Stunned,
+    STATUS_KEY_UNUSED,    ANIM_KoopaTroopa_Dark_Stunned,
     STATUS_END,
 };
 
@@ -159,7 +159,7 @@ s32 N(HyperShuffleAnims)[] = {
     STATUS_KEY_STATIC,    ANIM_KoopaTroopa_Dark_Walk,
     STATUS_KEY_PARALYZE,  ANIM_KoopaTroopa_Dark_Still,
     STATUS_KEY_DIZZY,     ANIM_KoopaTroopa_Dark_Stunned,
-    STATUS_KEY_FEAR,      ANIM_KoopaTroopa_Dark_Stunned,
+    STATUS_KEY_UNUSED,    ANIM_KoopaTroopa_Dark_Stunned,
     STATUS_END,
 };
 
@@ -172,7 +172,7 @@ s32 N(ToppledAnims)[] = {
     STATUS_KEY_STATIC,    ANIM_KoopaTroopa_Dark_ToppleStruggle,
     STATUS_KEY_PARALYZE,  ANIM_KoopaTroopa_Dark_ToppleStill,
     STATUS_KEY_DIZZY,     ANIM_KoopaTroopa_Dark_ToppleStunned,
-    STATUS_KEY_FEAR,      ANIM_KoopaTroopa_Dark_ToppleStunned,
+    STATUS_KEY_UNUSED,    ANIM_KoopaTroopa_Dark_ToppleStunned,
     STATUS_END,
 };
 
@@ -188,7 +188,7 @@ EvtScript N(EVS_Init) = {
         Call(SetIdleAnimations, ACTOR_SELF, PRT_MAIN, Ref(N(HyperAnims)))
         Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_KoopaTroopa_Dark_Scramble)
     EndIf
-    Call(SetActorVar, ACTOR_SELF, AVAR_HasWhirlwind, FALSE)
+    Call(SetActorVar, ACTOR_SELF, AVAR_HasWhirlwind, false)
     Return
     End
 };
@@ -330,7 +330,7 @@ EvtScript N(EVS_Idle) = {
         Call(GetActorVar, ACTOR_SELF, AVAR_State, LVar0)
         Switch(LVar0)
             CaseEq(AVAL_State_Hyper)
-                Call(SetActorVar, ACTOR_SELF, AVAR_HasWhirlwind, TRUE)
+                Call(SetActorVar, ACTOR_SELF, AVAR_HasWhirlwind, true)
                 Thread
                     Call(MakeLerp, 720, 0, 30, EASING_COS_IN_OUT)
                     Label(10)
@@ -343,7 +343,7 @@ EvtScript N(EVS_Idle) = {
                                 Goto(10)
                             EndIf
                         EndIf
-                    Call(SetActorVar, ACTOR_SELF, AVAR_HasWhirlwind, FALSE)
+                    Call(SetActorVar, ACTOR_SELF, AVAR_HasWhirlwind, false)
                     Call(SetActorYaw, ACTOR_SELF, 0)
                 EndThread
                 Wait(8)
@@ -351,7 +351,7 @@ EvtScript N(EVS_Idle) = {
                 Wait(15)
                 Call(RemoveActorDecoration, ACTOR_SELF, PRT_MAIN, WHIRLWIND_DECOR_IDX)
                 Wait(8)
-                Call(SetActorVar, ACTOR_SELF, AVAR_HasWhirlwind, FALSE)
+                Call(SetActorVar, ACTOR_SELF, AVAR_HasWhirlwind, false)
             CaseEq(AVAL_State_Normal)
             CaseEq(AVAL_State_ToppledNormal)
             CaseEq(AVAL_State_ToppledHyper)
@@ -364,14 +364,14 @@ EvtScript N(EVS_Idle) = {
 s32 N(FlipPosOffsets)[] = { 9, 16, 22, 26, 30, 32, 33, 32, 30, 26, 22, 16, 9, 0, 4, 6, 7, 6, 4, 0, 2, 0 };
 
 EvtScript N(EVS_HandleEvent) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(SetAnimationRate, ACTOR_SELF, PRT_MAIN, Float(1.0))
     Call(SetActorYaw, ACTOR_SELF, 0)
     Call(GetActorVar, ACTOR_SELF, AVAR_HasWhirlwind, LVar0)
-    IfEq(LVar0, TRUE)
+    IfEq(LVar0, true)
         Call(RemoveActorDecoration, ACTOR_SELF, PRT_MAIN, WHIRLWIND_DECOR_IDX)
-        Call(SetActorVar, ACTOR_SELF, AVAR_HasWhirlwind, FALSE)
+        Call(SetActorVar, ACTOR_SELF, AVAR_HasWhirlwind, false)
     EndIf
     Call(GetLastEvent, ACTOR_SELF, LVar0)
     Switch(LVar0)
@@ -420,7 +420,7 @@ EvtScript N(EVS_HandleEvent) = {
             Call(SetIdleAnimations, ACTOR_SELF, PRT_MAIN, Ref(N(ToppledAnims)))
             Call(SetTargetOffset, ACTOR_SELF, PRT_MAIN, -5, 15)
             Call(SetProjectileTargetOffset, ACTOR_SELF, PRT_MAIN, 0, 0)
-            Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_FLIPPED, TRUE)
+            Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_FLIPPED, true)
             Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_KoopaTroopa_Dark_Hurt)
             Call(SetActorRotationOffset, ACTOR_SELF, 0, 12, 0)
             Thread
@@ -454,12 +454,12 @@ EvtScript N(EVS_HandleEvent) = {
             SetConst(LVar0, PRT_MAIN)
             SetConst(LVar1, ANIM_KoopaTroopa_Dark_Hurt)
             ExecWait(EVS_Enemy_Knockback)
-            Call(JumpToGoal, ACTOR_SELF, 5, FALSE, TRUE, FALSE)
+            Call(JumpToGoal, ACTOR_SELF, 5, false, true, false)
             SetConst(LVar0, PRT_MAIN)
             SetConst(LVar1, ANIM_KoopaTroopa_Dark_Run)
             ExecWait(EVS_Enemy_ReturnHome)
             Call(SetActorJumpGravity, ACTOR_SELF, Float(1.6))
-            Call(JumpToGoal, ACTOR_SELF, 5, FALSE, TRUE, FALSE)
+            Call(JumpToGoal, ACTOR_SELF, 5, false, true, false)
         CaseEq(EVENT_SHOCK_DEATH)
             SetConst(LVar0, PRT_MAIN)
             SetConst(LVar1, ANIM_KoopaTroopa_Dark_Hurt)
@@ -584,13 +584,13 @@ EvtScript N(EVS_HandleEvent) = {
             EndSwitch
     EndSwitch
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_RESTART)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };
 
 EvtScript N(EVS_Attack_ShellToss) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
     Call(GetBattlePhase, LVar0)
@@ -614,7 +614,7 @@ EvtScript N(EVS_Attack_ShellToss) = {
         Call(PlaySoundAtActor, ACTOR_SELF, SOUND_SHELL_SPIN)
         Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_KoopaTroopa_Dark_ShellSpin)
         Wait(10)
-        Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_TARGET, BTL_CAM_XADJ_AVG, FALSE)
+        Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_TARGET, BTL_CAM_XADJ_AVG, false)
     EndIf
     Call(PlaySoundAtActor, ACTOR_SELF, SOUND_SHELL_TOSS)
     Call(SetActorSounds, ACTOR_SELF, ACTOR_SOUND_WALK, SOUND_NONE, SOUND_NONE)
@@ -627,7 +627,7 @@ EvtScript N(EVS_Attack_ShellToss) = {
             Call(GetStatusFlags, ACTOR_SELF, LVar5)
             Call(AddGoalPos, ACTOR_SELF, -40, 0, 0)
             Call(SetActorSpeed, ACTOR_SELF, Float(16.0))
-            Call(RunToGoal, ACTOR_SELF, 0, FALSE)
+            Call(RunToGoal, ACTOR_SELF, 0, false)
             Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_KoopaTroopa_Dark_ShellExit)
             Wait(8)
             Call(ResetAllActorSounds, ACTOR_SELF)
@@ -643,12 +643,12 @@ EvtScript N(EVS_Attack_ShellToss) = {
             Add(LVar1, 20)
             Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
             Call(SetActorJumpGravity, ACTOR_SELF, Float(2.0))
-            Call(JumpToGoal, ACTOR_SELF, 5, FALSE, TRUE, FALSE)
+            Call(JumpToGoal, ACTOR_SELF, 5, false, true, false)
             Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_KoopaTroopa_Dark_Panic)
             Wait(6)
             Sub(LVar1, 20)
             Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Call(JumpToGoal, ACTOR_SELF, 5, FALSE, TRUE, FALSE)
+            Call(JumpToGoal, ACTOR_SELF, 5, false, true, false)
             Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
             Call(YieldTurn)
             Call(SetActorYaw, ACTOR_SELF, 180)
@@ -656,18 +656,18 @@ EvtScript N(EVS_Attack_ShellToss) = {
             Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_KoopaTroopa_Dark_Panic)
             Call(SetActorSpeed, ACTOR_SELF, Float(6.0))
             Call(SetGoalToHome, ACTOR_SELF)
-            Call(RunToGoal, ACTOR_SELF, 0, FALSE)
+            Call(RunToGoal, ACTOR_SELF, 0, false)
             Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_KoopaTroopa_Dark_Idle)
             Call(RemoveActorDecoration, ACTOR_SELF, PRT_MAIN, SWEAT_DECOR_IDX)
             Call(SetActorYaw, ACTOR_SELF, 0)
             Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-            Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+            Call(UseIdleAnimation, ACTOR_SELF, true)
             Return
         EndCaseGroup
     EndSwitch
     Call(SetGoalToTarget, ACTOR_SELF)
     Call(SetActorSpeed, ACTOR_SELF, Float(16.0))
-    Call(RunToGoal, ACTOR_SELF, 0, FALSE)
+    Call(RunToGoal, ACTOR_SELF, 0, false)
     Call(ResetAllActorSounds, ACTOR_SELF)
     Wait(2)
     Call(EnemyDamageTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_STATUS_ALWAYS_HITS, SUPPRESS_EVENT_ALL, 0, DMG_SHELL_TOSS, BS_FLAGS1_TRIGGER_EVENTS)
@@ -680,13 +680,13 @@ EvtScript N(EVS_Attack_ShellToss) = {
             Set(LVar1, 0)
             Call(SetActorJumpGravity, ACTOR_SELF, Float(1.8))
             Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Call(JumpToGoal, ACTOR_SELF, 10, FALSE, TRUE, FALSE)
+            Call(JumpToGoal, ACTOR_SELF, 10, false, true, false)
             Add(LVar0, 30)
             Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Call(JumpToGoal, ACTOR_SELF, 8, FALSE, TRUE, FALSE)
+            Call(JumpToGoal, ACTOR_SELF, 8, false, true, false)
             Add(LVar0, 20)
             Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Call(JumpToGoal, ACTOR_SELF, 6, FALSE, TRUE, FALSE)
+            Call(JumpToGoal, ACTOR_SELF, 6, false, true, false)
             Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_KoopaTroopa_Dark_ShellExit)
             Wait(8)
             Call(YieldTurn)
@@ -697,7 +697,7 @@ EvtScript N(EVS_Attack_ShellToss) = {
         EndCaseGroup
     EndSwitch
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };
@@ -706,10 +706,10 @@ EvtScript N(EVS_Attack_Whirlwind) = {
     Label(10)
         Call(GetActorVar, ACTOR_SELF, AVAR_HasWhirlwind, LVar0)
         Wait(1)
-        IfEq(LVar0, TRUE)
+        IfEq(LVar0, true)
             Goto(10)
         EndIf
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(SetActorYaw, ACTOR_SELF, 0)
     Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
@@ -724,7 +724,7 @@ EvtScript N(EVS_Attack_Whirlwind) = {
     EndIf
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_KoopaTroopa_Dark_Run)
     Call(SetActorSpeed, ACTOR_SELF, Float(6.0))
-    Call(RunToGoal, ACTOR_SELF, 0, FALSE)
+    Call(RunToGoal, ACTOR_SELF, 0, false)
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_KoopaTroopa_Dark_Scramble)
     Wait(10)
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_KoopaTroopa_Dark_ShellEnter)
@@ -763,7 +763,7 @@ EvtScript N(EVS_Attack_Whirlwind) = {
             Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_KoopaTroopa_Dark_Panic)
             Call(SetActorSpeed, ACTOR_SELF, Float(6.0))
             Call(SetGoalToHome, ACTOR_SELF)
-            Call(RunToGoal, ACTOR_SELF, 0, FALSE)
+            Call(RunToGoal, ACTOR_SELF, 0, false)
             Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_KoopaTroopa_Dark_Scramble)
             Call(RemoveActorDecoration, ACTOR_SELF, PRT_MAIN, SWEAT_DECOR_IDX)
             Call(SetActorYaw, ACTOR_SELF, 0)
@@ -803,13 +803,13 @@ EvtScript N(EVS_Attack_Whirlwind) = {
         EndCaseGroup
     EndSwitch
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };
 
 EvtScript N(EVS_TryGettingUp) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(SetActorYaw, ACTOR_SELF, 0)
     Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
@@ -844,7 +844,7 @@ EvtScript N(EVS_TryGettingUp) = {
         Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
         Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
         Call(SetActorJumpGravity, ACTOR_SELF, Float(3.0))
-        Call(JumpToGoal, ACTOR_SELF, 8, FALSE, TRUE, FALSE)
+        Call(JumpToGoal, ACTOR_SELF, 8, false, true, false)
         Call(PlaySoundAtActor, ACTOR_SELF, SOUND_ACTOR_STEP_A)
         Call(SetActorRotationOffset, ACTOR_SELF, 0, 0, 0)
         Call(SetActorRotation, ACTOR_SELF, 0, 0, 0)
@@ -852,7 +852,7 @@ EvtScript N(EVS_TryGettingUp) = {
         Call(SetDefenseTable, ACTOR_SELF, PRT_MAIN, Ref(N(UprightDefenseTable)))
         Call(SetTargetOffset, ACTOR_SELF, PRT_MAIN, -4, 32)
         Call(SetProjectileTargetOffset, ACTOR_SELF, PRT_MAIN, -1, -4)
-        Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_FLIPPED, FALSE)
+        Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_FLIPPED, false)
         Call(ResetActorSounds, ACTOR_SELF, ACTOR_SOUND_JUMP)
         Call(GetActorVar, ACTOR_SELF, AVAR_State, LVar0)
         Switch(LVar0)
@@ -865,7 +865,7 @@ EvtScript N(EVS_TryGettingUp) = {
         EndSwitch
     EndIf
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };

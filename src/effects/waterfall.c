@@ -24,15 +24,15 @@ EffectInstance* waterfall_main(
 
     bp.init = waterfall_init;
     bp.update = waterfall_update;
-    bp.renderWorld = waterfall_render;
+    bp.renderScene = waterfall_render;
     bp.unk_00 = 0;
-    bp.renderUI = NULL;
+    bp.renderUI = nullptr;
     bp.effectID = EFFECT_WATERFALL;
 
     effect = create_effect_instance(&bp);
     effect->numParts = numParts;
     data = effect->data.waterfall = general_heap_malloc(numParts * sizeof(*data));
-    ASSERT(effect->data.waterfall != NULL);
+    ASSERT(effect->data.waterfall != nullptr);
 
     data->unk_00 = arg0;
     data->unk_14 = 0;
@@ -130,7 +130,7 @@ void waterfall_appendGfx(void* effect) {
     s32 i;
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
 
     guTranslateF(sp10, data->unk_04, data->unk_08, data->unk_0C);
     guScaleF(sp50, scale, scale, scale);

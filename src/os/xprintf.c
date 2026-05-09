@@ -1,6 +1,6 @@
-#include "stdlib/stdarg.h"
+#include <stdarg.h>
 #include "libc/xstdio.h"
-#include "gcc/string.h"
+#include <string.h>
 
 #define isdigit(x) ((x >= '0' && x <= '9'))
 #define LDSIGN(x) (((unsigned short *)&(x))[0] & 0x8000)
@@ -26,7 +26,7 @@
 #define PUT(s, n)                                \
     if (0 < (n))                                 \
     {                                            \
-        if ((arg = (*prout)(arg, s, n)) != NULL) \
+        if ((arg = (*prout)(arg, s, n)) != nullptr) \
             x.nchar += (n);                      \
         else                                     \
             return x.nchar;                      \
@@ -62,7 +62,7 @@ int _Printf(outfun prout, char *arg, const char *fmt, va_list args) {
 
         fmt = ++s;
 
-        for (x.flags = 0; (t = strchr(fchar, *s)) != NULL; s++) {
+        for (x.flags = 0; (t = strchr(fchar, *s)) != nullptr; s++) {
             x.flags |= fbit[t - fchar];
         }
 
@@ -230,4 +230,3 @@ static void _Putfld(_Pft *x, va_list *args, char type, char *buff) {
     }
 }
 
-static const s32 padding[] = {0, 0};

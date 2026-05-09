@@ -31,15 +31,15 @@ EffectInstance* quizmo_assistant_main(s32 arg0, f32 arg1, f32 arg2, f32 arg3, f3
 
     bp.init = quizmo_assistant_init;
     bp.update = quizmo_assistant_update;
-    bp.renderWorld = quizmo_assistant_render;
+    bp.renderScene = quizmo_assistant_render;
     bp.unk_00 = 0;
-    bp.renderUI = NULL;
+    bp.renderUI = nullptr;
     bp.effectID = EFFECT_QUIZMO_ASSISTANT;
 
     effect = create_effect_instance(&bp);
     effect->numParts = numParts;
     data = effect->data.quizmoAssistant = general_heap_malloc(numParts * sizeof(*data));
-    ASSERT(effect->data.quizmoAssistant != NULL);
+    ASSERT(effect->data.quizmoAssistant != nullptr);
 
     data->unk_00 = arg0;
     data->lifetime = 0;
@@ -106,7 +106,7 @@ void quizmo_assistant_appendGfx(void* effect) {
     Matrix4f sp58;
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
 
     guTranslateF(sp18, data->pos.x, data->pos.y, data->pos.z);
     guRotateF(sp58, -gCameras[gCurrentCameraID].curYaw, 0.0f, 1.0f, 0.0f);

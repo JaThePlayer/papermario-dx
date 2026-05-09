@@ -18,15 +18,15 @@ void drop_leaves_main(s32 arg0, f32 arg1, f32 arg2, f32 arg3, s32 arg4) {
 
     bp.init = drop_leaves_init;
     bp.update = drop_leaves_update;
-    bp.renderWorld = drop_leaves_render;
+    bp.renderScene = drop_leaves_render;
     bp.unk_00 = 0;
-    bp.renderUI = NULL;
+    bp.renderUI = nullptr;
     bp.effectID = EFFECT_DROP_LEAVES;
 
     effect = create_effect_instance(&bp);
     effect->numParts = numParts;
     part = effect->data.dropLeaves = general_heap_malloc(numParts * sizeof(*part));
-    ASSERT(effect->data.dropLeaves != NULL);
+    ASSERT(effect->data.dropLeaves != nullptr);
 
     part->unk_00 = arg0;
     part->unk_04 = arg1;
@@ -133,7 +133,7 @@ void drop_leaves_appendGfx(void* effect) {
     Matrix4f sp98;
     s32 i;
 
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
     gSPDisplayList(gMainGfxPos++, D_09001180_33E790);
     gDPSetPrimColor(gMainGfxPos++, 0, 0, 20, 100, 20, part->unk_24);
 

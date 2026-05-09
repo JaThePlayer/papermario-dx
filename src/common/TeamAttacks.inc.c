@@ -10,19 +10,19 @@ API_CALLABLE(N(NextEnemyIfTypeIsOneOf)) {
     s32 ownerId = script->owner1.actorID;
     s32 nextActorId = ownerId + 1;
 
-    s32 ret = FALSE;
+    s32 ret = false;
     Actor* nextActor = get_actor(nextActorId);
-    if (nextActor != NULL) {
-        while (*types != NULL) {
+    if (nextActor != nullptr) {
+        while (*types != nullptr) {
             if (*types == nextActor->actorType) {
-                ret = TRUE;
+                ret = true;
                 break;
             }
             types++;
         }
     }
 
-    evt_set_variable(script, *args++, ret ? nextActor : NULL);
+    evt_set_variable(script, *args++, ret ? nextActor : nullptr);
 
     return ApiStatus_DONE2;
 }

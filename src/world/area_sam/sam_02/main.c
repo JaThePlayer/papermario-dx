@@ -5,7 +5,7 @@
 
 #include "world/common/atomic/TexturePan.inc.c"
 
-#include "common/foliage.inc.c"
+#include "foliage.h"
 
 FoliageModelList N(Tree1_LeafModels)  = FOLIAGE_MODEL_LIST(MODEL_o494, MODEL_o495);
 FoliageModelList N(Tree1_TrunkModels) = FOLIAGE_MODEL_LIST(MODEL_miki2);
@@ -66,15 +66,15 @@ EvtScript N(EVS_EnterMap) = {
     Call(GetEntryID, LVar0)
     Switch(LVar0)
         CaseEq(sam_02_ENTRY_2)
-            IfEq(GF_SAM01_Visited, FALSE)
-                Set(GF_SAM01_Visited, TRUE)
+            IfEq(GF_SAM01_Visited, false)
+                Set(GF_SAM01_Visited, true)
                 Set(GB_StoryProgress, STORY_CH7_ARRIVED_AT_SHIVER_CITY)
             EndIf
             EVT_ENTER_PIPE_VERTICAL(N(EVS_BindExitTriggers))
             Wait(1)
         CaseEq(sam_02_ENTRY_3)
-            Call(DisablePlayerInput, TRUE)
-            Call(DisablePlayerPhysics, TRUE)
+            Call(DisablePlayerInput, true)
+            Call(DisablePlayerPhysics, true)
             Call(SetPlayerJumpscale, Float(1.0))
             Call(SetPlayerPos, 650, 0, 50)
             Wait(1)
@@ -95,8 +95,8 @@ EvtScript N(EVS_EnterMap) = {
                 Call(SetPlayerAnimation, ANIM_Mario1_Idle)
                 Wait(1)
                 ExecWait(N(EVS_BindExitTriggers))
-                Call(DisablePlayerInput, FALSE)
-                Call(DisablePlayerPhysics, FALSE)
+                Call(DisablePlayerInput, false)
+                Call(DisablePlayerPhysics, false)
             EndThread
         CaseDefault
             Set(LVar0, Ref(N(EVS_BindExitTriggers)))
@@ -126,14 +126,14 @@ EvtScript N(EVS_Main) = {
     Set(GB_WorldLocation, LOCATION_SHIVER_CITY)
     Call(SetSpriteShading, SHADING_NONE)
     EVT_SETUP_CAMERA_NO_LEAD(0, 0, 0)
-    Set(GF_MAP_ShiverCity, TRUE)
+    Set(GF_MAP_ShiverCity, true)
     Switch(GB_StoryProgress)
         CaseLt(STORY_CH7_MAYOR_MURDER_MYSTERY)
-            Call(MakeNpcs, FALSE, Ref(N(DefaultNPCs)))
+            Call(MakeNpcs, false, Ref(N(DefaultNPCs)))
         CaseLt(STORY_CH7_MAYOR_MURDER_SOLVED)
-            Call(MakeNpcs, FALSE, Ref(N(MysteryNPCs)))
+            Call(MakeNpcs, false, Ref(N(MysteryNPCs)))
         CaseGe(STORY_CH7_MAYOR_MURDER_SOLVED)
-            Call(MakeNpcs, FALSE, Ref(N(DefaultNPCs)))
+            Call(MakeNpcs, false, Ref(N(DefaultNPCs)))
     EndSwitch
     ExecWait(N(EVS_MakeEntities))
     ExecWait(N(EVS_SetupMusic))
@@ -142,11 +142,11 @@ EvtScript N(EVS_Main) = {
     ExecWait(N(EVS_SetupRooms))
     ExecWait(N(EVS_SetupShop))
     Set(LVar0, Ref(N(ShakeTree_Tree1)))
-    BindTrigger(Ref(N(EVS_ShakeTree)), TRIGGER_WALL_HAMMER, COLLIDER_ki, 1, 0)
-    BindTrigger(Ref(N(EVS_ShakeTree)), TRIGGER_POINT_BOMB, Ref(N(BombPos_Tree1)), 1, 0)
+    BindTrigger(Ref(EVS_ShakeTree), TRIGGER_WALL_HAMMER, COLLIDER_ki, 1, 0)
+    BindTrigger(Ref(EVS_ShakeTree), TRIGGER_POINT_BOMB, Ref(N(BombPos_Tree1)), 1, 0)
     Set(LVar0, Ref(N(ShakeTree_Tree2)))
-    BindTrigger(Ref(N(EVS_ShakeTree)), TRIGGER_WALL_HAMMER, COLLIDER_o505, 1, 0)
-    BindTrigger(Ref(N(EVS_ShakeTree)), TRIGGER_POINT_BOMB, Ref(N(BombPos_Tree2)), 1, 0)
+    BindTrigger(Ref(EVS_ShakeTree), TRIGGER_WALL_HAMMER, COLLIDER_o505, 1, 0)
+    BindTrigger(Ref(EVS_ShakeTree), TRIGGER_POINT_BOMB, Ref(N(BombPos_Tree2)), 1, 0)
     Call(ModifyColliderFlags, MODIFY_COLLIDER_FLAGS_SET_SURFACE, COLLIDER_kabe, SURFACE_TYPE_SNOW)
     Call(ModifyColliderFlags, MODIFY_COLLIDER_FLAGS_SET_SURFACE, COLLIDER_tumori, SURFACE_TYPE_SNOW)
     Call(ModifyColliderFlags, MODIFY_COLLIDER_FLAGS_SET_SURFACE, COLLIDER_o506, SURFACE_TYPE_SNOW)

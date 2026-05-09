@@ -43,7 +43,7 @@ s32 N(StatusTable)[] = {
     STATUS_KEY_POISON,              0,
     STATUS_KEY_FROZEN,              0,
     STATUS_KEY_DIZZY,               0,
-    STATUS_KEY_FEAR,                0,
+    STATUS_KEY_UNUSED,              0,
     STATUS_KEY_STATIC,              0,
     STATUS_KEY_PARALYZE,            0,
     STATUS_KEY_SHRINK,              0,
@@ -53,7 +53,7 @@ s32 N(StatusTable)[] = {
     STATUS_TURN_MOD_POISON,         0,
     STATUS_TURN_MOD_FROZEN,         0,
     STATUS_TURN_MOD_DIZZY,          0,
-    STATUS_TURN_MOD_FEAR,           0,
+    STATUS_TURN_MOD_UNUSED,         0,
     STATUS_TURN_MOD_STATIC,         0,
     STATUS_TURN_MOD_PARALYZE,       0,
     STATUS_TURN_MOD_SHRINK,         0,
@@ -68,7 +68,7 @@ ActorPartBlueprint N(ActorParts)[] = {
         .posOffset = { 0, 0, 0 },
         .targetOffset = { 0, 35 },
         .opacity = 255,
-        .idleAnimations = NULL,
+        .idleAnimations = nullptr,
         .defenseTable = N(DefenseTable),
         .eventFlags = 0,
         .elementImmunityFlags = 0,
@@ -117,7 +117,7 @@ EvtScript N(EVS_Idle) = {
 };
 
 EvtScript N(EVS_HandleEvent) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(GetLastEvent, ACTOR_SELF, LVar0)
     Switch(LVar0)
         CaseEq(EVENT_HIT_COMBO)
@@ -156,7 +156,7 @@ EvtScript N(EVS_HandleEvent) = {
         CaseEq(EVENT_END_FIRST_STRIKE)
         CaseDefault
     EndSwitch
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };
@@ -322,12 +322,12 @@ API_CALLABLE(N(SpawnShatterFX)) {
 EvtScript N(EVS_Death) = {
     Call(PlaySoundAtActor, ACTOR_BULB, SOUND_TANK_BULB_SHATTER)
     Call(N(SpawnShatterFX))
-    Call(EnableModel, MODEL_kyu3, FALSE)
-    Call(EnableModel, MODEL_kyu1, FALSE)
+    Call(EnableModel, MODEL_kyu3, false)
+    Call(EnableModel, MODEL_kyu1, false)
     Call(GetActorVar, ACTOR_TANK, AVAR_Tank_BulbGlowEffect, LVar0)
-    IfNe(LVar0, NULL)
+    IfNe(LVar0, nullptr)
         Call(RemoveEffect, LVar0)
-        Call(SetActorVar, ACTOR_TANK, AVAR_Tank_BulbGlowEffect, NULL)
+        Call(SetActorVar, ACTOR_TANK, AVAR_Tank_BulbGlowEffect, nullptr)
     EndIf
     Call(RemoveActor, ACTOR_SELF)
     Return

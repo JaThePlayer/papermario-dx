@@ -5,8 +5,13 @@
 #include "common.h"
 #include "map.h"
 #include "enums.h"
-#include "stdlib/stdarg.h"
-#include "libc/xstdio.h"
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Enemy;
+struct MobileAISettings;
+struct EnemyDetectVolume;
 
 #ifdef _LANGUAGE_C_PLUS_PLUS
 extern "C" {
@@ -21,7 +26,11 @@ void boot_idle(void* data);
 void boot_main(void* data);
 
 void is_debug_init(void);
-[[noreturn]] void is_debug_panic(const char* message);
+NORETURN void is_debug_panic(const char* message);
+
+// TODO: migrate to vsnprintf on modern libc
+typedef char *outfun(char*,const char*,size_t);
+int _Printf(outfun prout, char *arg, const char *fmt, va_list args);
 
 f32 signF(f32 val);
 
@@ -41,7 +50,7 @@ void copy_matrix(Matrix4f src, Matrix4f dest);
 Shadow* get_shadow_by_index(s32 index);
 s32 get_time_freeze_mode(void);
 void render_player_model(void);
-s32 is_picking_up_item(void);
+b32 is_picking_up_item(void);
 
 f32 integrate_gravity(void);
 void gravity_use_fall_parms(void);
@@ -60,7 +69,7 @@ void show_damage_fx(Actor* actor, f32 x, f32 y, f32 z, s32 damage);
 b32 entity_raycast_down(f32*, f32*, f32*, f32*, f32*, f32*);
 
 void step_game_loop(void);
-s32 resume_all_group(s32 groupFlags);
+void resume_all_group(s32 groupFlags);
 f32 length2D(f32 x, f32 y);
 void player_input_to_move_vector(f32* angle, f32* magnitude);
 void game_input_to_move_vector(f32* x, f32* y);
@@ -95,7 +104,7 @@ void get_msg_properties(s32 msgID, s32* height, s32* width, s32* maxLineChars, s
 void replace_window_update(s32 idx, s8 arg1, WindowUpdateFunc pendingFunc);
 void decode_yay0(void* src, void* dst);
 
-s32 ai_check_player_dist(Enemy* enemy, s32 arg1, f32 arg2, f32 arg3);
+s32 ai_check_player_dist(struct Enemy* enemy, s32 arg1, f32 arg2, f32 arg3);
 
 //pause
 void pause_init(void);
@@ -103,10 +112,10 @@ void pause_handle_input(s32 buttonsPressed, s32 buttonsHeld);
 void pause_cleanup(void);
 
 // file menu stuff
-void filemenu_init(s32);
+void filemenu_init(s32 mode);
 void filemenu_cleanup(void);
 void filemenu_update(void);
-s32 func_80244BC4(void);
+s32 filemenu_get_exit_mode(void);
 void filemenu_set_selected(MenuPanel* menu, s32 col, s32 row);
 void filemenu_set_cursor_alpha(s32 arg0);
 void filemenu_set_cursor_goal_pos(s32 windowIndex, s32 posX, s32 posY);
@@ -172,7 +181,7 @@ s32 entity_RedSwitch_animate_scale(Entity* entity);
 void entity_base_switch_start_bound_script(Entity* entity);
 void entity_base_switch_animate_scale(Entity* entity);
 void entity_base_switch_init(Entity* entity);
-f32 entity_block_hit_init_scale(Entity* entity);
+void entity_block_hit_init_scale(Entity* entity);
 void entity_block_hit_animate_scale(Entity* entity);
 s32 entity_block_handle_collision(Entity* entity);
 void entity_BlueSwitch_init(Entity* entity);
@@ -214,7 +223,7 @@ void set_time_freeze_mode(s32);
 
 NODISCARD s32 get_map_IDs_by_name(const char* mapName, s16* areaID, s16* mapID);
 
-/// Same as \ref get_map_IDs_by_name, but will panic if the map doesn't exist.
+/// Same as [`get_map_IDs_by_name`], but will panic if the map doesn't exist.
 void get_map_IDs_by_name_checked(const char* mapName, s16* areaID, s16* mapID);
 
 void transform_point(Matrix4f mtx, f32 inX, f32 inY, f32 inZ, f32 inS, f32* outX, f32* outY, f32* outZ, f32* outW);
@@ -280,22 +289,15 @@ s32 test_ray_colliders(s32 ignoreFlags, f32 startX, f32 startY, f32 startZ, f32 
                        f32* hitY, f32* hitZ, f32* hitDepth, f32* hitNx, f32* hitNy, f32* hitNz);
 
 /// Test a general ray from a given starting position and direction against all entities.
-/// If one is hit, returns the position and normal of the hit and the length along the ray on the output params.
-/// All output params are invalid when a value of `NO_COLLIDER` is returned.
-/// @param startX origin x position of the ray
-/// @param startY origin y position of the ray
-/// @param startZ origin z position of the ray
-/// @param dirX normalized x direction of the ray
-/// @param dirY normalized y direction of the ray
-/// @param dirZ normalized z direction of the ray
-/// @param[out] hitX normalized x position of the hit
-/// @param[out] hitY normalized y position of the hit
-/// @param[out] hitZ normalized z position of the hit
-/// @param[in,out] hitDepth as input, maximum length of the ray; as output, distance along the ray of the hit
-/// @param[out] hitNx x normal direction of the hit
-/// @param[out] hitNy y normal direction of the hit
-/// @param[out] hitNz z normal direction of the hit
-/// @returns entity index or `NO_COLLIDER` is none is hit
+/// If one is hit, returns the position and normal of the hit and the length along the ray
+/// via the output parameters. All output parameters are invalid when `NO_COLLIDER` is returned.
+///
+/// `startX`/`startY`/`startZ` are the ray origin. `dirX`/`dirY`/`dirZ` are the normalized
+/// ray direction. `hitX`/`hitY`/`hitZ` receive the hit position. `hitNx`/`hitNy`/`hitNz`
+/// receive the hit normal. `hitDepth` is both input (maximum ray length) and output (distance
+/// to the hit).
+///
+/// Returns entity index or `NO_COLLIDER` if none is hit.
 s32 test_ray_entities(f32 startX, f32 startY, f32 startZ, f32 dirX, f32 dirY, f32 dirZ, f32* hitX, f32* hitY, f32* hitZ,
                       f32* hitDepth, f32* hitNx, f32* hitNy, f32* hitNz);
 
@@ -307,7 +309,7 @@ void startup_set_fade_screen_alpha(s16 alpha);
 f32 get_xz_dist_to_player(f32, f32);
 void func_800E06C0(s32);
 void close_status_bar(void);
-Evt* func_802C39F8(Evt* parentScript, Bytecode* nextLine, s32 newState);
+Evt* start_child_thread(Evt* parentScript, Bytecode* nextLine, s32 newState);
 Evt* start_child_script(Evt* parentScript, EvtScript* source, s32 initialState);
 Evt* restart_script(Evt* script);
 void clear_virtual_entity_list(void);
@@ -320,78 +322,6 @@ s32 heap_free(void* ptr);
 void load_battle_hit_asset(const char* hitName);
 void load_data_for_models(struct ModelNode* model, s32 romOffset, s32 size);
 void load_player_actor(void);
-
-void btl_state_update_normal_start(void);
-void btl_state_draw_normal_start(void);
-void btl_state_update_begin_turn(void);
-void btl_state_draw_begin_turn(void);
-void btl_state_update_begin_player_turn(void);
-void btl_state_draw_begin_player_turn(void);
-void btl_state_update_switch_to_player(void);
-void btl_state_draw_switch_to_player(void);
-void btl_state_update_begin_partner_turn(void);
-void btl_state_draw_begin_partner_turn(void);
-void btl_state_update_switch_to_partner(void);
-void btl_state_draw_switch_to_partner(void);
-void btl_state_update_9(void);
-void btl_state_draw_9(void);
-void btl_state_update_prepare_menu(void);
-void btl_state_draw_prepare_menu(void);
-void btl_state_update_end_turn(void);
-void btl_state_draw_end_turn(void);
-void btl_state_update_1C(void);
-void btl_state_draw_1C(void);
-void btl_state_update_victory(void);
-void btl_state_draw_victory(void);
-void btl_state_update_end_training_battle(void);
-void btl_state_draw_end_training_battle(void);
-void btl_state_update_end_battle(void);
-void btl_state_draw_end_battle(void);
-void btl_state_update_defend(void);
-void btl_state_draw_defend(void);
-void btl_state_update_run_away(void);
-void btl_state_draw_run_away(void);
-void btl_state_update_defeat(void);
-void btl_state_draw_defeat(void);
-void btl_state_update_change_partner(void);
-void btl_state_draw_change_partner(void);
-void btl_state_update_player_move(void);
-void btl_state_draw_player_move(void);
-void btl_state_update_end_player_turn(void);
-void btl_state_update_partner_move(void);
-void btl_state_draw_end_player_turn(void);
-void btl_state_draw_partner_move(void);
-void btl_state_update_end_partner_turn(void);
-void btl_state_draw_end_partner_turn(void);
-void btl_state_update_next_enemy(void);
-void btl_state_draw_next_enemy(void);
-void btl_state_update_enemy_move(void);
-void btl_state_draw_enemy_move(void);
-void btl_state_update_first_strike(void);
-void btl_state_draw_first_stike(void);
-void btl_state_update_partner_striking_first(void);
-void btl_state_draw_partner_striking_first(void);
-void btl_state_update_enemy_striking_first(void);
-void btl_state_draw_enemy_striking_first(void);
-void btl_state_update_end_demo_battle(void);
-void btl_state_draw_end_demo_battle(void);
-
-void btl_state_update_player_menu(void);
-void btl_state_draw_player_menu(void);
-void btl_state_update_partner_menu(void);
-void btl_state_draw_partner_menu(void);
-void btl_state_update_peach_menu(void);
-void btl_state_draw_peach_menu(void);
-void btl_state_update_twink_menu(void);
-void btl_state_draw_twink_menu(void);
-void btl_state_update_select_target(void);
-void btl_state_draw_select_target(void);
-void btl_state_update_22(void);
-void btl_state_draw_22(void);
-
-void btl_state_update_celebration(void);
-void btl_draw_upgrade_windows(s32);
-void btl_state_draw_celebration(void);
 
 void btl_bonk_cleanup(void);
 void set_actor_anim_by_ref(Actor*, ActorPart*, AnimID);
@@ -414,11 +344,11 @@ void set_script_priority(Evt* script, s32 priority);
 void set_script_group(Evt* script, s32 groupFlags);
 void suspend_group_others(Evt* script, s32 groupFlags);
 void resume_group_others(Evt* script, s32 groupFlags);
-s32 suspend_all_script(s32 id);
-s32 resume_all_script(s32 id);
+void suspend_all_script(s32 id);
+void resume_all_script(s32 id);
 
 s32 create_shadow_type(s32 type, f32 x, f32 y, f32 z);
-s32 is_point_within_region(s32 shape, f32 pointX, f32 pointY, f32 centerX, f32 centerY, f32 sizeX, f32 sizeZ);
+b32 is_point_outside_territory(s32 shape, f32 pointX, f32 pointY, f32 centerX, f32 centerY, f32 sizeX, f32 sizeZ);
 
 b32 npc_raycast_down_around(s32, f32*, f32*, f32*, f32*, f32, f32);
 b32 npc_raycast_down_sides(s32 ignoreFlags, f32* posX, f32* posY, f32* posZ, f32* hitDepth);
@@ -538,23 +468,7 @@ f32 dist2D(f32 ax, f32 ay, f32 bx, f32 by);
 f32 dist3D(f32 ax, f32 ay, f32 az, f32 bx, f32 by, f32 bz);
 void add_vec2D_polar(f32* x, f32* y, f32 r, f32 theta);
 
-//TODO -- remove these and use audio/public.h instead
-
-enum AuResult bgm_set_track_volumes(s32 playerIndex, s16 trackVolSet);
-enum AuResult bgm_clear_track_volumes(s32 playerIndex, s16 trackVolSet);
-enum AuResult bgm_set_variation(s32 playerIndex, s16 arg1);
-void bgm_quiet_max_volume(void);
-void bgm_reset_max_volume(void);
-void bgm_reset_volume(void);
-s32 bgm_init_music_players(void);
-s32 bgm_set_song(s32 playerIndex, s32 songID, s32 variation, s32 fadeOutTime, s16 volume);
-void bgm_set_battle_song(s32, s32);
-void bgm_push_battle_song(void);
-s32 bgm_adjust_proximity(s32 playerIndex, s32 arg1, s16 arg2);
-void func_801491E4(Matrix4f mtx, s32, s32, s32, s32, s32 alpha);
-s32 func_8014A964(s32 playerIndex, s32 songID, s32 variation, s32 fadeInTime, s16 arg4, s16 arg5);
-
-#include "audio/public.h"
+#include "audio.h"
 
 void basic_window_update(s32 windowIndex, s32* flags, s32* posX, s32* posY, s32* posZ, f32* scaleX, f32* scaleY,
                    f32* rotX, f32* rotY, f32* rotZ, s32* darkening, s32* opacity);
@@ -578,7 +492,7 @@ void create_part_shadow(s32 actorID, s32 partID);
 void remove_part_shadow(s32 actorID, s32 partID);
 void create_part_shadow_by_ref(s32 arg0, ActorPart* part);
 
-void spawn_drops(Enemy* enemy);
+void spawn_drops(struct Enemy* enemy);
 
 void set_part_pal_adjustment(ActorPart*, s32);
 char* int_to_string(s32, char*, s32);
@@ -603,9 +517,7 @@ void update_triggers(void);
 void update_scripts(void);
 void update_messages(void);
 void update_entities(void);
-void func_80138198(void);
-void bgm_update_music_settings(void);
-s32 func_8014AD40(void);
+void bgm_update_music_control(void);
 void update_ambient_sounds(void);
 void update_windows(void);
 void player_render_interact_prompts(void);
@@ -619,7 +531,7 @@ void render_workers_frontUI(void);
 void render_screen_overlay_frontUI(void);
 void render_curtains(void);
 void fio_init_flash(void);
-void func_80028838(void);
+void clear_input(void);
 void clear_screen_overlays(void);
 void bgm_reset_sequence_players(void);
 void reset_ambient_sounds(void);
@@ -649,7 +561,7 @@ void exec_entity_commandlist(Entity* entity);
 void show_start_recovery_shimmer(f32 x, f32 y, f32 z, s32 arg3);
 void show_recovery_shimmer(f32 x, f32 y, f32 z, s32 arg3);
 
-void show_next_damage_popup(f32 x, f32 y, f32 z, s32 damageAmount, s32);
+void show_next_damage_popup(f32 x, f32 y, f32 z, s32 damageAmount, s32 angle);
 void add_xz_vec3f(Vec3f* vector, f32 speed, f32 angleDeg);
 void add_xz_vec3f_copy1(Vec3f* vector, f32 speed, f32 angleDeg);
 void add_xz_vec3f_copy2(Vec3f* vector, f32 speed, f32 angleDeg);
@@ -778,26 +690,17 @@ void set_curtain_fade(f32 fade);
 void crash_screen_init(void);
 void crash_screen_set_draw_info(u16* frameBufPtr, s16 width, s16 height);
 
-void basic_ai_wander_init(Evt* script, MobileAISettings* npcAISettings, EnemyDetectVolume* territory);
-void basic_ai_wander(Evt* script, MobileAISettings* npcAISettings, EnemyDetectVolume* territory);
-void basic_ai_loiter(Evt* script, MobileAISettings* npcAISettings, EnemyDetectVolume* territory);
-void basic_ai_found_player_jump_init(Evt* script, MobileAISettings* npcAISettings, EnemyDetectVolume* territory);
-void basic_ai_found_player_jump(Evt* script, MobileAISettings* npcAISettings, EnemyDetectVolume* territory);
-void basic_ai_chase_init(Evt* script, MobileAISettings* npcAISettings, EnemyDetectVolume* territory);
-void basic_ai_chase(Evt* script, MobileAISettings* npcAISettings, EnemyDetectVolume* territory);
-void basic_ai_lose_player(Evt* script, MobileAISettings* npcAISettings, EnemyDetectVolume* territory);
+void basic_ai_wander_init(Evt* script, struct MobileAISettings* npcAISettings, struct EnemyDetectVolume* territory);
+void basic_ai_wander(Evt* script, struct MobileAISettings* npcAISettings, struct EnemyDetectVolume* territory);
+void basic_ai_loiter(Evt* script, struct MobileAISettings* npcAISettings, struct EnemyDetectVolume* territory);
+void basic_ai_found_player_jump_init(Evt* script, struct MobileAISettings* npcAISettings, struct EnemyDetectVolume* territory);
+void basic_ai_found_player_jump(Evt* script, struct MobileAISettings* npcAISettings, struct EnemyDetectVolume* territory);
+void basic_ai_chase_init(Evt* script, struct MobileAISettings* npcAISettings, struct EnemyDetectVolume* territory);
+void basic_ai_chase(Evt* script, struct MobileAISettings* npcAISettings, struct EnemyDetectVolume* territory);
+void basic_ai_lose_player(Evt* script, struct MobileAISettings* npcAISettings, struct EnemyDetectVolume* territory);
 void basic_ai_suspend(Evt* script);
 
-b32 is_point_outside_territory(s32 shape, f32 centerX, f32 centerZ, f32 pointX, f32 pointZ, f32 sizeX, f32 sizeZ);
-
-// This legally allows all functions to be pointers without warnings.
-// Perhaps the void arg functions can be changed later to remove this need.
-typedef union {
-  void (*func1)(Evt*, s32);
-  void (*func2)(void);
-} WorldArgs TRANSPARENT_UNION;
-
-s32 create_worker_world(WorldArgs, WorldArgs);
+s32 create_worker_scene(void (*updateFunc)(void), void (*renderFunc)(void));
 
 void init_entity_models(void);
 f32 phys_get_spin_history(s32 lag, s32* x, s32* y, s32* z);
@@ -807,9 +710,9 @@ void imgfx_update_cache(void);
 s32 imgfx_get_free_instances(s32);
 void free_worker(s32);
 
-s32 ai_check_fwd_collisions(Npc* npc, f32 arg1, f32* arg2, f32* arg3, f32* arg4, f32* arg5);
-void basic_ai_loiter_init(Evt* script, MobileAISettings* aiSettings, EnemyDetectVolume* territory);
-void PatrolAI_LoiterInit(Evt* script, MobileAISettings* aiSettings, EnemyDetectVolume* territory);
+b32 ai_check_fwd_collisions(Npc* npc, f32 time, f32* outYaw, f32* outDistFwd, f32* outDistCW, f32* outDistCCW);
+void basic_ai_loiter_init(Evt* script, struct MobileAISettings* aiSettings, struct EnemyDetectVolume* territory);
+void PatrolAI_LoiterInit(Evt* script, struct MobileAISettings* aiSettings, struct EnemyDetectVolume* territory);
 
 s32 func_80263230(Actor*, Actor*);
 void set_part_glow_pal(ActorPart*, s32);
@@ -832,7 +735,7 @@ void* load_asset_by_name(const char* assetName, u32* decompressedSize);
 Gfx* mdl_get_copied_gfx(s32 copyIndex);
 void mdl_get_copied_vertices(s32 copyIndex, Vtx** firstVertex, Vtx** copiedVertices, s32* numCopied);
 void mdl_draw_hidden_panel_surface(Gfx** arg0, u16 treeIndex);
-s32 is_point_visible(f32 x, f32 y, f32 z, s32 depthQueryID, f32* screenX, f32* screenY);
+b32 is_point_visible(f32 x, f32 y, f32 z, s32 depthQueryID, f32* screenX, f32* screenY);
 void set_screen_overlay_center_worldpos(s32 idx, s32 posIdx, s32 x, s32 y, s32 z);
 void* mdl_get_next_texture_address(s32);
 s32 cancel_current_message(void);
@@ -951,12 +854,10 @@ b32 can_control_status_bar(void);
 void status_bar_respond_to_changes(void);
 void status_bar_always_show_on(void);
 void status_bar_always_show_off(void);
-void func_800F0CB0(s32, f32, f32, f32);
-void func_800F0D5C(void);
-void func_800F0D80(void);
-void func_800F102C(void);
-
-
+void star_power_shimmer_start(s32, f32, f32, f32);
+void star_power_shimmer_init(void);
+void star_power_shimmer_update(void);
+void star_power_shimmer_draw(void);
 void shop_open_item_select_popup(s32 mode);
 void hide_coin_counter(void);
 void set_message_text_var(s32 msgID, s32 index);
@@ -998,8 +899,8 @@ void reset_player_blur(void);
 void force_disable_player_blur(void);
 void force_disable_player_blur_immediately(void);
 
-void func_8023E104(void);
-void func_8023E11C(void);
+void btl_start_blinking_starpoints(void);
+void btl_stop_blinking_starpoints(void);
 
 void set_goal_pos_to_part(ActorState* state, s32 actorID, s32 partID);
 
@@ -1007,8 +908,8 @@ void init_encounters_ui(void);
 void initialize_collision(void);
 void render_entities(void);
 void render_player(void);
-void render_workers_world(void);
-void render_effects_world(void);
+void render_workers_scene(void);
+void render_effects_scene(void);
 s32 get_asset_offset(char*, s32*);
 void initialize_status_bar(void);
 void status_bar_start_blinking_fp(void);
@@ -1040,8 +941,8 @@ void update_encounters_conversation(void);
 void update_encounters_post_battle(void);
 void load_map_bg(char* optAssetName);
 void reset_background_settings(void);
-void func_80138188(void);
-void func_80266970(Actor*);
+void reset_back_screen_overlay_progress(void);
+void cancel_action_rating_combo(Actor*);
 void show_actor_health_bar(Actor*);
 void hide_actor_health_bar(Actor*);
 void clear_part_pal_adjustment(ActorPart*);
@@ -1103,7 +1004,7 @@ void mdl_load_all_textures(struct ModelNode* model, s32 romOffset, s32 size);
 void mdl_calculate_model_sizes(void);
 
 #ifdef _LANGUAGE_C_PLUS_PLUS
-}
+} // extern "C"
 #endif
 
 #endif

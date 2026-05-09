@@ -4,17 +4,20 @@
     {
       "label": "Run Mod",
       "type": "shell",
-      "command": "nix develop --profile .nix-profile --command ./run",
+      "command": "nix --extra-experimental-features \"flakes nix-command\" develop --profile .nix-profile --command ./run",
       "problemMatcher": "$gcc",
       "group": {
         "kind": "build",
         "isDefault": true
+      },
+      "windows": {
+        "command": "build.bat"
       }
     },
     {
       "label": "Open Star Rod",
       "type": "shell",
-      "command": "nix develop --profile .nix-profile --command star-rod",
+      "command": "nix --extra-experimental-features \"flakes nix-command\" develop --profile .nix-profile --command star-rod",
       "problemMatcher": [],
       "group": {
         "kind": "none"

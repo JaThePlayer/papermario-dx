@@ -6,6 +6,7 @@
 #include "dx/debug_menu.h"
 #include "misc_patches/custom_status.h"
 #include "misc_patches/status_rework_helpers.h"
+#include "misc_patches/misc_patches.h"
 
 b32 dispatch_damage_event_player(s32 damageAmount, s32 event, b32 noHitSound);
 b32 dispatch_hazard_event_player(s32 damageAmount, s32 event);
@@ -145,14 +146,14 @@ void dispatch_event_player(s32 eventType) {
     eventScript = start_script(&EVS_Player_HandleEvent, EVT_PRIORITY_A, EVT_FLAG_RUN_IMMEDIATELY);
     player->handleEventScript = eventScript;
     player->handleEventScriptID = eventScript->id;
-    eventScript->owner1.actor = NULL;
+    eventScript->owner1.actor = nullptr;
 
-    if (player->takeTurnScript != NULL) {
+    if (player->takeTurnScript != nullptr) {
         kill_script_by_ID(player->takeTurnScriptID);
-        player->takeTurnScript = NULL;
+        player->takeTurnScript = nullptr;
     }
 
-    if (oldOnHitScript != NULL) {
+    if (oldOnHitScript != nullptr) {
         kill_script_by_ID(oldOnHitID);
     }
 
@@ -173,9 +174,9 @@ void dispatch_event_player_continue_turn(s32 eventType) {
     eventScript = start_script(&EVS_Player_HandleEvent, EVT_PRIORITY_A, EVT_FLAG_RUN_IMMEDIATELY);
     player->handleEventScript = eventScript;
     player->handleEventScriptID = eventScript->id;
-    eventScript->owner1.actor = NULL;
+    eventScript->owner1.actor = nullptr;
 
-    if (oldOnHitScript != NULL) {
+    if (oldOnHitScript != nullptr) {
         kill_script_by_ID(oldOnHitID);
     }
 }
@@ -194,12 +195,12 @@ HitResult calc_player_test_enemy(void) {
     battleStatus->curTargetPart2 = battleStatus->curTargetPart;
 
     target = get_actor(targetActorID);
-    if (target == NULL) {
+    if (target == nullptr) {
         return HIT_RESULT_HIT;
     }
 
     targetPart = get_actor_part(target, targetPartIdx);
-    ASSERT(targetPart != NULL);
+    ASSERT(targetPart != nullptr);
 
     if (targetPart->eventFlags & ACTOR_EVENT_FLAG_ILLUSORY) {
         return HIT_RESULT_MISS;
@@ -271,17 +272,17 @@ HitResult calc_player_damage_enemy(void) {
     s32 wasStatusInflicted;
     s32 attackFxType;
 
-    canBeShocked = FALSE;
-    isFireDamage = FALSE;
-    isWaterDamage = FALSE;
-    isShockDamage = FALSE;
-    isIceDamage = FALSE;
-    wasSpecialHit = FALSE;
-    partImmuneToElement = FALSE;
-    wasStatusInflicted = FALSE;
-    missedAllOrNothing = FALSE;
+    canBeShocked = false;
+    isFireDamage = false;
+    isWaterDamage = false;
+    isShockDamage = false;
+    isIceDamage = false;
+    wasSpecialHit = false;
+    partImmuneToElement = false;
+    wasStatusInflicted = false;
+    missedAllOrNothing = false;
 
-    battleStatus->wasStatusInflicted = FALSE;
+    battleStatus->wasStatusInflicted = false;
     battleStatus->lastAttackDamage = 0;
     battleStatus->attackerActorID = player->actorID;
     battleStatus->curTargetID2 = battleStatus->curTargetID;
@@ -289,15 +290,15 @@ HitResult calc_player_damage_enemy(void) {
     target = get_actor(currentTargetID);
     state = &player->state;
 
-    if (target == NULL) {
+    if (target == nullptr) {
         return HIT_RESULT_HIT;
     }
 
-    player->attackedThisTurn = TRUE;
+    player->attackedThisTurn = true;
 
     targetPart = get_actor_part(target, currentTargetPartID);
 
-    ASSERT(targetPart != NULL);
+    ASSERT(targetPart != nullptr);
 
     target->lastDamageTaken = 0;
 
@@ -330,19 +331,19 @@ HitResult calc_player_damage_enemy(void) {
         }
 
         if (targetPart->elementalImmunities & battleStatus->curAttackElement) {
-            partImmuneToElement = TRUE;
+            partImmuneToElement = true;
         }
 
         #define GET_CONTACT_DMG(default) (targetPart->staticData->contactDamage == 0 ? default : targetPart->staticData->contactDamage)
 
-        b32 usedSpikeShield = FALSE;
+        b32 usedSpikeShield = false;
 
         // check jumping on spiky enemy
         if ((battleStatus->curAttackElement & DAMAGE_TYPE_JUMP)
             && (targetPart->eventFlags & ACTOR_EVENT_FLAG_SPIKY_TOP))
         {
             if (player_team_is_ability_active(player, ABILITY_SPIKE_SHIELD)) {
-                usedSpikeShield = TRUE;
+                usedSpikeShield = true;
             } else {
                 sfx_play_sound_at_position(SOUND_HIT_SPIKE, SOUND_SPACE_DEFAULT, state->goalPos.x, state->goalPos.y, state->goalPos.z);
                 dispatch_hazard_event_player(GET_CONTACT_DMG(2), EVENT_SPIKE_CONTACT);
@@ -392,7 +393,7 @@ HitResult calc_player_damage_enemy(void) {
             && !(battleStatus->curAttackEventSuppression & SUPPRESS_EVENT_ALT_SPIKY)
         ) {
             if (player_team_is_ability_active(player, ABILITY_SPIKE_SHIELD)) {
-                usedSpikeShield = TRUE;
+                usedSpikeShield = true;
             } else {
                 sfx_play_sound_at_position(SOUND_HIT_SPIKE, SOUND_SPACE_DEFAULT, state->goalPos.x, state->goalPos.y, state->goalPos.z);
                 dispatch_hazard_event_player(GET_CONTACT_DMG(2), EVENT_SPIKE_CONTACT);
@@ -404,22 +405,22 @@ HitResult calc_player_damage_enemy(void) {
 
         if (battleStatus->curAttackElement & DAMAGE_TYPE_FIRE) {
             fx_ring_blast(0, state->goalPos.x, state->goalPos.y, state->goalPos.z * 5.0f, 1.0f, 24);
-            isFireDamage = TRUE;
+            isFireDamage = true;
         }
 
         if (battleStatus->curAttackElement & DAMAGE_TYPE_SHOCK) {
             apply_shock_effect(target);
-            isShockDamage = TRUE;
+            isShockDamage = true;
         }
 
         if (battleStatus->curAttackElement & DAMAGE_TYPE_WATER) {
             fx_water_splash(0, state->goalPos.x, state->goalPos.y, state->goalPos.z + 5.0f, 1.0f, 24);
-            isWaterDamage = TRUE;
+            isWaterDamage = true;
         }
 
         if (battleStatus->curAttackElement & DAMAGE_TYPE_ICE) {
             fx_big_snowflakes(0, state->goalPos.x, state->goalPos.y, state->goalPos.z + 5.0f);
-            isIceDamage = TRUE;
+            isIceDamage = true;
         }
 
         attackFxType = player_team_is_ability_active(player, ABILITY_ATTACK_FX);
@@ -456,7 +457,7 @@ HitResult calc_player_damage_enemy(void) {
             && !(battleStatus->curAttackEventSuppression & SUPPRESS_EVENT_SHOCK_CONTACT)
         ) {
             gBattleStatus.flags1 |= BS_FLAGS1_TRIGGER_EVENTS;
-            canBeShocked = TRUE;
+            canBeShocked = true;
         }
 
         if (targetPart->eventFlags & (ACTOR_EVENT_FLAG_STAR_ROD_ENCHANTED | ACTOR_EVENT_FLAG_ENCHANTED)) {
@@ -577,7 +578,7 @@ HitResult calc_player_damage_enemy(void) {
             currentAttackDamage++;
 
             if (!(gBattleStatus.flags1 & (BS_FLAGS1_NICE_HIT | BS_FLAGS1_SUPER_HIT))) {
-                missedAllOrNothing = TRUE;
+                missedAllOrNothing = true;
                 currentAttackDamage = 0;
 #if !VERSION_JP
                 targetDefense = 0;
@@ -709,7 +710,7 @@ HitResult calc_player_damage_enemy(void) {
         if (gBattleStatus.flags1 & BS_FLAGS1_TRIGGER_EVENTS) {
             if (battleStatus->curAttackElement & DAMAGE_TYPE_FEAR
                 && rand_int(99) < (target->actorBlueprint->escapeChance * battleStatus->statusChance) / 100
-                && (target->debuff != STATUS_KEY_FEAR
+                && (target->debuff != STATUS_KEY_UNUSED
                     && target->debuff != STATUS_KEY_DIZZY
                     && target->debuff != STATUS_KEY_PARALYZE
                     && target->debuff != STATUS_KEY_SLEEP
@@ -821,7 +822,7 @@ HitResult calc_player_damage_enemy(void) {
                 dispatchEvent = EVENT_FALL_TRIGGER;
             }
 
-            wasSpecialHit = TRUE;
+            wasSpecialHit = true;
         }
 
         // try generating flip trigger events
@@ -838,7 +839,7 @@ HitResult calc_player_damage_enemy(void) {
             }
 
             if (!(target->flags & ACTOR_FLAG_FLIPPED)) {
-                wasSpecialHit = TRUE;
+                wasSpecialHit = true;
             }
         }
     }
@@ -857,7 +858,7 @@ HitResult calc_player_damage_enemy(void) {
         }
 
         if (!(target->flags & ACTOR_FLAG_FLIPPED)) {
-            wasSpecialHit = TRUE;
+            wasSpecialHit = true;
         }
     }
 
@@ -873,7 +874,7 @@ HitResult calc_player_damage_enemy(void) {
         if (dispatchEvent == EVENT_IMMUNE) {
             dispatchEvent = EVENT_SHELL_CRACK_HIT;
         }
-        wasSpecialHit = TRUE;
+        wasSpecialHit = true;
     }
 
     // try generating burn events
@@ -888,7 +889,7 @@ HitResult calc_player_damage_enemy(void) {
             dispatchEvent = EVENT_BURN_DEATH;
         }
 
-        isFireDamage = TRUE;
+        isFireDamage = true;
     }
 
     // try inflicting status effects
@@ -902,8 +903,8 @@ HitResult calc_player_damage_enemy(void) {
         #define INFLICT_STATUS(STATUS_TYPE) \
             if ((battleStatus->curAttackStatus & STATUS_FLAG_##STATUS_TYPE) && \
                 try_inflict_status(target, STATUS_KEY_##STATUS_TYPE, STATUS_TURN_MOD_##STATUS_TYPE)) { \
-                wasSpecialHit = TRUE; \
-                wasStatusInflicted = TRUE; \
+                wasSpecialHit = true; \
+                wasStatusInflicted = true; \
             } \
 
         INFLICT_STATUS(SHRINK);
@@ -912,15 +913,14 @@ HitResult calc_player_damage_enemy(void) {
         INFLICT_STATUS(SLEEP);
         INFLICT_STATUS(STOP);
         INFLICT_STATUS(STATIC);
-        INFLICT_STATUS(FEAR);
         INFLICT_STATUS(PARALYZE);
         INFLICT_STATUS(DIZZY);
 
         #undef INFLICT_STATUS
 
         if (inflict_next_attack_statuses(player, target, state->goalPos)) {
-            wasSpecialHit = TRUE;
-            wasStatusInflicted = TRUE;
+            wasSpecialHit = true;
+            wasStatusInflicted = true;
         }
 
         if (wasStatusInflicted) {
@@ -980,7 +980,7 @@ HitResult calc_player_damage_enemy(void) {
     }
 
     if (gBattleStatus.flags1 & BS_FLAGS1_TRIGGER_EVENTS) {
-        func_80266970(target);
+        cancel_action_rating_combo(target);
     }
 
     if ((battleStatus->lastAttackDamage > 0 || wasSpecialHit) && !partImmuneToElement) {
@@ -997,11 +997,11 @@ HitResult calc_player_damage_enemy(void) {
         }
     }
 
-    if (battleStatus->lastAttackDamage < 1 && !wasSpecialHit && !canBeShocked || targetPart->flags & ACTOR_PART_FLAG_DAMAGE_IMMUNE) {
+    if ((battleStatus->lastAttackDamage < 1 && !wasSpecialHit && !canBeShocked) || (targetPart->flags & ACTOR_PART_FLAG_DAMAGE_IMMUNE)) {
         sfx_play_sound_at_position(SOUND_IMMUNE, SOUND_SPACE_DEFAULT, state->goalPos.x, state->goalPos.y, state->goalPos.z);
     }
 
-    if (battleStatus->curAttackStatus & STATUS_FLAG_SLEEP && wasStatusInflicted) {
+    if ((battleStatus->curAttackStatus & STATUS_FLAG_SLEEP) && wasStatusInflicted) {
         evt = start_script(&EVS_PlaySleepHitFX, EVT_PRIORITY_A, 0);
         evt->varTable[0] = state->goalPos.x;
         evt->varTable[1] = state->goalPos.y;
@@ -1009,7 +1009,7 @@ HitResult calc_player_damage_enemy(void) {
         sfx_play_sound_at_position(SOUND_INFLICT_SLEEP, SOUND_SPACE_DEFAULT, state->goalPos.x, state->goalPos.y, state->goalPos.z);
     }
 
-    if (battleStatus->curAttackStatus & STATUS_FLAG_DIZZY && wasStatusInflicted) {
+    if ((battleStatus->curAttackStatus & STATUS_FLAG_DIZZY) && wasStatusInflicted) {
         evt = start_script(&EVS_PlayDizzyHitFX, EVT_PRIORITY_A, 0);
         evt->varTable[0] = state->goalPos.x;
         evt->varTable[1] = state->goalPos.y;
@@ -1017,7 +1017,7 @@ HitResult calc_player_damage_enemy(void) {
         sfx_play_sound_at_position(SOUND_INFLICT_STATUS, SOUND_SPACE_DEFAULT, state->goalPos.x, state->goalPos.y, state->goalPos.z);
     }
 
-    if (battleStatus->curAttackStatus & STATUS_FLAG_PARALYZE && wasStatusInflicted) {
+    if ((battleStatus->curAttackStatus & STATUS_FLAG_PARALYZE) && wasStatusInflicted) {
         evt = start_script(&EVS_PlayParalyzeHitFX, EVT_PRIORITY_A, 0);
         evt->varTable[0] = state->goalPos.x;
         evt->varTable[1] = state->goalPos.y;
@@ -1025,7 +1025,7 @@ HitResult calc_player_damage_enemy(void) {
         sfx_play_sound_at_position(SOUND_INFLICT_STATUS, SOUND_SPACE_DEFAULT, state->goalPos.x, state->goalPos.y, state->goalPos.z);
     }
 
-    if (battleStatus->curAttackStatus & STATUS_FLAG_POISON && wasStatusInflicted) {
+    if ((battleStatus->curAttackStatus & STATUS_FLAG_POISON) && wasStatusInflicted) {
         evt = start_script(&EVS_PlayPoisonHitFX, EVT_PRIORITY_A, 0);
         evt->varTable[0] = state->goalPos.x;
         evt->varTable[1] = state->goalPos.y;
@@ -1033,7 +1033,7 @@ HitResult calc_player_damage_enemy(void) {
         sfx_play_sound_at_position(SOUND_INFLICT_STATUS, SOUND_SPACE_DEFAULT, state->goalPos.x, state->goalPos.y, state->goalPos.z);
     }
 
-    if (battleStatus->curAttackStatus & STATUS_FLAG_STOP && wasStatusInflicted) {
+    if ((battleStatus->curAttackStatus & STATUS_FLAG_STOP) && wasStatusInflicted) {
         evt = start_script(&EVS_PlayStopHitFX, EVT_PRIORITY_A, 0);
         evt->varTable[0] = state->goalPos.x;
         evt->varTable[1] = state->goalPos.y;
@@ -1041,7 +1041,7 @@ HitResult calc_player_damage_enemy(void) {
         sfx_play_sound_at_position(SOUND_INFLICT_STATUS, SOUND_SPACE_DEFAULT, state->goalPos.x, state->goalPos.y, state->goalPos.z);
     }
 
-    if (battleStatus->curAttackStatus & STATUS_FLAG_FROZEN && wasStatusInflicted) {
+    if ((battleStatus->curAttackStatus & STATUS_FLAG_FROZEN) && wasStatusInflicted) {
         evt = start_script(&EVS_PlayFreezeHitFX, EVT_PRIORITY_A, 0);
         evt->varTable[0] = state->goalPos.x;
         evt->varTable[1] = state->goalPos.y;
@@ -1050,7 +1050,7 @@ HitResult calc_player_damage_enemy(void) {
         sfx_play_sound_at_position(SOUND_HIT_PLAYER_ICE, SOUND_SPACE_DEFAULT, state->goalPos.x, state->goalPos.y, state->goalPos.z);
     }
 
-    if (battleStatus->curAttackStatus & STATUS_FLAG_SHRINK && wasStatusInflicted) {
+    if ((battleStatus->curAttackStatus & STATUS_FLAG_SHRINK) && wasStatusInflicted) {
         evt = start_script(&EVS_PlayShrinkHitFX, EVT_PRIORITY_A, 0);
         evt->varTable[0] = state->goalPos.x;
         evt->varTable[1] = state->goalPos.y;
@@ -1094,7 +1094,6 @@ b32 dispatch_damage_event_player(s32 damageAmount, s32 event, b32 noHitSound) {
     PlayerData* playerData = &gPlayerData;
     Actor* player = battleStatus->playerActor;
     ActorState* state = &player->state;
-    s32 oldHPChangeCounter;
     s32 flags;
     s32 dispatchEvent;
     s32 oldPlayerHP;
@@ -1166,12 +1165,12 @@ b32 dispatch_damage_tick_event_player(s32 damageAmount, s32 event) {
 
     battleStatus->curAttackElement = ELEMENT_END;
     battleStatus->curDamageSource = DMG_SRC_DEFAULT;
-    return dispatch_damage_event_player(damageAmount, event, FALSE);
+    return dispatch_damage_event_player(damageAmount, event, false);
 }
 
 // damage received from contact hazards
 b32 dispatch_hazard_event_player(s32 damageAmount, s32 event) {
-    return dispatch_damage_event_player(damageAmount, event, TRUE);
+    return dispatch_damage_event_player(damageAmount, event, true);
 }
 
 API_CALLABLE(GetMenuSelection) {
@@ -1198,7 +1197,7 @@ API_CALLABLE(PlayerHopToGoal) {
     f32 goalX, goalY, goalZ;
 
     if (isInitialCall) {
-        script->functionTemp[0] = FALSE;
+        script->functionTemp[0] = false;
     }
 
     if (script->functionTemp[0] == 0) {
@@ -1235,7 +1234,7 @@ API_CALLABLE(PlayerHopToGoal) {
         if (script->functionTemp[1] != 2) {
             sfx_play_sound_at_position(SOUND_LONG_PLAYER_JUMP, SOUND_SPACE_DEFAULT, player->curPos.x, player->curPos.y, player->curPos.z);
         }
-        script->functionTemp[0] = TRUE;
+        script->functionTemp[0] = true;
     }
 
     if (playerState->vel < 0.0f) {
@@ -1291,7 +1290,7 @@ API_CALLABLE(PlayerFallToGoal) {
     f32 goalX, goalY, goalZ;
 
     if (isInitialCall) {
-        script->functionTemp[0] = FALSE;
+        script->functionTemp[0] = false;
     }
 
     if (!script->functionTemp[0]) {
@@ -1324,7 +1323,7 @@ API_CALLABLE(PlayerFallToGoal) {
         state->vel = 0.0f;
         state->acceleration = ((y / state->moveTime) - state->vel) / (-state->moveTime * 0.5);
         set_actor_anim(ACTOR_PLAYER, 0, state->animJumpRise);
-        script->functionTemp[0] = TRUE;
+        script->functionTemp[0] = true;
     }
 
     if (state->vel < 0.0f) {
@@ -1407,7 +1406,7 @@ API_CALLABLE(PlayerRunToGoal) {
     f32 currentX, currentZ, goalX, goalZ;
 
     if (isInitialCall) {
-        script->functionTemp[0] = FALSE;
+        script->functionTemp[0] = false;
     }
 
     if (!script->functionTemp[0]) {
@@ -1433,7 +1432,7 @@ API_CALLABLE(PlayerRunToGoal) {
             player->state.speed = player->state.dist / player->state.moveTime;
         }
         playerState->dist = player->actorTypeData1b[0] + 1;
-        script->functionTemp[0] = TRUE;
+        script->functionTemp[0] = true;
     }
 
     add_xz_vec3f(&playerState->curPos, playerState->speed, playerState->angle);
@@ -1477,7 +1476,7 @@ API_CALLABLE(CancelablePlayerRunToGoal) {
     f32 currentX, currentZ, goalX, goalZ;
 
     if (isInitialCall) {
-        script->functionTemp[0] = FALSE;
+        script->functionTemp[0] = false;
     }
 
     if (!script->functionTemp[0]) {
@@ -1506,9 +1505,9 @@ API_CALLABLE(CancelablePlayerRunToGoal) {
             return ApiStatus_DONE2;
         }
 
-        script->functionTemp[2] = FALSE;
+        script->functionTemp[2] = false;
         script->functionTemp[3] = 0;
-        script->functionTemp[0] = TRUE;
+        script->functionTemp[0] = true;
     }
 
     add_xz_vec3f(&playerState->curPos, playerState->speed, playerState->angle);
@@ -1537,7 +1536,7 @@ API_CALLABLE(CancelablePlayerRunToGoal) {
     if (script->functionTemp[3] > 12) {
         if (!script->functionTemp[2]) {
             if (!(battleStatus->curButtonsDown & BUTTON_A)) {
-                script->functionTemp[2] = TRUE;
+                script->functionTemp[2] = true;
             }
         }
 
@@ -1946,7 +1945,7 @@ API_CALLABLE(PlayerBasicJumpToGoal) {
             }
             break;
         case BASIC_STATE_02:
-            if (battleStatus->actionCommandMode == ACTION_COMMAND_MODE_NOT_LEARNED) {
+            if (battleStatus->actionCommandMode == AC_MODE_NOT_LEARNED) {
                 return ApiStatus_DONE2;
             }
             playerState->moveTime = 1;
@@ -2249,7 +2248,6 @@ API_CALLABLE(PlayerUltraJumpToGoal) {
     f64 temp_f20;
     f64 temp_f20_2;
     f64 temp_f20_4;
-    f64 temp_f20_5;
     f64 temp_f20_6;
     f64 temp_f20_7;
 
@@ -2257,7 +2255,6 @@ API_CALLABLE(PlayerUltraJumpToGoal) {
     f64 temp_f22_2;
     f64 temp_f22_3;
     f64 temp_f22_4;
-    f64 temp_f22_5;
     f64 temp_f22_6;
 
     enum {
@@ -2542,21 +2539,21 @@ API_CALLABLE(PlayerUltraJumpToGoal) {
     return ApiStatus_BLOCK;
 }
 
-API_CALLABLE(GetPlayerActionSuccess) {
+API_CALLABLE(GetPlayerActionQuality) {
     Bytecode* args = script->ptrReadPos;
     s32 outVar = *args++;
-    s32 actionSuccess = gBattleStatus.actionSuccess;
-    s32 actionSucceeded = 0;
+    s32 actionQuality = gBattleStatus.actionQuality;
+    s32 quality = 0;
 
-    if (actionSuccess < 0) {
-        actionSuccess = 0;
+    if (actionQuality < 0) {
+        actionQuality = 0;
     }
 
-    if (actionSucceeded < actionSuccess) {
-        actionSucceeded = actionSuccess;
+    if (quality < actionQuality) {
+        quality = actionQuality;
     }
 
-    evt_set_variable(script, outVar, actionSucceeded);
+    evt_set_variable(script, outVar, quality);
     return ApiStatus_DONE2;
 }
 

@@ -1,8 +1,8 @@
 #include "common.h"
-#include "audio.h"
+#include "audio/audio.h"
 #include "model.h"
 
-typedef s32 TlbEntry[0x1000 / 4];
+typedef s8 TlbEntry[0x1000];
 typedef TlbEntry TlbMappablePage[15];
 
 BSS TlbMappablePage gEffectDataBuffer ALIGNED(0x1000);

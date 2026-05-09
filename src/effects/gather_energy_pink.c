@@ -28,14 +28,14 @@ void gather_energy_pink_main(s32 type, f32 posX, f32 posY, f32 posZ, f32 scale, 
     bp.unk_00 = 0;
     bp.init = gather_energy_pink_init;
     bp.update = gather_energy_pink_update;
-    bp.renderWorld = gather_energy_pink_render;
-    bp.renderUI = NULL;
+    bp.renderScene = gather_energy_pink_render;
+    bp.renderUI = nullptr;
     bp.effectID = EFFECT_GATHER_ENERGY_PINK;
 
     effect = create_effect_instance(&bp);
     effect->numParts = numParts;
     data = effect->data.gatherEnergyPink = general_heap_malloc(sizeof(*data));
-    ASSERT (data != NULL);
+    ASSERT (data != nullptr);
 
     data->unk_00 = type;
     data->unk_28 = duration;
@@ -165,14 +165,13 @@ void gather_energy_pink_appendGfx(void* effect) {
     Camera* camera = &gCameras[gCurrentCameraID];
     Matrix4f sp20;
     Matrix4f sp60;
-    Matrix4f unused;
     u16 perspNorm;
     s32 alpha;
     s32 idx;
     s32 i;
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
     gSPDisplayList(gMainGfxPos++, dlist);
 
     guTranslateF(sp20, part->posB.x, part->posB.y, part->posB.z);

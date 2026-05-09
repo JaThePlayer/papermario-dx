@@ -7,6 +7,10 @@
 #include "macros.h"
 #include "enums.h"
 
+#ifdef _LANGUAGE_C_PLUS_PLUS
+extern "C" {
+#endif
+
 extern PlayerStatus* gPlayerStatusPtr;
 extern CollisionStatus gCollisionStatus;
 extern GameStatus gGameStatus;
@@ -85,7 +89,7 @@ extern EvtScript EVS_NpcDefeat;
 extern EvtScript ShakeCam1;
 extern EvtScript ShakeCamX;
 
-extern MusicSettings gMusicSettings[2];
+extern MusicControlData gMusicControlData[2];
 
 // gfx
 extern DisplayContext* gDisplayContext;
@@ -113,6 +117,10 @@ extern PlayerData gPlayerData;
 extern s32 gCurrentLanguage;
 #else
 #define gCurrentLanguage 0
+#endif
+
+#ifdef _LANGUAGE_C_PLUS_PLUS
+} // extern "C"
 #endif
 
 #endif

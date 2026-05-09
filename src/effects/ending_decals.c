@@ -36,15 +36,15 @@ void ending_decals_main(s32 type, f32 posX, f32 posY, f32 posZ, f32 arg4, Effect
 
     bp.init = ending_decals_init;
     bp.update = ending_decals_update;
-    bp.renderWorld = ending_decals_render;
+    bp.renderScene = ending_decals_render;
     bp.unk_00 = 0;
-    bp.renderUI = NULL;
+    bp.renderUI = nullptr;
     bp.effectID = EFFECT_ENDING_DECALS;
 
     effect = create_effect_instance(&bp);
     effect->numParts = numParts;
     data = effect->data.endingDecals = general_heap_malloc(numParts * sizeof(*data));
-    ASSERT(effect->data.endingDecals != NULL);
+    ASSERT(effect->data.endingDecals != nullptr);
 
     data->type = type;
     data->pos.x = posX;
@@ -143,7 +143,7 @@ void ending_decals_appendGfx(void* effect) {
     dlist2 = D_E00685B0[data->type];
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
 
     guPositionF(sp20, 0.0f, -gCameras[gCurrentCameraID].curYaw, 0.0f, data->scale, data->pos.x, data->pos.y, data->pos.z);
     guMtxF2L(sp20, &gDisplayContext->matrixStack[gMatrixListPos]);

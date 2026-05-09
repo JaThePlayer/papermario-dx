@@ -26,15 +26,15 @@ EffectInstance* flashing_box_shockwave_main(
 
     bp.init = flashing_box_shockwave_init;
     bp.update = flashing_box_shockwave_update;
-    bp.renderWorld = flashing_box_shockwave_render;
+    bp.renderScene = flashing_box_shockwave_render;
     bp.unk_00 = 0;
-    bp.renderUI = NULL;
+    bp.renderUI = nullptr;
     bp.effectID = EFFECT_FLASHING_BOX_SHOCKWAVE;
 
     effect = create_effect_instance(&bp);
     effect->numParts = numParts;
     data = effect->data.flashingBoxShockwave = general_heap_malloc(numParts * sizeof(*data));
-    ASSERT(effect->data.flashingBoxShockwave != NULL);
+    ASSERT(effect->data.flashingBoxShockwave != nullptr);
 
     data->type = type;
     data->pos.x = posX;
@@ -143,7 +143,7 @@ void flashing_box_shockwave_appendGfx(void* effect) {
     guRotateF(mtxCamRot, -gCameras[gCurrentCameraID].curYaw, 0.0f, 1.0f, 0.0f);
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
 
     guTranslateF(mtxTransform, data->pos.x, data->pos.y, data->pos.z);
     guMtxCatF(mtxCamRot, mtxTransform, mtxTransform);

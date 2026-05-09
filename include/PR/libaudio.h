@@ -29,9 +29,7 @@
 #ifndef __LIB_AUDIO__
 #define __LIB_AUDIO__
 
-#ifdef _LANGUAGE_C_PLUS_PLUS
-extern "C" {
-#endif
+
 
 #include <PR/ultratypes.h>
 #include <PR/mbi.h>
@@ -57,8 +55,8 @@ extern "C" {
 #	endif /* AUD_PROFILE */
 #endif /* EMULATOR */
 
-#ifndef NULL
-#define NULL 0
+#ifndef nullptr
+#define nullptr 0
 #endif
 
 #define AL_FX_BUFFER_SIZE       8192
@@ -937,11 +935,6 @@ s32             alSndpGetState(ALSndPlayer *sndp);
 #ifndef _FINALROM
 void alParseAbiCL(Acmd *cmdList, u32 nbytes);
 #endif
-#ifdef _LANGUAGE_C_PLUS_PLUS
-}
-#endif
+
 
 #endif /* !__LIB_AUDIO__ */
-
-
-

@@ -39,15 +39,15 @@ EvtScript N(EVS_Main) = {
         CaseOrEq(STORY_CH2_BEGAN_PEACH_MISSION)
         CaseOrEq(STORY_CH4_BEGAN_PEACH_MISSION)
         CaseOrEq(STORY_CH5_BEGAN_PEACH_MISSION)
-            Call(MakeNpcs, FALSE, Ref(N(EarlyNPCs)))
+            Call(MakeNpcs, false, Ref(N(EarlyNPCs)))
         EndCaseGroup
         CaseEq(STORY_CH6_BEGAN_PEACH_MISSION)
             Call(N(SetAvailableDisguise), PEACH_DISGUISE_HAMMER_BROS)
-            Call(MakeNpcs, FALSE, Ref(N(LaterNPCs)))
+            Call(MakeNpcs, false, Ref(N(LaterNPCs)))
     EndSwitch
     ExecWait(N(EVS_MakeEntities))
     IfLt(GB_StoryProgress, STORY_CH8_REACHED_PEACHS_CASTLE)
-        Call(SetMusicTrack, 0, SONG_PEACH_SNEAKING, 0, 8)
+        Call(SetMusic, 0, SONG_PEACH_SNEAKING, 0, VOL_LEVEL_FULL)
     EndIf
     Call(UseDoorSounds, DOOR_SOUNDS_BASIC)
     BindTrigger(Ref(N(EVS_ExitDoor_kkj_11_2)), TRIGGER_WALL_PRESS_A, COLLIDER_tte, 1, 0)

@@ -108,15 +108,15 @@ EffectInstance* pink_sparkles_main(s32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 a
 
     bp.init = pink_sparkles_init;
     bp.update = pink_sparkles_update;
-    bp.renderWorld = pink_sparkles_render;
+    bp.renderScene = pink_sparkles_render;
     bp.unk_00 = 0;
-    bp.renderUI = NULL;
+    bp.renderUI = nullptr;
     bp.effectID = EFFECT_PINK_SPARKLES;
 
     effect = create_effect_instance(&bp);
     effect->numParts = numParts;
     part = effect->data.pinkSparkles = general_heap_malloc(numParts * sizeof(*part));
-    ASSERT(effect->data.pinkSparkles != NULL);
+    ASSERT(effect->data.pinkSparkles != nullptr);
 
     part->unk_04 = arg1;
     part->unk_08 = arg2;
@@ -186,7 +186,7 @@ void pink_sparkles_update(EffectInstance* effect) {
         part->unk_28 = (unk_20 + i + i) & 7;
 
         if (part->unk_1C < 0) {
-            count += 1;
+            count++;
         }
 
         part->unk_1C--;
@@ -241,7 +241,7 @@ void pink_sparkles_appendGfx(void* effect) {
     s32 i;
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
     gSPDisplayList(gMainGfxPos++, D_09000F20_338EE0);
 
     colorIdx = (part->unk_20 - 1) * 3;

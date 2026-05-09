@@ -11,17 +11,16 @@
 
 #include "battle/common/move/UseItem.inc.c"
 
-static s32 _pad = 0;
 
 #include "battle/move/item/mystery.png.h"
 INCLUDE_IMG("battle/move/item/mystery.png", battle_item_mystery_png);
 INCLUDE_PAL("battle/move/item/mystery.pal", battle_item_mystery_pal);
 
 Vtx N(model)[] = {
-    { .v = {{ -16, -16, 0 }, FALSE, { 0,    0    }, { 0, 0, 0, 255 }}},
-    { .v = {{ 15,  -16, 0 }, FALSE, { 1024, 0    }, { 0, 0, 0, 255 }}},
-    { .v = {{ 15,  15,  0 }, FALSE, { 1024, 1024 }, { 0, 0, 0, 255 }}},
-    { .v = {{ -16, 15,  0 }, FALSE, { 0,    1024 }, { 0, 0, 0, 255 }}},
+    { .v = {{ -16, -16, 0 }, false, { 0,    0    }, { 0, 0, 0, 255 }}},
+    { .v = {{ 15,  -16, 0 }, false, { 1024, 0    }, { 0, 0, 0, 255 }}},
+    { .v = {{ 15,  15,  0 }, false, { 1024, 1024 }, { 0, 0, 0, 255 }}},
+    { .v = {{ -16, 15,  0 }, false, { 0,    1024 }, { 0, 0, 0, 255 }}},
 };
 
 Gfx N(displayList)[] = {
@@ -83,13 +82,12 @@ BSS s32 D_802A25F8;
 BSS s32* D_802A25FC;
 
 void N(func_802A123C_72C7EC(void)) {
-    s32 var_s3;
     s32 id;
     s32 i;
 
     if (D_802A25E4 < 6) {
         if (D_802A25E4 > 0) {
-            draw_box(0, WINDOW_STYLE_7, 106, 86, 0, 36, 36, 255, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, NULL, NULL, NULL, SCREEN_WIDTH, SCREEN_HEIGHT, NULL);
+            draw_box(0, WINDOW_STYLE_7, 106, 86, 0, 36, 36, 255, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, nullptr, nullptr, nullptr, SCREEN_WIDTH, SCREEN_HEIGHT, nullptr);
             gDPSetScissor(gMainGfxPos++, G_SC_NON_INTERLACE, 108, 90, 139, 118);
 
             for (i = 0; i < ARRAY_COUNT(D_802A25C8); i++) {
@@ -110,7 +108,7 @@ API_CALLABLE(N(func_802A13E4_72C994)) {
     s32 temp_v1_3;
     s32 var_v0_2;
     s32 var_v0_3;
-    s32 id;
+    HudElemID hid;
     s32 i;
 
     if (isInitialCall) {
@@ -119,7 +117,7 @@ API_CALLABLE(N(func_802A13E4_72C994)) {
 
     switch (D_802A25E4) {
         case 0:
-            D_802A25F8 = create_worker_frontUI(NULL, N(func_802A123C_72C7EC));
+            D_802A25F8 = create_worker_frontUI(nullptr, N(func_802A123C_72C7EC));
             D_802A25EC = rand_int(18200);
             D_802A25F0 = 1000;
             D_802A25FC = N(D_802A227C_72D82C);
@@ -135,9 +133,9 @@ API_CALLABLE(N(func_802A13E4_72C994)) {
             }
 
             for (i = 0; i < ARRAY_COUNT(D_802A25C8); i++) {
-                id = hud_element_create(gItemHudScripts[gItemTable[D_802A25FC[i]].hudElemID].enabled);
-                D_802A25C8[i] = id;
-                hud_element_set_flags(id, HUD_ELEMENT_FLAG_80);
+                hid = hud_element_create(gItemHudScripts[gItemTable[D_802A25FC[i]].hudElemID].enabled);
+                D_802A25C8[i] = hid;
+                hud_element_set_flags(hid, HUD_ELEMENT_FLAG_MANUAL_RENDER);
             }
             D_802A25E4 = 1;
             return ApiStatus_BLOCK;
@@ -277,7 +275,7 @@ EvtScript N(EVS_UseItem) = {
     Call(SetGoalToTarget, ACTOR_SELF)
     Call(GetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
     Call(N(func_802A188C_72CE3C), LVar0, LVar1, LVar2)
-    Call(SetBattleFlagBits, BS_FLAGS1_TRIGGER_EVENTS, TRUE)
+    Call(SetBattleFlagBits, BS_FLAGS1_TRIGGER_EVENTS, true)
     Call(DispatchDamagePlayerEvent, 1, EVENT_HIT)
     Return
     End

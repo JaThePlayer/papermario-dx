@@ -81,11 +81,11 @@ API_CALLABLE(N(ModifyBowPos)) {
     return ApiStatus_DONE2;
 }
 
-/// Duplicate of IsPartnerImmobile
-API_CALLABLE(N(IsPartnerImmobile)) {
+/// Duplicate of IsPlayerImmobile
+API_CALLABLE(N(IsPlayerImmobile)) {
     BattleStatus* battleStatus = &gBattleStatus;
     Actor* playerActor = battleStatus->playerActor;
-    s32 isImmobile = playerActor->debuff == STATUS_KEY_FEAR
+    s32 isImmobile = playerActor->debuff == STATUS_KEY_UNUSED
                      //|| playerActor->debuff == STATUS_KEY_DIZZY
                      || playerActor->debuff == STATUS_KEY_PARALYZE
                      || playerActor->debuff == STATUS_KEY_SLEEP
@@ -93,7 +93,7 @@ API_CALLABLE(N(IsPartnerImmobile)) {
                      || playerActor->debuff == STATUS_KEY_STOP;
 
     if (playerActor->stoneStatus == STATUS_KEY_STONE) {
-        isImmobile = TRUE;
+        isImmobile = true;
     }
 
     script->varTable[0] = isImmobile;
@@ -102,7 +102,6 @@ API_CALLABLE(N(IsPartnerImmobile)) {
 
 API_CALLABLE(N(RestorePlayerIdleAnimations)) {
     BattleStatus* battleStatus = &gBattleStatus;
-    Actor* playerActor = battleStatus->playerActor;
     ActorPart* playerActorPartTable = battleStatus->playerActor->partsTable;
     playerActorPartTable->idleAnimations = bMarioIdleAnims;
 
@@ -155,7 +154,7 @@ s32 N(DefaultAnims)[] = {
     STATUS_KEY_SLEEP,     ANIM_BattleBow_Pray,
     STATUS_KEY_POISON,    ANIM_BattleBow_Still,
     STATUS_KEY_STOP,      ANIM_BattleBow_Still,
-    STATUS_KEY_DAZE,      ANIM_BattleBow_Injured,
+    STATUS_KEY_KO,        ANIM_BattleBow_Injured,
     STATUS_KEY_INACTIVE,  ANIM_BattleBow_Still,
     STATUS_END,
 };
@@ -172,7 +171,7 @@ s32 N(StatusTable)[] = {
     STATUS_KEY_POISON,            100,
     STATUS_KEY_FROZEN,            100,
     STATUS_KEY_DIZZY,             100,
-    STATUS_KEY_FEAR,              100,
+    STATUS_KEY_UNUSED,            100,
     STATUS_KEY_STATIC,            100,
     STATUS_KEY_PARALYZE,          100,
     STATUS_KEY_SHRINK,            100,
@@ -182,7 +181,7 @@ s32 N(StatusTable)[] = {
     STATUS_TURN_MOD_POISON,         0,
     STATUS_TURN_MOD_FROZEN,         0,
     STATUS_TURN_MOD_DIZZY,          0,
-    STATUS_TURN_MOD_FEAR,           0,
+    STATUS_TURN_MOD_UNUSED,         0,
     STATUS_TURN_MOD_STATIC,         0,
     STATUS_TURN_MOD_PARALYZE,       0,
     STATUS_TURN_MOD_SHRINK,         0,
@@ -243,8 +242,8 @@ EvtScript N(EVS_Idle) = {
 };
 
 EvtScript N(EVS_HandleEvent) = {
-    Call(UseIdleAnimation, ACTOR_PARTNER, FALSE)
-    Call(CloseActionCommandInfo)
+    Call(UseIdleAnimation, ACTOR_PARTNER, false)
+    Call(InterruptActionCommand)
     Call(GetLastEvent, ACTOR_PARTNER, LVar0)
     Switch(LVar0)
         CaseOrEq(EVENT_HIT_COMBO)
@@ -304,7 +303,7 @@ EvtScript N(EVS_HandleEvent) = {
         EndCaseGroup
         CaseDefault
     EndSwitch
-    Call(UseIdleAnimation, ACTOR_PARTNER, TRUE)
+    Call(UseIdleAnimation, ACTOR_PARTNER, true)
     Return
     End
 };
@@ -342,14 +341,14 @@ EvtScript N(runAway) = {
 };
 
 EvtScript N(runAwayFail) = {
-    Call(UseIdleAnimation, ACTOR_PARTNER, FALSE)
+    Call(UseIdleAnimation, ACTOR_PARTNER, false)
     Call(SetGoalToHome, ACTOR_PARTNER)
     Call(SetActorSpeed, ACTOR_PARTNER, Float(6.0))
     Call(SetAnimation, ACTOR_PARTNER, -1, ANIM_BattleBow_Run)
     Call(SetActorYaw, ACTOR_PARTNER, 0)
     Call(RunToGoal, ACTOR_PARTNER, 0)
     Call(SetAnimation, ACTOR_PARTNER, -1, ANIM_BattleBow_Idle)
-    Call(UseIdleAnimation, ACTOR_PARTNER, TRUE)
+    Call(UseIdleAnimation, ACTOR_PARTNER, true)
     Return
     End
 };
@@ -368,7 +367,7 @@ EvtScript N(EVS_HandlePhase) = {
 };
 
 EvtScript N(EVS_ExecuteAction) = {
-    Call(ShowActionHud, TRUE)
+    Call(ShowActionHud, true)
     Call(GetMenuSelection, LVar0, LVar1, LVar2)
     Switch(LVar0)
         CaseEq(BTL_MENU_TYPE_STAR_POWERS)
@@ -385,10 +384,10 @@ EvtScript N(EVS_ExecuteAction) = {
         CaseEq(MOVE_SMACK3)
             ExecWait(N(smack))
         CaseEq(MOVE_OUTTA_SIGHT)
-            Call(SetBattleFlagBits, BS_FLAGS1_4000, FALSE)
+            Call(SetBattleFlagBits, BS_FLAGS1_4000, false)
             ExecWait(N(outtaSight))
         CaseEq(MOVE_SPOOK)
-            Call(SetBattleFlagBits, BS_FLAGS1_4000, FALSE)
+            Call(SetBattleFlagBits, BS_FLAGS1_4000, false)
             ExecWait(N(spook))
         CaseEq(MOVE_FAN_SMACK)
             ExecWait(N(fanSmack))
@@ -489,8 +488,8 @@ EvtScript N(smack) = {
         Wait(10)
         Set(LVar0, LVarB)
         Add(LVar0, -3)
-        Call(action_command_smack_start, 0, LVar0, 3, 0)
-        Call(SetBattleFlagBits, BS_FLAGS1_4000, FALSE)
+        Call(action_command_smack_start, 0, LVar0, AC_DIFFICULTY_3, ACV_SMACK_HAND)
+        Call(SetBattleFlagBits, BS_FLAGS1_4000, false)
     EndThread
     Call(PlaySoundAtActor, ACTOR_PARTNER, SOUND_BOO_VANISH_A)
     Call(SetPartAlpha, ACTOR_PARTNER, -1, 55)
@@ -523,7 +522,7 @@ EvtScript N(smack) = {
     Set(LVarF, 0)
     Set(LVarE, 0)
     Set(LVarD, 0)
-    Set(LFlag0, FALSE)
+    Set(LFlag0, false)
     Call(InitTargetIterator)
     Call(SetGoalToTarget, ACTOR_SELF)
     Loop(15)
@@ -532,80 +531,80 @@ EvtScript N(smack) = {
         Call(SetActorDispOffset, ACTOR_PARTNER, Float(-0.5), 0, 0)
         Wait(1)
     EndLoop
-    Call(GetPartnerActionSuccess, LVarB)
-    Call(func_80269600, LVarD)
+    Call(GetPartnerActionQuality, LVarB)
+    Call(GetActionResultTier, LVarD)
     Label(0)
-    Call(PartnerTestEnemy, LVar0, 0, SUPPRESS_EVENT_SPIKY_FRONT | SUPPRESS_EVENT_BURN_CONTACT, 0, 1, BS_FLAGS1_INCLUDE_POWER_UPS)
-    IfEq(LVar0, HIT_RESULT_MISS)
-        Call(SetAnimation, ACTOR_PARTNER, -1, ANIM_BattleBow_SlapOnce)
-        Call(CloseActionCommandInfo)
-        Set(LVar0, 0)
-        Loop(20)
-            Add(LVar0, -45)
-            Call(SetActorYaw, ACTOR_PARTNER, LVar0)
-            Wait(1)
-        EndLoop
-        Call(SetActorYaw, ACTOR_PARTNER, 0)
-        Call(SetAnimation, ACTOR_PARTNER, -1, ANIM_BattleBow_Injured)
-        Call(AddActorDecoration, ACTOR_SELF, PRT_ZERO, 0, ACTOR_DECORATION_SEEING_STARS)
-        Wait(30)
-        Call(RemoveActorDecoration, ACTOR_SELF, PRT_ZERO, 0)
+        Call(PartnerTestEnemy, LVar0, 0, SUPPRESS_EVENT_SPIKY_FRONT | SUPPRESS_EVENT_BURN_CONTACT, 0, 1, BS_FLAGS1_INCLUDE_POWER_UPS)
+        IfEq(LVar0, HIT_RESULT_MISS)
+            Call(SetAnimation, ACTOR_PARTNER, -1, ANIM_BattleBow_SlapOnce)
+            Call(InterruptActionCommand)
+            Set(LVar0, 0)
+            Loop(20)
+                Add(LVar0, -45)
+                Call(SetActorYaw, ACTOR_PARTNER, LVar0)
+                Wait(1)
+            EndLoop
+            Call(SetActorYaw, ACTOR_PARTNER, 0)
+            Call(SetAnimation, ACTOR_PARTNER, -1, ANIM_BattleBow_Injured)
+            Call(AddActorDecoration, ACTOR_SELF, PRT_ZERO, 0, ACTOR_DECORATION_SEEING_STARS)
+            Wait(30)
+            Call(RemoveActorDecoration, ACTOR_SELF, PRT_ZERO, 0)
+            Call(SetAnimation, ACTOR_PARTNER, -1, ANIM_BattleBow_Idle)
+            Wait(10)
+            ExecWait(N(EVS_ReturnHome_Miss))
+            Return
+        EndIf
+        Add(LVarE, 1)
+        IfGt(LVarE, LVarD)
+            Goto(2)
+        EndIf
+        Call(SetActorScale, ACTOR_PARTNER, Float(1.4), Float(1.4), Float(1.0))
+        IfEq(LFlag0, false)
+            Call(SetAnimation, ACTOR_PARTNER, -1, ANIM_BattleBow_SlapOnce)
+            Set(LFlag0, true)
+            Call(SetDamageSource, DMG_SRC_NEXT_SLAP_LEFT)
+        Else
+            Call(SetAnimation, ACTOR_PARTNER, -1, ANIM_BattleBow_SlapBack)
+            Set(LFlag0, false)
+            Call(SetDamageSource, DMG_SRC_NEXT_SLAP_RIGHT)
+        EndIf
+        Wait(2)
+        Call(SetActorScale, ACTOR_PARTNER, Float(1.0), Float(1.0), Float(1.0))
+        Thread
+            Call(ShakeCam, CAM_BATTLE, 0, 2, Float(0.5))
+            Call(ShakeCam, CAM_BATTLE, 0, 2, Float(1.5))
+            Call(ShakeCam, CAM_BATTLE, 0, 1, Float(0.5))
+            Call(ShakeCam, CAM_BATTLE, 0, 1, Float(0.2))
+        EndThread
+        IfEq(LVarE, 1)
+            Call(N(GetBowSize))
+            Call(AddBattleCamDist, LVar0)
+            Call(MoveBattleCamOver, 5)
+        Else
+            Call(AddBattleCamDist, 25)
+            Call(MoveBattleCamOver, 5)
+        EndIf
+        Call(SetActorSounds, ACTOR_PARTNER, ACTOR_SOUND_HURT, SOUND_BOW_SMACK, 0)
+        IfEq(LVarE, 1)
+            IfGt(LVarB, 99)
+                Call(PartnerDamageEnemy, LVar0, 0, SUPPRESS_EVENT_SPIKY_TOP | SUPPRESS_EVENT_SPIKY_FRONT, 0, LVarC, BS_FLAGS1_NICE_HIT | BS_FLAGS1_INCLUDE_POWER_UPS)
+            Else
+                Call(PartnerDamageEnemy, LVar0, 0, SUPPRESS_EVENT_SPIKY_TOP | SUPPRESS_EVENT_SPIKY_FRONT, 0, LVarC, BS_FLAGS1_INCLUDE_POWER_UPS)
+            EndIf
+            Goto(1)
+        Else
+            IfGt(LVarB, 99)
+                Call(PartnerDamageEnemy, LVar0, 0, SUPPRESS_EVENT_SPIKY_TOP | SUPPRESS_EVENT_SPIKY_FRONT, 0, LVarC, BS_FLAGS1_NICE_HIT)
+            Else
+                Call(PartnerDamageEnemy, LVar0, 0, SUPPRESS_EVENT_SPIKY_TOP | SUPPRESS_EVENT_SPIKY_FRONT, 0, LVarC, 0)
+            EndIf
+            Goto(1)
+        EndIf
+        Label(1)
+        Wait(8)
+        Add(LVarF, 10)
         Call(SetAnimation, ACTOR_PARTNER, -1, ANIM_BattleBow_Idle)
-        Wait(10)
-        ExecWait(N(EVS_ReturnHome_Miss))
-        Return
-    EndIf
-    Add(LVarE, 1)
-    IfGt(LVarE, LVarD)
-        Goto(2)
-    EndIf
-    Call(SetActorScale, ACTOR_PARTNER, Float(1.4), Float(1.4), Float(1.0))
-    IfEq(LFlag0, FALSE)
-        Call(SetAnimation, ACTOR_PARTNER, -1, ANIM_BattleBow_SlapOnce)
-        Set(LFlag0, TRUE)
-        Call(SetDamageSource, DMG_SRC_NEXT_SLAP_LEFT)
-    Else
-        Call(SetAnimation, ACTOR_PARTNER, -1, ANIM_BattleBow_SlapBack)
-        Set(LFlag0, FALSE)
-        Call(SetDamageSource, DMG_SRC_NEXT_SLAP_RIGHT)
-    EndIf
-    Wait(2)
-    Call(SetActorScale, ACTOR_PARTNER, Float(1.0), Float(1.0), Float(1.0))
-    Thread
-        Call(ShakeCam, CAM_BATTLE, 0, 2, Float(0.5))
-        Call(ShakeCam, CAM_BATTLE, 0, 2, Float(1.5))
-        Call(ShakeCam, CAM_BATTLE, 0, 1, Float(0.5))
-        Call(ShakeCam, CAM_BATTLE, 0, 1, Float(0.2))
-    EndThread
-    IfEq(LVarE, 1)
-        Call(N(GetBowSize))
-        Call(AddBattleCamDist, LVar0)
-        Call(MoveBattleCamOver, 5)
-    Else
-        Call(AddBattleCamDist, 25)
-        Call(MoveBattleCamOver, 5)
-    EndIf
-    Call(SetActorSounds, ACTOR_PARTNER, ACTOR_SOUND_HURT, SOUND_BOW_SMACK, 0)
-    IfEq(LVarE, 1)
-        IfGt(LVarB, 99)
-            Call(PartnerDamageEnemy, LVar0, 0, SUPPRESS_EVENT_SPIKY_TOP | SUPPRESS_EVENT_SPIKY_FRONT, 0, LVarC, BS_FLAGS1_NICE_HIT | BS_FLAGS1_INCLUDE_POWER_UPS)
-        Else
-            Call(PartnerDamageEnemy, LVar0, 0, SUPPRESS_EVENT_SPIKY_TOP | SUPPRESS_EVENT_SPIKY_FRONT, 0, LVarC, BS_FLAGS1_INCLUDE_POWER_UPS)
-        EndIf
-        Goto(1)
-    Else
-        IfGt(LVarB, 99)
-            Call(PartnerDamageEnemy, LVar0, 0, SUPPRESS_EVENT_SPIKY_TOP | SUPPRESS_EVENT_SPIKY_FRONT, 0, LVarC, BS_FLAGS1_NICE_HIT)
-        Else
-            Call(PartnerDamageEnemy, LVar0, 0, SUPPRESS_EVENT_SPIKY_TOP | SUPPRESS_EVENT_SPIKY_FRONT, 0, LVarC, 0)
-        EndIf
-        Goto(1)
-    EndIf
-    Label(1)
-    Wait(8)
-    Add(LVarF, 10)
-    Call(SetAnimation, ACTOR_PARTNER, -1, ANIM_BattleBow_Idle)
-    Goto(0)
+        Goto(0)
     Label(2)
     IfEq(LVarE, 1)
         Call(N(GetBowSize))
@@ -616,19 +615,19 @@ EvtScript N(smack) = {
         Call(MoveBattleCamOver, 5)
     EndIf
     Call(SetActorScale, ACTOR_PARTNER, Float(1.4), Float(1.4), Float(1.0))
-    IfEq(LFlag0, FALSE)
+    IfEq(LFlag0, false)
         Call(SetAnimation, ACTOR_PARTNER, -1, ANIM_BattleBow_SlapOnce)
-        Set(LFlag0, TRUE)
+        Set(LFlag0, true)
         Call(SetDamageSource, DMG_SRC_LAST_SLAP_LEFT)
     Else
         Call(SetAnimation, ACTOR_PARTNER, -1, ANIM_BattleBow_SlapBack)
-        Set(LFlag0, FALSE)
+        Set(LFlag0, false)
         Call(SetDamageSource, DMG_SRC_LAST_SLAP_RIGHT)
     EndIf
     Wait(2)
     Call(SetActorScale, ACTOR_PARTNER, Float(1.0), Float(1.0), Float(1.0))
     Call(SetActorSounds, ACTOR_PARTNER, ACTOR_SOUND_HURT, SOUND_BOW_SMACK, 0)
-    Call(GetPartnerActionSuccess, LVar0)
+    Call(GetPartnerActionQuality, LVar0)
     Switch(LVar0)
         CaseGt(99)
             Call(PartnerDamageEnemy, LVar0, 0, SUPPRESS_EVENT_SPIKY_TOP | SUPPRESS_EVENT_SPIKY_FRONT, 0, LVarC, BS_FLAGS1_NICE_HIT | BS_FLAGS1_TRIGGER_EVENTS)
@@ -653,8 +652,8 @@ EvtScript N(smack) = {
 };
 
 EvtScript N(outtaSight) = {
-    Call(SetActorFlagBits, ACTOR_PLAYER, ACTOR_FLAG_NO_INACTIVE_ANIM, TRUE)
-    Call(SetActorFlagBits, ACTOR_PLAYER, ACTOR_FLAG_USING_IDLE_ANIM, FALSE)
+    Call(SetActorFlagBits, ACTOR_PLAYER, ACTOR_FLAG_NO_INACTIVE_ANIM, true)
+    Call(SetActorFlagBits, ACTOR_PLAYER, ACTOR_FLAG_USING_IDLE_ANIM, false)
     Call(UseBattleCamPreset, BTL_CAM_REPOSITION)
     Call(SetBattleCamTarget, -129, 28, 0)
     Call(SetBattleCamOffsetY, 15)
@@ -699,7 +698,7 @@ EvtScript N(outtaSight) = {
     Add(LVar2, 5)
     Call(SetGoalPos, ACTOR_PARTNER, LVar0, LVar1, LVar2)
     Call(FlyToGoal, ACTOR_PARTNER, 20, 0, EASING_LINEAR)
-    Call(N(IsPartnerImmobile))
+    Call(N(IsPlayerImmobile))
     IfEq(LVar0, 0)
         Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_Mario1_Crouch)
     EndIf
@@ -714,7 +713,7 @@ EvtScript N(outtaSight) = {
     Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
     Call(MoveBattleCamOver, 30)
     Call(N(ApplyOuttaSight))
-    Call(SetActorFlagBits, ACTOR_PLAYER, ACTOR_FLAG_NO_INACTIVE_ANIM, FALSE)
+    Call(SetActorFlagBits, ACTOR_PLAYER, ACTOR_FLAG_NO_INACTIVE_ANIM, false)
     Return
     End
 };
@@ -795,8 +794,8 @@ EvtScript N(spook) = {
         Call(SetActorDispOffset, ACTOR_PARTNER, 0, 0, 0)
     EndThread
     Call(N(AverageSpookChance))
-    Call(action_command_spook_start, 0, 87 * DT, 3, LVar0)
-    Call(GetActionQuality, LVar1)
+    Call(action_command_spook_start, 0, 87 * DT, AC_DIFFICULTY_3, LVar0)
+    Call(GetActionProgress, LVar1)
     Call(SetAnimation, ACTOR_PARTNER, -1, ANIM_BattleBow_Conceal)
     Set(LVar1, 0)
     Set(LVar2, 0)
@@ -806,56 +805,56 @@ EvtScript N(spook) = {
                 IfEq(LVar2, 7)
                     Call(AddBattleCamDist, -20)
                     Call(MoveBattleCamOver, 20)
-                    Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_NONE, BTL_CAM_XADJ_NONE, TRUE)
+                    Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_NONE, BTL_CAM_XADJ_NONE, true)
                     Set(LVar2, 8)
                 EndIf
             CaseGt(70)
                 IfEq(LVar2, 6)
                     Call(AddBattleCamDist, -20)
                     Call(MoveBattleCamOver, 20)
-                    Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_NONE, BTL_CAM_XADJ_NONE, TRUE)
+                    Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_NONE, BTL_CAM_XADJ_NONE, true)
                     Set(LVar2, 7)
                 EndIf
             CaseGt(60)
                 IfEq(LVar2, 5)
                     Call(AddBattleCamDist, -20)
                     Call(MoveBattleCamOver, 20)
-                    Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_NONE, BTL_CAM_XADJ_NONE, TRUE)
+                    Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_NONE, BTL_CAM_XADJ_NONE, true)
                     Set(LVar2, 6)
                 EndIf
             CaseGt(50)
                 IfEq(LVar2, 4)
                     Call(AddBattleCamDist, -20)
                     Call(MoveBattleCamOver, 20)
-                    Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_NONE, BTL_CAM_XADJ_NONE, TRUE)
+                    Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_NONE, BTL_CAM_XADJ_NONE, true)
                     Set(LVar2, 5)
                 EndIf
             CaseGt(40)
                 IfEq(LVar2, 3)
                     Call(AddBattleCamDist, -20)
                     Call(MoveBattleCamOver, 20)
-                    Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_NONE, BTL_CAM_XADJ_NONE, TRUE)
+                    Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_NONE, BTL_CAM_XADJ_NONE, true)
                     Set(LVar2, 4)
                 EndIf
             CaseGt(30)
                 IfEq(LVar2, 2)
                     Call(AddBattleCamDist, -20)
                     Call(MoveBattleCamOver, 20)
-                    Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_NONE, BTL_CAM_XADJ_NONE, TRUE)
+                    Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_NONE, BTL_CAM_XADJ_NONE, true)
                     Set(LVar2, 3)
                 EndIf
             CaseGt(20)
                 IfEq(LVar2, 1)
                     Call(AddBattleCamDist, -20)
                     Call(MoveBattleCamOver, 20)
-                    Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_NONE, BTL_CAM_XADJ_NONE, TRUE)
+                    Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_NONE, BTL_CAM_XADJ_NONE, true)
                     Set(LVar2, 2)
                 EndIf
             CaseGt(10)
                 IfEq(LVar2, 0)
                     Call(AddBattleCamDist, -20)
                     Call(MoveBattleCamOver, 20)
-                    Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_NONE, BTL_CAM_XADJ_NONE, TRUE)
+                    Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_NONE, BTL_CAM_XADJ_NONE, true)
                     Set(LVar2, 1)
                 EndIf
         EndSwitch
@@ -887,7 +886,7 @@ EvtScript N(spook) = {
     EndThread
     Call(PlaySoundAtActor, ACTOR_PARTNER, SOUND_BOW_SPOOK)
     SetF(LVar0, Float(1.0))
-    Call(GetActionQuality, LVar2)
+    Call(GetActionProgress, LVar2)
     Switch(LVar2)
         CaseLe(20)
             SetF(LVar1, Float(0.3))
@@ -926,7 +925,7 @@ EvtScript N(spook) = {
     PlayEffect(EFFECT_ENERGY_IN_OUT, 6, LVar0, LVar1, LVar2, Float(1.0), 45, 0)
     Wait(15)
     Call(InitTargetIterator)
-    Call(GetActionQuality, LVarF)
+    Call(GetActionProgress, LVarF)
     Loop(0)
         Call(SetGoalToTarget, ACTOR_SELF)
         Call(PartnerTestEnemy, LVar0, 0, SUPPRESS_EVENT_SPIKY_FRONT | SUPPRESS_EVENT_BURN_CONTACT, 0, 2, BS_FLAGS1_INCLUDE_POWER_UPS)
@@ -936,9 +935,9 @@ EvtScript N(spook) = {
         Call(SetDamageSource, DMG_SRC_SPOOK)
         Switch(LVarF)
             CaseGt(99)
-                Call(PartnerAfflictEnemy, LVar0, DAMAGE_TYPE_NO_CONTACT | DAMAGE_TYPE_MULTIPLE_POPUPS | DAMAGE_TYPE_STATUS_ALWAYS_HITS, 0, STATUS_FLAG_400000, LVarF, 0, BS_FLAGS1_NICE_HIT | BS_FLAGS1_TRIGGER_EVENTS | BS_FLAGS1_INCLUDE_POWER_UPS)
+                Call(PartnerAfflictEnemy, LVar0, DAMAGE_TYPE_NO_CONTACT | DAMAGE_TYPE_MULTIPLE_POPUPS | DAMAGE_TYPE_STATUS_ALWAYS_HITS, 0, STATUS_FLAG_FEAR, LVarF, 0, BS_FLAGS1_NICE_HIT | BS_FLAGS1_TRIGGER_EVENTS | BS_FLAGS1_INCLUDE_POWER_UPS)
             CaseDefault
-                Call(PartnerAfflictEnemy, LVar0, DAMAGE_TYPE_NO_CONTACT | DAMAGE_TYPE_MULTIPLE_POPUPS | DAMAGE_TYPE_STATUS_ALWAYS_HITS, 0, STATUS_FLAG_400000, LVarF, 0, BS_FLAGS1_NO_RATING | BS_FLAGS1_TRIGGER_EVENTS | BS_FLAGS1_INCLUDE_POWER_UPS)
+                Call(PartnerAfflictEnemy, LVar0, DAMAGE_TYPE_NO_CONTACT | DAMAGE_TYPE_MULTIPLE_POPUPS | DAMAGE_TYPE_STATUS_ALWAYS_HITS, 0, STATUS_FLAG_FEAR, LVarF, 0, BS_FLAGS1_NO_RATING | BS_FLAGS1_TRIGGER_EVENTS | BS_FLAGS1_INCLUDE_POWER_UPS)
         EndSwitch
         Label(10)
         Wait(5)
@@ -947,7 +946,7 @@ EvtScript N(spook) = {
             BreakLoop
         EndIf
     EndLoop
-    Call(GetPartnerActionSuccess, LVar0)
+    Call(GetPartnerActionQuality, LVar0)
     Switch(LVar0)
         CaseGt(99)
             Call(UseBattleCamPreset, BTL_CAM_RETURN_HOME)
@@ -963,7 +962,7 @@ EvtScript N(spook) = {
             Wait(1)
         EndLoop
     EndThread
-    Call(GetActionQuality, LVar2)
+    Call(GetActionProgress, LVar2)
     Switch(LVar2)
         CaseLe(20)
             SetF(LVar1, Float(0.3))
@@ -1001,8 +1000,8 @@ EvtScript N(fanSmack) = {
         Wait(10)
         Set(LVar0, LVarB)
         Add(LVar0, -3)
-        Call(action_command_smack_start, 0, LVar0, 3, 1)
-        Call(SetBattleFlagBits, BS_FLAGS1_4000, FALSE)
+        Call(action_command_smack_start, 0, LVar0, AC_DIFFICULTY_3, ACV_SMACK_FAN)
+        Call(SetBattleFlagBits, BS_FLAGS1_4000, false)
     EndThread
     Call(PlaySoundAtActor, ACTOR_PARTNER, SOUND_BOO_VANISH_A)
     Call(SetPartAlpha, ACTOR_PARTNER, -1, 55)
@@ -1034,7 +1033,7 @@ EvtScript N(fanSmack) = {
     Set(LVarF, 0)
     Set(LVarE, 0)
     Set(LVarD, 0)
-    Set(LFlag0, FALSE)
+    Set(LFlag0, false)
     Call(InitTargetIterator)
     Call(SetGoalToTarget, ACTOR_SELF)
     Call(SetAnimation, ACTOR_PARTNER, -1, ANIM_BattleBow_CelebrateFast)
@@ -1044,102 +1043,102 @@ EvtScript N(fanSmack) = {
         Call(SetActorDispOffset, ACTOR_PARTNER, Float(-0.5), 0, 0)
         Wait(1)
     EndLoop
-    Call(GetPartnerActionSuccess, LVarB)
-    Call(func_80269600, LVarD)
+    Call(GetPartnerActionQuality, LVarB)
+    Call(GetActionResultTier, LVarD)
     Label(0)
-    Call(PartnerTestEnemy, LVar0, DAMAGE_TYPE_NO_CONTACT, SUPPRESS_EVENT_SPIKY_TOP | SUPPRESS_EVENT_SPIKY_FRONT | SUPPRESS_EVENT_BURN_CONTACT | SUPPRESS_EVENT_ALT_SPIKY, 0, 1, BS_FLAGS1_INCLUDE_POWER_UPS)
-    IfEq(LVar0, HIT_RESULT_MISS)
-        Call(SetAnimation, ACTOR_PARTNER, -1, ANIM_BattleBow_FanSmackOnce)
-        Call(CloseActionCommandInfo)
-        Set(LVar0, 0)
-        Loop(15)
-            Add(LVar0, -45)
-            Call(SetActorYaw, ACTOR_PARTNER, LVar0)
-            Wait(1)
-        EndLoop
-        Loop(15)
-            Add(LVar0, -90)
-            Call(SetActorYaw, ACTOR_PARTNER, LVar0)
-            Wait(1)
-        EndLoop
+        Call(PartnerTestEnemy, LVar0, DAMAGE_TYPE_NO_CONTACT, SUPPRESS_EVENT_SPIKY_TOP | SUPPRESS_EVENT_SPIKY_FRONT | SUPPRESS_EVENT_BURN_CONTACT | SUPPRESS_EVENT_ALT_SPIKY, 0, 1, BS_FLAGS1_INCLUDE_POWER_UPS)
+        IfEq(LVar0, HIT_RESULT_MISS)
+            Call(SetAnimation, ACTOR_PARTNER, -1, ANIM_BattleBow_FanSmackOnce)
+            Call(InterruptActionCommand)
+            Set(LVar0, 0)
+            Loop(15)
+                Add(LVar0, -45)
+                Call(SetActorYaw, ACTOR_PARTNER, LVar0)
+                Wait(1)
+            EndLoop
+            Loop(15)
+                Add(LVar0, -90)
+                Call(SetActorYaw, ACTOR_PARTNER, LVar0)
+                Wait(1)
+            EndLoop
+            Call(SetActorYaw, ACTOR_PARTNER, 0)
+            Call(SetAnimation, ACTOR_PARTNER, -1, ANIM_BattleBow_Injured)
+            Call(AddActorDecoration, ACTOR_SELF, PRT_ZERO, 0, ACTOR_DECORATION_SEEING_STARS)
+            Wait(40)
+            Call(RemoveActorDecoration, ACTOR_SELF, PRT_ZERO, 0)
+            Call(SetAnimation, ACTOR_PARTNER, -1, ANIM_BattleBow_Idle)
+            Wait(10)
+            ExecWait(N(EVS_ReturnHome_Miss))
+            Return
+        EndIf
+        Add(LVarE, 1)
+        IfGt(LVarE, LVarD)
+            Goto(2)
+        EndIf
+        Call(SetActorScale, ACTOR_PARTNER, Float(1.4), Float(1.4), Float(1.0))
+        IfEq(LFlag0, false)
+            Call(SetAnimation, ACTOR_PARTNER, -1, ANIM_BattleBow_FanSmackOnce)
+            Set(LFlag0, true)
+            Call(SetDamageSource, DMG_SRC_NEXT_FAN_SMACK_LEFT)
+        Else
+            Call(SetAnimation, ACTOR_PARTNER, -1, ANIM_BattleBow_FanSmackBack)
+            Set(LFlag0, false)
+            Call(SetDamageSource, DMG_SRC_NEXT_FAN_SMACK_RIGHT)
+        EndIf
+        Wait(2)
+        Call(SetActorScale, ACTOR_PARTNER, Float(1.0), Float(1.0), Float(1.0))
+        Thread
+            Call(ShakeCam, CAM_BATTLE, 0, 2, Float(0.5))
+            Call(ShakeCam, CAM_BATTLE, 0, 2, Float(1.5))
+            Call(ShakeCam, CAM_BATTLE, 0, 1, Float(0.5))
+            Call(ShakeCam, CAM_BATTLE, 0, 1, Float(0.2))
+        EndThread
+        IfEq(LVarE, 1)
+            Call(N(GetBowSize))
+            Call(AddBattleCamDist, LVar0)
+            Call(MoveBattleCamOver, 5)
+        Else
+            Call(AddBattleCamDist, 25)
+            Call(MoveBattleCamOver, 5)
+        EndIf
+        Call(GetGoalPos, ACTOR_PARTNER, LVar0, LVar1, LVar2)
+        PlayEffect(EFFECT_CONFETTI, 5, LVar0, LVar1, LVar2, Float(1.0), 20, 0)
+        Call(SetActorSounds, ACTOR_PARTNER, ACTOR_SOUND_HURT, SOUND_BOW_FAN_SMACK, 0)
+        IfEq(LVarE, 1)
+            IfGt(LVarB, 99)
+                Call(PartnerDamageEnemy, LVar0, DAMAGE_TYPE_NO_CONTACT, SUPPRESS_EVENT_SPIKY_TOP | SUPPRESS_EVENT_SPIKY_FRONT | SUPPRESS_EVENT_BURN_CONTACT | SUPPRESS_EVENT_ALT_SPIKY, 0, LVarC, BS_FLAGS1_NICE_HIT | BS_FLAGS1_INCLUDE_POWER_UPS)
+            Else
+                Call(PartnerDamageEnemy, LVar0, DAMAGE_TYPE_NO_CONTACT, SUPPRESS_EVENT_SPIKY_TOP | SUPPRESS_EVENT_SPIKY_FRONT | SUPPRESS_EVENT_BURN_CONTACT | SUPPRESS_EVENT_ALT_SPIKY, 0, LVarC, BS_FLAGS1_INCLUDE_POWER_UPS)
+            EndIf
+            Goto(1)
+        Else
+            IfGt(LVarB, 99)
+                Call(PartnerDamageEnemy, LVar0, DAMAGE_TYPE_NO_CONTACT, SUPPRESS_EVENT_SPIKY_TOP | SUPPRESS_EVENT_SPIKY_FRONT | SUPPRESS_EVENT_BURN_CONTACT | SUPPRESS_EVENT_ALT_SPIKY, 0, LVarC, BS_FLAGS1_NICE_HIT)
+            Else
+                Call(PartnerDamageEnemy, LVar0, DAMAGE_TYPE_NO_CONTACT, SUPPRESS_EVENT_SPIKY_TOP | SUPPRESS_EVENT_SPIKY_FRONT | SUPPRESS_EVENT_BURN_CONTACT | SUPPRESS_EVENT_ALT_SPIKY, 0, LVarC, 0)
+            EndIf
+            Goto(1)
+        EndIf
+        Label(1)
+        IfEq(LVarE, 1)
+            Set(LVar0, 0)
+            Loop(8)
+                Add(LVar0, 144)
+                Call(SetActorYaw, ACTOR_PARTNER, LVar0)
+                Wait(1)
+            EndLoop
+        Else
+            Set(LVar0, 0)
+            Loop(8)
+                Sub(LVar0, 144)
+                Call(SetActorYaw, ACTOR_PARTNER, LVar0)
+                Wait(1)
+            EndLoop
+        EndIf
         Call(SetActorYaw, ACTOR_PARTNER, 0)
-        Call(SetAnimation, ACTOR_PARTNER, -1, ANIM_BattleBow_Injured)
-        Call(AddActorDecoration, ACTOR_SELF, PRT_ZERO, 0, ACTOR_DECORATION_SEEING_STARS)
-        Wait(40)
-        Call(RemoveActorDecoration, ACTOR_SELF, PRT_ZERO, 0)
+        Add(LVarF, 10)
         Call(SetAnimation, ACTOR_PARTNER, -1, ANIM_BattleBow_Idle)
-        Wait(10)
-        ExecWait(N(EVS_ReturnHome_Miss))
-        Return
-    EndIf
-    Add(LVarE, 1)
-    IfGt(LVarE, LVarD)
-        Goto(2)
-    EndIf
-    Call(SetActorScale, ACTOR_PARTNER, Float(1.4), Float(1.4), Float(1.0))
-    IfEq(LFlag0, FALSE)
-        Call(SetAnimation, ACTOR_PARTNER, -1, ANIM_BattleBow_FanSmackOnce)
-        Set(LFlag0, TRUE)
-        Call(SetDamageSource, DMG_SRC_NEXT_FAN_SMACK_LEFT)
-    Else
-        Call(SetAnimation, ACTOR_PARTNER, -1, ANIM_BattleBow_FanSmackBack)
-        Set(LFlag0, FALSE)
-        Call(SetDamageSource, DMG_SRC_NEXT_FAN_SMACK_RIGHT)
-    EndIf
-    Wait(2)
-    Call(SetActorScale, ACTOR_PARTNER, Float(1.0), Float(1.0), Float(1.0))
-    Thread
-        Call(ShakeCam, CAM_BATTLE, 0, 2, Float(0.5))
-        Call(ShakeCam, CAM_BATTLE, 0, 2, Float(1.5))
-        Call(ShakeCam, CAM_BATTLE, 0, 1, Float(0.5))
-        Call(ShakeCam, CAM_BATTLE, 0, 1, Float(0.2))
-    EndThread
-    IfEq(LVarE, 1)
-        Call(N(GetBowSize))
-        Call(AddBattleCamDist, LVar0)
-        Call(MoveBattleCamOver, 5)
-    Else
-        Call(AddBattleCamDist, 25)
-        Call(MoveBattleCamOver, 5)
-    EndIf
-    Call(GetGoalPos, ACTOR_PARTNER, LVar0, LVar1, LVar2)
-    PlayEffect(EFFECT_CONFETTI, 5, LVar0, LVar1, LVar2, Float(1.0), 20, 0)
-    Call(SetActorSounds, ACTOR_PARTNER, ACTOR_SOUND_HURT, SOUND_BOW_FAN_SMACK, 0)
-    IfEq(LVarE, 1)
-        IfGt(LVarB, 99)
-            Call(PartnerDamageEnemy, LVar0, DAMAGE_TYPE_NO_CONTACT, SUPPRESS_EVENT_SPIKY_TOP | SUPPRESS_EVENT_SPIKY_FRONT | SUPPRESS_EVENT_BURN_CONTACT | SUPPRESS_EVENT_ALT_SPIKY, 0, LVarC, BS_FLAGS1_NICE_HIT | BS_FLAGS1_INCLUDE_POWER_UPS)
-        Else
-            Call(PartnerDamageEnemy, LVar0, DAMAGE_TYPE_NO_CONTACT, SUPPRESS_EVENT_SPIKY_TOP | SUPPRESS_EVENT_SPIKY_FRONT | SUPPRESS_EVENT_BURN_CONTACT | SUPPRESS_EVENT_ALT_SPIKY, 0, LVarC, BS_FLAGS1_INCLUDE_POWER_UPS)
-        EndIf
-        Goto(1)
-    Else
-        IfGt(LVarB, 99)
-            Call(PartnerDamageEnemy, LVar0, DAMAGE_TYPE_NO_CONTACT, SUPPRESS_EVENT_SPIKY_TOP | SUPPRESS_EVENT_SPIKY_FRONT | SUPPRESS_EVENT_BURN_CONTACT | SUPPRESS_EVENT_ALT_SPIKY, 0, LVarC, BS_FLAGS1_NICE_HIT)
-        Else
-            Call(PartnerDamageEnemy, LVar0, DAMAGE_TYPE_NO_CONTACT, SUPPRESS_EVENT_SPIKY_TOP | SUPPRESS_EVENT_SPIKY_FRONT | SUPPRESS_EVENT_BURN_CONTACT | SUPPRESS_EVENT_ALT_SPIKY, 0, LVarC, 0)
-        EndIf
-        Goto(1)
-    EndIf
-    Label(1)
-    IfEq(LVarE, 1)
-        Set(LVar0, 0)
-        Loop(8)
-            Add(LVar0, 144)
-            Call(SetActorYaw, ACTOR_PARTNER, LVar0)
-            Wait(1)
-        EndLoop
-    Else
-        Set(LVar0, 0)
-        Loop(8)
-            Sub(LVar0, 144)
-            Call(SetActorYaw, ACTOR_PARTNER, LVar0)
-            Wait(1)
-        EndLoop
-    EndIf
-    Call(SetActorYaw, ACTOR_PARTNER, 0)
-    Add(LVarF, 10)
-    Call(SetAnimation, ACTOR_PARTNER, -1, ANIM_BattleBow_Idle)
-    Goto(0)
+        Goto(0)
     Label(2)
     Thread
         Call(ShakeCam, CAM_BATTLE, 0, 2, Float(0.5))
@@ -1156,19 +1155,19 @@ EvtScript N(fanSmack) = {
         Call(MoveBattleCamOver, 5)
     EndIf
     Call(SetActorScale, ACTOR_PARTNER, Float(1.4), Float(1.4), Float(1.0))
-    IfEq(LFlag0, FALSE)
+    IfEq(LFlag0, false)
         Call(SetAnimation, ACTOR_PARTNER, -1, ANIM_BattleBow_FanSmackOnce)
-        Set(LFlag0, TRUE)
+        Set(LFlag0, true)
         Call(SetDamageSource, DMG_SRC_LAST_FAN_SMACK_LEFT)
     Else
         Call(SetAnimation, ACTOR_PARTNER, -1, ANIM_BattleBow_FanSmackBack)
-        Set(LFlag0, FALSE)
+        Set(LFlag0, false)
         Call(SetDamageSource, DMG_SRC_LAST_FAN_SMACK_RIGHT)
     EndIf
     Wait(2)
     Call(SetActorScale, ACTOR_PARTNER, Float(1.0), Float(1.0), Float(1.0))
     Call(SetActorSounds, ACTOR_PARTNER, ACTOR_SOUND_HURT, SOUND_BOW_FAN_SMACK, 0)
-    Call(GetPartnerActionSuccess, LVar0)
+    Call(GetPartnerActionQuality, LVar0)
     Switch(LVar0)
         CaseGt(99)
             Call(PartnerDamageEnemy, LVar0, DAMAGE_TYPE_NO_CONTACT, SUPPRESS_EVENT_SPIKY_TOP | SUPPRESS_EVENT_SPIKY_FRONT | SUPPRESS_EVENT_BURN_CONTACT | SUPPRESS_EVENT_ALT_SPIKY, 0, LVarC, BS_FLAGS1_NICE_HIT | BS_FLAGS1_TRIGGER_EVENTS)

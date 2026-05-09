@@ -28,15 +28,15 @@ void steam_burst_main(
 
     bp.init = steam_burst_init;
     bp.update = steam_burst_update;
-    bp.renderWorld = steam_burst_render;
+    bp.renderScene = steam_burst_render;
     bp.unk_00 = 0;
-    bp.renderUI = NULL;
+    bp.renderUI = nullptr;
     bp.effectID = EFFECT_STEAM_BURST;
 
     effect = create_effect_instance(&bp);
     effect->numParts = numParts;
     part = effect->data.steamBurst = general_heap_malloc(numParts * sizeof(*part));
-    ASSERT(effect->data.steamBurst != NULL);
+    ASSERT(effect->data.steamBurst != nullptr);
 
     mem_clear(part, numParts * sizeof(*part));
 
@@ -120,7 +120,7 @@ void steam_burst_appendGfx(void* effect) {
     s32 i;
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
     gSPDisplayList(gMainGfxPos++, dlist2);
 
     guTranslateF(sp18, part->unk_04, part->unk_08, part->unk_0C);

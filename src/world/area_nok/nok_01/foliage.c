@@ -1,6 +1,6 @@
 #include "nok_01.h"
 
-#include "common/foliage.inc.c"
+#include "foliage.h"
 
 FoliageModelList N(Bush5_BushModels) = FOLIAGE_MODEL_LIST(MODEL_o315);
 
@@ -48,19 +48,19 @@ SearchBushConfig N(SearchBush_Bush3) = {
 FoliageModelList N(Bush6_BushModels) = FOLIAGE_MODEL_LIST(MODEL_o390, MODEL_o396, MODEL_o397, MODEL_o398);
 
 EvtScript N(EVS_Bush6_HideFlowers) = {
-    Call(EnableModel, MODEL_o396, FALSE)
-    Call(EnableModel, MODEL_o397, FALSE)
-    Call(EnableModel, MODEL_o398, FALSE)
+    Call(EnableModel, MODEL_o396, false)
+    Call(EnableModel, MODEL_o397, false)
+    Call(EnableModel, MODEL_o398, false)
     Return
     End
 };
 
 EvtScript N(EVS_OnSearchBush6) = {
-    Call(EnableModel, MODEL_o396, TRUE)
+    Call(EnableModel, MODEL_o396, true)
     Wait(10)
-    Call(EnableModel, MODEL_o398, TRUE)
+    Call(EnableModel, MODEL_o398, true)
     Wait(10)
-    Call(EnableModel, MODEL_o397, TRUE)
+    Call(EnableModel, MODEL_o397, true)
     Return
     End
 };
@@ -145,19 +145,19 @@ FoliageDropList N(Bush1_Drops) = {
 };
 
 EvtScript N(EVS_Bush2_HideFlowers) = {
-    Call(EnableModel, MODEL_o399, FALSE)
-    Call(EnableModel, MODEL_o400, FALSE)
-    Call(EnableModel, MODEL_o401, FALSE)
+    Call(EnableModel, MODEL_o399, false)
+    Call(EnableModel, MODEL_o400, false)
+    Call(EnableModel, MODEL_o401, false)
     Return
     End
 };
 
 EvtScript N(EVS_OnSearchBush2) = {
-    Call(EnableModel, MODEL_o399, TRUE)
+    Call(EnableModel, MODEL_o399, true)
     Wait(10)
-    Call(EnableModel, MODEL_o401, TRUE)
+    Call(EnableModel, MODEL_o401, true)
     Wait(10)
-    Call(EnableModel, MODEL_o400, TRUE)
+    Call(EnableModel, MODEL_o400, true)
     Return
     End
 };
@@ -189,32 +189,32 @@ BombTrigger N(BombPos_Tree1) = {
 
 EvtScript N(EVS_SetupFoliage) = {
     Set(LVar0, Ref(N(SearchBush_Bush5)))
-    BindTrigger(Ref(N(EVS_SearchBush)), TRIGGER_WALL_PRESS_A, COLLIDER_o312, 1, 0)
+    BindTrigger(Ref(EVS_SearchBush), TRIGGER_WALL_PRESS_A, COLLIDER_o312, 1, 0)
     IfEq(GB_KootFavor_Current, KOOT_FAVOR_CH6_2)
         Set(LVar0, Ref(N(SearchBush_Bush3)))
     Else
         Set(LVar0, Ref(N(SearchBush_Bush4)))
     EndIf
-    BindTrigger(Ref(N(EVS_SearchBush)), TRIGGER_WALL_PRESS_A, COLLIDER_o313, 1, 0)
+    BindTrigger(Ref(EVS_SearchBush), TRIGGER_WALL_PRESS_A, COLLIDER_o313, 1, 0)
     Set(LVar0, Ref(N(SearchBush_Bush6)))
-    BindTrigger(Ref(N(EVS_SearchBush)), TRIGGER_WALL_PRESS_A, COLLIDER_o419, 1, 0)
+    BindTrigger(Ref(EVS_SearchBush), TRIGGER_WALL_PRESS_A, COLLIDER_o419, 1, 0)
     Exec(N(EVS_Bush6_HideFlowers))
     Set(LVar0, Ref(N(SearchBush_Bush7)))
-    BindTrigger(Ref(N(EVS_SearchBush)), TRIGGER_WALL_PRESS_A, COLLIDER_o420, 1, 0)
+    BindTrigger(Ref(EVS_SearchBush), TRIGGER_WALL_PRESS_A, COLLIDER_o420, 1, 0)
     Set(LVar0, Ref(N(SearchBush_Bush8)))
-    BindTrigger(Ref(N(EVS_SearchBush)), TRIGGER_WALL_PRESS_A, COLLIDER_o421, 1, 0)
+    BindTrigger(Ref(EVS_SearchBush), TRIGGER_WALL_PRESS_A, COLLIDER_o421, 1, 0)
     Set(LVar0, Ref(N(SearchBush_Bush9)))
-    BindTrigger(Ref(N(EVS_SearchBush)), TRIGGER_WALL_PRESS_A, COLLIDER_o422, 1, 0)
+    BindTrigger(Ref(EVS_SearchBush), TRIGGER_WALL_PRESS_A, COLLIDER_o422, 1, 0)
     IfEq(GB_KootFavor_Current, KOOT_FAVOR_CH3_2)
         Set(LVar0, Ref(N(SearchBush_Bush1)))
     Else
         Set(LVar0, Ref(N(SearchBush_Bush2)))
     EndIf
-    BindTrigger(Ref(N(EVS_SearchBush)), TRIGGER_WALL_PRESS_A, COLLIDER_o423, 1, 0)
+    BindTrigger(Ref(EVS_SearchBush), TRIGGER_WALL_PRESS_A, COLLIDER_o423, 1, 0)
     Exec(N(EVS_Bush2_HideFlowers))
     Set(LVar0, Ref(N(ShakeTree_Tree1)))
-    BindTrigger(Ref(N(EVS_ShakeTree)), TRIGGER_WALL_HAMMER, COLLIDER_o323, 1, 0)
-    BindTrigger(Ref(N(EVS_ShakeTree)), TRIGGER_POINT_BOMB, Ref(N(BombPos_Tree1)), 1, 0)
+    BindTrigger(Ref(EVS_ShakeTree), TRIGGER_WALL_HAMMER, COLLIDER_o323, 1, 0)
+    BindTrigger(Ref(EVS_ShakeTree), TRIGGER_POINT_BOMB, Ref(N(BombPos_Tree1)), 1, 0)
     // bind the same tree a second time for the koopa shell stuck inside
     BindTrigger(Ref(N(EVS_Scene_RecoverTreeShell)), TRIGGER_WALL_HAMMER, COLLIDER_o323, 1, 0)
     BindTrigger(Ref(N(EVS_Scene_RecoverTreeShell)), TRIGGER_POINT_BOMB, Ref(N(BombPos_Tree1)), 1, 0)

@@ -9,9 +9,6 @@
 #ifndef _NUALSGI_H_
 #define _NUALSGI_H_
 
-#ifdef _LANGUAGE_C_PLUS_PLUS
-extern "C" {
-#endif
 /*----------------------------------------------------------------------*/
 /*----------------------------------------------------------------------*/
 /*	DEFINE								*/
@@ -283,8 +280,8 @@ extern s32 nuAuHeapGetUsed(void);
 /*----------------------------------------------------------------------*/
 
 /* Delete the callback function */
-#define nuAuPreNMIFuncRemove()	nuAuPreNMIFuncSet(NULL)
-#define nuAuMgrFuncRemove()	nuAuMgrFuncSet(NULL)
+#define nuAuPreNMIFuncRemove()	nuAuPreNMIFuncSet(nullptr)
+#define nuAuMgrFuncRemove()	nuAuMgrFuncSet(nullptr)
 
 #define nuAuSeqPlayerGetChlVol(player_no, chan)				\
 	alCSPGetChlVol(&nuAuSeqPlayer[player_no].player, chan)
@@ -338,7 +335,4 @@ extern s32 nuAuHeapGetUsed(void);
 
 /*----------------------------------------------------------------------*/
 #endif  /* defined(_LANGUAGE_C) || defined(_LANGUAGE_C_PLUS_PLUS) */
-#ifdef _LANGUAGE_C_PLUS_PLUS
-}
-#endif
 #endif /* _NUALSGI_H_ */

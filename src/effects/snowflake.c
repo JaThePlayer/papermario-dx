@@ -21,15 +21,15 @@ void snowflake_main(f32 x, f32 y, f32 z, s32 arg3) {
     bp.unk_00 = 0;
     bp.init = snowflake_init;
     bp.update = snowflake_update;
-    bp.renderWorld = snowflake_render;
-    bp.renderUI = NULL;
+    bp.renderScene = snowflake_render;
+    bp.renderUI = nullptr;
     bp.effectID = EFFECT_SNOWFLAKE;
 
     effect = create_effect_instance(&bp);
     effect->numParts = 1;
     part = effect->data.snowflake = general_heap_malloc(numParts * sizeof(*part));
 
-    ASSERT(effect->data.snowflake != NULL);
+    ASSERT(effect->data.snowflake != nullptr);
 
     part->pos.x = x;
     part->pos.y = y;
@@ -123,7 +123,7 @@ void snowflake_appendGfx(void* effect) {
     SnowflakeFXData* data = effectTemp->data.snowflake;
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(effectTemp->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(effectTemp->shared->graphics));
     gSPDisplayList(gMainGfxPos++, D_09000900_331800);
 
     guTranslateF(sp18, data->pos.x, data->pos.y, data->pos.z);

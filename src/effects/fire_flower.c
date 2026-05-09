@@ -18,7 +18,6 @@ void fire_flower_render(EffectInstance* effect);
 
 EffectInstance* fire_flower_main(s32 arg0, f32 arg1, f32 arg2, f32 arg3, s32 arg4) {
     EffectBlueprint bp;
-    EffectBlueprint* bpPtr = &bp;
     EffectInstance* effect;
     FireFlowerFXData* part;
     Vec3i* partData;
@@ -28,8 +27,8 @@ EffectInstance* fire_flower_main(s32 arg0, f32 arg1, f32 arg2, f32 arg3, s32 arg
     bp.unk_00 = 0;
     bp.init = fire_flower_init;
     bp.update = fire_flower_update;
-    bp.renderWorld = fire_flower_render;
-    bp.renderUI = NULL;
+    bp.renderScene = fire_flower_render;
+    bp.renderUI = nullptr;
     bp.effectID = EFFECT_FIRE_FLOWER;
 
     effect = create_effect_instance(&bp);
@@ -37,12 +36,12 @@ EffectInstance* fire_flower_main(s32 arg0, f32 arg1, f32 arg2, f32 arg3, s32 arg
     part = general_heap_malloc(numParts * sizeof(*part));
     effect->data.fireFlower = part;
 
-    ASSERT(effect->data.fireFlower != NULL);
+    ASSERT(effect->data.fireFlower != nullptr);
 
     part->unk_04 = 0;
     part->unk_00 = 0;
     part->isFlippedHorizontal = arg0;
-    part->isIce = FALSE;
+    part->isIce = false;
     part->pos.x = arg1;
     part->pos.y = arg2;
     part->pos.z = arg3;
@@ -218,7 +217,7 @@ void fire_flower_appendGfx(void* effect) {
     s32 i;
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
 
     guTranslateF(sp18, part->pos.x, part->pos.y, part->pos.z);
     guRotateF(sp58, -gCameras[gCurrentCameraID].curYaw, 0.0f, 1.0f, 0.0f);

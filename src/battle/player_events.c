@@ -17,16 +17,16 @@ extern EvtScript EVS_Player_SimpleHit;
 extern EvtScript EVS_Player_ComplexHit;
 extern EvtScript EVS_Player_NoDamageHit;
 
-extern PlayerCelebrationAnimOptions bPlayerCelebrations;
+extern CelebrationAnimOptions bPlayerCelebrations;
 
 BSS s32 BattleMerleeEffectsTime;
 BSS f32 BattleMerleeBasePosY;
 BSS EffectInstance* BattleMerleeOrbEffect;
 BSS EffectInstance* BattleMerleeWaveEffect;
-BSS s32 HID_Refund;
+BSS HudElemID HID_Refund;
 BSS s16 BattleMerleeEffectsState;
-BSS s32 HID_Happy;
-BSS s32 HID_HPDrain;
+BSS HudElemID HID_Happy;
+BSS HudElemID HID_HPDrain;
 BSS s32 D_8029FBB0[3];
 
 enum {
@@ -49,10 +49,10 @@ void btl_set_player_idle_anims(void) {
     }
 }
 
-API_CALLABLE(IsPartnerImmobile) {
+API_CALLABLE(IsPlayerImmobile) {
     BattleStatus* battleStatus = &gBattleStatus;
     Actor* playerActor = battleStatus->playerActor;
-    s32 isImmobile = playerActor->debuff == STATUS_KEY_FEAR
+    s32 isImmobile = playerActor->debuff == STATUS_KEY_UNUSED
                      //|| playerActor->debuff == STATUS_KEY_DIZZY
                      || playerActor->debuff == STATUS_KEY_PARALYZE
                      || playerActor->debuff == STATUS_KEY_SLEEP
@@ -60,7 +60,7 @@ API_CALLABLE(IsPartnerImmobile) {
                      || playerActor->debuff == STATUS_KEY_STOP;
 
     if (playerActor->stoneStatus == STATUS_KEY_STONE) {
-        isImmobile = TRUE;
+        isImmobile = true;
     }
 
     script->varTable[0] = isImmobile;
@@ -84,66 +84,55 @@ API_CALLABLE(TryPlayerLucky) {
     show_action_rating(ACTION_RATING_LUCKY, player, player->curPos.x, player->curPos.y + 20.0f, player->curPos.z);
     sfx_play_sound(SOUND_LUCKY);
 
-    script->varTable[0] = FALSE;
-    if (player->debuff == STATUS_KEY_FEAR
+    script->varTable[0] = false;
+    if (player->debuff == STATUS_KEY_UNUSED
         //|| player->debuff == STATUS_KEY_DIZZY
         || player->debuff == STATUS_KEY_PARALYZE
         || player->debuff == STATUS_KEY_SLEEP
         || player->debuff == STATUS_KEY_FROZEN
         || player->debuff == STATUS_KEY_STOP
     ) {
-        script->varTable[0] = TRUE;
+        script->varTable[0] = true;
     }
     return ApiStatus_DONE2;
 }
 
 API_CALLABLE(ChoosePlayerCelebrationAnim) {
-    PlayerCelebrationAnimOptions* pcao = &bPlayerCelebrations;
-    PlayerData* playerData = &gPlayerData;
-    s32 temp;
+    CelebrationAnimOptions* celebrations = &bPlayerCelebrations;
+    s32 optionSet;
+    s32 weight;
     s32 i;
 
-    if (rand_int(pcao->randomChance + pcao->hpBasedChance) < pcao->randomChance) {
-        temp = 0;
-        for (i = 0; i < 8; i++) {
-            temp += pcao->options[i * 2];
-        }
-        temp = rand_int(temp);
-        for (i = 0; i < 8; i++) {
-            temp -= pcao->options[i * 2];
-            if (temp <= 0) {
-                break;
-            }
-        }
-
-        script->varTable[0] = pcao->options[i * 2 + 1];
+    if (rand_int(celebrations->randomChance + celebrations->hpBasedChance) < celebrations->randomChance) {
+        optionSet = 0;
     } else {
-        s32* opts;
-        f32 healthRatio = playerData->curHP / (f32) playerData->curMaxHP;
+        f32 healthRatio = gPlayerData.curHP / (f32) gPlayerData.curMaxHP;
 
         if (healthRatio <= 0.25) {
-            opts = &pcao->options[16];
+            optionSet = 1;
         } else if (healthRatio <= 0.5) {
-            opts = &pcao->options[32];
+            optionSet = 2;
         } else if (healthRatio <= 0.75) {
-            opts = &pcao->options[48];
+            optionSet = 3;
         } else {
-            opts = &pcao->options[64];
+            optionSet = 4;
         }
-
-        temp = 0;
-        for (i = 0; i < 8; i++) {
-            temp += opts[i * 2];
-        }
-        temp = rand_int(temp);
-        for (i = 0; i < 8; i++) {
-            temp -= opts[i * 2];
-            if (temp <= 0) {
-                break;
-            }
-        }
-        script->varTable[0] = opts[i * 2 + 1];
     }
+
+    weight = 0;
+    for (i = 0; i < 8; i++) {
+        weight += celebrations->options[optionSet][i].weight;
+    }
+    weight = rand_int(weight);
+    for (i = 0; i < 8; i++) {
+        weight -= celebrations->options[optionSet][i].weight;
+        if (weight <= 0) {
+            break;
+        }
+    }
+
+    script->varTable[0] = celebrations->options[optionSet][i].anim;
+
     return ApiStatus_DONE2;
 }
 
@@ -162,9 +151,9 @@ API_CALLABLE(DetermineAutoRunAwaySuccess) {
 
     var = player->state.varTable[0];
     if (var >= rand_int(100)) {
-        script->varTable[0] = TRUE;
+        script->varTable[0] = true;
     } else {
-        script->varTable[0] = FALSE;
+        script->varTable[0] = false;
     }
     return ApiStatus_DONE2;
 }
@@ -242,7 +231,7 @@ API_CALLABLE(LifeShroomShroudWorld) {
 
     mdl_set_shroud_tint_params(0, 0, 0, ((20 - script->functionTemp[0]) * 12) & 0xFC);
 
-    script->functionTemp[0] -= 1;
+    script->functionTemp[0]--;
 
     if (script->functionTemp[0] == 0) {
         return ApiStatus_DONE2;
@@ -259,7 +248,7 @@ API_CALLABLE(LifeShroomRevealWorld) {
 
     mdl_set_shroud_tint_params(0, 0, 0, (script->functionTemp[0] * 12) & 0xFC);
 
-    script->functionTemp[0] -= 1;
+    script->functionTemp[0]--;
     if (script->functionTemp[0] == 0) {
         mdl_set_shroud_tint_params(0, 0, 0, 0);
         return ApiStatus_DONE2;
@@ -313,11 +302,11 @@ API_CALLABLE(RestorePreDefeatState) {
 }
 
 API_CALLABLE(func_80261388) {
-    s32 partnerActorExists = gBattleStatus.partnerActor != NULL;
+    s32 partnerActorExists = gBattleStatus.partnerActor != nullptr;
 
-    script->varTable[0] = FALSE;
+    script->varTable[0] = false;
     if (partnerActorExists) {
-        script->varTable[0] = TRUE;
+        script->varTable[0] = true;
     }
     return ApiStatus_DONE2;
 }
@@ -474,9 +463,9 @@ API_CALLABLE(BattleMerleeStopFX) {
 API_CALLABLE(HasMerleeCastsLeft) {
     PlayerData* playerData = &gPlayerData;
 
-    script->varTable[0] = FALSE;
+    script->varTable[0] = false;
     if (playerData->merleeCastsLeft > 0) {
-        script->varTable[0] = TRUE;
+        script->varTable[0] = true;
     }
     return ApiStatus_DONE2;
 }
@@ -723,7 +712,7 @@ EvtScript EVS_MarioEnterStage = {
 };
 
 EvtScript EVS_PeachEnterStage = {
-    Call(FreezeBattleState, TRUE)
+    Call(FreezeBattleState, true)
     Call(UseBattleCamPreset, BTL_CAM_PLAYER_ENTRY)
     Call(SetBattleCamTarget, -80, 35, 8)
     Call(BattleCamTargetActor, ACTOR_PLAYER)
@@ -744,7 +733,7 @@ EvtScript EVS_PeachEnterStage = {
     Call(PlayerRunToGoal, 40)
     Call(SetAnimation, ACTOR_SELF, 0, ANIM_Peach1_Walk)
     Wait(15)
-    Call(FreezeBattleState, FALSE)
+    Call(FreezeBattleState, false)
     Return
     End
 };
@@ -792,8 +781,8 @@ EvtScript EVS_Peach_HandlePhase = {
 };
 
 EvtScript EVS_ExecuteMarioAction = {
-    Call(UseIdleAnimation, ACTOR_PLAYER, FALSE)
-    Call(SetBattleFlagBits, BS_FLAGS1_4000, FALSE)
+    Call(UseIdleAnimation, ACTOR_PLAYER, false)
+    Call(SetBattleFlagBits, BS_FLAGS1_4000, false)
     Call(GetMenuSelection, LVar0, LVar1, LVar2)
     Switch(LVar0)
         CaseEq(BTL_MENU_TYPE_JUMP)
@@ -810,26 +799,26 @@ EvtScript EVS_ExecuteMarioAction = {
             ExecWait(LVar0)
     EndSwitch
     Call(EnablePlayerBlur, ACTOR_BLUR_DISABLE)
-    Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+    Call(UseIdleAnimation, ACTOR_PLAYER, true)
     Return
     End
 };
 
 EvtScript EVS_ExecutePeachAction = {
-    Call(UseIdleAnimation, ACTOR_PLAYER, FALSE)
+    Call(UseIdleAnimation, ACTOR_PLAYER, false)
     Call(GetMenuSelection, LVar0, LVar1, LVar2)
     Switch(LVar0)
         CaseEq(BTL_MENU_TYPE_STAR_POWERS)
             Call(LoadStarPowerScript)
             ExecWait(LVar0)
     EndSwitch
-    Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+    Call(UseIdleAnimation, ACTOR_PLAYER, true)
     Return
     End
 };
 
 EvtScript EVS_PlayerFirstStrike = {
-    Call(UseIdleAnimation, ACTOR_PLAYER, FALSE)
+    Call(UseIdleAnimation, ACTOR_PLAYER, false)
     Call(GetMenuSelection, LVar0, LVar1, LVar2)
     Switch(LVar0)
         CaseEq(0)
@@ -840,7 +829,7 @@ EvtScript EVS_PlayerFirstStrike = {
             ExecWait(LVar0)
     EndSwitch
     Call(EnablePlayerBlur, ACTOR_BLUR_DISABLE)
-    Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+    Call(UseIdleAnimation, ACTOR_PLAYER, true)
     Return
     End
 };
@@ -854,11 +843,11 @@ EvtScript EVS_StartDefend = {
 EvtScript EVS_Player_HandleEvent = {
     Call(GetLastEvent, ACTOR_PLAYER, LVarF)
     Switch(LVarF)
-        CaseNe(EVENT_32)
-            Call(UseIdleAnimation, ACTOR_PLAYER, FALSE)
+        CaseNe(EVENT_RECOVER_FROZEN)
+            Call(UseIdleAnimation, ACTOR_PLAYER, false)
     EndSwitch
-    Call(CloseActionCommandInfo)
-    Call(SetBattleFlagBits, BS_FLAGS1_EXECUTING_MOVE, FALSE)
+    Call(InterruptActionCommand)
+    Call(SetBattleFlagBits, BS_FLAGS1_EXECUTING_MOVE, false)
     Call(func_802693F0)
     Call(ForceDisablePlayerBlurImmediately)
     Call(GetLastEvent, ACTOR_PLAYER, LVarF)
@@ -994,9 +983,9 @@ EvtScript EVS_Player_HandleEvent = {
             Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_Mario1_Run)
             Call(PlayerRunToGoal, 0)
             Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_Mario1_Idle)
-        CaseEq(EVENT_32)
+        CaseEq(EVENT_RECOVER_FROZEN)
             Wait(10)
-            Call(UseIdleAnimation, ACTOR_PLAYER, FALSE)
+            Call(UseIdleAnimation, ACTOR_PLAYER, false)
             Call(SetActorJumpGravity, ACTOR_PLAYER, Float(1.8))
             Call(SetJumpAnimations, ACTOR_PLAYER, 0, ANIM_Mario1_Jump, ANIM_Mario1_Fall, ANIM_Mario1_Land)
             Call(GetActorPos, ACTOR_PLAYER, LVar0, LVar1, LVar2)
@@ -1054,7 +1043,7 @@ EvtScript EVS_Player_HandleEvent = {
             Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_Mario1_BeforeJump)
         CaseDefault
     EndSwitch
-    Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+    Call(UseIdleAnimation, ACTOR_PLAYER, true)
     Return
     End
 };
@@ -1164,17 +1153,17 @@ EvtScript EVS_RunAwayNoCommand = {
         Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
         Wait(10)
     EndIf
-    Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+    Call(UseIdleAnimation, ACTOR_PLAYER, true)
     Return
     End
 };
 
 EvtScript EVS_RunAwayStart = {
-    Call(UseIdleAnimation, ACTOR_PLAYER, FALSE)
+    Call(UseIdleAnimation, ACTOR_PLAYER, false)
     Call(GetActionCommandMode, LVar2)
-    IfEq(LVar2, ACTION_COMMAND_MODE_NOT_LEARNED)
+    IfEq(LVar2, AC_MODE_NOT_LEARNED)
         ExecWait(EVS_RunAwayNoCommand)
-        Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+        Call(UseIdleAnimation, ACTOR_PLAYER, true)
         Return
     EndIf
     Call(ShowActionHud, 1)
@@ -1197,7 +1186,7 @@ EvtScript EVS_RunAwayStart = {
     Wait(1)
     Call(SetActorYaw, ACTOR_PLAYER, 180)
     Wait(5)
-    Call(action_command_flee_start, 0, 60, 3)
+    Call(action_command_flee_start, 0, 60, AC_DIFFICULTY_3)
     Call(func_80260E5C)
     Wait(5)
     Call(AddActorPos, ACTOR_PLAYER, 2, 0, 0)
@@ -1222,7 +1211,7 @@ EvtScript EVS_RunAwayStart = {
     Call(SetJumpAnimations, ACTOR_PLAYER, 0, ANIM_Mario1_Jump, ANIM_Mario1_Fall, ANIM_Mario1_Land)
     Call(SetGoalPos, ACTOR_PLAYER, LVar0, LVar1, LVar2)
     Call(PlayerHopToGoal, 8, 0, 0)
-    Call(GetActionSuccess, LVar0)
+    Call(GetSmashActionQuality, LVar0)
     Call(DetermineAutoRunAwaySuccess)
     IfEq(LVar0, 1)
         Call(SetFledBattleFlag)
@@ -1278,26 +1267,26 @@ EvtScript EVS_RunAwayStart = {
         Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
         Wait(10)
     EndIf
-    Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+    Call(UseIdleAnimation, ACTOR_PLAYER, true)
     Return
     End
 };
 
 EvtScript EVS_RunAwayFail = {
-    Call(UseIdleAnimation, ACTOR_PLAYER, FALSE)
+    Call(UseIdleAnimation, ACTOR_PLAYER, false)
     Call(SetGoalToHome, ACTOR_PLAYER)
     Call(SetActorSpeed, ACTOR_PLAYER, Float(4.0))
     Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_Mario1_Run)
     Call(SetActorYaw, ACTOR_PLAYER, 0)
     Call(PlayerRunToGoal, 0)
     Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_Mario1_Idle)
-    Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+    Call(UseIdleAnimation, ACTOR_PLAYER, true)
     Return
     End
 };
 
 EvtScript EVS_PlayerDies = {
-    Call(UseIdleAnimation, ACTOR_PLAYER, FALSE)
+    Call(UseIdleAnimation, ACTOR_PLAYER, false)
     Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_MarioB1_Dying)
     Call(UseBattleCamPreset, BTL_CAM_PLAYER_DIES)
     Wait(15)
@@ -1407,13 +1396,13 @@ EvtScript EVS_Unused_UseItem = {
 };
 
 EvtScript EVS_Unused_PlayerGoHome = {
-    Call(UseIdleAnimation, ACTOR_PLAYER, FALSE)
+    Call(UseIdleAnimation, ACTOR_PLAYER, false)
     Call(SetGoalToHome, ACTOR_PLAYER)
     Call(SetActorSpeed, ACTOR_PLAYER, Float(8.0))
     Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_Mario1_Run)
     Call(PlayerRunToGoal, 0)
     Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_Mario1_Idle)
-    Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+    Call(UseIdleAnimation, ACTOR_PLAYER, true)
     Return
     End
 };
@@ -1445,7 +1434,7 @@ EvtScript EVS_Unused_DrinkItem = {
 };
 
 EvtScript EVS_UseLifeShroom = {
-    Call(UseIdleAnimation, ACTOR_PLAYER, FALSE)
+    Call(UseIdleAnimation, ACTOR_PLAYER, false)
     ChildThread
         Call(func_80261388)
         IfEq(LVar0, 1)
@@ -1579,7 +1568,7 @@ EvtScript EVS_UseLifeShroom = {
     Wait(4)
     Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_Mario1_Idle)
     Wait(10)
-    Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+    Call(UseIdleAnimation, ACTOR_PLAYER, true)
     Call(RestorePreDefeatState)
     Return
     End
@@ -1598,7 +1587,7 @@ EvtScript EVS_MerleeRunOut = {
 };
 
 EvtScript EVS_MerleeAttackBonus = {
-    Call(UseIdleAnimation, ACTOR_PLAYER, FALSE)
+    Call(UseIdleAnimation, ACTOR_PLAYER, false)
     Call(BattleMerleeFadeStageToBlack)
     Wait(10)
     Call(UseBattleCamPreset, BTL_CAM_REPOSITION)
@@ -1608,7 +1597,7 @@ EvtScript EVS_MerleeAttackBonus = {
     Call(MoveBattleCamOver, 20)
     Wait(10)
     Call(CreateNpc, NPC_BTL_MERLEE, ANIM_BattleMerlee_Gather)
-    Call(SetNpcFlagBits, NPC_BTL_MERLEE, NPC_FLAG_IGNORE_CAMERA_FOR_YAW, TRUE)
+    Call(SetNpcFlagBits, NPC_BTL_MERLEE, NPC_FLAG_IGNORE_CAMERA_FOR_YAW, true)
     Call(SetNpcRenderMode, NPC_BTL_MERLEE, 34)
     Call(SetNpcPos, NPC_BTL_MERLEE, 0, 65, 20)
     ChildThread
@@ -1647,7 +1636,7 @@ EvtScript EVS_MerleeAttackBonus = {
 };
 
 EvtScript EVS_MerleeDefenseBonus = {
-    Call(UseIdleAnimation, ACTOR_PLAYER, FALSE)
+    Call(UseIdleAnimation, ACTOR_PLAYER, false)
     Call(BattleMerleeFadeStageToBlack)
     Wait(10)
     Call(UseBattleCamPreset, BTL_CAM_REPOSITION)
@@ -1657,7 +1646,7 @@ EvtScript EVS_MerleeDefenseBonus = {
     Call(MoveBattleCamOver, 20)
     Wait(10)
     Call(CreateNpc, NPC_BTL_MERLEE, ANIM_BattleMerlee_Gather)
-    Call(SetNpcFlagBits, NPC_BTL_MERLEE, NPC_FLAG_IGNORE_CAMERA_FOR_YAW, TRUE)
+    Call(SetNpcFlagBits, NPC_BTL_MERLEE, NPC_FLAG_IGNORE_CAMERA_FOR_YAW, true)
     Call(SetNpcRenderMode, NPC_BTL_MERLEE, 34)
     Call(SetNpcPos, NPC_BTL_MERLEE, 0, 65, 20)
     ChildThread
@@ -1701,7 +1690,7 @@ EvtScript EVS_MerleeDefenseBonus = {
 };
 
 EvtScript EVS_MerleeExpBonus = {
-    Call(UseIdleAnimation, ACTOR_PLAYER, FALSE)
+    Call(UseIdleAnimation, ACTOR_PLAYER, false)
     Call(BattleMerleeFadeStageToBlack)
     Wait(10)
     Call(UseBattleCamPreset, BTL_CAM_REPOSITION)
@@ -1711,7 +1700,7 @@ EvtScript EVS_MerleeExpBonus = {
     Call(MoveBattleCamOver, 20)
     Wait(10)
     Call(CreateNpc, NPC_BTL_MERLEE, ANIM_BattleMerlee_Gather)
-    Call(SetNpcFlagBits, NPC_BTL_MERLEE, NPC_FLAG_IGNORE_CAMERA_FOR_YAW, TRUE)
+    Call(SetNpcFlagBits, NPC_BTL_MERLEE, NPC_FLAG_IGNORE_CAMERA_FOR_YAW, true)
     Call(SetNpcRenderMode, NPC_BTL_MERLEE, 34)
     Call(SetNpcPos, NPC_BTL_MERLEE, 0, 65, 20)
     ChildThread
@@ -1750,7 +1739,7 @@ EvtScript EVS_MerleeExpBonus = {
 };
 
 EvtScript EVS_PlayerHappy = {
-    Call(UseIdleAnimation, ACTOR_PLAYER, FALSE)
+    Call(UseIdleAnimation, ACTOR_PLAYER, false)
     Call(UseBattleCamPresetWait, BTL_CAM_DEFAULT)
     Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_Mario1_ThumbsUp)
     Call(GetActorPos, ACTOR_PLAYER, LVar0, LVar1, LVar2)
@@ -1798,7 +1787,7 @@ EvtScript EVS_PlayerHappy = {
     Wait(30)
     Call(SetAnimation, ACTOR_SELF, 0, ANIM_Mario1_Idle)
     Call(RemoveTurnEndFX)
-    Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+    Call(UseIdleAnimation, ACTOR_PLAYER, true)
     Return
     End
 };
@@ -1831,21 +1820,21 @@ EvtScript EVS_PlayerRegainAbility = {
         CaseEq(BTL_MENU_TYPE_SMASH)
             Set(LVarE, 1)
             Switch(LVarC)
-                CaseEq(0)
+                CaseEq(GEAR_RANK_NORMAL)
                     Set(LVarA, ITEM_MENU_HAMMER1)
-                CaseEq(1)
+                CaseEq(GEAR_RANK_SUPER)
                     Set(LVarA, ITEM_MENU_HAMMER2)
-                CaseEq(2)
+                CaseEq(GEAR_RANK_ULTRA)
                     Set(LVarA, ITEM_MENU_HAMMER3)
             EndSwitch
         CaseEq(BTL_MENU_TYPE_JUMP)
             Set(LVarE, 2)
             Switch(LVarB)
-                CaseEq(0)
+                CaseEq(GEAR_RANK_NORMAL)
                     Set(LVarA, ITEM_MENU_BOOTS1)
-                CaseEq(1)
+                CaseEq(GEAR_RANK_SUPER)
                     Set(LVarA, ITEM_MENU_BOOTS2)
-                CaseEq(2)
+                CaseEq(GEAR_RANK_ULTRA)
                     Set(LVarA, ITEM_MENU_BOOTS3)
             EndSwitch
     EndSwitch
@@ -1861,7 +1850,7 @@ EvtScript EVS_PlayerRegainAbility = {
     Add(LVar1, 20)
     PlayEffect(EFFECT_STARS_SHIMMER, 0, LVar0, LVar1, LVar2, 30, 30, 10, 30)
     Call(RemoveItemEntity, LVarA)
-    Call(FreezeBattleState, FALSE)
+    Call(FreezeBattleState, false)
     Return
     End
 };

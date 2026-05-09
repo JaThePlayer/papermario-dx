@@ -6,11 +6,11 @@ s32 food_poison_was_used(FOOD_POISON_ITEM_ID itemId) {
     s32 i;
     for (i = 0; i < ARRAY_COUNT(usedItems); i++) {
         if (usedItems[i] == itemId) {
-            return TRUE;
+            return true;
         }
     }
 
-    return FALSE;
+    return false;
 }
 
 void food_poison_mark_used(FOOD_POISON_ITEM_ID itemId) {

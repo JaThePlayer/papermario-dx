@@ -1,6 +1,6 @@
 #include "common.h"
 #include "goompa.h"
-#include "../src/world/partners.h"
+#include "world/partners.h"
 
 #define NAMESPACE world_goompa
 
@@ -41,12 +41,12 @@ API_CALLABLE(N(Update)) {
     if (isInitialCall) {
         partner_walking_enable(goompa, 1);
         mem_clear(N(TweesterPhysicsPtr), sizeof(TweesterPhysics));
-        TweesterTouchingPartner = NULL;
+        TweesterTouchingPartner = nullptr;
     }
 
     entity = TweesterTouchingPartner;
 
-    if (entity == NULL) {
+    if (entity == nullptr) {
         partner_walking_update_player_tracking(goompa);
         partner_walking_update_motion(goompa);
         return ApiStatus_BLOCK;
@@ -106,7 +106,7 @@ API_CALLABLE(N(Update)) {
 
             if (--N(TweesterPhysicsPtr)->countdown == 0) {
                 N(TweesterPhysicsPtr)->state = TWEESTER_PARTNER_INIT;
-                TweesterTouchingPartner = NULL;
+                TweesterTouchingPartner = nullptr;
             }
             break;
     }
@@ -120,8 +120,8 @@ EvtScript EVS_WorldGoompa_Update = {
 };
 
 void N(try_cancel_tweester)(Npc* goompa) {
-    if (TweesterTouchingPartner != NULL) {
-        TweesterTouchingPartner = NULL;
+    if (TweesterTouchingPartner != nullptr) {
+        TweesterTouchingPartner = nullptr;
         goompa->flags = N(TweesterPhysicsPtr)->prevFlags;
         N(TweesterPhysicsPtr)->state = TWEESTER_PARTNER_INIT;
         partner_clear_player_tracking(goompa);

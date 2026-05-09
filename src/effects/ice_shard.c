@@ -28,15 +28,15 @@ EffectInstance* ice_shard_main(
 
     bp.init = ice_shard_init;
     bp.update = ice_shard_update;
-    bp.renderWorld = ice_shard_render;
+    bp.renderScene = ice_shard_render;
     bp.unk_00 = 0;
-    bp.renderUI = NULL;
+    bp.renderUI = nullptr;
     bp.effectID = EFFECT_ICE_SHARD;
 
     effect = create_effect_instance(&bp);
     effect->numParts = numParts;
     data = effect->data.iceShard = general_heap_malloc(numParts * sizeof(*data));
-    ASSERT(effect->data.iceShard != NULL);
+    ASSERT(effect->data.iceShard != nullptr);
 
     data->type = type;
     data->lifetime = 0;
@@ -138,10 +138,9 @@ void ice_shard_appendGfx(void* effect) {
     s32 texCoordT;
     s32 envAlpha;
     Matrix4f sp20;
-    Matrix4f unused;
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
 
     guPositionF(sp20, 0.0f, -gCameras[gCurrentCameraID].curYaw, 0.0f, data->scale, data->pos.x, data->pos.y, data->pos.z);
     guMtxF2L(sp20, &gDisplayContext->matrixStack[gMatrixListPos]);

@@ -20,15 +20,15 @@ void floating_flower_main(s32 type, f32 posX, f32 posY, f32 posZ, s32 duration) 
     bp.unk_00 = 0;
     bp.init = floating_flower_init;
     bp.update = floating_flower_update;
-    bp.renderWorld = floating_flower_render;
-    bp.renderUI = NULL;
+    bp.renderScene = floating_flower_render;
+    bp.renderUI = nullptr;
     bp.effectID = EFFECT_FLOATING_FLOWER;
 
     effect = create_effect_instance(&bp);
     effect->numParts = 1;
     part = effect->data.floatingFlower = general_heap_malloc(numParts * sizeof(*part));
 
-    ASSERT(effect->data.floatingFlower != NULL);
+    ASSERT(effect->data.floatingFlower != nullptr);
 
     part->type = type;
     part->pos.x = posX;
@@ -141,14 +141,14 @@ void floating_flower_render(EffectInstance* effect) {
 }
 
 void floating_flower_appendGfx(void* effect) {
-    Matrix4f mtxTransform, mtxUnused;
+    Matrix4f mtxTransform;
     EffectInstance* effectTemp = effect;
     FloatingFlowerFXData* part = effectTemp->data.floatingFlower;
     u32 alpha;
     u8 rgb, a;
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(effectTemp->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(effectTemp->shared->graphics));
 
     guPositionF(mtxTransform, part->rot.x, part->rot.y, 0.0f, 1.0f, part->pos.x, part->pos.y, part->pos.z);
     guMtxF2L(mtxTransform, &gDisplayContext->matrixStack[gMatrixListPos]);

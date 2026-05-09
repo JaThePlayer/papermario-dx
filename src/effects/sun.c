@@ -29,16 +29,16 @@ EffectInstance* sun_main(s32 shineFromRight, f32 offsetX, f32 offsetY, f32 offse
 
     bp.init = sun_init;
     bp.update = sun_update;
-    bp.renderWorld = sun_render;
+    bp.renderScene = sun_render;
     bp.unk_00 = 0;
-    bp.renderUI = NULL;
+    bp.renderUI = nullptr;
     bp.effectID = EFFECT_SUN;
 
     effect = create_effect_instance(&bp);
     effect->numParts = numParts;
 
     data = effect->data.sun = general_heap_malloc(sizeof(*data));
-    ASSERT(data != NULL);
+    ASSERT(data != nullptr);
 
     data->shineFromRight = shineFromRight;
     data->lifeTime = 0;
@@ -149,7 +149,6 @@ void sun_appendGfx(void* argEffect) {
     EffectInstance* effect = (EffectInstance*) argEffect;
     SunFXData* data;
     Matrix4f mtx;
-    Matrix4f mtxUnused;
     s32 alpha;
     s32 offsetS;
     s32 fromRight;
@@ -161,7 +160,7 @@ void sun_appendGfx(void* argEffect) {
 
     if (alpha != 0) {
         gDPPipeSync(gMainGfxPos++);
-        gSPSegment(gMainGfxPos++, 0x9, VIRTUAL_TO_PHYSICAL(effect->graphics->data));
+        gSPSegment(gMainGfxPos++, 0x9, VIRTUAL_TO_PHYSICAL(effect->shared->graphics));
 
         if (!fromRight) {
             guOrthoF(mtx, -1600.0f, 1600.0f, -1200.0f, 1200.0f, -100.0f, 100.0f, 1.0f);

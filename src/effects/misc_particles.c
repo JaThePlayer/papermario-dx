@@ -64,15 +64,15 @@ EffectInstance* misc_particles_main(
 
     bp.init = misc_particles_init;
     bp.update = misc_particles_update;
-    bp.renderWorld = misc_particles_render;
+    bp.renderScene = misc_particles_render;
     bp.unk_00 = 0;
-    bp.renderUI = NULL;
+    bp.renderUI = nullptr;
     bp.effectID = EFFECT_MISC_PARTICLES;
 
     effect = create_effect_instance(&bp);
     effect->numParts = numParticles;
     part = effect->data.miscParticles = general_heap_malloc(numParticles * sizeof(*part));
-    ASSERT(effect->data.miscParticles != NULL);
+    ASSERT(effect->data.miscParticles != nullptr);
 
     part->variation = variation;
     part->lifetime = 0;
@@ -303,11 +303,10 @@ void misc_particles_appendGfx(void* effect) {
     s32 variation = particle->variation;
     f32 alphaScale = (particle->innerColor.a / 255.0f) * particle->scale;
     Matrix4f mtxTransform;
-    Matrix4f unused;
     s32 i;
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
     gDPSetEnvColor(gMainGfxPos++, particle->glowColor.r, particle->glowColor.g, particle->glowColor.b, particle->glowColor.a);
     gSPDisplayList(gMainGfxPos++, D_E00E4DA8[variation]);
 

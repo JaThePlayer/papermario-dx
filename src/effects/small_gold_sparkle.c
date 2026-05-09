@@ -33,9 +33,9 @@ EffectInstance* small_gold_sparkle_main(s32 arg0, f32 arg1, f32 arg2, f32 arg3, 
 
     bp.init = small_gold_sparkle_init;
     bp.update = small_gold_sparkle_update;
-    bp.renderWorld = small_gold_sparkle_render;
+    bp.renderScene = small_gold_sparkle_render;
     bp.unk_00 = 0;
-    bp.renderUI = NULL;
+    bp.renderUI = nullptr;
     bp.effectID = EFFECT_SMALL_GOLD_SPARKLE;
 
     effect = create_effect_instance(&bp);
@@ -45,7 +45,7 @@ EffectInstance* small_gold_sparkle_main(s32 arg0, f32 arg1, f32 arg2, f32 arg3, 
     effect->data.smallGoldSparkle = data;
     part = data;
 
-    ASSERT(data != NULL);
+    ASSERT(data != nullptr);
 
     part->unk_00 = arg0;
     part->unk_18 = 0;
@@ -121,7 +121,7 @@ void small_gold_sparkle_appendGfx(void* effect) {
     guMtxF2L(sp98, &gDisplayContext->matrixStack[gMatrixListPos]);
     spD8 = &gDisplayContext->matrixStack[gMatrixListPos++];
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
     guTranslateF(sp18, part->unk_08, part->unk_0C, part->unk_10);
     guMtxF2L(sp18, &gDisplayContext->matrixStack[gMatrixListPos]);
 

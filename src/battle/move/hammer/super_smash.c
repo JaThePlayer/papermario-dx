@@ -5,28 +5,28 @@
 
 #include "battle/common/move/HammerSupport.inc.c"
 
-extern EvtScript N(UseMove_Impl);
+extern EvtScript N(EVS_UseMove_Impl);
 
 EvtScript N(EVS_UseMove) = {
     Call(EnablePlayerBlur, ACTOR_BLUR_ENABLE)
-    Call(ShowActionHud, TRUE)
+    Call(ShowActionHud, true)
     Call(GetMenuSelection, LVar0, LVar1, LVar2)
     Switch(LVar1)
         CaseEq(0)
-            Set(LVarD, 45)
-            Set(LVarE, 4)
-            Set(LVarF, 5)
-            ExecWait(N(UseMove_Impl))
+            Set(LVarD, 45) // duration
+            Set(LVarE, BASIC_HAMMER_DMG_BAD + 3)
+            Set(LVarF, BASIC_HAMMER_DMG_GOOD + 3)
+            ExecWait(N(EVS_UseMove_Impl))
         CaseEq(1)
-            Set(LVarD, 45)
-            Set(LVarE, 5)
-            Set(LVarF, 7)
-            ExecWait(N(UseMove_Impl))
+            Set(LVarD, 45) // duration
+            Set(LVarE, SUPER_HAMMER_DMG_BAD + 3)
+            Set(LVarF, SUPER_HAMMER_DMG_GOOD + 3)
+            ExecWait(N(EVS_UseMove_Impl))
         CaseEq(2)
-            Set(LVarD, 45)
-            Set(LVarE, 6)
-            Set(LVarF, 9)
-            ExecWait(N(UseMove_Impl))
+            Set(LVarD, 45) // duration
+            Set(LVarE, ULTRA_HAMMER_DMG_BAD + 3)
+            Set(LVarF, ULTRA_HAMMER_DMG_GOOD + 3)
+            ExecWait(N(EVS_UseMove_Impl))
     EndSwitch
     Call(EnablePlayerBlur, ACTOR_BLUR_DISABLE)
     Return
@@ -47,7 +47,7 @@ EvtScript N(EVS_802A3188) = {
     End
 };
 
-EvtScript N(UseMove_Impl) = {
+EvtScript N(EVS_UseMove_Impl) = {
     Call(GetMenuSelection, LVar0, LVar1, LVar2)
     Switch(LVar1)
         CaseEq(0)
@@ -63,12 +63,12 @@ EvtScript N(UseMove_Impl) = {
     ExecWait(N(EVS_802A3188))
     Call(PlayerTestEnemy, LVar0, DAMAGE_TYPE_SMASH, 0, 0, 0, 16)
     IfEq(LVar0, HIT_RESULT_MISS)
-        ExecWait(N(EVS_HammerSupport_ReturnHome_Miss))
+        ExecWait(N(EVS_HammerSupport_ReturnHome_SmashMiss))
         Return
     EndIf
-    Call(GetPlayerActionSuccess, LVar0)
+    Call(GetPlayerActionQuality, LVar0)
     Switch(LVar0)
-        CaseGt(FALSE)
+        CaseGt(false)
             Call(GetMenuSelection, LVar0, LVar1, LVar2)
             Switch(LVar1)
                 CaseEq(0)
@@ -94,11 +94,11 @@ EvtScript N(UseMove_Impl) = {
     Switch(LVar0)
         CaseOrEq(HIT_RESULT_NICE)
         CaseOrEq(HIT_RESULT_NICE_NO_DAMAGE)
-            ExecWait(N(EVS_HammerSupport_ReturnHome_Success))
+            ExecWait(N(EVS_HammerSupport_ReturnHome_SmashSuccess))
         EndCaseGroup
         CaseOrEq(HIT_RESULT_HIT)
         CaseOrEq(HIT_RESULT_NO_DAMAGE)
-            ExecWait(N(EVS_HammerSupport_ReturnHome_Miss))
+            ExecWait(N(EVS_HammerSupport_ReturnHome_SmashMiss))
         EndCaseGroup
     EndSwitch
     Return

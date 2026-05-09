@@ -1,7 +1,7 @@
 #include "common.h"
 #include "filemenu.h"
 #include "hud_element.h"
-#include "audio/public.h"
+#include "audio.h"
 #include "fio.h"
 #include "game_modes.h"
 #include "dx/config.h"
@@ -86,7 +86,7 @@ extern HudScript HES_OptionMonoOff_es;
 extern HudScript HES_OptionStereoOn_es;
 extern HudScript HES_OptionStereoOff_es;
 
-HudScript* filemenu_main_hudElemScripts[][20] = {
+HudScript* filemenu_main_hudScripts[][20] = {
     [LANGUAGE_DEFAULT] = {
         &HES_Spirit1, &HES_Spirit2, &HES_Spirit3, &HES_Spirit4, &HES_Spirit5, &HES_Spirit6, &HES_Spirit7,
         &HES_Spirit1Missing, &HES_Spirit2Missing, &HES_Spirit3Missing, &HES_Spirit4Missing, &HES_Spirit5Missing,
@@ -138,7 +138,7 @@ MenuWindowBP filemenu_main_windowBPs[] = {
         .height = 0,
         .priority = WINDOW_PRIORITY_0,
         .fpDrawContents = &filemenu_draw_contents_title,
-        .tab = NULL,
+        .tab = nullptr,
         .parentID = WIN_FILES_MAIN,
         .fpUpdate = { .func = &filemenu_update_show_title },
         .extraFlags = 0,
@@ -152,7 +152,7 @@ MenuWindowBP filemenu_main_windowBPs[] = {
         .height = 20,
         .priority = WINDOW_PRIORITY_0,
         .fpDrawContents = &filemenu_draw_contents_stereo,
-        .tab = NULL,
+        .tab = nullptr,
         .parentID = WIN_FILES_MAIN,
         .fpUpdate = { .func = &filemenu_update_show_options_left },
         .extraFlags = 0,
@@ -166,7 +166,7 @@ MenuWindowBP filemenu_main_windowBPs[] = {
         .height = 20,
         .priority = WINDOW_PRIORITY_0,
         .fpDrawContents = &filemenu_draw_contents_mono,
-        .tab = NULL,
+        .tab = nullptr,
         .parentID = WIN_FILES_MAIN,
         .fpUpdate = { .func = &filemenu_update_show_options_right },
         .extraFlags = 0,
@@ -180,7 +180,7 @@ MenuWindowBP filemenu_main_windowBPs[] = {
         .height = 16,
         .priority = WINDOW_PRIORITY_0,
         .fpDrawContents = &filemenu_draw_contents_option_left,
-        .tab = NULL,
+        .tab = nullptr,
         .parentID = WIN_FILES_MAIN,
         .fpUpdate = { .func = &filemenu_update_show_options_bottom },
         .extraFlags = 0,
@@ -194,7 +194,7 @@ MenuWindowBP filemenu_main_windowBPs[] = {
         .height = 16,
         .priority = WINDOW_PRIORITY_0,
         .fpDrawContents = &filemenu_draw_contents_option_center,
-        .tab = NULL,
+        .tab = nullptr,
         .parentID = WIN_FILES_MAIN,
         .fpUpdate = { .func = &filemenu_update_show_options_bottom },
         .extraFlags = 0,
@@ -208,7 +208,7 @@ MenuWindowBP filemenu_main_windowBPs[] = {
         .height = 16,
         .priority = WINDOW_PRIORITY_0,
         .fpDrawContents = &filemenu_draw_contents_option_right,
-        .tab = NULL,
+        .tab = nullptr,
         .parentID = WIN_FILES_MAIN,
         .fpUpdate = { .func = &filemenu_update_show_options_bottom },
         .extraFlags = 0,
@@ -222,7 +222,7 @@ MenuWindowBP filemenu_main_windowBPs[] = {
         .height = 54,
         .priority = WINDOW_PRIORITY_0,
         .fpDrawContents = &filemenu_draw_contents_file_2_info,
-        .tab = NULL,
+        .tab = nullptr,
         .parentID = WIN_FILES_MAIN,
         .fpUpdate = { .func = &filemenu_update_show_options_left },
         .extraFlags = 0,
@@ -236,7 +236,7 @@ MenuWindowBP filemenu_main_windowBPs[] = {
         .height = 15,
         .priority = WINDOW_PRIORITY_0,
         .fpDrawContents = &filemenu_draw_contents_file_2_title,
-        .tab = NULL,
+        .tab = nullptr,
         .parentID = WIN_FILES_SLOT3_BODY,
         .fpUpdate = { WINDOW_UPDATE_SHOW },
         .extraFlags = 0,
@@ -250,7 +250,7 @@ MenuWindowBP filemenu_main_windowBPs[] = {
         .height = 54,
         .priority = WINDOW_PRIORITY_0,
         .fpDrawContents = &filemenu_draw_contents_file_3_info,
-        .tab = NULL,
+        .tab = nullptr,
         .parentID = WIN_FILES_MAIN,
         .fpUpdate = { .func = &filemenu_update_show_options_right },
         .extraFlags = 0,
@@ -264,7 +264,7 @@ MenuWindowBP filemenu_main_windowBPs[] = {
         .height = 15,
         .priority = WINDOW_PRIORITY_0,
         .fpDrawContents = &filemenu_draw_contents_file_3_title,
-        .tab = NULL,
+        .tab = nullptr,
         .parentID = WIN_FILES_SLOT4_BODY,
         .fpUpdate = { WINDOW_UPDATE_SHOW },
         .extraFlags = 0,
@@ -278,7 +278,7 @@ MenuWindowBP filemenu_main_windowBPs[] = {
         .height = 54,
         .priority = WINDOW_PRIORITY_0,
         .fpDrawContents = &filemenu_draw_contents_file_0_info,
-        .tab = NULL,
+        .tab = nullptr,
         .parentID = WIN_FILES_MAIN,
         .fpUpdate = { .func = &filemenu_update_show_options_left },
         .extraFlags = 0,
@@ -292,7 +292,7 @@ MenuWindowBP filemenu_main_windowBPs[] = {
         .height = 15,
         .priority = WINDOW_PRIORITY_0,
         .fpDrawContents = &filemenu_draw_contents_file_0_title,
-        .tab = NULL,
+        .tab = nullptr,
         .parentID = WIN_FILES_SLOT1_BODY,
         .fpUpdate = { WINDOW_UPDATE_SHOW },
         .extraFlags = 0,
@@ -306,7 +306,7 @@ MenuWindowBP filemenu_main_windowBPs[] = {
         .height = 54,
         .priority = WINDOW_PRIORITY_0,
         .fpDrawContents = &filemenu_draw_contents_file_1_info,
-        .tab = NULL,
+        .tab = nullptr,
         .parentID = WIN_FILES_MAIN,
         .fpUpdate = { .func = &filemenu_update_show_options_right },
         .extraFlags = 0,
@@ -320,7 +320,7 @@ MenuWindowBP filemenu_main_windowBPs[] = {
         .height = 15,
         .priority = WINDOW_PRIORITY_0,
         .fpDrawContents = &filemenu_draw_contents_file_1_title,
-        .tab = NULL,
+        .tab = nullptr,
         .parentID = WIN_FILES_SLOT2_BODY,
         .fpUpdate = { WINDOW_UPDATE_SHOW },
         .extraFlags = 0,
@@ -329,7 +329,7 @@ MenuWindowBP filemenu_main_windowBPs[] = {
 };
 
 MenuPanel filemenu_main_menuBP = {
-    .initialized = FALSE,
+    .initialized = false,
     .col = 0,
     .row = 0,
     .selected = 0,
@@ -385,7 +385,7 @@ void filemenu_draw_contents_title(
 
     sprintf(strBuf, "%s (v%d.%d.%d)", DX_MOD_NAME, DX_MOD_VER_MAJOR, DX_MOD_VER_MINOR, DX_MOD_VER_PATCH);
     dx_string_to_msg(msgBuf, strBuf);
-    msgWidth = get_msg_width(msgBuf, 0);
+    msgWidth = get_msg_width((s32)msgBuf, 0);
     filemenu_draw_message(msgBuf, (SCREEN_WIDTH - msgWidth) / 2, 245 - baseY, 255, 0, 0);
 }
 
@@ -396,11 +396,11 @@ void filemenu_draw_contents_stereo(
     s32 opacity, s32 darkening
 ) {
     if (gGameStatusPtr->soundOutputMode == SOUND_OUT_STEREO) {
-        hud_element_set_render_pos(filemenu_hudElemIDs[18], baseX + 34, baseY + 10);
-        hud_element_draw_without_clipping(filemenu_hudElemIDs[18]);
+        hud_element_set_render_pos(filemenu_mainHIDs[18], baseX + 34, baseY + 10);
+        hud_element_draw_without_clipping(filemenu_mainHIDs[18]);
     } else {
-        hud_element_set_render_pos(filemenu_hudElemIDs[19], baseX + 34, baseY + 10);
-        hud_element_draw_without_clipping(filemenu_hudElemIDs[19]);
+        hud_element_set_render_pos(filemenu_mainHIDs[19], baseX + 34, baseY + 10);
+        hud_element_draw_without_clipping(filemenu_mainHIDs[19]);
     }
 }
 
@@ -411,11 +411,11 @@ void filemenu_draw_contents_mono(
     s32 opacity, s32 darkening
 ) {
     if (gGameStatusPtr->soundOutputMode == SOUND_OUT_MONO) {
-        hud_element_set_render_pos(filemenu_hudElemIDs[16], baseX + 34, baseY + 10);
-        hud_element_draw_without_clipping(filemenu_hudElemIDs[16]);
+        hud_element_set_render_pos(filemenu_mainHIDs[16], baseX + 34, baseY + 10);
+        hud_element_draw_without_clipping(filemenu_mainHIDs[16]);
     } else {
-        hud_element_set_render_pos(filemenu_hudElemIDs[17], baseX + 34, baseY + 10);
-        hud_element_draw_without_clipping(filemenu_hudElemIDs[17]);
+        hud_element_set_render_pos(filemenu_mainHIDs[17], baseX + 34, baseY + 10);
+        hud_element_draw_without_clipping(filemenu_mainHIDs[17]);
     }
 }
 
@@ -477,10 +477,9 @@ void filemenu_draw_contents_option_center(
     s32 yOffset;
 
     switch (menu->state) {
-        case 1:
-        case 2:
-        case 3:
-        case 4:
+        case FM_MAIN_SELECT_DELETE:
+        case FM_MAIN_SELECT_COPY_FROM:
+        case FM_MAIN_SELECT_COPY_TO:
             msgIdx = FILE_MESSAGE_CANCEL;
             xOffset = CENTER_CANCEL_X;
             yOffset = 0;
@@ -541,14 +540,14 @@ void filemenu_draw_contents_file_info(s32 fileIdx,
 
     // do not show file summary from mods that don't match the current one
     if (!gSaveSlotMetadata[fileIdx].validData) {
-        char buf[32];
+        u8 buf[32];
         if (gSaveSlotMetadata[fileIdx].modName[0] == '\0') {
-            dx_string_to_msg(&buf, "Paper Mario");
+            dx_string_to_msg(buf, "Paper Mario");
         } else {
-            dx_string_to_msg(&buf, gSaveSlotMetadata[fileIdx].modName);
+            dx_string_to_msg(buf, gSaveSlotMetadata[fileIdx].modName);
         }
-        xOffset = 66 - get_msg_width(&buf, 0) / 2;
-        filemenu_draw_message(&buf, baseX + xOffset, baseY + 20, 255, MSG_PAL_RED, 0);
+        xOffset = 66 - get_msg_width((s32)&buf, 0) / 2;
+        filemenu_draw_message(buf, baseX + xOffset, baseY + 20, 255, MSG_PAL_RED, 0);
         return;
     }
 
@@ -595,9 +594,9 @@ void filemenu_draw_contents_file_info(s32 fileIdx,
 
     for (i = 0; i < 7; i++) {
         if (i < gSaveSlotSummary[fileIdx].spiritsRescued) {
-            id = filemenu_hudElemIDs[i];
+            id = filemenu_mainHIDs[i];
         } else {
-            id = filemenu_hudElemIDs[i + 7];
+            id = filemenu_mainHIDs[i + 7];
         }
         hud_element_set_render_pos(id, baseX + 17 + (i * 16), baseY + 44);
         if (i == 0) {
@@ -623,12 +622,12 @@ void filemenu_draw_contents_file_title(
     filemenu_draw_message(filemenu_get_menu_message(FILE_MESSAGE_OK), baseX + FILE_X, baseY + 1, 255, 0, 1);
 
     if (!gSaveSlotHasData[fileIdx]) {
-        filemenu_draw_message(filemenu_get_menu_message(fileIdx + FILE_MESSAGE_BASE_UNK),
+        filemenu_draw_message(filemenu_get_menu_message(fileIdx + FILE_MESSAGE_PAL_UNK3),
             baseX + D_filemenu_802508D0[gCurrentLanguage], baseY + 1, 255, 0, 1);
     } else {
         s32 tmp = D_filemenu_802508D0[gCurrentLanguage];
 
-        filemenu_draw_message(filemenu_get_menu_message(fileIdx + FILE_MESSAGE_BASE_UNK),
+        filemenu_draw_message(filemenu_get_menu_message(fileIdx + FILE_MESSAGE_PAL_UNK3),
             baseX + tmp, baseY + 1, 255, 0, 1);
 
         tmp += D_filemenu_802508D4[gCurrentLanguage];
@@ -741,9 +740,9 @@ void filemenu_draw_contents_file_3_title(
 void filemenu_main_init(MenuPanel* menu) {
     s32 i;
 
-    for (i = 0; i < ARRAY_COUNT(filemenu_hudElemIDs); i++) {
-        filemenu_hudElemIDs[i] = hud_element_create(filemenu_main_hudElemScripts[gCurrentLanguage][i]);
-        hud_element_set_flags(filemenu_hudElemIDs[i], HUD_ELEMENT_FLAG_80);
+    for (i = 0; i < ARRAY_COUNT(filemenu_mainHIDs); i++) {
+        filemenu_mainHIDs[i] = hud_element_create(filemenu_main_hudScripts[gCurrentLanguage][i]);
+        hud_element_set_flags(filemenu_mainHIDs[i], HUD_ELEMENT_FLAG_MANUAL_RENDER);
     }
 
     for (i = 0; i < ARRAY_COUNT(filemenu_main_windowBPs); i++) {
@@ -766,7 +765,7 @@ void filemenu_main_init(MenuPanel* menu) {
         set_window_update(WIN_FILES_STEREO, WINDOW_UPDATE_HIDE);
         set_window_update(WIN_FILES_MONO, WINDOW_UPDATE_HIDE);
     }
-    menu->initialized = TRUE;
+    menu->initialized = true;
 }
 
 void filemenu_main_handle_input(MenuPanel* menu) {
@@ -774,7 +773,7 @@ void filemenu_main_handle_input(MenuPanel* menu) {
     s32 i;
 
     if (filemenu_heldButtons & BUTTON_STICK_LEFT) {
-        while (TRUE) {
+        while (true) {
             menu->col--;
             if (menu->col < 0) {
                 menu->col = 0;
@@ -787,7 +786,7 @@ void filemenu_main_handle_input(MenuPanel* menu) {
     }
 
     if (filemenu_heldButtons & BUTTON_STICK_RIGHT) {
-        while (TRUE) {
+        while (true) {
             menu->col++;
             if (menu->col >= menu->numCols) {
                 menu->col = menu->numCols - 1;
@@ -853,9 +852,9 @@ void filemenu_main_handle_input(MenuPanel* menu) {
         if (originalOutputMode != gGameStatusPtr->soundOutputMode) {
             sfx_play_sound(SOUND_MENU_CHANGE_TAB);
             if (gGameStatusPtr->soundOutputMode != SOUND_OUT_MONO) {
-                audio_set_stereo();
+                snd_set_stereo();
             } else {
-                audio_set_mono();
+                snd_set_mono();
             }
         }
     }
@@ -1156,7 +1155,7 @@ void filemenu_main_update(MenuPanel* menu) {
             break;
     }
 
-    // alsoadd highlight to "copy to" target
+    // also add highlight to "copy to" target
     if (filemenu_menus[FILE_MENU_MAIN]->state == FM_MAIN_SELECT_COPY_TO) {
         switch (filemenu_CopyFromFileIdx) {
             case FM_MAIN_OPT_FILE_1:
@@ -1182,7 +1181,7 @@ void filemenu_main_update(MenuPanel* menu) {
 void filemenu_main_cleanup(MenuPanel* menu) {
     s32 i;
 
-    for (i = 0; i < ARRAY_COUNT(filemenu_hudElemIDs); i++) {
-        hud_element_free(filemenu_hudElemIDs[i]);
+    for (i = 0; i < ARRAY_COUNT(filemenu_mainHIDs); i++) {
+        hud_element_free(filemenu_mainHIDs[i]);
     }
 }

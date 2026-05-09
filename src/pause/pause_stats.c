@@ -1,4 +1,4 @@
-#include "pause_common.h"
+#include "pause/pause_common.h"
 #include "misc_patches/misc_patches.h"
 
 void pause_stats_draw_contents(MenuPanel* menu, s32 baseX, s32 baseY, s32 width, s32 height, s32 opacity, s32 darkening);
@@ -96,7 +96,6 @@ s8 gPauseStatsGridData[] = {
 #define COLLECTABLES_X 125
 #endif
 
-
 StatsEntryData gStatsMenuEntries[] = {
     { .cursorX =   9, .cursorY =  20, .baseMsgID = PAUSE_MSG_TIP_CONTROLS },
     { .cursorX =  17, .cursorY =  55, .baseMsgID = PAUSE_MSG_TIP_HP },
@@ -140,15 +139,16 @@ MenuWindowBP gStatsMenuWindowBPs[] = {
         .height = 154,
         .priority = WINDOW_PRIORITY_0,
         .fpDrawContents = &pause_stats_draw_contents,
-        .tab = NULL,
+        .tab = nullptr,
         .parentID = WIN_PAUSE_MAIN,
         .fpUpdate = { WINDOW_UPDATE_HIDE },
         .extraFlags = 0,
         .style = { .customStyle = &gPauseWS_12 }
     }
 };
+
 MenuPanel gPausePanelStats = {
-    .initialized = FALSE,
+    .initialized = false,
     .col = 0,
     .row = 0,
     .selected = 0,
@@ -159,16 +159,14 @@ MenuPanel gPausePanelStats = {
     .gridData = gPauseStatsGridData,
     .fpInit = &pause_stats_init,
     .fpHandleInput = &pause_stats_handle_input,
-    .fpUpdate = NULL,
+    .fpUpdate = nullptr,
     .fpCleanup = &pause_stats_cleanup
 };
-
 
 #if VERSION_PAL
 INCLUDE_ASM(void, "pause/pause_stats", pause_stats_draw_contents);
 #else
 void pause_stats_draw_contents(MenuPanel* menu, s32 baseX, s32 baseY, s32 width, s32 height, s32 opacity, s32 darkening) {
-    StatsEntryData* statsEntryData;
     PlayerData* playerData;
     s16 bootsLevel;
     s16 hammerLevel;
@@ -178,7 +176,6 @@ void pause_stats_draw_contents(MenuPanel* menu, s32 baseX, s32 baseY, s32 width,
     s32 curIncrement;
     b32 drawingFirst;
     s32 powBarIdx;
-    s32 boxWidth;
     s16 level;
     s32 frameCount;
     s32 powFullBars;
@@ -255,7 +252,7 @@ void pause_stats_draw_contents(MenuPanel* menu, s32 baseX, s32 baseY, s32 width,
     bootsLevel = gPlayerData.bootsLevel;
     hammerLevel = gPlayerData.hammerLevel;
     level = gPlayerData.level;
-    draw_box(4, &gPauseWS_10, baseX + 7, baseY + 12, 0, level >= 10 ? 121 : 113, 17, 255, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, NULL, NULL, NULL, SCREEN_WIDTH, SCREEN_HEIGHT, NULL);
+    draw_box(4, &gPauseWS_10, baseX + 7, baseY + 12, 0, level >= 10 ? 121 : 113, 17, 255, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, nullptr, nullptr, nullptr, SCREEN_WIDTH, SCREEN_HEIGHT, nullptr);
 
     // draw level
 #if !VERSION_IQUE
@@ -301,7 +298,7 @@ void pause_stats_draw_contents(MenuPanel* menu, s32 baseX, s32 baseY, s32 width,
     pause_draw_menu_label(PAUSE_LBL_STATS,  baseX + 130, baseY + 69);
     pause_draw_menu_label(PAUSE_LBL_ENERGY, baseX + 138, baseY + 60);
 
-    drawingFirst = TRUE;
+    drawingFirst = true;
     curIncrement = 0;
     powBarIdx = 0; // which bar of the power meter we're drawing
     powIncIdx = 0; // which increment of the bar we're drawing
@@ -328,10 +325,8 @@ void pause_stats_init(MenuPanel* panel) {
     s32 i;
 
     for (i = 0; i < ARRAY_COUNT(gPauseStatsIconIDs); i++) {
-        s32 iconID = hud_element_create(gStatsMenuElements[i]);
-
-        gPauseStatsIconIDs[i] = iconID;
-        hud_element_set_flags(iconID, HUD_ELEMENT_FLAG_80);
+        gPauseStatsIconIDs[i] = hud_element_create(gStatsMenuElements[i]);
+        hud_element_set_flags(gPauseStatsIconIDs[i], HUD_ELEMENT_FLAG_MANUAL_RENDER);
     }
 
     for (i = 0; i < ARRAY_COUNT(gStatsMenuWindowBPs); i++) {
@@ -339,7 +334,7 @@ void pause_stats_init(MenuPanel* panel) {
     }
 
     setup_pause_menu_tab(gStatsMenuWindowBPs, ARRAY_COUNT(gStatsMenuWindowBPs));
-    panel->initialized = TRUE;
+    panel->initialized = true;
 }
 
 void pause_stats_handle_input(MenuPanel* panel) {
@@ -349,7 +344,7 @@ void pause_stats_handle_input(MenuPanel* panel) {
     s32 msgOffset;
 
     if (gPauseHeldButtons & BUTTON_STICK_LEFT) {
-        while (TRUE) {
+        while (true) {
             panel->col--;
             if (panel->col < 0) {
                 panel->col = 0;
@@ -361,7 +356,7 @@ void pause_stats_handle_input(MenuPanel* panel) {
     }
 
     if (gPauseHeldButtons & BUTTON_STICK_RIGHT) {
-        while (TRUE) {
+        while (true) {
             panel->col++;
             if (panel->col >= panel->numCols) {
                 panel->col = panel->numCols - 1;
@@ -373,7 +368,7 @@ void pause_stats_handle_input(MenuPanel* panel) {
     }
 
     if (gPauseHeldButtons & BUTTON_STICK_UP) {
-        while (TRUE) {
+        while (true) {
             panel->row--;
             if (panel->row < 0) {
                 panel->row = 0;
@@ -385,7 +380,7 @@ void pause_stats_handle_input(MenuPanel* panel) {
     }
 
     if (gPauseHeldButtons & BUTTON_STICK_DOWN) {
-        while (TRUE) {
+        while (true) {
             panel->row++;
             if (panel->row >= panel->numRows) {
                 panel->row = panel->numRows - 1;
@@ -431,14 +426,14 @@ void pause_stats_handle_input(MenuPanel* panel) {
             msgOffset = hammerMsgIdx;
             break;
         case PAUSE_MSG_TIP_SECRETS:
-            if (evt_get_variable(NULL, GF_Tutorial_GotStarPiece)) {
+            if (evt_get_variable(nullptr, GF_Tutorial_GotStarPiece)) {
                 msgOffset = 1;
             }
             break;
     }
 
     gPauseCurrentDescMsg = pause_get_menu_msg(gStatsMenuEntries[panel->selected].baseMsgID + msgOffset);
-    gPauseCurrentDescIconScript = NULL;
+    gPauseCurrentDescIconScript = nullptr;
 
     if (gPausePressedButtons & BUTTON_B) {
         sfx_play_sound(SOUND_MENU_BACK);

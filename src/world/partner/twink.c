@@ -1,5 +1,5 @@
 #include "common.h"
-#include "../partners.h"
+#include "world/partners.h"
 #include "twink.h"
 
 #define NAMESPACE world_twink
@@ -28,7 +28,7 @@ API_CALLABLE(N(Update)) {
     Npc* twink = script->owner2.npc;
 
     if (isInitialCall) {
-        partner_flying_enable(twink, TRUE);
+        partner_flying_enable(twink, true);
     }
 
     partner_flying_update_player_tracking(twink);

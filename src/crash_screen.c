@@ -1,8 +1,8 @@
 #include "common.h"
-#include "stdlib/stdarg.h"
+#include <stdarg.h>
 #include "PR/os_internal_thread.h"
-#include "libc/xstdio.h"
-#include "gcc/string.h"
+#include <stdio.h>
+#include <string.h>
 #include "dx/backtrace.h"
 #include "include_asset.h"
 
@@ -103,7 +103,7 @@ void crash_screen_draw_rect(s32 x, s32 y, s32 width, s32 height) {
     }
 }
 
-/** @returns X advance */
+/// Returns X advance.
 s32 crash_screen_draw_glyph(s32 x, s32 y, s32 glyph) {
     s32 shift = ((glyph % 5) * 6);
     u16 width = gCrashScreen.width;
@@ -188,7 +188,7 @@ char* crash_screen_copy_to_buf(char* dest, const char* src, size_t size) {
     return dest + size;
 }
 
-/// @returns Y advance
+/// Returns y advance.
 s32 crash_screen_printf(s32 x, s32 y, const char* fmt, ...) {
     u8* ptr;
     u32 glyph;
@@ -234,7 +234,7 @@ s32 crash_screen_printf(s32 x, s32 y, const char* fmt, ...) {
     va_end(args);
 }
 
-/// @returns Y advance
+/// Returns y advance.
 s32 crash_screen_printf_proportional(s32 x, s32 y, const char* fmt, ...) {
     u8* ptr;
     u32 glyph;
@@ -334,10 +334,10 @@ void crash_screen_draw(OSThread* faultedThread) {
     crash_screen_draw_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
     // Print error message
-    b32 isException = FALSE;
+    b32 isException = false;
     if (crashScreenAssertMessage[0] == '\0') {
         y += crash_screen_printf_proportional(x, y, "Exception in thread %d: %s", faultedThread->id, gFaultCauses[causeIndex]);
-        isException = TRUE;
+        isException = true;
     } else {
         y += crash_screen_printf_proportional(x, y, crashScreenAssertMessage);
         i = 1; // Don't include is_debug_panic line in backtrace.
@@ -425,7 +425,7 @@ OSThread* crash_screen_get_faulted_thread(void) {
         thread = thread->tlnext;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 void crash_screen_thread_entry(void* unused) {
@@ -438,12 +438,12 @@ void crash_screen_thread_entry(void* unused) {
     do {
         osRecvMesg(&gCrashScreen.queue, &mesg, 1);
         faultedThread = crash_screen_get_faulted_thread();
-    } while (faultedThread == NULL);
+    } while (faultedThread == nullptr);
 
     osStopThread(faultedThread);
     crash_screen_draw(faultedThread);
 
-    while (TRUE) {}
+    while (true) {}
 }
 
 void crash_screen_set_draw_info(u16* frameBufPtr, s16 width, s16 height) {
@@ -457,7 +457,7 @@ void crash_screen_init(void) {
     gCrashScreen.height = 16;
     gCrashScreen.frameBuf = (u16*)((osMemSize | 0xA0000000) - ((SCREEN_WIDTH * SCREEN_HEIGHT) * 2));
     osCreateMesgQueue(&gCrashScreen.queue, &gCrashScreen.mesg, 1);
-    osCreateThread(&gCrashScreen.thread, 2, crash_screen_thread_entry, NULL,
+    osCreateThread(&gCrashScreen.thread, THREAD_ID_CRASH, crash_screen_thread_entry, nullptr,
                    gCrashScreen.stack + sizeof(gCrashScreen.stack), 0x80);
     osStartThread(&gCrashScreen.thread);
 

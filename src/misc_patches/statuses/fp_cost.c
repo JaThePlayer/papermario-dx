@@ -4,7 +4,7 @@
 
 #define NAMESPACE fp_cost_status
 
-#define fp_cost_status_DECREMENT_LATE TRUE
+#define fp_cost_status_DECREMENT_LATE true
 
 extern EvtScript EVS_PlaySleepHitFX;
 

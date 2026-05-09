@@ -37,7 +37,6 @@ void stars_burst_main(
     EffectBlueprint* bpPtr = &bp;
     EffectInstance* effect;
     StarsBurstFXData* part;
-    Matrix4f unused;
     s32 numParts = arg6;
     f32 temp;
     s32 i;
@@ -47,15 +46,15 @@ void stars_burst_main(
 
         bpPtr->init = stars_burst_init;
         bpPtr->update = stars_burst_update;
-        bpPtr->renderWorld = stars_burst_render;
+        bpPtr->renderScene = stars_burst_render;
         bpPtr->unk_00 = 0;
-        bpPtr->renderUI = NULL;
+        bpPtr->renderUI = nullptr;
         bpPtr->effectID = EFFECT_STARS_BURST;
 
         effect = create_effect_instance(bpPtr);
         effect->numParts = numParts;
         part = effect->data.starsBurst = general_heap_malloc(numParts * sizeof(*part));
-        ASSERT(effect->data.starsBurst != NULL);
+        ASSERT(effect->data.starsBurst != nullptr);
 
         part->unk_00 = arg0;
         part->unk_04 = arg1;
@@ -138,7 +137,7 @@ void stars_burst_appendGfx(void* effect) {
     s32 i;
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
     gSPDisplayList(gMainGfxPos++, D_090004C0_343500);
 
     unk_2C = part->unk_2C;

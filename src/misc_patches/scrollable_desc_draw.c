@@ -35,9 +35,9 @@ static HudScript HES_DescMsgPrev2 = {
     hs_SetVisible
     hs_SetCustomSize(16, 16)
     hs_Loop
-        hs_ClearFlags(HUD_ELEMENT_FLAG_200000)
+        hs_ClearFlags(HUD_ELEMENT_FLAG_INVISIBLE)
         hs_SetCI(9, prev_msg)
-        hs_SetFlags(HUD_ELEMENT_FLAG_200000)
+        hs_SetFlags(HUD_ELEMENT_FLAG_INVISIBLE)
         hs_SetCI(6, prev_msg)
     hs_Restart
     hs_End
@@ -47,9 +47,9 @@ static HudScript HES_DescMsgNext2 = {
     hs_SetVisible
     hs_SetCustomSize(16, 16)
     hs_Loop
-        hs_ClearFlags(HUD_ELEMENT_FLAG_200000)
+        hs_ClearFlags(HUD_ELEMENT_FLAG_INVISIBLE)
         hs_SetCI(9, next_msg)
-        hs_SetFlags(HUD_ELEMENT_FLAG_200000)
+        hs_SetFlags(HUD_ELEMENT_FLAG_INVISIBLE)
         hs_SetCI(6, next_msg)
     hs_Restart
     hs_End
@@ -86,7 +86,7 @@ void draw_scrollable_desc(s32 itemMsg, s32 posX, s32 posY, s32 width, s32 height
         draw_item_setup();
     }
 
-    get_msg_properties(itemMsg, NULL, NULL, NULL, &numLines, NULL, NULL, 0);
+    get_msg_properties(itemMsg, nullptr, nullptr, nullptr, &numLines, nullptr, nullptr, 0);
     if (numLines % 2) {
         numLines++;
     }
@@ -118,7 +118,7 @@ void draw_scrollable_desc(s32 itemMsg, s32 posX, s32 posY, s32 width, s32 height
 
     if (descTextPos != 0) {
         hud_element_clear_flags(prevMsgHudElementId, HUD_ELEMENT_FLAG_DISABLED);
-        hud_element_set_flags(prevMsgHudElementId, HUD_ELEMENT_FLAG_80);
+        hud_element_set_flags(prevMsgHudElementId, HUD_ELEMENT_FLAG_MANUAL_RENDER);
         hud_element_set_render_pos(prevMsgHudElementId, posX + width - 8, posY + 8);
         hud_element_draw_without_clipping(prevMsgHudElementId);
     } else {
@@ -127,7 +127,7 @@ void draw_scrollable_desc(s32 itemMsg, s32 posX, s32 posY, s32 width, s32 height
 
     if (descTextPos < textMaxPos) {
         hud_element_clear_flags(nextMsgHudElementId, HUD_ELEMENT_FLAG_DISABLED);
-        hud_element_set_flags(nextMsgHudElementId, HUD_ELEMENT_FLAG_80);
+        hud_element_set_flags(nextMsgHudElementId, HUD_ELEMENT_FLAG_MANUAL_RENDER);
         hud_element_set_render_pos(nextMsgHudElementId, posX + width - 8, posY + height - 8);
         hud_element_draw_without_clipping(nextMsgHudElementId);
     } else {

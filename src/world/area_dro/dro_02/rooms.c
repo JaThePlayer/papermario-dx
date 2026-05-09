@@ -111,7 +111,7 @@ EvtScript N(EVS_RoomListener_Hideout) = {
     Switch(LVar0)
         CaseEq(ROOM_UPDATE_ENTER_BEGIN)
             Call(SetGroupVisibility, MODEL_ie5_naka, MODEL_GROUP_VISIBLE)
-            Call(SetCamType, CAM_DEFAULT, CAM_CONTROL_FIXED_ORIENTATION, FALSE)
+            Call(SetCamType, CAM_DEFAULT, CAM_CONTROL_FIXED_ORIENTATION, false)
             Call(SetCamDistance, CAM_DEFAULT, 260)
             Call(SetCamPitch, CAM_DEFAULT, 22, -13)
             Call(SetCamPosA, CAM_DEFAULT, 0, 290)
@@ -119,7 +119,7 @@ EvtScript N(EVS_RoomListener_Hideout) = {
             Call(SetCamPosC, CAM_DEFAULT, 0, 0)
             Call(SetPanTarget, CAM_DEFAULT, -395, 140, -150)
             Call(SetCamSpeed, CAM_DEFAULT, Float(4.0))
-            Call(PanToTarget, CAM_DEFAULT, 0, TRUE)
+            Call(PanToTarget, CAM_DEFAULT, 0, true)
         CaseEq(ROOM_UPDATE_EXIT_BEGIN)
             Call(SetPanTarget, CAM_DEFAULT, -365, 140, -145)
             Call(SetCamPitch, CAM_DEFAULT, 20, -7)
@@ -128,18 +128,18 @@ EvtScript N(EVS_RoomListener_Hideout) = {
             Call(WaitForCam, CAM_DEFAULT, Float(1.0))
 
             IfGe(GB_StoryProgress, STORY_CH2_GOT_PULSE_STONE)
-            IfEq(GF_DRO02_BanditAmbush, FALSE)
+            IfEq(GF_DRO02_BanditAmbush, false)
                 Call(SetNpcVar, NPC_Bandit, 0, 1)
             EndIf
             EndIf
         CaseEq(ROOM_UPDATE_EXIT_END)
             Call(SetGroupVisibility, MODEL_ie5_naka, MODEL_GROUP_HIDDEN)
-            Call(PanToTarget, CAM_DEFAULT, 0, FALSE)
+            Call(PanToTarget, CAM_DEFAULT, 0, false)
             Call(SetCamSpeed, CAM_DEFAULT, Float(1.334))
 
             IfGe(GB_StoryProgress, STORY_CH2_GOT_PULSE_STONE)
-            IfEq(GF_DRO02_BanditAmbush, FALSE)
-                Set(GF_DRO02_BanditAmbush, TRUE)
+            IfEq(GF_DRO02_BanditAmbush, false)
+                Set(GF_DRO02_BanditAmbush, true)
                 Call(SetNpcVar, NPC_Bandit, 0, 2)
             EndIf
             EndIf
@@ -150,7 +150,7 @@ EvtScript N(EVS_RoomListener_Hideout) = {
 
 EvtScript N(EVS_OpenSecretDoor_FromOutside) = {
     SetGroup(EVT_GROUP_NEVER_PAUSE)
-    Call(DisablePlayerInput, TRUE)
+    Call(DisablePlayerInput, true)
     Call(func_802D2C14, 1)
     Call(PlayerMoveTo, 230, 10, 20)
     Call(ModifyColliderFlags, MODIFY_COLLIDER_FLAGS_SET_BITS, COLLIDER_o1287, COLLIDER_FLAGS_UPPER_MASK)
@@ -177,14 +177,14 @@ EvtScript N(EVS_OpenSecretDoor_FromOutside) = {
     Call(PlaySoundAtCollider, COLLIDER_o1287, SOUND_BASIC_DOOR_CLOSE, SOUND_SPACE_DEFAULT)
     Call(ModifyColliderFlags, MODIFY_COLLIDER_FLAGS_CLEAR_BITS, COLLIDER_o1287, COLLIDER_FLAGS_UPPER_MASK)
     Call(func_802D2C14, 0)
-    Call(DisablePlayerInput, FALSE)
+    Call(DisablePlayerInput, false)
     Return
     End
 };
 
 EvtScript N(EVS_OpenSecretDoor_FromInside) = {
     SetGroup(EVT_GROUP_NEVER_PAUSE)
-    Call(DisablePlayerInput, TRUE)
+    Call(DisablePlayerInput, true)
     Call(func_802D2C14, 1)
     Call(PlayerMoveTo, 230, -70, 20)
     Call(ModifyColliderFlags, MODIFY_COLLIDER_FLAGS_SET_BITS, COLLIDER_o1289, COLLIDER_FLAGS_UPPER_MASK)
@@ -211,7 +211,7 @@ EvtScript N(EVS_OpenSecretDoor_FromInside) = {
     Call(PlaySoundAtCollider, COLLIDER_o1289, SOUND_BASIC_DOOR_CLOSE, SOUND_SPACE_DEFAULT)
     Call(ModifyColliderFlags, MODIFY_COLLIDER_FLAGS_CLEAR_BITS, COLLIDER_o1289, COLLIDER_FLAGS_UPPER_MASK)
     Call(func_802D2C14, 0)
-    Call(DisablePlayerInput, FALSE)
+    Call(DisablePlayerInput, false)
     Return
     End
 };
@@ -252,7 +252,7 @@ EvtScript N(EVS_SetupRooms) = {
         PACK_ROOM_FLAGS(VIS_GROUP_1, ROOM_LARGE_DOOR_RIGHT_HINGE_OPENS_OUT),
         Ref(N(EVS_SetDoorRot_ToadHouse)),
         Ref(N(EVS_SetWallRot_ToadHouse)),
-        NULL,
+        nullptr,
         Ref(N(EVS_RoomListener_ToadHouse)),
         COLLIDER_o1204,
         COLLIDER_o1261,

@@ -10,7 +10,7 @@ void N(worker_update_partner_reflection)(void);
 static s32 N(Animator);
 
 API_CALLABLE(N(EnablePlayerReflection)) {
-    script->array[0] = (s32) create_worker_frontUI(NULL, &N(worker_render_player_reflection));
+    script->array[0] = (s32) create_worker_frontUI(nullptr, &N(worker_render_player_reflection));
     return ApiStatus_DONE2;
 }
 
@@ -58,16 +58,16 @@ void N(appendGfx_test_player_reflection)(void* data) {
     guTranslateF(translation, playerStatus->pos.x, playerStatus->pos.y, -playerStatus->pos.z);
     guMtxCatF(main, translation, main);
     spr_update_player_sprite(PLAYER_SPRITE_AUX1, playerStatus->trueAnimation, 1.0f);
-    spr_draw_player_sprite(PLAYER_SPRITE_AUX1, 0, 0, NULL, main);
+    spr_draw_player_sprite(PLAYER_SPRITE_AUX1, 0, 0, nullptr, main);
 }
 
 API_CALLABLE(N(EnablePartnerReflection)) {
     Npc* partner;
 
-    script->array[1] = create_worker_world(&N(worker_update_partner_reflection), NULL);
+    script->array[1] = create_worker_scene(&N(worker_update_partner_reflection), nullptr);
     partner = get_npc_safe(NPC_PARTNER);
 
-    if (partner == NULL) {
+    if (partner == nullptr) {
         return ApiStatus_DONE2;
     }
 
@@ -79,7 +79,7 @@ API_CALLABLE(N(EnablePartnerReflection)) {
 void N(worker_update_partner_reflection)(void) {
     Npc* partner = get_npc_safe(NPC_PARTNER);
 
-    if (partner != NULL) {
+    if (partner != nullptr) {
         partner->flags |= NPC_FLAG_REFLECT_WALL;
         partner->flags |= NPC_FLAG_REFLECT_FLOOR;
     }
@@ -90,10 +90,7 @@ void N(worker_update_animator)(void) {
 }
 
 void N(worker_render_animator)(void) {
-    Matrix4f m0;
     Matrix4f m1;
-    Matrix4f m2;
-    Matrix4f m3;
     Mtx m4;
 
     guTranslateF(m1, -484.0f, 25.0f, -40.0f);
@@ -102,7 +99,7 @@ void N(worker_render_animator)(void) {
 }
 
 API_CALLABLE(N(SetupAnimatedModel)) {
-    create_worker_world(N(worker_update_animator), N(worker_render_animator));
+    create_worker_scene(N(worker_update_animator), N(worker_render_animator));
     return ApiStatus_DONE2;
 }
 

@@ -140,8 +140,8 @@ Formation A(Formation_06_Wave3) = {
 Formation A(Formation_06_Wave2) = {
     ACTOR_BY_IDX_ARG_ITEM(A(bob_omb), BTL_POS_GROUND_A, 10, 2, ITEM_P_DOWN_D_UP),
     ACTOR_BY_IDX_ARG_ITEM(A(bob_omb), BTL_POS_GROUND_B, 9, 2, ITEM_P_DOWN_D_UP),
-    ACTOR_BY_IDX_ARG(A(koopa_troopa), BTL_POS_GROUND_C, 8, TRUE),
-    ACTOR_BY_IDX_ARG(A(koopa_troopa), BTL_POS_GROUND_D, 7, TRUE),
+    ACTOR_BY_IDX_ARG(A(koopa_troopa), BTL_POS_GROUND_C, 8, true),
+    ACTOR_BY_IDX_ARG(A(koopa_troopa), BTL_POS_GROUND_D, 7, true),
     NEXT_WAVE(A(Formation_06_Wave3)),
 };
 
@@ -248,8 +248,8 @@ Formation A(Formation_18) = { // Boo Trial - ch1 - part 5
 Formation A(Formation_12) = { // Boo Trial - ch1 - part 6
     ACTOR_BY_IDX_ARG(A(bob_omb), BTL_POS_GROUND_A, 10, 2),
     ACTOR_BY_IDX_ARG(A(bob_omb), BTL_POS_GROUND_B, 9, 2),
-    ACTOR_BY_IDX_ARG(A(koopa_troopa), BTL_POS_GROUND_C, 8, TRUE),
-    ACTOR_BY_IDX_ARG(A(koopa_troopa), BTL_POS_GROUND_D, 7, TRUE),
+    ACTOR_BY_IDX_ARG(A(koopa_troopa), BTL_POS_GROUND_C, 8, true),
+    ACTOR_BY_IDX_ARG(A(koopa_troopa), BTL_POS_GROUND_D, 7, true),
 };
 
 Formation A(Formation_15) = { // Boo Trial - ch1 - part 7

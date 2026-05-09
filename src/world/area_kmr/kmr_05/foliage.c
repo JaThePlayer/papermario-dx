@@ -1,12 +1,12 @@
 #include "kmr_05.h"
 
-#include "common/foliage.inc.c"
+#include "foliage.h"
 
 API_CALLABLE(N(func_8024173C_8CF7AC)) {
-    if (get_enemy_safe(NPC_06) == NULL) {
-        script->varTable[0] = FALSE;
+    if (get_enemy_safe(NPC_06) == nullptr) {
+        script->varTable[0] = false;
     } else {
-        script->varTable[0] = TRUE;
+        script->varTable[0] = true;
     }
 
     return ApiStatus_DONE2;
@@ -34,10 +34,10 @@ FoliageVectorList N(Tree1_Effects) = {
 };
 
 EvtScript N(EVS_OnShakeTree1) = {
-    IfEq(GF_KMR05_Tree1_Coin, TRUE)
+    IfEq(GF_KMR05_Tree1_Coin, true)
         Return
     EndIf
-    IfEq(AF_JAN01_TreeDrop_StarPiece, TRUE)
+    IfEq(AF_JAN01_TreeDrop_StarPiece, true)
         Return
     EndIf
     Wait(10)
@@ -47,7 +47,7 @@ EvtScript N(EVS_OnShakeTree1) = {
     Else
         Call(MakeItemEntity, ITEM_COIN, 436, 300, -180, ITEM_SPAWN_MODE_FALL, GF_KMR05_Tree1_Coin)
     EndIf
-    Set(AF_JAN01_TreeDrop_StarPiece, TRUE)
+    Set(AF_JAN01_TreeDrop_StarPiece, true)
     Return
     End
 };
@@ -66,8 +66,8 @@ BombTrigger N(BombPos_Tree1) = {
 
 EvtScript N(EVS_SetupFoliage) = {
     Set(LVar0, Ref(N(ShakeTree_Tree1)))
-    BindTrigger(Ref(N(EVS_ShakeTree)), TRIGGER_WALL_HAMMER, COLLIDER_o1238, 1, 0)
-    BindTrigger(Ref(N(EVS_ShakeTree)), TRIGGER_POINT_BOMB, Ref(N(BombPos_Tree1)), 1, 0)
+    BindTrigger(Ref(EVS_ShakeTree), TRIGGER_WALL_HAMMER, COLLIDER_o1238, 1, 0)
+    BindTrigger(Ref(EVS_ShakeTree), TRIGGER_POINT_BOMB, Ref(N(BombPos_Tree1)), 1, 0)
     Return
     End
 };

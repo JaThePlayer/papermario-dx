@@ -67,7 +67,7 @@ EffectInstance* tattle_window_main(s32 type, f32 x, f32 y, f32 z, f32 arg4, s32 
 
     bp.init = tattle_window_init;
     bp.update = tattle_window_update;
-    bp.renderWorld = tattle_window_render;
+    bp.renderScene = tattle_window_render;
     bp.renderUI = func_E00D8264;
     bp.unk_00 = 0;
     bp.effectID = EFFECT_TATTLE_WINDOW;
@@ -76,7 +76,7 @@ EffectInstance* tattle_window_main(s32 type, f32 x, f32 y, f32 z, f32 arg4, s32 
     effect->numParts = numParts;
     part = effect->data.tattleWindow = general_heap_malloc(numParts * sizeof(*part));
 
-    ASSERT(effect->data.tattleWindow != NULL);
+    ASSERT(effect->data.tattleWindow != nullptr);
 
     part->type = type;
     part->unk_14 = 0;
@@ -226,7 +226,7 @@ void func_E00D8630(EffectInstance* effect) {
     s32 flags;
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
 
     if (data->scale == 1.0f && data->rot.x == 0.0f && data->rot.y == 0.0f && data->rot.z == 0.0f) {
         flags = 0;
@@ -243,6 +243,6 @@ void func_E00D8630(EffectInstance* effect) {
         255, 0,
         data->scale, data->scale,
         data->rot.x, data->rot.y, data->rot.z,
-        (void (*)(void*)) func_E00D8334, data, NULL, SCREEN_WIDTH, SCREEN_HEIGHT, NULL);
+        (void (*)(void*)) func_E00D8334, data, nullptr, SCREEN_WIDTH, SCREEN_HEIGHT, nullptr);
     gDPPipeSync(gMainGfxPos++);
 }

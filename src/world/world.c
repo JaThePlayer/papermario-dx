@@ -5,8 +5,7 @@
 #include "rumble.h"
 #include "sprite.h"
 #include "model.h"
-#include "gcc/string.h"
-#include "dx/debug_menu.h"
+#include <string.h>
 #include "world/surfaces.h"
 
 #ifdef SHIFT
@@ -63,8 +62,8 @@ void load_map_by_IDs(s16 areaID, s16 mapID, s16 loadType) {
 
     gGameStatusPtr->playerSpriteSet = PLAYER_SPRITES_MARIO_WORLD;
     surface_set_walk_effect(SURFACE_WALK_FX_STANDARD);
-    phys_set_player_sliding_check(NULL);
-    phys_set_landing_adjust_cam_check(NULL);
+    phys_set_player_sliding_check(nullptr);
+    phys_set_landing_adjust_cam_check(nullptr);
 
 #if !VERSION_IQUE
     load_obfuscation_shims();
@@ -92,7 +91,7 @@ void load_map_by_IDs(s16 areaID, s16 mapID, s16 loadType) {
             break;
     }
 
-    gGameStatusPtr->mapShop = NULL;
+    gGameStatusPtr->mapShop = nullptr;
 
     ASSERT_MSG(areaID < ARRAY_COUNT(gAreas) - 1, "Invalid area ID %d", areaID);
     ASSERT_MSG(mapID < gAreas[areaID].mapCount, "Invalid map ID %d in %s", mapID, gAreas[areaID].id);
@@ -109,19 +108,19 @@ void load_map_by_IDs(s16 areaID, s16 mapID, s16 loadType) {
     sprintf(wMapTexName, "%s_tex", texStr);
 
     gMapConfig = mapConfig;
-    if (mapConfig->bgName != NULL) {
+    if (mapConfig->bgName != nullptr) {
         strcpy(wMapBgName, mapConfig->bgName);
     }
     load_map_script_lib();
 
-    if (mapConfig->dmaStart != NULL) {
+    if (mapConfig->dmaStart != nullptr) {
         dma_copy(mapConfig->dmaStart, mapConfig->dmaEnd, mapConfig->dmaDest);
     }
 
     gMapSettings = *mapConfig->settings;
 
     mapSettings = &gMapSettings;
-    if (mapConfig->init != NULL) {
+    if (mapConfig->init != nullptr) {
         skipLoadingAssets = mapConfig->init();
     }
 
@@ -138,7 +137,7 @@ void load_map_by_IDs(s16 areaID, s16 mapID, s16 loadType) {
         mapSettings->zoneNameList = shapeFile->header.zoneNames;
     }
 
-    if (mapConfig->bgName != NULL) {
+    if (mapConfig->bgName != nullptr) {
         load_map_bg(wMapBgName);
     }
 
@@ -162,7 +161,7 @@ void load_map_by_IDs(s16 areaID, s16 mapID, s16 loadType) {
     reset_background_settings();
 
     if (gGameStatusPtr->introPart == INTRO_PART_NONE) {
-        func_80138188();
+        reset_back_screen_overlay_progress();
     }
 
     if (!skipLoadingAssets) {
@@ -172,7 +171,7 @@ void load_map_by_IDs(s16 areaID, s16 mapID, s16 loadType) {
 
     reset_battle_status();
     clear_encounter_status();
-    clear_entity_data(TRUE);
+    clear_entity_data(true);
     clear_effect_data();
     clear_player_status();
     player_reset_data();
@@ -188,15 +187,16 @@ void load_map_by_IDs(s16 areaID, s16 mapID, s16 loadType) {
     if (!skipLoadingAssets) {
         s32 texturesOffset = get_asset_offset(wMapTexName, &decompressedSize);
 
-        if (mapSettings->modelTreeRoot != NULL) {
+        if (mapSettings->modelTreeRoot != nullptr) {
             load_data_for_models(mapSettings->modelTreeRoot, texturesOffset, decompressedSize);
         }
     }
 
-    if (mapSettings->background != NULL) {
+    if (mapSettings->background != nullptr) {
         set_background(mapSettings->background);
     } else {
-        set_background_size(296, 200, 12, 20);
+        set_background_size(SCREEN_XMAX - SCREEN_XMIN, SCREEN_YMAX - SCREEN_YMIN,
+            SCREEN_INSET_X, SCREEN_INSET_Y);
     }
 
     gCurrentCameraID = CAM_DEFAULT;
@@ -231,17 +231,17 @@ NODISCARD s32 get_map_IDs_by_name(const char* mapName, s16* areaID, s16* mapID) 
     MapConfig* maps;
 
     // TODO: Potentially a fake match? Difficult to not set the temp in the for conditional.
-    for (i = 0; (maps = gAreas[i].maps) != NULL; i++) {
+    for (i = 0; (maps = gAreas[i].maps) != nullptr; i++) {
         for (j = 0; j < gAreas[i].mapCount; j++) {
             if (strcmp(maps[j].id, mapName) == 0) {
                 *areaID = i;
                 *mapID = j;
-                return TRUE;
+                return true;
             }
         }
     }
 
-    return FALSE;
+    return false;
 }
 
 void get_map_IDs_by_name_checked(const char* mapName, s16* areaID, s16* mapID) {

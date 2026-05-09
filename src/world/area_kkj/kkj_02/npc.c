@@ -2,6 +2,7 @@
 
 #include "hud_element.h"
 #include "pause/pause_common.h"
+#include "inventory.h"
 
 #include "world/common/npc/Toad_Wander.inc.c"
 #include "world/common/npc/Toad_Stationary.inc.c"
@@ -81,7 +82,7 @@ void N(PopulateChallengeSelectorPopup)(PopupMenu* menu, Evt* script) {
             menu->nameMsg[menuPos] = item->nameMsg;
             menu->ptrIcon[menuPos] = itemHudScripts->enabled;
 
-            menu->enabled[menuPos] = TRUE;
+            menu->enabled[menuPos] = true;
 
             menu->descMsg[menuPos] = item->fullDescMsg;
             menuPos++;
@@ -152,9 +153,9 @@ API_CALLABLE(N(ChallengeSelectorPopup)) {
 
 EvtScript N(EVS_NpcInteract_Nomadimouse) = {
     Call(GetNpcVar, NPC_Nomadimouse, NPCVar_NomadimouseMet, LVar0)
-    IfEq(LVar0, FALSE)
+    IfEq(LVar0, false)
         Call(SpeakToPlayer, NPC_SELF, ANIM_Nomadimouse_Talk, ANIM_Nomadimouse_Idle, 0, MSG_CH0_ChallengeIntroduction)
-        Call(SetNpcVar, NPC_Nomadimouse, NPCVar_NomadimouseMet, TRUE)
+        Call(SetNpcVar, NPC_Nomadimouse, NPCVar_NomadimouseMet, true)
     Else
         Call(N(CountChosenChallenges), LVar0)
         Switch(LVar0)
@@ -186,7 +187,7 @@ EvtScript N(EVS_NpcInteract_Nomadimouse) = {
 EvtScript N(EVS_NpcInit_Nomadimouse) = {
     Call(BindNpcInteract, NPC_SELF, Ref(N(EVS_NpcInteract_Nomadimouse)))
     Call(SetNpcAnimation, NPC_SELF, ANIM_Nomadimouse_Idle)
-    Call(SetNpcVar, NPC_Nomadimouse, NPCVar_NomadimouseMet, FALSE)
+    Call(SetNpcVar, NPC_Nomadimouse, NPCVar_NomadimouseMet, false)
     Return
     End
 };
@@ -268,5 +269,3 @@ NpcGroupList N(DefaultNPCs) = {
     NPC_GROUP(N(NpcData_Toads)),
     {}
 };
-
-

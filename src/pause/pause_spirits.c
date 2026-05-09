@@ -1,4 +1,4 @@
-#include "pause_common.h"
+#include "pause/pause_common.h"
 #include "message_ids.h"
 #include "sprite.h"
 #include "sprite/npc/WorldEldstar.h"
@@ -20,7 +20,6 @@ void pause_spirits_update(MenuPanel* panel);
 void pause_spirits_cleanup(MenuPanel* panel);
 
 static s32 gPauseSpiritsSpriteIDs[7];
-static s32 D_802706DC;
 static s32 gPauseSpiritsIndexes[7];
 static s32 gPauseSpiritsNumSpirits;
 
@@ -106,7 +105,7 @@ MenuWindowBP gPauseSpiritsWindowsBPs[] = {
         .height = 154,
         .priority = WINDOW_PRIORITY_1,
         .fpDrawContents = &pause_spirits_draw_contents,
-        .tab = NULL,
+        .tab = nullptr,
         .parentID = WIN_PAUSE_MAIN,
         .fpUpdate = { WINDOW_UPDATE_HIDE },
         .extraFlags = 0,
@@ -120,7 +119,7 @@ MenuWindowBP gPauseSpiritsWindowsBPs[] = {
         .height = 20,
         .priority = WINDOW_PRIORITY_0,
         .fpDrawContents = &pause_spirits_draw_title,
-        .tab = NULL,
+        .tab = nullptr,
         .parentID = WIN_PAUSE_SPIRITS,
         .fpUpdate = { WINDOW_UPDATE_SHOW },
         .extraFlags = 0,
@@ -128,7 +127,7 @@ MenuWindowBP gPauseSpiritsWindowsBPs[] = {
     }
 };
 MenuPanel gPausePanelSpirits = {
-    .initialized = FALSE,
+    .initialized = false,
     .col = 2,
     .row = 0,
     .selected = 0,
@@ -146,7 +145,7 @@ MenuPanel gPausePanelSpirits = {
 void pause_spirits_draw_contents(MenuPanel* menu, s32 baseX, s32 baseY, s32 width, s32 height, s32 opacity, s32 darkening) {
     Matrix4f matrix1;
     Matrix4f matrix2;
-    s32 i, j;
+    s32 i;
     s32 color;
     s32 alpha;
     s32 index;
@@ -154,7 +153,6 @@ void pause_spirits_draw_contents(MenuPanel* menu, s32 baseX, s32 baseY, s32 widt
     f32 offsetY;
     s32 x1, y1, x2, y2;
     f32 frameCounter;
-    f32 scale;
 
     gDPPipeSync(gMainGfxPos++);
     gSPViewport(gMainGfxPos++, &gPauseSpiritsViewport);
@@ -174,7 +172,6 @@ void pause_spirits_draw_contents(MenuPanel* menu, s32 baseX, s32 baseY, s32 widt
     guTranslateF(matrix1, 0.0f, 0.0f, 0.0f);
     guMtxF2L(matrix1, &gDisplayContext->matrixStack[gMatrixListPos]);
     gSPMatrix(gMainGfxPos++, &gDisplayContext->matrixStack[gMatrixListPos++], G_MTX_PUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-
 
     for (i = 0; i < gPauseSpiritsNumSpirits; i++) {
         index = gPauseSpiritsDrawOrder[i];
@@ -274,14 +271,14 @@ void pause_spirits_init(MenuPanel* panel) {
         gPauseSpiritsWindowsBPs[i].tab = panel;
     }
     setup_pause_menu_tab(gPauseSpiritsWindowsBPs, ARRAY_COUNT(gPauseSpiritsWindowsBPs));
-    panel->initialized = TRUE;
+    panel->initialized = true;
 }
 
 void pause_spirits_handle_input(MenuPanel* panel) {
     s32 oldSelected = panel->selected;
 
     if (gPauseHeldButtons & BUTTON_STICK_LEFT) {
-        while (TRUE) {
+        while (true) {
             panel->col--;
             if (panel->col < 0) {
                 panel->col = 0;
@@ -295,7 +292,7 @@ void pause_spirits_handle_input(MenuPanel* panel) {
     }
 
     if (gPauseHeldButtons & BUTTON_STICK_RIGHT) {
-        while (TRUE) {
+        while (true) {
             panel->col++;
             if (panel->col >= panel->numCols) {
                 panel->col = panel->numCols - 1;
@@ -316,7 +313,7 @@ void pause_spirits_handle_input(MenuPanel* panel) {
             panel->col = 1;
             panel->row = 0;
         } else {
-            while (TRUE) {
+            while (true) {
                 panel->row--;
                 if (panel->row < 0) {
                     panel->row = 0;
@@ -337,7 +334,7 @@ void pause_spirits_handle_input(MenuPanel* panel) {
             panel->col = 1;
             panel->row = 1;
         } else {
-            while (TRUE) {
+            while (true) {
                 panel->row++;
                 if (panel->row >= panel->numRows) {
                     panel->row = panel->numRows - 1;

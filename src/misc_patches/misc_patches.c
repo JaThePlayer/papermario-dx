@@ -5,6 +5,9 @@
 #include "move_enum.h"
 #include "variables.h"
 #include "hud_element.h"
+#include "misc_patches/status_rework_helpers.h"
+#include "battle/battle_menu.h"
+#include "misc_patches/scrollable_desc_draw.h"
 
 // returns how much fp costs are changed by
 s32 getFpCostChange(Actor* player) {
@@ -28,7 +31,7 @@ s32 getDamageChangeFromStatus(Actor* actor) {
 }
 
 void markActorAsNotAttackedThisTurn(Actor* actor) {
-    actor->attackedThisTurn = FALSE;
+    actor->attackedThisTurn = false;
 }
 
 API_CALLABLE(MarkActorAsNotAttackedThisTurn) {
@@ -70,10 +73,10 @@ API_CALLABLE(TargetPlayerOrPartner) {
     actor->targetPartID = 1;
     if (gBattleStatus.partnerActor->koDuration > 0 || (rand_int(100) < chanceToTargetPlayer)) {
         actor->targetActorID = ACTOR_PLAYER;
-        evt_set_variable(script, *args++, TRUE);
+        evt_set_variable(script, *args++, true);
     } else {
         actor->targetActorID = ACTOR_PARTNER;
-        evt_set_variable(script, *args++, FALSE);
+        evt_set_variable(script, *args++, false);
     }
 
     return ApiStatus_DONE2;
@@ -86,15 +89,15 @@ s32 get_focus_cap() {
 }
 
 // Used by Trial Boo, needs to be somewhere global
-void* gCurrentTrial = NULL;
+void* gCurrentTrial = nullptr;
 s32 gCurrentTrialFormationId = 0;
 
 void _onActorCtor(Actor* actor) {
     enemy_items_zero_initialize(actor);
     custom_status_zero_initialize(actor);
-    actor->attackedThisTurn = FALSE;
+    actor->attackedThisTurn = false;
     actor->overridenLevel = -1;
-    actor->onEnemyDamagedScript = NULL;
+    actor->onEnemyDamagedScript = nullptr;
 }
 
 API_CALLABLE(OverrideActorLevel) {
@@ -143,6 +146,34 @@ s32 get_bp_cost_of_move(s32 moveId) {
     return bp;
 }
 
+// New function to setup cost reductions for the menu, which does not duplicate logic
+void setup_move_cost_reductions(Actor* playerActor, s32 i)
+{
+    s32 change = getFpCostChange(playerActor);
+    s32 color;
+
+    switch (change) {
+        case 0:
+            color = 0;
+            break;
+        case -1:
+            color = 1;
+            break;
+        default:
+            color = change <= -2 ? 2 : 0;
+        break;
+    }
+
+    MovesOptionDiscounts[i] = -change;
+    MovesOptionDiscountColors[i] = color;
+}
+
+s32 fixed_star_power_index(s32 moveId) {
+    if (moveId == MOVE_THREAT_FOCUS)
+        moveId = MOVE_FOCUS;
+    return STAR_POWER_INDEX(moveId);
+}
+
 void _onFrame() {
     draw_item_gc();
 
@@ -161,7 +192,7 @@ void _onFrame() {
         gPlayerData.starPoints = 0;
     }
 
-    if (is_lone_idol() && gBattleStatus.partnerActor != NULL
+    if (is_lone_idol() && gBattleStatus.partnerActor != nullptr
         && gPlayerData.curPartner != PARTNER_GOOMPA
         && gPlayerData.curPartner != PARTNER_GOOMBARIA
         && gPlayerData.curPartner != PARTNER_TWINK) {
@@ -172,7 +203,6 @@ void _onFrame() {
 API_CALLABLE(BindOnEnemyDamaged) {
     Bytecode* args = script->ptrReadPos;
     s32 actorID = evt_get_variable(script, *args++);
-    EvtScript* takeTurnScript;
 
     if (actorID == ACTOR_SELF) {
         actorID = script->owner1.actorID;
@@ -208,7 +238,7 @@ void _on_dispatch_event_actor(Actor* actor, s32 event) {
                 for (s32 i = 0; i < ARRAY_COUNT(gBattleStatus.enemyActors); i++)
                 {
                     Actor* actor = gBattleStatus.enemyActors[i];
-                    if (actor != NULL && actor->onEnemyDamagedScript != NULL) {
+                    if (actor != nullptr && actor->onEnemyDamagedScript != nullptr) {
                         Evt* script = start_script(actor->onEnemyDamagedScript, EVT_PRIORITY_A, EVT_FLAG_RUN_IMMEDIATELY);
                         script->owner1.actorID = actor->actorID;
                     }

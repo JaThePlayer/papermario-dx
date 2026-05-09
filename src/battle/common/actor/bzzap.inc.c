@@ -33,7 +33,7 @@ s32 N(DefaultAnims)[] = {
     STATUS_KEY_STATIC,    ANIM_Bzzap_Anim01,
     STATUS_KEY_PARALYZE,  ANIM_Bzzap_Anim00,
     STATUS_KEY_DIZZY,     ANIM_Bzzap_Anim0A,
-    STATUS_KEY_FEAR,      ANIM_Bzzap_Anim0A,
+    STATUS_KEY_UNUSED,    ANIM_Bzzap_Anim0A,
     STATUS_END,
 };
 
@@ -49,7 +49,7 @@ s32 N(StatusTable)[] = {
     STATUS_KEY_POISON,             50,
     STATUS_KEY_FROZEN,              0,
     STATUS_KEY_DIZZY,             100,
-    STATUS_KEY_FEAR,                0,
+    STATUS_KEY_UNUSED,              0,
     STATUS_KEY_STATIC,              0,
     STATUS_KEY_PARALYZE,           90,
     STATUS_KEY_SHRINK,             75,
@@ -59,7 +59,7 @@ s32 N(StatusTable)[] = {
     STATUS_TURN_MOD_POISON,         0,
     STATUS_TURN_MOD_FROZEN,         0,
     STATUS_TURN_MOD_DIZZY,          1,
-    STATUS_TURN_MOD_FEAR,           0,
+    STATUS_TURN_MOD_UNUSED,         0,
     STATUS_TURN_MOD_STATIC,         0,
     STATUS_TURN_MOD_PARALYZE,       0,
     STATUS_TURN_MOD_SHRINK,         0,
@@ -225,7 +225,7 @@ EvtScript N(EVS_ReturnHome) = {
 };
 
 EvtScript N(EVS_HandleEvent) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(GetLastEvent, ACTOR_SELF, LVar0)
     Switch(LVar0)
@@ -304,7 +304,7 @@ EvtScript N(EVS_HandleEvent) = {
             SetConst(LVar1, ANIM_Bzzap_Anim01)
             ExecWait(EVS_Enemy_Recover)
         CaseEq(EVENT_SCARE_AWAY)
-            Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_FLYING, FALSE)
+            Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_FLYING, false)
             SetConst(LVar0, PRT_MAIN)
             SetConst(LVar1, ANIM_Bzzap_Anim03)
             SetConst(LVar2, ANIM_Bzzap_Anim06)
@@ -329,18 +329,18 @@ EvtScript N(EVS_HandleEvent) = {
         CaseDefault
     EndSwitch
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };
 
 EvtScript N(EVS_Attack_Sting) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
     Call(UseBattleCamPreset, BTL_CAM_ENEMY_APPROACH)
     Call(BattleCamTargetActor, ACTOR_SELF)
-    Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_TARGET, BTL_CAM_XADJ_AVG, FALSE)
+    Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_TARGET, BTL_CAM_XADJ_AVG, false)
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Bzzap_Anim03)
     Call(SetGoalToTarget, ACTOR_SELF)
     Call(AddGoalPos, ACTOR_SELF, 52, 10, 0)
@@ -375,7 +375,7 @@ EvtScript N(EVS_Attack_Sting) = {
             Call(RemoveActorDecoration, ACTOR_SELF, PRT_MAIN, 0)
             Call(SetActorYaw, ACTOR_SELF, 0)
             Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-            Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+            Call(UseIdleAnimation, ACTOR_SELF, true)
             Return
         EndCaseGroup
     EndSwitch
@@ -404,7 +404,7 @@ EvtScript N(EVS_Attack_Sting) = {
         EndCaseGroup
     EndSwitch
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };
@@ -416,7 +416,7 @@ EvtScript N(EVS_SummonSwarmPart) = {
     Add(LVarA, 200)
     Add(LVarB, 100)
     Call(SetPartPos, ACTOR_SELF, LVar9, LVarA, LVarB, LVarC)
-    Call(SetPartFlagBits, ACTOR_SELF, LVar9, ACTOR_PART_FLAG_INVISIBLE, FALSE)
+    Call(SetPartFlagBits, ACTOR_SELF, LVar9, ACTOR_PART_FLAG_INVISIBLE, false)
     Call(SetAnimation, ACTOR_SELF, LVar9, ANIM_Bzzap_Anim03)
     Call(GetActorPos, ACTOR_SELF, LVarA, LVarB, LVarC)
     Add(LVarB, 50)
@@ -476,12 +476,12 @@ EvtScript N(EVS_SummonSwarmPart) = {
 };
 
 EvtScript N(EVS_Attack_CallSwarm) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
     Call(UseBattleCamPreset, BTL_CAM_ENEMY_APPROACH)
     Call(BattleCamTargetActor, ACTOR_SELF)
-    Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_TARGET, BTL_CAM_XADJ_AVG, FALSE)
+    Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_TARGET, BTL_CAM_XADJ_AVG, false)
     Call(SetPartSounds, ACTOR_SELF, PRT_SWARM_1, ACTOR_SOUND_FLY, SOUND_NONE, SOUND_NONE)
     Call(SetPartSounds, ACTOR_SELF, PRT_SWARM_2, ACTOR_SOUND_FLY, SOUND_NONE, SOUND_NONE)
     Call(SetPartSounds, ACTOR_SELF, PRT_SWARM_3, ACTOR_SOUND_FLY, SOUND_NONE, SOUND_NONE)
@@ -535,7 +535,7 @@ EvtScript N(EVS_Attack_CallSwarm) = {
                 Call(AddActorDecoration, ACTOR_SELF, PRT_SWARM_1, 0, ACTOR_DECORATION_SWEAT)
                 Call(FlyPartTo, ACTOR_SELF, PRT_SWARM_1, LVar0, LVar1, LVar2, 0, 10, EASING_LINEAR)
                 Call(RemoveActorDecoration, ACTOR_SELF, PRT_SWARM_1, 0)
-                Call(SetPartFlagBits, ACTOR_SELF, PRT_SWARM_1, ACTOR_PART_FLAG_INVISIBLE, TRUE)
+                Call(SetPartFlagBits, ACTOR_SELF, PRT_SWARM_1, ACTOR_PART_FLAG_INVISIBLE, true)
             EndThread
             Wait(11)
             Thread
@@ -554,7 +554,7 @@ EvtScript N(EVS_Attack_CallSwarm) = {
                 Call(AddActorDecoration, ACTOR_SELF, PRT_SWARM_2, 0, ACTOR_DECORATION_SWEAT)
                 Call(FlyPartTo, ACTOR_SELF, PRT_SWARM_2, LVar0, LVar1, LVar2, 0, 10, EASING_LINEAR)
                 Call(RemoveActorDecoration, ACTOR_SELF, PRT_SWARM_2, 0)
-                Call(SetPartFlagBits, ACTOR_SELF, PRT_SWARM_2, ACTOR_PART_FLAG_INVISIBLE, TRUE)
+                Call(SetPartFlagBits, ACTOR_SELF, PRT_SWARM_2, ACTOR_PART_FLAG_INVISIBLE, true)
             EndThread
             Wait(11)
             Thread
@@ -573,7 +573,7 @@ EvtScript N(EVS_Attack_CallSwarm) = {
                 Call(AddActorDecoration, ACTOR_SELF, PRT_SWARM_3, 0, ACTOR_DECORATION_SWEAT)
                 Call(FlyPartTo, ACTOR_SELF, PRT_SWARM_3, LVar0, LVar1, LVar2, 0, 10, EASING_LINEAR)
                 Call(RemoveActorDecoration, ACTOR_SELF, PRT_SWARM_3, 0)
-                Call(SetPartFlagBits, ACTOR_SELF, PRT_SWARM_3, ACTOR_PART_FLAG_INVISIBLE, TRUE)
+                Call(SetPartFlagBits, ACTOR_SELF, PRT_SWARM_3, ACTOR_PART_FLAG_INVISIBLE, true)
             EndThread
             Wait(11)
             Thread
@@ -592,7 +592,7 @@ EvtScript N(EVS_Attack_CallSwarm) = {
                 Call(AddActorDecoration, ACTOR_SELF, PRT_SWARM_4, 0, ACTOR_DECORATION_SWEAT)
                 Call(FlyPartTo, ACTOR_SELF, PRT_SWARM_4, LVar0, LVar1, LVar2, 0, 10, EASING_LINEAR)
                 Call(RemoveActorDecoration, ACTOR_SELF, PRT_SWARM_4, 0)
-                Call(SetPartFlagBits, ACTOR_SELF, PRT_SWARM_4, ACTOR_PART_FLAG_INVISIBLE, TRUE)
+                Call(SetPartFlagBits, ACTOR_SELF, PRT_SWARM_4, ACTOR_PART_FLAG_INVISIBLE, true)
             EndThread
             Wait(11)
             Thread
@@ -611,7 +611,7 @@ EvtScript N(EVS_Attack_CallSwarm) = {
                 Call(AddActorDecoration, ACTOR_SELF, PRT_SWARM_5, 0, ACTOR_DECORATION_SWEAT)
                 Call(FlyPartTo, ACTOR_SELF, PRT_SWARM_5, LVar0, LVar1, LVar2, 0, 10, EASING_LINEAR)
                 Call(RemoveActorDecoration, ACTOR_SELF, PRT_SWARM_5, 0)
-                Call(SetPartFlagBits, ACTOR_SELF, PRT_SWARM_5, ACTOR_PART_FLAG_INVISIBLE, TRUE)
+                Call(SetPartFlagBits, ACTOR_SELF, PRT_SWARM_5, ACTOR_PART_FLAG_INVISIBLE, true)
             EndThread
             Wait(11)
             IfEq(LVarA, HIT_RESULT_LUCKY)
@@ -623,7 +623,7 @@ EvtScript N(EVS_Attack_CallSwarm) = {
             Call(StopSound, SOUND_MINI_BZZAP_BUZZ)
             Call(YieldTurn)
             Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-            Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+            Call(UseIdleAnimation, ACTOR_SELF, true)
             Return
         EndCaseGroup
     EndSwitch
@@ -644,7 +644,7 @@ EvtScript N(EVS_Attack_CallSwarm) = {
         Add(LVar1, 100)
         Add(LVar2, 100)
         Call(FlyPartTo, ACTOR_SELF, PRT_SWARM_1, LVar0, LVar1, LVar2, 0, 10, EASING_LINEAR)
-        Call(SetPartFlagBits, ACTOR_SELF, PRT_SWARM_1, ACTOR_PART_FLAG_INVISIBLE, TRUE)
+        Call(SetPartFlagBits, ACTOR_SELF, PRT_SWARM_1, ACTOR_PART_FLAG_INVISIBLE, true)
     EndThread
     Wait(11)
     Thread
@@ -664,7 +664,7 @@ EvtScript N(EVS_Attack_CallSwarm) = {
         Add(LVar1, 100)
         Add(LVar2, 100)
         Call(FlyPartTo, ACTOR_SELF, PRT_SWARM_2, LVar0, LVar1, LVar2, 0, 10, EASING_LINEAR)
-        Call(SetPartFlagBits, ACTOR_SELF, PRT_SWARM_2, ACTOR_PART_FLAG_INVISIBLE, TRUE)
+        Call(SetPartFlagBits, ACTOR_SELF, PRT_SWARM_2, ACTOR_PART_FLAG_INVISIBLE, true)
     EndThread
     Wait(11)
     Thread
@@ -684,7 +684,7 @@ EvtScript N(EVS_Attack_CallSwarm) = {
         Add(LVar1, 100)
         Add(LVar2, 100)
         Call(FlyPartTo, ACTOR_SELF, PRT_SWARM_3, LVar0, LVar1, LVar2, 0, 10, EASING_LINEAR)
-        Call(SetPartFlagBits, ACTOR_SELF, PRT_SWARM_3, ACTOR_PART_FLAG_INVISIBLE, TRUE)
+        Call(SetPartFlagBits, ACTOR_SELF, PRT_SWARM_3, ACTOR_PART_FLAG_INVISIBLE, true)
     EndThread
     Wait(11)
     Thread
@@ -704,7 +704,7 @@ EvtScript N(EVS_Attack_CallSwarm) = {
         Add(LVar1, 100)
         Add(LVar2, 100)
         Call(FlyPartTo, ACTOR_SELF, PRT_SWARM_4, LVar0, LVar1, LVar2, 0, 10, EASING_LINEAR)
-        Call(SetPartFlagBits, ACTOR_SELF, PRT_SWARM_4, ACTOR_PART_FLAG_INVISIBLE, TRUE)
+        Call(SetPartFlagBits, ACTOR_SELF, PRT_SWARM_4, ACTOR_PART_FLAG_INVISIBLE, true)
     EndThread
     Wait(11)
     Wait(1)
@@ -728,13 +728,13 @@ EvtScript N(EVS_Attack_CallSwarm) = {
             Add(LVar1, 100)
             Add(LVar2, 100)
             Call(FlyPartTo, ACTOR_SELF, PRT_SWARM_5, LVar0, LVar1, LVar2, 0, 10, EASING_LINEAR)
-            Call(SetPartFlagBits, ACTOR_SELF, PRT_SWARM_5, ACTOR_PART_FLAG_INVISIBLE, TRUE)
+            Call(SetPartFlagBits, ACTOR_SELF, PRT_SWARM_5, ACTOR_PART_FLAG_INVISIBLE, true)
             Call(StopSound, SOUND_MINI_BZZAP_BUZZ)
             Call(YieldTurn)
         EndCaseGroup
     EndSwitch
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };

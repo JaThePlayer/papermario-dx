@@ -3,7 +3,6 @@
 #include "nu/nusys.h"
 #include "hud_element.h"
 #include "dx/profiling.h"
-#include "dx/debug_menu.h"
 
 void render_models(void);
 void execute_render_tasks(void);
@@ -117,7 +116,7 @@ void render_frame(s32 isSecondPass) {
 
         gCurrentCamID = camID;
 
-        if (camera->fpDoPreRender != NULL) {
+        if (camera->fpDoPreRender != nullptr) {
             camera->fpDoPreRender(camera);
         } else {
             s32 ulx;
@@ -218,9 +217,9 @@ void render_frame(s32 isSecondPass) {
                 GFX_PROFILER_SWITCH(PROFILER_TIME_SUB_GFX_PLAYER, PROFILER_TIME_SUB_GFX_NPCS);
                 render_npcs();
                 GFX_PROFILER_SWITCH(PROFILER_TIME_SUB_GFX_NPCS, PROFILER_TIME_SUB_GFX_WORKERS);
-                render_workers_world();
+                render_workers_scene();
                 GFX_PROFILER_SWITCH(PROFILER_TIME_SUB_GFX_WORKERS, PROFILER_TIME_SUB_GFX_EFFECTS);
-                render_effects_world();
+                render_effects_scene();
                 GFX_PROFILER_SWITCH(PROFILER_TIME_SUB_GFX_EFFECTS, PROFILER_TIME_SUB_GFX_RENDER_TASKS);
                 execute_render_tasks();
                 #if DX_DEBUG_MENU
@@ -237,11 +236,11 @@ void render_frame(s32 isSecondPass) {
                 render_item_entities();
             }
         } else {
-            render_workers_world();
+            render_workers_scene();
             execute_render_tasks();
         }
 
-        if (camera->fpDoPostRender != NULL) {
+        if (camera->fpDoPostRender != nullptr) {
             camera->fpDoPostRender(camera);
         }
 
@@ -335,7 +334,7 @@ Camera* initialize_next_camera(CameraInitData* initData) {
     camera->targetOffsetY = 0;
     camera->curBoomYaw = 0.0f;
     camera->targetBoomYaw = 0.0f;
-    camera->needsInit = TRUE;
+    camera->needsInit = true;
     camera->updateMode = initData->updateMode;
     camera->nearClip = initData->nearClip;
     camera->farClip = initData->farClip;
@@ -351,20 +350,20 @@ Camera* initialize_next_camera(CameraInitData* initData) {
     camera->targetPos.x = 0;
     camera->targetPos.y = 0;
     camera->targetPos.z = 0;
-    camera->fpDoPreRender = NULL;
-    camera->fpDoPostRender = NULL;
+    camera->fpDoPreRender = nullptr;
+    camera->fpDoPostRender = nullptr;
     camera->leadAmount = 0.0f;
     camera->targetLeadAmount = 0.0f;
     camera->leadInterpAlpha = 0.0f;
     camera->accumulatedStickLead = 0.0f;
-    camera->increasingLeadInterp = FALSE;
+    camera->increasingLeadInterp = false;
     camera->prevLeadPosX = 0.0f;
     camera->prevLeadPosZ = 0.0f;
     camera->leadConstrainDir = 0;
-    camera->needsInitialConstrainDir = TRUE;
-    camera->prevLeadSettings = NULL;
-    camera->panActive = FALSE;
-    camera->useOverrideSettings = FALSE;
+    camera->needsInitialConstrainDir = true;
+    camera->prevLeadSettings = nullptr;
+    camera->panActive = false;
+    camera->useOverrideSettings = false;
     camera->leadAmtScale = 0.2f;
     camera->moveSpeed = 1.0f;
     return camera;
@@ -440,15 +439,15 @@ b32 is_outside_cam_viewport_bounds(s32 camID, s32 x, s32 y) {
     s32 endY = startY + gCameras[camID].viewportH;
 
     if (x < startX) {
-        return TRUE;
+        return true;
     } else if (x > endX) {
-        return TRUE;
+        return true;
     } else if (y < startY) {
-        return TRUE;
+        return true;
     } else if (y > endY) {
-        return TRUE;
+        return true;
     } else {
-        return FALSE;
+        return false;
     }
 }
 

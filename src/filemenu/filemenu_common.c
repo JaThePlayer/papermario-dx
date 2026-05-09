@@ -5,8 +5,8 @@
 #include "ld_addrs.h"
 #include "game_modes.h"
 #include "dx/config.h"
-#include "gcc/memory.h"
-#include "gcc/string.h"
+#include <memory.h>
+#include <string.h>
 
 extern HudScript HES_AnimatedCursorHand;
 
@@ -29,7 +29,7 @@ s32 filemenu_cursor_targetX = SCREEN_WIDTH / 2;
 s32 filemenu_cursor_targetY = -SCREEN_HEIGHT / 2;
 s32 filemenu_cursorGoalAlpha = 0;
 s32 filemenu_cursorGoalAlpha2 = 0;
-s32 D_80249BB0 = TRUE;
+s32 D_80249BB0 = true;
 s32 D_80249BB8 = 0;
 s16 D_80249BBC[16] = { 315, 303, 283, 260, 235, 210, 185, 160, 135, 110, 85, 60, 37, 17, 5, 0 };
 s16 D_80249BDC[16] = { 315, 303, 283, 260, 235, 210, 185, 160, 135, 110, 85, 60, 37, 17, 5, 0 };
@@ -70,8 +70,8 @@ MenuWindowBP filemenu_common_windowBPs[] = {
         .width = 288,
         .height = 192,
         .priority = WINDOW_PRIORITY_0,
-        .fpDrawContents = NULL,
-        .tab = NULL,
+        .fpDrawContents = nullptr,
+        .tab = nullptr,
         .parentID = -1,
         .fpUpdate = { WINDOW_UPDATE_SHOW },
         .extraFlags = WINDOW_FLAG_40,
@@ -87,7 +87,7 @@ MenuWindowBP filemenu_common_windowBPs[] = {
         .height = 192,
         .priority = WINDOW_PRIORITY_0,
         .fpDrawContents = filemenu_draw_contents_copy_arrow,
-        .tab = NULL,
+        .tab = nullptr,
         .parentID = WIN_FILES_MAIN,
         .fpUpdate = { WINDOW_UPDATE_SHOW } ,
         .extraFlags = 0,
@@ -103,7 +103,7 @@ MenuWindowBP filemenu_common_windowBPs[] = {
         .height = 240,
         .priority = WINDOW_PRIORITY_0,
         .fpDrawContents = filemenu_draw_cursor,
-        .tab = NULL,
+        .tab = nullptr,
         .parentID = -1,
         .fpUpdate = { WINDOW_UPDATE_SHOW },
         .extraFlags = 0,
@@ -117,19 +117,19 @@ extern Gfx D_8024B708[];
 
 BSS s32 filemenu_CopyToFileIdx;
 BSS s32 filemenu_pressedButtons;
-BSS s32 filemenu_cursorHudElem;
+BSS HudElemID filemenu_cursorHID;
 BSS s32 filemenu_heldButtons;
 BSS s8 filemenu_filename_pos;
 BSS s32 filemenu_CopyFromFileIdx;
 BSS s8 filemenu_currentMenu;
 BSS s32 filemenu_8024C09C;
-BSS s32 filemenu_cursorHudElemID[1];
+BSS HudElemID filemenu_cursorHIDs[1];
 BSS s32 filemenu_8024C0A4[3];
-BSS s32 filemenu_hudElemIDs[20];
-BSS s32 filemenu_createfile_hudElems[4];
+BSS HudElemID filemenu_mainHIDs[20];
+BSS HudElemID filemenu_createfile_HIDs[4];
 
 #if VERSION_PAL
-BSS s32 D_802517D0[1];
+BSS HudElemID PauseLanguageHIDs[1];
 BSS s32 D_802517D4[1];
 BSS u16 D_802517E0[2][0x400] ALIGNED(16);
 #endif
@@ -176,7 +176,7 @@ void filemenu_set_cursor_goal_pos(s32 windowID, s32 posX, s32 posY) {
                 }
             }
             if (i >= ARRAY_COUNT(gWindows)) {
-                D_80249BB0 = FALSE;
+                D_80249BB0 = false;
             }
         }
         filemenu_cursor_targetX = posX;
@@ -288,7 +288,7 @@ void filemenu_update(void) {
     // only process inputs for the current menu
     menu = filemenu_menus[filemenu_currentMenu];
     if (menu->initialized) {
-        if (menu->fpHandleInput != NULL) {
+        if (menu->fpHandleInput != nullptr) {
             menu->fpHandleInput(menu);
         }
     }
@@ -296,7 +296,7 @@ void filemenu_update(void) {
     // update all menus
     for (i = 0; i < ARRAY_COUNT(filemenu_menus); i++) {
         menu = filemenu_menus[i];
-        if (menu->initialized && menu->fpUpdate != NULL) {
+        if (menu->initialized && menu->fpUpdate != nullptr) {
             menu->fpUpdate(menu);
         }
     }
@@ -735,17 +735,17 @@ void filemenu_update_hidden_name_confirm(
 }
 
 void filemenu_draw_cursor(MenuPanel* menu, s32 baseX, s32 baseY, s32 width, s32 height, s32 opacity, s32 darkening) {
-    s32 temp_a1;
+    s32 alpha;
 
     filemenu_update_cursor();
-    temp_a1 = filemenu_cursor_alpha;
-    if (temp_a1 > 0) {
-        if (temp_a1 > 255) {
-            temp_a1 = 255;
+    alpha = filemenu_cursor_alpha;
+    if (alpha > 0) {
+        if (alpha > 255) {
+            alpha = 255;
         }
-        hud_element_set_alpha(filemenu_cursorHudElemID[0], temp_a1);
-        hud_element_set_render_pos(filemenu_cursorHudElemID[0], baseX + filemenu_cursor_posX, baseY + filemenu_cursor_posY);
-        hud_element_draw_without_clipping(filemenu_cursorHudElemID[0]);
+        hud_element_set_alpha(filemenu_cursorHIDs[0], alpha);
+        hud_element_set_render_pos(filemenu_cursorHIDs[0], baseX + filemenu_cursor_posX, baseY + filemenu_cursor_posY);
+        hud_element_draw_without_clipping(filemenu_cursorHIDs[0]);
     }
 }
 
@@ -876,23 +876,21 @@ void filemenu_draw_contents_copy_arrow(MenuPanel* menu, s32 baseX, s32 baseY, s3
     gSPPopMatrix(gMainGfxPos++, G_MTX_MODELVIEW);
 }
 
-void func_PAL_8002B574(void); // TODO identify
-
 // TODO bad match, look into
-void filemenu_init(s32 arg0) {
+void filemenu_init(s32 mode) {
     MenuPanel* menu;
     s32 i;
 
     DMA_COPY_SEGMENT(ui_images_filemenu_pause);
 
-    for (i = 0; i < ARRAY_COUNT(filemenu_cursorHudElemID); i++) {
-        filemenu_cursorHudElemID[i] = hud_element_create(filemenu_cursor_hudElemScripts[i]);
-        hud_element_set_flags(filemenu_cursorHudElemID[i], HUD_ELEMENT_FLAG_DROP_SHADOW | HUD_ELEMENT_FLAG_80);
+    for (i = 0; i < ARRAY_COUNT(filemenu_cursorHIDs); i++) {
+        filemenu_cursorHIDs[i] = hud_element_create(filemenu_cursor_hudElemScripts[i]);
+        hud_element_set_flags(filemenu_cursorHIDs[i], HUD_ELEMENT_FLAG_DROP_SHADOW | HUD_ELEMENT_FLAG_MANUAL_RENDER);
     }
 
-    filemenu_cursorHudElem = filemenu_cursorHudElemID[0];
-    if (arg0 == 0) {
-        filemenu_common_windowBPs[0].style.customStyle->background.imgData = NULL; // ???
+    filemenu_cursorHID = filemenu_cursorHIDs[0];
+    if (mode == 0) {
+        filemenu_common_windowBPs[0].style.customStyle->background.imgData = nullptr; // ???
     }
     setup_pause_menu_tab(filemenu_common_windowBPs, ARRAY_COUNT(filemenu_common_windowBPs));
 
@@ -905,13 +903,13 @@ void filemenu_init(s32 arg0) {
         for (i = 0; i < ARRAY_COUNT(filemenu_menus); i++) {
             if (fio_load_game(i)) {
                 gSaveSlotSummary[i] = gCurrentSaveFile.summary;
-                gSaveSlotMetadata[i].hasData = TRUE;
+                gSaveSlotMetadata[i].hasData = true;
                 gSaveSlotMetadata[i].validData = strcmp(gCurrentSaveFile.modName, DX_MOD_NAME) == 0;
                 memcpy(gSaveSlotMetadata[i].modName, gCurrentSaveFile.modName, ARRAY_COUNT(gSaveSlotMetadata[i].modName));
             } else {
-                gSaveSlotMetadata[i].hasData = FALSE;
-                gSaveSlotMetadata[i].validData = FALSE;
-                memset(gSaveSlotMetadata[i].modName, ARRAY_COUNT(gSaveSlotMetadata[i].modName), 0);
+                gSaveSlotMetadata[i].hasData = false;
+                gSaveSlotMetadata[i].validData = false;
+                memset(gSaveSlotMetadata[i].modName, 0, ARRAY_COUNT(gSaveSlotMetadata[i].modName));
             }
         }
 
@@ -926,7 +924,7 @@ void filemenu_init(s32 arg0) {
 
     for (i = 0; i < ARRAY_COUNT(filemenu_menus); i++) {
         menu = filemenu_menus[i];
-        if (menu->fpInit != NULL) {
+        if (menu->fpInit != nullptr) {
             menu->fpInit(menu);
         }
     }
@@ -937,14 +935,14 @@ void filemenu_cleanup(void) {
     MenuPanel* menu;
     s32 i;
 
-    for (i = 0; i < ARRAY_COUNT(filemenu_cursorHudElemID); i++) {
-        hud_element_free(filemenu_cursorHudElemID[i]);
+    for (i = 0; i < ARRAY_COUNT(filemenu_cursorHIDs); i++) {
+        hud_element_free(filemenu_cursorHIDs[i]);
     }
 
     for (i = 0; i < ARRAY_COUNT(filemenu_menus); i++) {
         menu = filemenu_menus[i];
         if (menu->initialized) {
-            if (menu->fpCleanup != NULL) {
+            if (menu->fpCleanup != nullptr) {
                 menu->fpCleanup(menu);
             }
         }
@@ -956,18 +954,22 @@ void filemenu_cleanup(void) {
 
     set_window_update(WIN_PAUSE_TUTORIAL, WINDOW_UPDATE_HIDE);
     set_window_update(WIN_PAUSE_DECRIPTION, WINDOW_UPDATE_HIDE);
-    func_80244BC4();
+    filemenu_get_exit_mode(); // part of a conditional that optimized out?
 }
 
-s32 func_80244BC4() {
+s32 filemenu_get_exit_mode() {
     if (filemenu_menus[FILE_MENU_MAIN]->state == FM_MAIN_SELECT_FILE
         && filemenu_currentMenu == FILE_MENU_CONFIRM
-        && filemenu_menus[FILE_MENU_CONFIRM]->selected == 0)
-     {
+        && filemenu_menus[FILE_MENU_CONFIRM]->selected == 0
+    ) {
         return 2;
-    } else if (filemenu_menus[FILE_MENU_MAIN]->state == FM_MAIN_SELECT_FILE && filemenu_menus[FILE_MENU_MAIN]->selected < 4) {
-        return 1;
-    } else {
-        return 0;
     }
+
+    if (filemenu_menus[FILE_MENU_MAIN]->state == FM_MAIN_SELECT_FILE
+        && filemenu_menus[FILE_MENU_MAIN]->selected <= FM_MAIN_OPT_FILE_4
+    ) {
+        return 1;
+    }
+
+    return 0;
 }

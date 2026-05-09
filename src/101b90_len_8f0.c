@@ -14,7 +14,7 @@
 #define SPRITE_ROM_START 0x1A40000 + 0x10
 #endif
 
-extern s32 spr_allocateBtlComponentsOnWorldHeap;
+extern b32 SpriteUseGeneralHeap;
 extern HeapNode heap_generalHead;
 extern HeapNode heap_spriteHead;
 
@@ -35,26 +35,22 @@ BSS PlayerSpriteCacheEntry PlayerRasterCache[18];
 #define SPR_SWIZZLE(base,offset) ((void*)((s32)(offset) + (s32)(base)))
 
 void spr_swizzle_anim_offsets(s32 arg0, s32 base, void* spriteData) {
-    u8* buffer;
     SpriteAnimComponent*** animList;
     SpriteAnimComponent** compList;
     SpriteAnimComponent* comp;
-    s32 animOffset;
-    s32 compOffset;
-    s32 temp;
 
     // required to match, spriteData->animList would be nicer
     animList = (SpriteAnimComponent***) spriteData;
     animList += 4;
 
-    while (TRUE) {
+    while (true) {
         if (*animList == PTR_LIST_END) {
             break;
         }
         compList = (SpriteAnimComponent**) ((s32)*animList - ALIGN4(base));
         compList = SPR_SWIZZLE(ALIGN4(spriteData), compList);
         *animList = compList;
-        while (TRUE) {
+        while (true) {
             if (*compList == PTR_LIST_END) {
                 break;
             }
@@ -108,7 +104,7 @@ SpriteAnimData* spr_load_sprite(s32 idx, s32 isPlayerSprite, s32 useTailAlloc) {
     data = SPR_SWIZZLE(ALIGN4(animData), data);
     animData->rastersOffset = (SpriteRasterCacheEntry**)data;
 
-    while (TRUE) {
+    while (true) {
         ptr1 = *data;
         if (ptr1 == PTR_LIST_END) {
             break;
@@ -139,7 +135,7 @@ SpriteAnimData* spr_load_sprite(s32 idx, s32 isPlayerSprite, s32 useTailAlloc) {
     // swizzle palettes array
     palettes = SPR_SWIZZLE(ALIGN4(animData), animData->palettesOffset);
     animData->palettesOffset = (PAL_PTR*)palettes;
-    while (TRUE) {
+    while (true) {
         ptr1 = *palettes;
         if (ptr1 == PTR_LIST_END) {
             break;
@@ -199,7 +195,7 @@ IMG_PTR spr_get_player_raster(s32 rasterIndex, s32 playerSpriteID) {
     }
 
     if (idx == -1) {
-        return NULL;
+        return nullptr;
     }
 
     cacheEntry = &PlayerRasterCache[idx];
@@ -241,14 +237,13 @@ void spr_load_npc_extra_anims(SpriteAnimData* header, u32* extraAnimList) {
     void* writePos;
     SpriteRasterCacheEntry** rasterList;
     SpriteRasterCacheEntry* raster;
-    u16** oldPalList;
-    u16* palette;
+    PAL_PTR* oldPalList;
     // one extra required for 'done' sentinel
     s32 sawRaster[100 + 1];
     s32 i;
 
     for (i = 0; i < ARRAY_COUNT(sawRaster) - 1; i++) {
-        sawRaster[i] = FALSE;
+        sawRaster[i] = false;
     }
 
     while ((extraAnimID = *extraAnimList++) != -1) {
@@ -264,7 +259,7 @@ void spr_load_npc_extra_anims(SpriteAnimData* header, u32* extraAnimList) {
                         i = animCmd; // required to match
                         imgID = i & 0xFF;
                         if (imgID < ARRAY_COUNT(sawRaster) - 1) {
-                            sawRaster[imgID] = TRUE;
+                            sawRaster[imgID] = true;
                         }
                         break;
                     case 0x3000:
@@ -313,7 +308,7 @@ void spr_load_npc_extra_anims(SpriteAnimData* header, u32* extraAnimList) {
         rasterList++;
     }
     // sentinel value to mark end of valid data
-    sawRaster[i] = TRUE;
+    sawRaster[i] = true;
 
     writePos = dataPos;
 
@@ -363,7 +358,7 @@ SpriteComponent** spr_allocate_components(s32 count) {
     listSize = (count + 1) * 4;
     totalSize = (count * sizeof(SpriteComponent)) + listSize;
 
-    if (spr_allocateBtlComponentsOnWorldHeap) {
+    if (SpriteUseGeneralHeap) {
         listStart = _heap_malloc(&heap_generalHead, totalSize);
         listPos = listStart;
         component = (SpriteComponent*) listPos;

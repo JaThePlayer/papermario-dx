@@ -4,7 +4,9 @@
 
 #define NAMESPACE burn_status
 
-#define burn_status_DECREMENT_LATE FALSE
+#define burn_status_DECREMENT_LATE false
+
+extern b32 dispatch_damage_event_player(s32 damageAmount, s32 event, b32 noHitSound);
 
 extern EvtScript EVS_PlaySleepHitFX;
 
@@ -52,7 +54,7 @@ void N(on_decrement)(Actor* target) {
     target->state.goalPos = target->curPos;
 
     if (target == gBattleStatus.playerActor) {
-        dispatch_damage_event_player(dmg, EVENT_BURN_HIT, FALSE);
+        dispatch_damage_event_player(dmg, EVENT_BURN_HIT, false);
     } else {
         dispatch_damage_event_actor_1(target, dmg, EVENT_BURN_HIT);
     }

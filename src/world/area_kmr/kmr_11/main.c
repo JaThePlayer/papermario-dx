@@ -1,8 +1,5 @@
 #include "kmr_11.h"
-
-#define NAME_SUFFIX _Scripted
-#include "common/foliage.inc.c"
-#define NAME_SUFFIX
+#include "foliage.h"
 
 API_CALLABLE(N(SetupFog)) {
     set_world_fog_dist(980, 1000);
@@ -96,7 +93,7 @@ EvtScript N(EVS_Main) = {
     Call(SetSpriteShading, SHADING_NONE)
     Call(N(UseSlowerFadeOnMapChange))
     EVT_SETUP_CAMERA_NO_LEAD(0, 0, 0)
-    Call(MakeNpcs, FALSE, Ref(N(DefaultNPCs)))
+    Call(MakeNpcs, false, Ref(N(DefaultNPCs)))
     Call(ClearDefeatedEnemies)
     ExecWait(N(EVS_MakeEntities))
     IfLt(GB_StoryProgress, STORY_CH0_KAMMY_RETURNED_TO_BOWSER)
@@ -104,26 +101,26 @@ EvtScript N(EVS_Main) = {
     EndIf
     ExecWait(N(EVS_SetupFoliage))
     Call(InitAnimatedModels)
-    Call(EnableModel, MODEL_eye_mask, FALSE)
+    Call(EnableModel, MODEL_eye_mask, false)
     IfLt(GB_StoryProgress, STORY_CH0_HIT_GATEHOUSE_SWITCH)
-        Call(EnableModel, MODEL_bb, FALSE)
+        Call(EnableModel, MODEL_bb, false)
     Else
         Call(SetGroupVisibility, MODEL_ue, MODEL_GROUP_HIDDEN)
         Call(SetGroupVisibility, MODEL_sotokabe, MODEL_GROUP_HIDDEN)
         Call(SetGroupVisibility, MODEL_tobira, MODEL_GROUP_HIDDEN)
-        Call(EnableModel, MODEL_b1, FALSE)
-        Call(EnableModel, MODEL_b2, FALSE)
-        Call(EnableModel, MODEL_b3, FALSE)
-        Call(EnableModel, MODEL_b4, FALSE)
-        Call(EnableModel, MODEL_b5, FALSE)
-        Call(EnableModel, MODEL_b6, FALSE)
+        Call(EnableModel, MODEL_b1, false)
+        Call(EnableModel, MODEL_b2, false)
+        Call(EnableModel, MODEL_b3, false)
+        Call(EnableModel, MODEL_b4, false)
+        Call(EnableModel, MODEL_b5, false)
+        Call(EnableModel, MODEL_b6, false)
     EndIf
     IfLt(GB_StoryProgress, STORY_CH0_DEFEATED_GOOMBA_KING)
-        IfEq(GF_KMR11_GoombaBrosFledToCastle, FALSE)
+        IfEq(GF_KMR11_GoombaBrosFledToCastle, false)
             Exec(N(EVS_BindExitTriggers))
-            Call(SetMusicTrack, 0, SONG_GOOMBA_BROS_RETREAT, 1, 8)
+            Call(SetMusic, 0, SONG_GOOMBA_BROS_RETREAT, BGM_VARIATION_1, VOL_LEVEL_FULL)
             ExecWait(N(EVS_Scene_MeetGoombaKing))
-            Set(GF_KMR11_GoombaBrosFledToCastle, TRUE)
+            Set(GF_KMR11_GoombaBrosFledToCastle, true)
         Else
             Exec(N(EVS_SetupMusic))
             Set(LVar0, Ref(N(EVS_BindExitTriggers)))
@@ -137,7 +134,7 @@ EvtScript N(EVS_Main) = {
         Wait(1)
     EndIf
     Set(LVar0, Ref(N(SearchBush_SwitchBush)))
-    BindTrigger(Ref(N(EVS_SearchBush_Scripted)), TRIGGER_WALL_PRESS_A, COLLIDER_kusa4, 1, 0)
+    BindTrigger(Ref(EVS_SearchBush), TRIGGER_WALL_PRESS_A, COLLIDER_kusa4, 1, 0)
     Call(SetGroupVisibility, MODEL_event_cam, MODEL_GROUP_HIDDEN)
     Call(TranslateGroup, MODEL_g172, NPC_DISPOSE_LOCATION)
     Call(TranslateGroup, MODEL_g173, NPC_DISPOSE_LOCATION)

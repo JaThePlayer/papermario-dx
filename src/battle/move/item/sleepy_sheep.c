@@ -53,7 +53,7 @@ API_CALLABLE(N(func_802A123C_71E88C)) {
             break;
         case 1:
             posPtr->x += 6.0f;
-            cond = FALSE;
+            cond = false;
             if (!((gGameStatusPtr->frameCounter % 3) & 0xFFFF)) {
                 script->functionTemp[1] = (script->functionTemp[1] + 1) % 10;
             }
@@ -77,7 +77,7 @@ API_CALLABLE(N(func_802A123C_71E88C)) {
                         x = -(x - 40.0f);
                     }
                     fx_landing_dust(3, x, y, z, 0.0f);
-                    cond = TRUE;
+                    cond = true;
                 }
             }
             if (gGameStatusPtr->frameCounter & 1) {
@@ -130,7 +130,7 @@ API_CALLABLE(N(handle_sheep_enemy)) {
             break;
         case 1:
             posPtr->x -= 6.0f; // +=
-            cond = FALSE;
+            cond = false;
             if (!((gGameStatusPtr->frameCounter % 3) & 0xFFFF)) {
                 script->functionTemp[1] = (script->functionTemp[1] + 1) % 10;
             }
@@ -154,7 +154,7 @@ API_CALLABLE(N(handle_sheep_enemy)) {
                         x = -(x - 40.0f);
                     }
                     fx_landing_dust(3, x, y, z, 0.0f);
-                    cond = TRUE;
+                    cond = true;
                 }
             }
             if (gGameStatusPtr->frameCounter & 1) {
@@ -219,14 +219,14 @@ API_CALLABLE(N(func_802A1848_71EE98)) {
         script->functionTemp[0] = 0;
     }
 
-    cond = FALSE;
+    cond = false;
 
     for (i = 0; i < player->targetListLength; i++) {
         s8 targetIdx = player->targetIndexList[i];
         SelectableTarget* target = &player->targetData[targetIdx];
         Actor* targetActor = get_actor(target->actorID);
 
-        if (targetActor != NULL) {
+        if (targetActor != nullptr) {
             ActorPart* targetPart = get_actor_part(targetActor, target->partID);
             if ((targetActor->transparentStatus == 0) && !(targetPart->eventFlags & ACTOR_EVENT_FLAG_ILLUSORY)) {
                 if (targetActor->yaw < 360.0f) {
@@ -234,7 +234,7 @@ API_CALLABLE(N(func_802A1848_71EE98)) {
                     if (targetActor->yaw >= 360.0f) {
                         targetActor->yaw = 360.0f;
                     }
-                    cond = TRUE;
+                    cond = true;
                 }
             }
         }
@@ -248,7 +248,6 @@ API_CALLABLE(N(func_802A1848_71EE98)) {
 
 #include "battle/common/move/UseItem.inc.c"
 
-static s32 _pad = 0;
 
 #include "battle/move/item/sleepy_sheep1.png.h"
 INCLUDE_IMG("battle/move/item/sleepy_sheep1.png", battle_item_sleepy_sheep1_png);
@@ -263,10 +262,10 @@ INCLUDE_IMG("battle/move/item/sleepy_sheep3.png", battle_item_sleepy_sheep3_png)
 INCLUDE_PAL("battle/move/item/sleepy_sheep3.pal", battle_item_sleepy_sheep3_pal);
 
 Vtx N(model)[] = {
-    { .v = {{ -28,  0,  0 }, FALSE, { 0,    1536 }, { 0, 0, 0, 255 }}},
-    { .v = {{  27,  0,  0 }, FALSE, { 1792, 1536 }, { 0, 0, 0, 255 }}},
-    { .v = {{  27, 47,  0 }, FALSE, { 1792,    0 }, { 0, 0, 0, 255 }}},
-    { .v = {{ -28, 47,  0 }, FALSE, { 0,       0 }, { 0, 0, 0, 255 }}},
+    { .v = {{ -28,  0,  0 }, false, { 0,    1536 }, { 0, 0, 0, 255 }}},
+    { .v = {{  27,  0,  0 }, false, { 1792, 1536 }, { 0, 0, 0, 255 }}},
+    { .v = {{  27, 47,  0 }, false, { 1792,    0 }, { 0, 0, 0, 255 }}},
+    { .v = {{ -28, 47,  0 }, false, { 0,       0 }, { 0, 0, 0, 255 }}},
 };
 
 Gfx N(frame1_displayList)[] = {
@@ -413,7 +412,7 @@ EvtScript N(EVS_UseItem_Enemy) = {
     Wait(30)
     ChildThread
         Wait(40)
-        Call(UseIdleAnimation, ACTOR_PLAYER, FALSE)
+        Call(UseIdleAnimation, ACTOR_PLAYER, false)
         Call(EnableIdleScript, ACTOR_PLAYER, IDLE_SCRIPT_DISABLE)
 
         Loop(2)
@@ -426,7 +425,7 @@ EvtScript N(EVS_UseItem_Enemy) = {
             Call(SetActorYaw, ACTOR_PLAYER, 0)
         EndLoop
 
-        Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+        Call(UseIdleAnimation, ACTOR_PLAYER, true)
         Call(EnableIdleScript, ACTOR_PLAYER, IDLE_SCRIPT_ENABLE)
     EndChildThread
 

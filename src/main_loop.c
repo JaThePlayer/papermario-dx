@@ -8,6 +8,7 @@
 #include "dx/profiling.h"
 #include "dx/debug_menu.h"
 #include "misc_patches/scrollable_desc_draw.c"
+#include "misc_patches/misc_patches.h"
 
 s32 gOverrideFlags;
 s32 gTimeFreezeMode;
@@ -26,8 +27,8 @@ GameStatus gGameStatus = {
     .prevButtons = { 0 },
     .stickX = { 0 },
     .stickY = { 0 },
-    .unk_48 = { 0 },
-    .unk_50 = { 0 },
+    .holdDelayTime = { 0 },
+    .holdRepeatInterval = { 0 },
 };
 
 GameStatus* gGameStatusPtr = &gGameStatus;
@@ -56,7 +57,7 @@ void step_game_loop(void) {
     profiler_frame_setup();
 
     PlayerData* playerData = &gPlayerData;
-    const int MAX_GAME_TIME = 1000*60*60*60 - 1; // 1000 hours minus one frame at 60 fps
+    const int MAX_GAME_TIME = (1000*60*60*60) - 1; // 1000 hours minus one frame at 60 fps
 
 #if !VERSION_JP
     update_input();
@@ -101,8 +102,7 @@ void step_game_loop(void) {
     profiler_update(PROFILER_TIME_STEP_GAME_MODE, 0);
     update_entities();
     profiler_update(PROFILER_TIME_ENTITIES, 0);
-    func_80138198();
-    bgm_update_music_settings();
+    bgm_update_music_control();
     update_ambient_sounds();
     sfx_update_env_sound_params();
     update_windows();
@@ -203,7 +203,7 @@ void gfx_draw_frame(void) {
     GFX_PROFILER_COMPLETE(PROFILER_TIME_SUB_GFX_UPDATE); // dummy
 
     if (!(gOverrideFlags & GLOBAL_OVERRIDES_DISABLE_RENDER_WORLD)) {
-        render_frame(FALSE);
+        render_frame(false);
     }
 
     player_render_interact_prompts();
@@ -223,7 +223,7 @@ void gfx_draw_frame(void) {
     GFX_PROFILER_SWITCH(PROFILER_TIME_SUB_GFX_BACK_UI, PROFILER_TIME_SUB_GFX_FRONT_UI);
 
     if (!(gOverrideFlags & GLOBAL_OVERRIDES_DISABLE_RENDER_WORLD) && gGameStatusPtr->debugScripts == DEBUG_SCRIPTS_NONE) {
-        render_frame(TRUE);
+        render_frame(true);
     }
 
     if (!(gOverrideFlags & GLOBAL_OVERRIDES_MESSAGES_OVER_CURTAINS)
@@ -258,7 +258,7 @@ void gfx_draw_frame(void) {
         switch (SoftResetState) {
             case 0:
             case 1:
-                _render_transition_stencil(OVERLAY_SCREEN_MARIO, SoftResetOverlayAlpha, NULL);
+                _render_transition_stencil(OVERLAY_SCREEN_MARIO, SoftResetOverlayAlpha, nullptr);
                 break;
         }
     }
@@ -298,11 +298,11 @@ void load_engine_data(void) {
     gOverrideFlags = 0;
     gGameStatusPtr->unk_79 = 0;
     gGameStatusPtr->backgroundFlags = 0;
-    gGameStatusPtr->musicEnabled = TRUE;
-    gGameStatusPtr->healthBarsEnabled = TRUE;
+    gGameStatusPtr->musicEnabled = true;
+    gGameStatusPtr->healthBarsEnabled = true;
     gGameStatusPtr->introPart = INTRO_PART_NONE;
     gGameStatusPtr->demoBattleFlags = 0;
-    gGameStatusPtr->multiplayerEnabled = FALSE;
+    gGameStatusPtr->multiplayerEnabled = false;
     gGameStatusPtr->altViewportOffset.x = -8;
     gGameStatusPtr->altViewportOffset.y = 4;
     gTimeFreezeMode = TIME_FREEZE_NONE;
@@ -310,7 +310,7 @@ void load_engine_data(void) {
     gGameStepDelayCount = 5;
     gGameStatusPtr->saveCount = 0;
     fio_init_flash();
-    func_80028838();
+    clear_input();
     general_heap_create();
     clear_render_tasks();
     clear_worker_list();
@@ -329,7 +329,7 @@ void load_engine_data(void) {
     clear_npcs();
     hud_element_clear_cache();
     clear_trigger_data();
-    clear_entity_data(FALSE);
+    clear_entity_data(false);
     clear_player_data();
     init_encounter_status();
     clear_screen_overlays();
@@ -343,9 +343,9 @@ void load_engine_data(void) {
     initialize_curtains();
     poll_rumble();
 
-    for (i = 0; i < ARRAY_COUNT(gGameStatusPtr->unk_50); i++) {
-        gGameStatusPtr->unk_50[i] = 3;
-        gGameStatusPtr->unk_48[i] = 12;
+    for (i = 0; i < ARRAY_COUNT(gGameStatusPtr->holdRepeatInterval); i++) {
+        gGameStatusPtr->holdRepeatInterval[i] = 3;
+        gGameStatusPtr->holdDelayTime[i] = 12;
     }
 
     gOverrideFlags |= GLOBAL_OVERRIDES_DISABLE_DRAW_FRAME;
@@ -394,6 +394,3 @@ s32 get_time_freeze_mode(void) {
     return gTimeFreezeMode;
 }
 
-#if VERSION_IQUE
-static const f32 rodata_padding[] = {0.0f, 0.0f};
-#endif

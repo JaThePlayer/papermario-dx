@@ -11,7 +11,6 @@
 #include "battle/common/move/ItemRefund.inc.c"
 
 API_CALLABLE(N(func_802A123C_72A98C)) {
-    BattleStatus* battleStatus = &gBattleStatus;
     Actor* enemy = get_actor(script->owner1.enemyID);
     Actor* target = get_actor(enemy->targetActorID);
 
@@ -55,17 +54,16 @@ API_CALLABLE(N(func_802A12E0_72AA30)) {
 
 #include "battle/common/move/UseItem.inc.c"
 
-static s32 _pad = 0; // XXX
 
 #include "battle/move/item/insecticide_herb.png.h"
 INCLUDE_IMG("battle/move/item/insecticide_herb.png", battle_item_insecticide_herb_png);
 INCLUDE_PAL("battle/move/item/insecticide_herb.pal", battle_item_insecticide_herb_pal);
 
 Vtx N(model)[] = {
-    { .v = { .ob = {-16, -16, 0}, FALSE, .tc = {0,    0},    .cn = {0, 0, 0, 255} } },
-    { .v = { .ob = {15,  -16, 0}, FALSE, .tc = {1024, 0},    .cn = {0, 0, 0, 255} } },
-    { .v = { .ob = {15,  15,  0}, FALSE, .tc = {1024, 1024}, .cn = {0, 0, 0, 255} } },
-    { .v = { .ob = {-16, 15,  0}, FALSE, .tc = {0,    1024}, .cn = {0, 0, 0, 255} } },
+    { .v = { .ob = {-16, -16, 0}, false, .tc = {0,    0},    .cn = {0, 0, 0, 255} } },
+    { .v = { .ob = {15,  -16, 0}, false, .tc = {1024, 0},    .cn = {0, 0, 0, 255} } },
+    { .v = { .ob = {15,  15,  0}, false, .tc = {1024, 1024}, .cn = {0, 0, 0, 255} } },
+    { .v = { .ob = {-16, 15,  0}, false, .tc = {0,    1024}, .cn = {0, 0, 0, 255} } },
 };
 
 Gfx N(displayList)[] = {
@@ -91,7 +89,6 @@ Gfx N(displayList)[] = {
 };
 
 EntityModelScript N(modelCommandList) = STANDARD_ENTITY_MODEL_SCRIPT(N(displayList), RENDER_MODE_ALPHATEST);
-
 
 EvtScript N(EVS_UseItem) = {
     SetConst(LVarA, ITEM_INSECTICIDE_HERB)

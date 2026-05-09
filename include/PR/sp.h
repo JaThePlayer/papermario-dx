@@ -23,9 +23,7 @@
 #ifndef _SP_H_
 #define _SP_H_
 
-#ifdef _LANGUAGE_C_PLUS_PLUS
-extern "C" {
-#endif
+
 
 #include <PR/mbi.h>
 #include <PR/ultratypes.h>
@@ -45,7 +43,7 @@ struct bitmap {
 	void	*buf;		/* Pointer to bitmap data	*/
 				/* Don't re-load if new buf	*/
 				/* is the same as the old one   */
-				/* Skip if NULL */
+				/* Skip if nullptr */
 
 	s16	actualHeight;	/* True Height of this bitmap piece */
 
@@ -127,16 +125,16 @@ typedef struct sprite Sprite;
  * Misc constants
  */
 
-#ifndef NULL
-#define NULL			0
+#ifndef nullptr
+#define nullptr			0
 #endif
 
-#ifndef TRUE
-#define TRUE			1
+#ifndef true
+#define true			1
 #endif
 
-#ifndef FALSE
-#define FALSE			0
+#ifndef false
+#define false			0
 #endif
 
 /*
@@ -189,8 +187,6 @@ void spInit( Gfx **glistp );
 void spScissor( s32 xmin, s32 xmax, s32 ymin, s32 ymax );
 void spFinish( Gfx **glistp );
 
-#ifdef _LANGUAGE_C_PLUS_PLUS
-}
-#endif
+
 
 #endif /* _SP_H_ */

@@ -32,8 +32,8 @@ void footprint_main(f32 x, f32 y, f32 z, f32 angle, b32 isLeft) {
     bp.unk_00 = 0;
     bp.init = footprint_init;
     bp.update = footprint_update;
-    bp.renderWorld = footprint_render;
-    bp.renderUI = NULL;
+    bp.renderScene = footprint_render;
+    bp.renderUI = nullptr;
     bp.effectID = EFFECT_FOOTPRINT;
 
     effect = create_effect_instance(&bp);
@@ -41,12 +41,12 @@ void footprint_main(f32 x, f32 y, f32 z, f32 angle, b32 isLeft) {
     part = general_heap_malloc(numParts * sizeof(*part));
     effect->data.footprint = part;
 
-    ASSERT(effect->data.footprint != NULL);
+    ASSERT(effect->data.footprint != nullptr);
 
     mem_clear(part, numParts * sizeof(*part));
 
     for (i = 0; i < numParts; i++, part++) {
-        part->alive = TRUE;
+        part->alive = true;
         part->unk_7C = 0;
         part->pos.x = x;
         part->pos.y = y;
@@ -77,16 +77,16 @@ void footprint_init(EffectInstance* effect) {
 
 void footprint_update(EffectInstance* effect) {
     FootprintFXData* part = effect->data.footprint;
-    s32 cond = FALSE;
+    s32 cond = false;
     s32 i;
 
     for (i = 0; i < effect->numParts; i++, part++) {
         if (part->alive) {
             part->lifetime--;
             if (part->lifetime <= 0) {
-                part->alive = FALSE;
+                part->alive = false;
             } else {
-                cond = TRUE;
+                cond = true;
                 func_E0018000(part);
                 part->alpha -= 2;
             }
@@ -116,14 +116,14 @@ void func_E00183BC(EffectInstance* effect) {
 }
 
 void footprint_appendGfx(void* effect) {
-    EffectInstance* effectTemp = effect;
-    FootprintFXData* part = effectTemp->data.footprint;
+    EffectInstance* effectInst = effect;
+    FootprintFXData* part = effectInst->data.footprint;
     s32 i;
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(effectTemp->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(effectInst->shared->graphics));
 
-    for (i = 0; i < effectTemp->numParts; i++, part++) {
+    for (i = 0; i < effectInst->numParts; i++, part++) {
         if (part->alive) {
             Gfx* dlist = D_09000240_32FD90;
 

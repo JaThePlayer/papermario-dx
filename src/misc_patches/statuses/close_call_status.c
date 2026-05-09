@@ -4,7 +4,7 @@
 
 #define NAMESPACE close_call
 
-#define close_call_DECREMENT_LATE TRUE
+#define close_call_DECREMENT_LATE true
 
 void N(on_apply)(Actor* actor, Vec3f position, u8 potency) {
     EffectInstance* debuffEffect = fx_debuff(2, position.x, position.y, position.z);

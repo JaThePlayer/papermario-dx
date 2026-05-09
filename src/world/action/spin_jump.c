@@ -43,7 +43,7 @@ void action_update_spin_jump(void) {
         sfx_play_sound_at_player(SOUND_SPIN_JUMP, SOUND_SPACE_DEFAULT);
     }
 
-    landed = FALSE;
+    landed = false;
     switch (playerStatus->actionSubstate) {
         case SUBSTATE_SPIN:
             RotationRate = 40.0f;
@@ -57,7 +57,7 @@ void action_update_spin_jump(void) {
                     playerStatus->pos.y += playerStatus->gravityIntegrator[0];
                 } else if (collisionStatus->curCeiling & COLLISION_WITH_ENTITY_BIT) {
                     entity = get_entity_by_index(collisionStatus->curCeiling);
-                    if (entity != NULL) {
+                    if (entity != nullptr) {
                         playerStatus->pos.y = entity->pos.y - (playerStatus->colliderHeight * 0.5);
                     }
                 }
@@ -106,7 +106,7 @@ void action_update_spin_jump(void) {
                 playerStatus->gravityIntegrator[0] = -100.0f;
             }
             if (belowColliderID > NO_COLLIDER) {
-                if (collisionStatus->curFloor & COLLISION_WITH_ENTITY_BIT && (entityType = get_entity_type(collisionStatus->curFloor),
+                if ((collisionStatus->curFloor & COLLISION_WITH_ENTITY_BIT) && (entityType = get_entity_type(collisionStatus->curFloor),
                         entityType == ENTITY_TYPE_RED_SWITCH || entityType == ENTITY_TYPE_BLUE_SWITCH)) {
                     get_entity_by_index(collisionStatus->curFloor)->collisionFlags |= ENTITY_COLLISION_PLAYER_TOUCH_FLOOR;
                     playerStatus->actionSubstate = SUBSTATE_HIT_SWITCH;
@@ -141,7 +141,7 @@ void action_update_spin_jump(void) {
                         sfx_play_sound_at_player(SOUND_LAND_SPIN_JUMP, SOUND_SPACE_DEFAULT);
                         start_rumble(128, 25);
                         panels = &gCurrentHiddenPanels;
-                        panels->tryFlipTrigger = TRUE;
+                        panels->tryFlipTrigger = true;
                         panels->flipTriggerPosY = playerStatus->pos.y;
                         playerStatus->flags |= PS_FLAG_SPECIAL_LAND;
                     }
@@ -151,7 +151,7 @@ void action_update_spin_jump(void) {
         case SUBSTATE_IMPACT:
             velocity = integrate_gravity();
             if (velocity == 0.0f) {
-                landed = TRUE;
+                landed = true;
             } else {
                 if (playerStatus->gravityIntegrator[0] > 0.0f) {
                     playerStatus->pos.y += velocity;
@@ -175,7 +175,7 @@ void action_update_spin_jump(void) {
             // fallthrough
         case SUBSTATE_ABORT:
             if (--playerStatus->poundImpactDelay <= 0) {
-                landed = TRUE;
+                landed = true;
             }
             break;
         case SUBSTATE_HIT_SWITCH:

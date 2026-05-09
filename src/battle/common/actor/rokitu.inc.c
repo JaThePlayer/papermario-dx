@@ -42,7 +42,7 @@ s32 N(DefaultAnims)[] = {
     STATUS_KEY_STATIC,    ANIM_Lakitu_Rokitu_Anim01,
     STATUS_KEY_PARALYZE,  ANIM_Lakitu_Rokitu_Anim00,
     STATUS_KEY_DIZZY,     ANIM_Lakitu_Rokitu_Anim09,
-    STATUS_KEY_FEAR,      ANIM_Lakitu_Rokitu_Anim09,
+    STATUS_KEY_UNUSED,      ANIM_Lakitu_Rokitu_Anim09,
     STATUS_END,
 };
 
@@ -69,7 +69,7 @@ s32 N(StatusTable)[] = {
     STATUS_KEY_POISON,             50,
     STATUS_KEY_FROZEN,              0,
     STATUS_KEY_DIZZY,             100,
-    STATUS_KEY_FEAR,                0,
+    STATUS_KEY_UNUSED,                0,
     STATUS_KEY_STATIC,             50,
     STATUS_KEY_PARALYZE,           50,
     STATUS_KEY_SHRINK,             75,
@@ -79,7 +79,7 @@ s32 N(StatusTable)[] = {
     STATUS_TURN_MOD_POISON,         0,
     STATUS_TURN_MOD_FROZEN,         0,
     STATUS_TURN_MOD_DIZZY,          1,
-    STATUS_TURN_MOD_FEAR,           0,
+    STATUS_TURN_MOD_UNUSED,           0,
     STATUS_TURN_MOD_STATIC,         0,
     STATUS_TURN_MOD_PARALYZE,      -1,
     STATUS_TURN_MOD_SHRINK,         0,
@@ -176,7 +176,7 @@ EvtScript N(EVS_ReturnHome) = {
 };
 
 EvtScript N(EVS_HandleEvent) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(GetLastEvent, ACTOR_SELF, LVar0)
     Switch(LVar0)
@@ -272,23 +272,23 @@ EvtScript N(EVS_HandleEvent) = {
         CaseDefault
     EndSwitch
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };
 
 EvtScript N(EVS_Attack_SpinyToss) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
     Call(UseBattleCamPreset, BTL_CAM_ENEMY_APPROACH)
     Call(BattleCamTargetActor, ACTOR_SELF)
-    Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_TARGET, BTL_CAM_XADJ_AVG, FALSE)
+    Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_TARGET, BTL_CAM_XADJ_AVG, false)
     Call(SetActorSpeed, ACTOR_SELF, Float(6.0))
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Lakitu_Rokitu_Anim03)
     Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
     Call(SetGoalPos, ACTOR_SELF, -20, LVar1, LVar2)
-    Call(RunToGoal, ACTOR_SELF, 0, FALSE)
+    Call(RunToGoal, ACTOR_SELF, 0, false)
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Lakitu_Rokitu_Anim01)
     Call(SetAnimation, ACTOR_SELF, PRT_SPINY_BALL, ANIM_Lakitu_Cleft_AnimCleft)
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Lakitu_Rokitu_Anim12)
@@ -318,7 +318,7 @@ EvtScript N(EVS_Attack_SpinyToss) = {
         Call(SetPartPos, ACTOR_SELF, PRT_SPINY_BALL, LVar0, LVar1, LVar2)
         Call(SetPartScale, ACTOR_SELF, PRT_SPINY_BALL, Float(1.0), Float(1.0), Float(1.0))
     EndIf
-    Call(SetPartFlagBits, ACTOR_SELF, PRT_SPINY_BALL, ACTOR_PART_FLAG_INVISIBLE, FALSE)
+    Call(SetPartFlagBits, ACTOR_SELF, PRT_SPINY_BALL, ACTOR_PART_FLAG_INVISIBLE, false)
     Wait(10)
     Thread
         Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Lakitu_Rokitu_Anim15)
@@ -338,16 +338,16 @@ EvtScript N(EVS_Attack_SpinyToss) = {
             Call(GetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
             Sub(LVar0, 40)
             Set(LVar1, 0)
-            Call(JumpPartTo, ACTOR_SELF, PRT_SPINY_BALL, LVar0, 0, LVar2, 20, TRUE)
+            Call(JumpPartTo, ACTOR_SELF, PRT_SPINY_BALL, LVar0, 0, LVar2, 20, true)
             Sub(LVar0, 30)
             IfEq(LVarA, HIT_RESULT_LUCKY)
                 Call(EnemyTestTarget, ACTOR_SELF, LVarA, DAMAGE_TYPE_TRIGGER_LUCKY, 0, 0, 0)
             EndIf
             Call(ResetAllActorSounds, ACTOR_SELF)
-            Call(JumpPartTo, ACTOR_SELF, PRT_SPINY_BALL, LVar0, 0, LVar2, 10, TRUE)
+            Call(JumpPartTo, ACTOR_SELF, PRT_SPINY_BALL, LVar0, 0, LVar2, 10, true)
             Sub(LVar0, 20)
-            Call(JumpPartTo, ACTOR_SELF, PRT_SPINY_BALL, LVar0, 0, LVar2, 5, TRUE)
-            Call(SetPartFlagBits, ACTOR_SELF, PRT_SPINY_BALL, ACTOR_PART_FLAG_INVISIBLE, TRUE)
+            Call(JumpPartTo, ACTOR_SELF, PRT_SPINY_BALL, LVar0, 0, LVar2, 5, true)
+            Call(SetPartFlagBits, ACTOR_SELF, PRT_SPINY_BALL, ACTOR_PART_FLAG_INVISIBLE, true)
             Wait(20)
             Call(YieldTurn)
             Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
@@ -357,14 +357,14 @@ EvtScript N(EVS_Attack_SpinyToss) = {
             Call(SetActorYaw, ACTOR_SELF, 0)
             Call(RemoveActorDecoration, ACTOR_SELF, PRT_MAIN, 0)
             Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-            Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+            Call(UseIdleAnimation, ACTOR_SELF, true)
             Return
         EndCaseGroup
     EndSwitch
     Call(SetPartJumpGravity, ACTOR_SELF, PRT_SPINY_BALL, Float(1.0))
     Call(SetGoalToTarget, ACTOR_SELF)
     Call(GetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-    Call(JumpPartTo, ACTOR_SELF, PRT_SPINY_BALL, LVar0, LVar1, LVar2, 20, TRUE)
+    Call(JumpPartTo, ACTOR_SELF, PRT_SPINY_BALL, LVar0, LVar1, LVar2, 20, true)
     Call(ResetAllActorSounds, ACTOR_SELF)
     Wait(2)
     Call(EnemyDamageTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_NO_CONTACT, 0, 0, DMG_SPINY_TOSS, BS_FLAGS1_TRIGGER_EVENTS)
@@ -374,7 +374,7 @@ EvtScript N(EVS_Attack_SpinyToss) = {
     Call(SetGoalToTarget, ACTOR_SELF)
     Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER) // make the camera stay in place
     Call(GetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-    Call(JumpPartTo, ACTOR_SELF, PRT_SPINY_BALL, LVar0, LVar1, LVar2, 20, TRUE)
+    Call(JumpPartTo, ACTOR_SELF, PRT_SPINY_BALL, LVar0, LVar1, LVar2, 20, true)
     Call(ResetAllActorSounds, ACTOR_SELF)
     Wait(2)
     Call(SetTargetActor, ACTOR_SELF, ACTOR_PARTNER)
@@ -386,19 +386,19 @@ EvtScript N(EVS_Attack_SpinyToss) = {
         Call(SetGoalToTarget, ACTOR_SELF)
         Call(GetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
         Sub(LVar0, 40)
-        Call(JumpPartTo, ACTOR_SELF, PRT_SPINY_BALL, LVar0, 0, LVar2, 20, TRUE)
+        Call(JumpPartTo, ACTOR_SELF, PRT_SPINY_BALL, LVar0, 0, LVar2, 20, true)
         Sub(LVar0, 30)
-        Call(JumpPartTo, ACTOR_SELF, PRT_SPINY_BALL, LVar0, 0, LVar2, 10, TRUE)
+        Call(JumpPartTo, ACTOR_SELF, PRT_SPINY_BALL, LVar0, 0, LVar2, 10, true)
         Sub(LVar0, 20)
-        Call(JumpPartTo, ACTOR_SELF, PRT_SPINY_BALL, LVar0, 0, LVar2, 5, TRUE)
-        Call(SetPartFlagBits, ACTOR_SELF, PRT_SPINY_BALL, ACTOR_PART_FLAG_INVISIBLE, TRUE)
+        Call(JumpPartTo, ACTOR_SELF, PRT_SPINY_BALL, LVar0, 0, LVar2, 5, true)
+        Call(SetPartFlagBits, ACTOR_SELF, PRT_SPINY_BALL, ACTOR_PART_FLAG_INVISIBLE, true)
     EndThread
     Wait(20)
     Call(YieldTurn)
     ExecWait(N(EVS_ReturnHome))
 
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };
@@ -410,12 +410,12 @@ Formation N(SpinyFormation) = {
 };
 
 EvtScript N(EVS_Move_SummonSpiny) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
     Call(UseBattleCamPreset, BTL_CAM_ACTOR)
     Call(BattleCamTargetActor, ACTOR_SELF)
-    Call(SummonEnemy, Ref(N(SpinyFormation)), FALSE)
+    Call(SummonEnemy, Ref(N(SpinyFormation)), false)
     Call(CopyStatusEffects, ACTOR_SELF, LVar0)
     Set(LVarB, LVar0)
     Call(OverrideActorLevel, LVarB, 1)
@@ -450,7 +450,7 @@ EvtScript N(EVS_Move_SummonSpiny) = {
         Call(SetPartScale, ACTOR_SELF, PRT_SPINY_BALL, Float(1.0), Float(1.0), Float(1.0))
         Call(SetPartScale, ACTOR_SELF, PRT_SPINY, Float(1.0), Float(1.0), Float(1.0))
     EndIf
-    Call(SetPartFlagBits, ACTOR_SELF, PRT_SPINY_BALL, ACTOR_PART_FLAG_INVISIBLE, FALSE)
+    Call(SetPartFlagBits, ACTOR_SELF, PRT_SPINY_BALL, ACTOR_PART_FLAG_INVISIBLE, false)
     Wait(10)
     Thread
         Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Lakitu_Rokitu_Anim15)
@@ -464,27 +464,27 @@ EvtScript N(EVS_Move_SummonSpiny) = {
     Call(SetPartJumpGravity, ACTOR_SELF, PRT_SPINY_BALL, Float(1.6))
     Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
     Sub(LVar0, 40)
-    Call(JumpPartTo, ACTOR_SELF, PRT_SPINY_BALL, LVar0, 0, LVar2, 12, TRUE)
+    Call(JumpPartTo, ACTOR_SELF, PRT_SPINY_BALL, LVar0, 0, LVar2, 12, true)
     Call(SetPartPos, ACTOR_SELF, PRT_SPINY, LVar0, 0, LVar2)
     Sub(LVar0, 30)
     Thread
         Call(SetPartRotationOffset, ACTOR_SELF, PRT_SPINY, 0, 16, 0)
         Set(LVar0, 0)
         Set(LVar1, 0)
-        Set(LFlag0, FALSE)
+        Set(LFlag0, false)
         Loop(12)
             Add(LVar0, 30)
             Call(SetPartRotation, ACTOR_SELF, PRT_SPINY, 0, 0, LVar0)
             Add(LVar1, 1)
             IfGe(LVar1, 6)
-                IfEq(LFlag0, TRUE)
-                    Call(SetPartFlagBits, ACTOR_SELF, PRT_SPINY_BALL, ACTOR_PART_FLAG_INVISIBLE, FALSE)
-                    Call(SetPartFlagBits, ACTOR_SELF, PRT_SPINY, ACTOR_PART_FLAG_INVISIBLE, TRUE)
-                    Set(LFlag0, FALSE)
+                IfEq(LFlag0, true)
+                    Call(SetPartFlagBits, ACTOR_SELF, PRT_SPINY_BALL, ACTOR_PART_FLAG_INVISIBLE, false)
+                    Call(SetPartFlagBits, ACTOR_SELF, PRT_SPINY, ACTOR_PART_FLAG_INVISIBLE, true)
+                    Set(LFlag0, false)
                 Else
-                    Call(SetPartFlagBits, ACTOR_SELF, PRT_SPINY_BALL, ACTOR_PART_FLAG_INVISIBLE, TRUE)
-                    Call(SetPartFlagBits, ACTOR_SELF, PRT_SPINY, ACTOR_PART_FLAG_INVISIBLE, FALSE)
-                    Set(LFlag0, TRUE)
+                    Call(SetPartFlagBits, ACTOR_SELF, PRT_SPINY_BALL, ACTOR_PART_FLAG_INVISIBLE, true)
+                    Call(SetPartFlagBits, ACTOR_SELF, PRT_SPINY, ACTOR_PART_FLAG_INVISIBLE, false)
+                    Set(LFlag0, true)
                 EndIf
             EndIf
             Wait(1)
@@ -492,17 +492,17 @@ EvtScript N(EVS_Move_SummonSpiny) = {
     EndThread
     Thread
         Call(SetPartJumpGravity, ACTOR_SELF, PRT_SPINY, Float(1.3))
-        Call(JumpPartTo, ACTOR_SELF, PRT_SPINY, LVar0, 0, LVar2, 12, TRUE)
+        Call(JumpPartTo, ACTOR_SELF, PRT_SPINY, LVar0, 0, LVar2, 12, true)
     EndThread
     Wait(1)
     Call(ResetAllActorSounds, ACTOR_SELF)
     Call(SetPartJumpGravity, ACTOR_SELF, PRT_SPINY_BALL, Float(1.3))
-    Call(JumpPartTo, ACTOR_SELF, PRT_SPINY_BALL, LVar0, 0, LVar2, 12, TRUE)
+    Call(JumpPartTo, ACTOR_SELF, PRT_SPINY_BALL, LVar0, 0, LVar2, 12, true)
     PlayEffect(EFFECT_LANDING_DUST, 1, LVar0, 0, LVar2, 0, 0)
     Call(GetPartOffset, ACTOR_SELF, PRT_SPINY_BALL, LVar0, LVar1, LVar2)
     Call(SetActorPos, LVarB, LVar0, LVar1, LVar2)
-    Call(SetPartFlagBits, ACTOR_SELF, PRT_SPINY_BALL, ACTOR_PART_FLAG_INVISIBLE, TRUE)
-    Call(SetPartFlagBits, ACTOR_SELF, PRT_SPINY, ACTOR_PART_FLAG_INVISIBLE, TRUE)
+    Call(SetPartFlagBits, ACTOR_SELF, PRT_SPINY_BALL, ACTOR_PART_FLAG_INVISIBLE, true)
+    Call(SetPartFlagBits, ACTOR_SELF, PRT_SPINY, ACTOR_PART_FLAG_INVISIBLE, true)
     Call(SetAnimation, LVarB, 1, ANIM_Cleft_Anim02)
     Wait(20)
     Call(SetAnimation, LVarB, 1, ANIM_Cleft_Anim06)
@@ -515,7 +515,7 @@ EvtScript N(EVS_Move_SummonSpiny) = {
         Call(SetActorYaw, LVarB, 180)
     EndIf
     Call(SetActorSpeed, LVarB, Float(4.0))
-    Call(RunToGoal, LVarB, 0, FALSE)
+    Call(RunToGoal, LVarB, 0, false)
     Call(SetAnimation, LVarB, 1, ANIM_Cleft_Anim02)
     Call(SetActorYaw, LVarB, 0)
     Call(GetActorPos, LVarB, LVar0, LVar1, LVar2)
@@ -525,7 +525,7 @@ EvtScript N(EVS_Move_SummonSpiny) = {
     Add(LVar0, 1)
     Call(SetActorVar, ACTOR_SELF, AVAR_SummonCount, LVar0)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };
@@ -539,31 +539,31 @@ EvtScript N(EVS_GetAvailableColumn) = {
         Mod(LVar5, 4)
         Switch(LVar5)
             CaseEq(0)
-                Set(LFlag1, TRUE)
+                Set(LFlag1, true)
             CaseEq(1)
-                Set(LFlag2, TRUE)
+                Set(LFlag2, true)
             CaseEq(2)
-                Set(LFlag3, TRUE)
+                Set(LFlag3, true)
             CaseEq(3)
-                Set(LFlag4, TRUE)
+                Set(LFlag4, true)
         EndSwitch
         Call(ChooseNextTarget, ITER_NEXT, LVar0)
         IfNe(LVar0, ITER_NO_MORE)
             Goto(0)
         EndIf
-    IfEq(LFlag1, FALSE)
+    IfEq(LFlag1, false)
         Set(LVarA, 0)
         Return
     EndIf
-    IfEq(LFlag2, FALSE)
+    IfEq(LFlag2, false)
         Set(LVarA, 1)
         Return
     EndIf
-    IfEq(LFlag3, FALSE)
+    IfEq(LFlag3, false)
         Set(LVarA, 2)
         Return
     EndIf
-    IfEq(LFlag4, FALSE)
+    IfEq(LFlag4, false)
         Set(LVarA, 3)
         Return
     EndIf

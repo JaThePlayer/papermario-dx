@@ -6,6 +6,8 @@
 #include "sprite/player.h"
 #include "hud_element.h"
 #include "pause/pause_common.h"
+#include "misc_patches/sp_pools.h"
+#include "misc_patches/misc_patches.h"
 
 #ifndef TRIAL_BOO_NPC_ID
     #error TRIAL_BOO_NPC_ID must be defined for trial_boo.inc.c
@@ -50,7 +52,7 @@ Trial N(BooTrials)[] = {
 };
 
 b8 is_trial_completed(Trial* trial) {
-    return evt_get_variable(NULL, trial->gameFlag);
+    return evt_get_variable(nullptr, trial->gameFlag);
 }
 
 API_CALLABLE(N(BooTrials_TrialSelectorPopup)) {
@@ -60,7 +62,7 @@ API_CALLABLE(N(BooTrials_TrialSelectorPopup)) {
     s32 selected, menuPos, i;
 
     if (isInitialCall) {
-        s32 storyProgress = evt_get_variable(NULL, GB_StoryProgress);
+        s32 storyProgress = evt_get_variable(nullptr, GB_StoryProgress);
 
         script->functionTempPtr[2] = heap_malloc(sizeof(*menu));
         menu = script->functionTempPtr[2];
@@ -76,14 +78,14 @@ API_CALLABLE(N(BooTrials_TrialSelectorPopup)) {
                 menu->nameMsg[menuPos] = trial->nameMsg;
                 menu->ptrIcon[menuPos] = itemHudScripts->enabled;
 
-                menu->enabled[menuPos] = TRUE;
+                menu->enabled[menuPos] = true;
                 s32 cost = is_trial_completed(trial) ? 0 : trial->coinCost;
                 if (is_ascetic_note())
                     cost = 0;
 
                 if (playerData->coins < cost) {
                     menu->ptrIcon[menuPos] = itemHudScripts->disabled;
-                    menu->enabled[menuPos] = FALSE;
+                    menu->enabled[menuPos] = false;
                 }
 
                 menu->descMsg[menuPos] = trial->descMsg;
@@ -127,7 +129,7 @@ API_CALLABLE(N(BooTrials_TrialSelectorPopup)) {
 
         playerData->coins -= menu->value[selected - 1];
     } else {
-        script->varTable[0xE] = NULL;
+        script->varTable[0xE] = nullptr;
     }
 
     gCurrentTrial = script->varTable[0xE];
@@ -170,7 +172,7 @@ EvtScript N(EVS_TrialBoo_NPC_OtherAI) = {
         Return
     EndIf
     */
-    Call(SetNpcFlagBits, NPC_SELF, NPC_FLAG_HAS_NO_SPRITE, FALSE)
+    Call(SetNpcFlagBits, NPC_SELF, NPC_FLAG_HAS_NO_SPRITE, false)
     Call(SetNpcSprite, -1, ANIM_Boo_Idle)
     Return
     End
@@ -198,12 +200,12 @@ API_CALLABLE(N(CheckForNextBattle)) {
     Enemy* enemy = script->owner1.enemy;
 
     gCurrentTrialFormationId++;
-    if (trial->formations[gCurrentTrialFormationId] == NULL) {
-        script->varTable[0x9] = FALSE;
+    if (trial->formations[gCurrentTrialFormationId] == nullptr) {
+        script->varTable[0x9] = false;
         return ApiStatus_DONE2;
     }
 
-    script->varTable[0x9] = TRUE;
+    script->varTable[0x9] = true;
     gCurrentEncounter.encounterList[enemy->encounterIndex]->battle = trial->formations[gCurrentTrialFormationId];
 
     return ApiStatus_DONE2;
@@ -212,11 +214,11 @@ API_CALLABLE(N(CheckForNextBattle)) {
 API_CALLABLE(N(GetTrialRewardInfoAndMarkAsCompleted)) {
     Trial* trial = gCurrentTrial;
 
-    if (trial == NULL || is_trial_completed(trial)) {
-        script->varTable[0x9] = FALSE;
+    if (trial == nullptr || is_trial_completed(trial)) {
+        script->varTable[0x9] = false;
     } else {
-        evt_set_variable(NULL, trial->gameFlag, TRUE);
-        script->varTable[0x9] = TRUE;
+        evt_set_variable(nullptr, trial->gameFlag, true);
+        script->varTable[0x9] = true;
         script->varTable[0xA] = trial->rewardStarPieces;
         script->varTable[0xB] = trial->rewardItemId;
     }
@@ -231,7 +233,7 @@ EvtScript N(EVS_NpcDefeat_TrialBoo) = {
     Call(N(CheckForNextBattle))
     IfTrue(LVar9)
         Call(SpeakToPlayer, NPC_SELF, ANIM_Boo_Talk, ANIM_Boo_Idle, 0, MSG_BooTrial_Intoduction_SwappingFormation)
-        Call(DisablePlayerInput, FALSE)
+        Call(DisablePlayerInput, false)
         Call(StartBossBattle)
         Return
     EndIf
@@ -251,14 +253,14 @@ EvtScript N(EVS_NpcDefeat_TrialBoo) = {
         Call(SpeakToPlayer, NPC_SELF, ANIM_Boo_Talk, ANIM_Boo_Idle, 0, MSG_BooTrial_Intoduction_TrialSuccess)
     EndIf
 
-    Call(DisablePlayerInput, FALSE)
+    Call(DisablePlayerInput, false)
     Return
     End
 };
 
 EvtScript N(EVS_TrialBoo_Conversation) = {
     IfFalse(GF_BooTrial_IntroductionInToadTown)
-        Set(GF_BooTrial_IntroductionInToadTown, TRUE)
+        Set(GF_BooTrial_IntroductionInToadTown, true)
         Call(SpeakToPlayer, NPC_SELF, ANIM_Boo_Talk, ANIM_Boo_Idle, 0, MSG_BooTrial_Intoduction_BeforeCh3)
     Else
         Call(SpeakToPlayer, NPC_SELF, ANIM_Boo_Talk, ANIM_Boo_Idle, 0, MSG_BooTrial_Intoduction_Again)

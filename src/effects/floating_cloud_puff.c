@@ -27,15 +27,15 @@ EffectInstance* floating_cloud_puff_main(
 
     bp.init = floating_cloud_puff_init;
     bp.update = floating_cloud_puff_update;
-    bp.renderWorld = floating_cloud_puff_render;
+    bp.renderScene = floating_cloud_puff_render;
     bp.unk_00 = 0;
-    bp.renderUI = NULL;
+    bp.renderUI = nullptr;
     bp.effectID = EFFECT_FLOATING_CLOUD_PUFF;
 
     effect = create_effect_instance(&bp);
     effect->numParts = numParts;
     data = effect->data.floatingCloudPuff = general_heap_malloc(numParts * sizeof(*data));
-    ASSERT(effect->data.floatingCloudPuff != NULL);
+    ASSERT(effect->data.floatingCloudPuff != nullptr);
 
     data->unk_00 = arg0;
     data->unk_14 = 0;
@@ -122,7 +122,7 @@ void floating_cloud_puff_appendGfx(void* effect) {
     Matrix4f sp50;
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
 
     guTranslateF(sp10, data->unk_04, data->unk_08, data->unk_0C);
     guScaleF(sp50, scale, scale, scale);

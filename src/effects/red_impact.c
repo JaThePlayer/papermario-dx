@@ -32,14 +32,14 @@ EffectInstance* red_impact_main(s32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4
     bpPtr->unk_00 = 0;
     bpPtr->init = red_impact_init;
     bpPtr->update = red_impact_update;
-    bpPtr->renderWorld = red_impact_render;
-    bpPtr->renderUI = NULL;
+    bpPtr->renderScene = red_impact_render;
+    bpPtr->renderUI = nullptr;
     bpPtr->effectID = EFFECT_RED_IMPACT;
 
     effect = create_effect_instance(bpPtr);
     effect->numParts = numParts;
     part = effect->data.redImpact = general_heap_malloc(numParts * sizeof(*part));
-    ASSERT(effect->data.redImpact != NULL);
+    ASSERT(effect->data.redImpact != nullptr);
 
     part->unk_2C = 0;
     part->unk_00 = arg0;
@@ -167,7 +167,7 @@ void red_impact_appendGfx(void* effect) {
     s32 i;
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
     gSPDisplayList(gMainGfxPos++, dlist);
 
     guPositionF(sp20, 0.0f, -gCameras[gCurrentCameraID].curYaw, 0.0f, 1.0f, part->unk_04, part->unk_08, part->unk_0C);

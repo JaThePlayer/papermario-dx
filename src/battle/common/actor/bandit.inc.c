@@ -38,7 +38,7 @@ s32 N(DefaultAnims)[] = {
     STATUS_KEY_STATIC,    ANIM_Bandit_Idle,
     STATUS_KEY_PARALYZE,  ANIM_Bandit_Still,
     STATUS_KEY_DIZZY,     ANIM_Bandit_Dizzy,
-    STATUS_KEY_FEAR,      ANIM_Bandit_Dizzy,
+    STATUS_KEY_UNUSED,    ANIM_Bandit_Dizzy,
     STATUS_END,
 };
 
@@ -51,7 +51,7 @@ s32 N(HoldingAnims)[] = {
     STATUS_KEY_STATIC,    ANIM_Bandit_IdleHolding,
     STATUS_KEY_PARALYZE,  ANIM_Bandit_StillHolding,
     STATUS_KEY_DIZZY,     ANIM_Bandit_Dizzy,
-    STATUS_KEY_FEAR,      ANIM_Bandit_Dizzy,
+    STATUS_KEY_UNUSED,    ANIM_Bandit_Dizzy,
     STATUS_END,
 };
 
@@ -72,7 +72,7 @@ s32 N(StatusTable)[] = {
     STATUS_KEY_POISON,             20,
     STATUS_KEY_FROZEN,            100,
     STATUS_KEY_DIZZY,              90,
-    STATUS_KEY_FEAR,               50,
+    STATUS_KEY_UNUSED,      50,
     STATUS_KEY_STATIC,             30,
     STATUS_KEY_PARALYZE,          100,
     STATUS_KEY_SHRINK,             90,
@@ -82,7 +82,7 @@ s32 N(StatusTable)[] = {
     STATUS_TURN_MOD_POISON,         0,
     STATUS_TURN_MOD_FROZEN,         0,
     STATUS_TURN_MOD_DIZZY,          0,
-    STATUS_TURN_MOD_FEAR,           0,
+    STATUS_TURN_MOD_UNUSED,         0,
     STATUS_TURN_MOD_STATIC,         0,
     STATUS_TURN_MOD_PARALYZE,       1,
     STATUS_TURN_MOD_SHRINK,         0,
@@ -216,17 +216,17 @@ EvtScript N(EVS_Idle) = {
 EvtScript N(EVS_DropCoin) = {
     Call(GetActorVar, ACTOR_SELF, AVAR_HasCoin, LVar0)
     Switch(LVar0)
-        CaseEq(FALSE)
+        CaseEq(false)
             // do nothing
-        CaseEq(TRUE)
-            Call(SetActorVar, ACTOR_SELF, AVAR_HasCoin, FALSE)
+        CaseEq(true)
+            Call(SetActorVar, ACTOR_SELF, AVAR_HasCoin, false)
             Call(SetIdleAnimations, ACTOR_SELF, PRT_MAIN, Ref(N(DefaultAnims)))
-            Call(SetPartFlagBits, ACTOR_SELF, PRT_COIN, ACTOR_PART_FLAG_USE_ABSOLUTE_POSITION, FALSE)
-            Call(SummonEnemy, Ref(N(CoinFormation)), FALSE)
+            Call(SetPartFlagBits, ACTOR_SELF, PRT_COIN, ACTOR_PART_FLAG_USE_ABSOLUTE_POSITION, false)
+            Call(SummonEnemy, Ref(N(CoinFormation)), false)
             Set(LVarA, LVar0)
             Call(GetPartOffset, ACTOR_SELF, PRT_COIN, LVar1, LVar2, LVar3)
             Call(SetActorPos, LVarA, LVar1, LVar2, LVar3)
-            Call(SetPartFlagBits, ACTOR_SELF, PRT_COIN, ACTOR_PART_FLAG_INVISIBLE, TRUE)
+            Call(SetPartFlagBits, ACTOR_SELF, PRT_COIN, ACTOR_PART_FLAG_INVISIBLE, true)
             Call(GetActorVar, ACTOR_SELF, AVAR_NumCoins, LVar0)
             Call(SetActorVar, LVarA, AVAR_Coin_NumCoins, LVar0)
             Call(SetActorJumpGravity, LVarA, Float(1.0))
@@ -237,15 +237,15 @@ EvtScript N(EVS_DropCoin) = {
             Call(SetActorSounds, LVarA, ACTOR_SOUND_JUMP, SOUND_NONE, 0)
             Call(AddVectorPolar, LVar1, LVar3, Float(40.0), LVar0)
             Call(SetGoalPos, LVarA, LVar1, 0, LVar3)
-            Call(JumpToGoal, LVarA, 20, FALSE, TRUE, FALSE)
+            Call(JumpToGoal, LVarA, 20, false, true, false)
             Call(PlaySoundAtActor, LVarA, SOUND_COIN_BOUNCE)
             Call(AddVectorPolar, LVar1, LVar3, Float(20.0), LVar0)
             Call(SetGoalPos, LVarA, LVar1, 0, LVar3)
-            Call(JumpToGoal, LVarA, 10, FALSE, TRUE, FALSE)
+            Call(JumpToGoal, LVarA, 10, false, true, false)
             Call(PlaySoundAtActor, LVarA, SOUND_COIN_BOUNCE)
             Call(AddVectorPolar, LVar1, LVar3, Float(10.0), LVar0)
             Call(SetGoalPos, LVarA, LVar1, 0, LVar3)
-            Call(JumpToGoal, LVarA, 5, FALSE, TRUE, FALSE)
+            Call(JumpToGoal, LVarA, 5, false, true, false)
             Call(PlaySoundAtActor, LVarA, SOUND_COIN_BOUNCE)
             Loop(0)
                 Call(GetBattleFlags, LVar1)
@@ -273,13 +273,13 @@ EvtScript N(EVS_DropCoin) = {
                 Sub(LVar4, LVar3)
                 IfLt(LVar4, 30)
                     Call(SetGoalPos, LVarA, LVar0, LVar1, LVar2)
-                    Call(JumpToGoal, LVarA, 5, FALSE, TRUE, FALSE)
+                    Call(JumpToGoal, LVarA, 5, false, true, false)
                     Call(PlaySoundAtActor, LVarA, SOUND_COIN_BOUNCE)
                 Else
                     Set(LVar4, LVar3)
                     Add(LVar3, 30)
                     Call(SetGoalPos, LVarA, LVar3, LVar1, LVar2)
-                    Call(JumpToGoal, LVarA, 0, FALSE, TRUE, FALSE)
+                    Call(JumpToGoal, LVarA, 0, false, true, false)
                     Call(PlaySoundAtActor, LVarA, SOUND_COIN_BOUNCE)
                 EndIf
             Else
@@ -287,12 +287,12 @@ EvtScript N(EVS_DropCoin) = {
                 Sub(LVar4, LVar0)
                 IfLt(LVar4, 30)
                     Call(SetGoalPos, LVarA, LVar0, LVar1, LVar2)
-                    Call(JumpToGoal, LVarA, 5, FALSE, TRUE, FALSE)
+                    Call(JumpToGoal, LVarA, 5, false, true, false)
                     Call(PlaySoundAtActor, LVarA, SOUND_COIN_BOUNCE)
                 Else
                     Sub(LVar3, 30)
                     Call(SetGoalPos, LVarA, LVar3, LVar1, LVar2)
-                    Call(JumpToGoal, LVarA, 0, FALSE, TRUE, FALSE)
+                    Call(JumpToGoal, LVarA, 0, false, true, false)
                     Call(PlaySoundAtActor, LVarA, SOUND_COIN_BOUNCE)
                 EndIf
             EndIf
@@ -301,7 +301,7 @@ EvtScript N(EVS_DropCoin) = {
             Call(EnableActorBlur, LVarA, ACTOR_BLUR_ENABLE)
             Call(SetTargetActor, LVarA, ACTOR_PLAYER)
             Call(SetGoalToTarget, LVarA)
-            Call(JumpToGoal, LVarA, 15, FALSE, FALSE, FALSE)
+            Call(JumpToGoal, LVarA, 15, false, false, false)
             Call(GetGoalPos, LVarA, LVar0, LVar1, LVar2)
             PlayEffect(EFFECT_SMALL_GOLD_SPARKLE, 0, LVar0, LVar1, LVar2, Float(1.0), 0, 0)
             Call(PlaySoundAtActor, LVarA, SOUND_COIN_PICKUP)
@@ -315,7 +315,7 @@ EvtScript N(EVS_DropCoin) = {
 
 EvtScript N(EVS_HandleEvent) = {
     UseArray(Ref(N(DropCoinScript)))
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(GetLastEvent, ACTOR_SELF, LVar0)
     Switch(LVar0)
@@ -414,7 +414,7 @@ EvtScript N(EVS_HandleEvent) = {
             SetConst(LVar1, ANIM_Bandit_Run)
             ExecWait(EVS_Enemy_ReturnHome)
             Call(SetActorJumpGravity, ACTOR_SELF, Float(1.6))
-            Call(JumpToGoal, ACTOR_SELF, 5, FALSE, TRUE, FALSE)
+            Call(JumpToGoal, ACTOR_SELF, 5, false, true, false)
         CaseEq(EVENT_SHOCK_DEATH)
             SetConst(LVar0, PRT_MAIN)
             SetConst(LVar1, ANIM_Bandit_Hurt)
@@ -495,14 +495,14 @@ EvtScript N(EVS_HandleEvent) = {
     EndSwitch
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Bandit_Idle)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };
 
 EvtScript N(EVS_TakeTurn) = {
     STANDARD_ITEM_USE_AI()
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
     // if carrying a coin, run away
@@ -513,15 +513,15 @@ EvtScript N(EVS_TakeTurn) = {
         Wait(30)
         Call(SetActorSpeed, ACTOR_SELF, Float(10.0))
         Call(SetGoalPos, ACTOR_SELF, 300, 0, 0)
-        Call(RunToGoal, ACTOR_SELF, 0, FALSE)
-        Call(SetBattleFlagBits, BS_FLAGS1_BATTLE_FLED, TRUE)
+        Call(RunToGoal, ACTOR_SELF, 0, false)
+        Call(SetBattleFlagBits, BS_FLAGS1_BATTLE_FLED, true)
         Call(HideHealthBar, ACTOR_SELF)
         Call(RemoveActor, ACTOR_SELF)
         Return
     EndIf
     Call(UseBattleCamPreset, BTL_CAM_ENEMY_APPROACH)
     Call(BattleCamTargetActor, ACTOR_SELF)
-    Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_TARGET, BTL_CAM_XADJ_AVG, FALSE)
+    Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_TARGET, BTL_CAM_XADJ_AVG, false)
     Call(GetBattlePhase, LVar0)
     IfEq(LVar0, PHASE_FIRST_STRIKE)
         Call(SetGoalToTarget, ACTOR_SELF)
@@ -534,7 +534,7 @@ EvtScript N(EVS_TakeTurn) = {
         Call(SetGoalToTarget, ACTOR_SELF)
         Call(AddGoalPos, ACTOR_SELF, 50, 0, 0)
         Call(SetActorSpeed, ACTOR_SELF, Float(6.0))
-        Call(RunToGoal, ACTOR_SELF, 0, FALSE)
+        Call(RunToGoal, ACTOR_SELF, 0, false)
         Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Bandit_Idle)
         Wait(6)
     EndIf
@@ -542,7 +542,7 @@ EvtScript N(EVS_TakeTurn) = {
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Bandit_Walk)
     Call(SetGoalToTarget, ACTOR_SELF)
     Call(AddGoalPos, ACTOR_SELF, 35, 0, 0)
-    Call(RunToGoal, ACTOR_SELF, 0, FALSE)
+    Call(RunToGoal, ACTOR_SELF, 0, false)
     Call(PlaySoundAtActor, ACTOR_SELF, SOUND_BANDIT_STEAL)
     Call(SetActorSounds, ACTOR_SELF, ACTOR_SOUND_WALK, SOUND_NONE, SOUND_NONE)
     Call(EnemyTestTarget, ACTOR_SELF, LVar0, 0, 0, 1, BS_FLAGS1_INCLUDE_POWER_UPS)
@@ -553,17 +553,17 @@ EvtScript N(EVS_TakeTurn) = {
             Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Bandit_Tackle)
             Call(SetGoalToTarget, ACTOR_SELF)
             Call(SetActorSpeed, ACTOR_SELF, Float(8.0))
-            Call(RunToGoal, ACTOR_SELF, 0, FALSE)
+            Call(RunToGoal, ACTOR_SELF, 0, false)
             Call(ResetAllActorSounds, ACTOR_SELF)
             Call(SetActorSpeed, ACTOR_SELF, Float(6.0))
             Call(SetActorJumpGravity, ACTOR_SELF, Float(0.5))
             Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
             Sub(LVar0, 30)
             Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Call(JumpToGoal, ACTOR_SELF, 8, FALSE, TRUE, FALSE)
+            Call(JumpToGoal, ACTOR_SELF, 8, false, true, false)
             Sub(LVar0, 20)
             Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Call(JumpToGoal, ACTOR_SELF, 8, FALSE, TRUE, FALSE)
+            Call(JumpToGoal, ACTOR_SELF, 8, false, true, false)
             Wait(5)
             IfEq(LVarA, HIT_RESULT_LUCKY)
                 Call(EnemyTestTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_TRIGGER_LUCKY, 0, 0, 0)
@@ -576,19 +576,19 @@ EvtScript N(EVS_TakeTurn) = {
             Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Bandit_Run)
             Call(SetGoalToHome, ACTOR_SELF)
             Call(SetActorSpeed, ACTOR_SELF, Float(8.0))
-            Call(RunToGoal, ACTOR_SELF, 0, FALSE)
+            Call(RunToGoal, ACTOR_SELF, 0, false)
             Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Bandit_Idle)
             Call(RemoveActorDecoration, ACTOR_SELF, PRT_MAIN, 0)
             Call(SetActorYaw, ACTOR_SELF, 0)
             Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-            Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+            Call(UseIdleAnimation, ACTOR_SELF, true)
             Return
         EndCaseGroup
     EndSwitch
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Bandit_Tackle)
     Call(SetGoalToTarget, ACTOR_SELF)
     Call(SetActorSpeed, ACTOR_SELF, Float(8.0))
-    Call(RunToGoal, ACTOR_SELF, 0, FALSE)
+    Call(RunToGoal, ACTOR_SELF, 0, false)
     Call(ResetAllActorSounds, ACTOR_SELF)
     Wait(2)
     Call(EnemyDamageTarget, ACTOR_SELF, LVar0, 0, 0, 0, DMG_TACKLE, BS_FLAGS1_TRIGGER_EVENTS)
@@ -640,7 +640,7 @@ EvtScript N(EVS_TakeTurn) = {
                     Set(LVar1, 0)
                     Call(SetActorJumpGravity, ACTOR_SELF, Float(1.8))
                     Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-                    Call(JumpToGoal, ACTOR_SELF, 10, FALSE, TRUE, FALSE)
+                    Call(JumpToGoal, ACTOR_SELF, 10, false, true, false)
                     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Bandit_Idle)
                     Wait(20)
                     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Bandit_Run)
@@ -651,7 +651,7 @@ EvtScript N(EVS_TakeTurn) = {
                     Set(LVar1, 0)
                     Call(SetActorJumpGravity, ACTOR_SELF, Float(1.8))
                     Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-                    Call(JumpToGoal, ACTOR_SELF, 10, FALSE, TRUE, FALSE)
+                    Call(JumpToGoal, ACTOR_SELF, 10, false, true, false)
                     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Bandit_LookUp)
                     Wait(20)
                     Call(PlaySoundAtActor, ACTOR_SELF, SOUND_DISAPPOINTED)
@@ -668,14 +668,14 @@ EvtScript N(EVS_TakeTurn) = {
                     Mul(LVar0, -1)
                     Call(AddCoin, LVar0)
                     Thread
-                        Call(SetPartFlagBits, ACTOR_SELF, PRT_COIN, ACTOR_PART_FLAG_USE_ABSOLUTE_POSITION, TRUE)
-                        Call(SetPartFlagBits, ACTOR_SELF, PRT_COIN, ACTOR_PART_FLAG_INVISIBLE, FALSE)
+                        Call(SetPartFlagBits, ACTOR_SELF, PRT_COIN, ACTOR_PART_FLAG_USE_ABSOLUTE_POSITION, true)
+                        Call(SetPartFlagBits, ACTOR_SELF, PRT_COIN, ACTOR_PART_FLAG_INVISIBLE, false)
                         Call(GetActorPos, ACTOR_PLAYER, LVar0, LVar1, LVar2)
                         Call(SetPartPos, ACTOR_SELF, PRT_COIN, LVar0, LVar1, LVar2)
                         Call(SetPartJumpGravity, ACTOR_SELF, PRT_COIN, Float(1.0))
                         Add(LVarB, 30)
-                        Call(JumpPartTo, ACTOR_SELF, PRT_COIN, LVarA, LVarB, LVarC, 22, TRUE)
-                        Call(SetPartFlagBits, ACTOR_SELF, PRT_COIN, ACTOR_PART_FLAG_USE_ABSOLUTE_POSITION, FALSE)
+                        Call(JumpPartTo, ACTOR_SELF, PRT_COIN, LVarA, LVarB, LVarC, 22, true)
+                        Call(SetPartFlagBits, ACTOR_SELF, PRT_COIN, ACTOR_PART_FLAG_USE_ABSOLUTE_POSITION, false)
                     EndThread
                     Thread
                         Call(GetActorVar, ACTOR_SELF, AVAR_NumCoins, LVar0)
@@ -686,7 +686,7 @@ EvtScript N(EVS_TakeTurn) = {
                     EndThread
                     Call(SetActorJumpGravity, ACTOR_SELF, Float(1.8))
                     Call(SetGoalPos, ACTOR_SELF, LVarA, LVarB, LVarC)
-                    Call(JumpToGoal, ACTOR_SELF, 10, FALSE, TRUE, FALSE)
+                    Call(JumpToGoal, ACTOR_SELF, 10, false, true, false)
                     Call(SetIdleAnimations, ACTOR_SELF, PRT_MAIN, Ref(N(HoldingAnims)))
                     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Bandit_LookUp)
                     Call(SetActorVar, ACTOR_SELF, AVAR_HasCoin, 1)
@@ -699,11 +699,11 @@ EvtScript N(EVS_TakeTurn) = {
             Call(YieldTurn)
             Call(SetGoalToHome, ACTOR_SELF)
             Call(SetActorSpeed, ACTOR_SELF, Float(8.0))
-            Call(RunToGoal, ACTOR_SELF, 0, FALSE)
+            Call(RunToGoal, ACTOR_SELF, 0, false)
         EndCaseGroup
     EndSwitch
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };

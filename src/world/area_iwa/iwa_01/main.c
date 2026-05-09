@@ -61,9 +61,9 @@ EvtScript N(EVS_Main) = {
     EVT_SETUP_CAMERA_DEFAULT(0, 0, 0)
 
     IfFalse(GF_IWA_01_SlideAmbush)
-        Call(MakeNpcs, TRUE, Ref(N(DefaultNPCs)))
+        Call(MakeNpcs, true, Ref(N(DefaultNPCs)))
     Else
-        Call(MakeNpcs, TRUE, Ref(N(NPCs_NoAmbush)))
+        Call(MakeNpcs, true, Ref(N(NPCs_NoAmbush)))
     EndIf
 
     ExecWait(N(EVS_MakeEntities))
@@ -71,7 +71,7 @@ EvtScript N(EVS_Main) = {
     ExecWait(N(EVS_MakeSplashes))
     Exec(N(EVS_BindSlideTriggers2))
     Exec(N(EVS_BindSlideTriggers1))
-    Call(SetMusicTrack, 0, SONG_MT_RUGGED, 0, 8)
+    Call(SetMusic, 0, SONG_MT_RUGGED, 0, VOL_LEVEL_FULL)
     Call(PlaySoundAtF, SOUND_LOOP_IWA01_FLOW1, SOUND_SPACE_WITH_DEPTH, -570, -180, 425)
     Call(PlaySoundAtF, SOUND_LOOP_IWA01_FLOW2, SOUND_SPACE_WITH_DEPTH, 740, -170, 330)
     Call(GetLoadType, LVar1)

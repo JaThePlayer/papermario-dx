@@ -281,11 +281,10 @@ API_CALLABLE(SetModelFlags) {
 
 void apply_transform_to_children(ApiStatus (*apiFunc)(Evt*, s32), Evt* script) {
     Evt localEvt;
-    ModelTreeInfo* parentModelInfo;
     ModelTreeInfo* childModelInfo;
     s32 parentModelID;
     s32 originalArg;
-    s32* argsPtr;
+    Bytecode* argsPtr;
     s32 modelIndex;
     s32 firstChild;
     s32 lastChild;
@@ -333,7 +332,7 @@ void apply_transform_to_children(ApiStatus (*apiFunc)(Evt*, s32), Evt* script) {
         localEvt.ptrReadPos = argsPtr;
         *argsPtr = model->modelID;
 
-        apiFunc(&localEvt, TRUE);
+        apiFunc(&localEvt, true);
     }
 
     *argsPtr = originalArg;
@@ -568,7 +567,7 @@ API_CALLABLE(ResetFromLava) {
     if (isInitialCall) {
         lavaReset = gLavaResetList = (LavaReset*)evt_get_variable(script, *args++);
 
-        while (TRUE) {
+        while (true) {
             if (lavaReset->colliderID == -1) {
                 break;
             }
@@ -596,7 +595,6 @@ API_CALLABLE(ResetFromLava) {
 
 s32 get_lava_reset_pos(f32* outX, f32* outY, f32* outZ) {
     Vec4f *temp_v0;
-    s32 temp_a0;
     LavaReset* lavaReset = gLavaResetList;
 
     if (LastSafeFloor == -1) {
@@ -607,7 +605,7 @@ s32 get_lava_reset_pos(f32* outX, f32* outY, f32* outZ) {
         return -1;
     }
 
-    while (TRUE) {
+    while (true) {
         if (lavaReset->colliderID == -1) {
             break;
         }
@@ -681,10 +679,10 @@ API_CALLABLE(SetZoneEnabled) {
     }
 
     switch (enabled) {
-        case FALSE:
+        case false:
             zone->flags |= TEMP_SET_ZONE_ENABLED_FLAG_10000;
             break;
-        case TRUE:
+        case true:
             zone->flags &= ~TEMP_SET_ZONE_ENABLED_FLAG_10000;
             break;
     }
@@ -761,12 +759,12 @@ API_CALLABLE(PlaySoundAtModel) {
     Bytecode* args = script->ptrReadPos;
     s32 modelID = evt_get_variable(script, *args++);
     s32 soundID = evt_get_variable(script, *args++);
-    s32 var3 = evt_get_variable(script, *args++);
+    s32 soundSpace = evt_get_variable(script, *args++);
     f32 x, y, z;
     f32 sx, sy, sz;
 
     get_model_center_and_size(modelID, &x, &y, &z, &sx, &sy, &sz);
-    sfx_play_sound_at_position(soundID, var3, x, y, z);
+    sfx_play_sound_at_position(soundID, soundSpace, x, y, z);
 
     return ApiStatus_DONE2;
 }

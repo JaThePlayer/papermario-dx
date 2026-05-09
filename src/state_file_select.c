@@ -53,16 +53,16 @@ void state_init_file_select(void) {
     general_heap_create();
     hud_element_set_aux_cache(0, 0);
     hud_element_clear_cache();
-    mdl_load_all_textures(NULL, 0, 0);
+    mdl_load_all_textures(nullptr, 0, 0);
 
     gCameras[CAM_DEFAULT].updateMode = CAM_UPDATE_NO_INTERP;
-    gCameras[CAM_DEFAULT].needsInit = TRUE;
+    gCameras[CAM_DEFAULT].needsInit = true;
     gCameras[CAM_DEFAULT].nearClip = CAM_NEAR_CLIP;
     gCameras[CAM_DEFAULT].farClip = CAM_FAR_CLIP;
     gCameras[CAM_DEFAULT].vfov = 25.0f;
     set_cam_viewport(CAM_DEFAULT, 12, 28, 296, 184);
 
-    gCameras[CAM_DEFAULT].params.basic.skipRecalc = FALSE;
+    gCameras[CAM_DEFAULT].params.basic.skipRecalc = false;
     gCameras[CAM_DEFAULT].params.basic.pitch = 0;
     gCameras[CAM_DEFAULT].params.basic.dist = 40;
     gCameras[CAM_DEFAULT].params.basic.fovScale = 100;
@@ -125,7 +125,7 @@ void state_init_exit_file_select(void) {
     D_800A0932 = 0;
     D_800A0930 = 0;
 
-    if (func_80244BC4() == 0) {
+    if (filemenu_get_exit_mode() == 0) {
         set_map_transition_effect(TRANSITION_SLOW_FADE_TO_WHITE);
     } else {
         set_map_transition_effect(TRANSITION_ENTER_WORLD);
@@ -136,7 +136,7 @@ void state_init_exit_file_select(void) {
 }
 
 void state_step_exit_file_select(void) {
-    s32 temp_s0 = func_80244BC4();
+    s32 exitMode = filemenu_get_exit_mode();
     s32 flagSum;
     s32 i;
 
@@ -157,7 +157,7 @@ void state_step_exit_file_select(void) {
             }
             break;
         case 1:
-            if (temp_s0 == 0 || update_exit_map_screen_overlay(&D_800A0932) != 0) {
+            if (exitMode == 0 || update_exit_map_screen_overlay(&D_800A0932) != 0) {
                 D_800A0931 = 2;
             }
             break;
@@ -167,7 +167,7 @@ void state_step_exit_file_select(void) {
             D_800A0931 = 3;
         case 3:
             set_time_freeze_mode(TIME_FREEZE_NONE);
-            if (temp_s0 == 0) {
+            if (exitMode == 0) {
                 set_game_mode(GAME_MODE_TITLE_SCREEN);
                 gOverrideFlags &= ~GLOBAL_OVERRIDES_WINDOWS_OVER_CURTAINS;
             } else {

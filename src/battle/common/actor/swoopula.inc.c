@@ -39,7 +39,7 @@ s32 N(StatusTable)[] = {
     STATUS_KEY_POISON,             60,
     STATUS_KEY_FROZEN,              0,
     STATUS_KEY_DIZZY,             100,
-    STATUS_KEY_FEAR,                0,
+    STATUS_KEY_UNUSED,              0,
     STATUS_KEY_STATIC,             80,
     STATUS_KEY_PARALYZE,           80,
     STATUS_KEY_SHRINK,             75,
@@ -49,7 +49,7 @@ s32 N(StatusTable)[] = {
     STATUS_TURN_MOD_POISON,         0,
     STATUS_TURN_MOD_FROZEN,         0,
     STATUS_TURN_MOD_DIZZY,          1,
-    STATUS_TURN_MOD_FEAR,           0,
+    STATUS_TURN_MOD_UNUSED,         0,
     STATUS_TURN_MOD_STATIC,         0,
     STATUS_TURN_MOD_PARALYZE,       0,
     STATUS_TURN_MOD_SHRINK,         0,
@@ -105,7 +105,7 @@ s32 N(CeilingAnims)[] = {
     STATUS_KEY_STATIC,    ANIM_Swooper_Gray_Anim0C,
     STATUS_KEY_PARALYZE,  ANIM_Swooper_Gray_Anim0B,
     STATUS_KEY_DIZZY,     ANIM_Swooper_Gray_Anim10,
-    STATUS_KEY_FEAR,      ANIM_Swooper_Gray_Anim10,
+    STATUS_KEY_UNUSED,    ANIM_Swooper_Gray_Anim10,
     STATUS_END,
 };
 
@@ -118,7 +118,7 @@ s32 N(FlyingAnims)[] = {
     STATUS_KEY_STATIC,    ANIM_Swooper_Gray_Anim02,
     STATUS_KEY_PARALYZE,  ANIM_Swooper_Gray_Anim01,
     STATUS_KEY_DIZZY,     ANIM_Swooper_Gray_Anim14,
-    STATUS_KEY_FEAR,      ANIM_Swooper_Gray_Anim14,
+    STATUS_KEY_UNUSED,    ANIM_Swooper_Gray_Anim14,
     STATUS_END,
 };
 
@@ -145,7 +145,7 @@ EvtScript N(EVS_ReturnHome) = {
             Call(SetGoalToHome, ACTOR_SELF)
             Call(AddGoalPos, ACTOR_SELF, 0, -24, 0)
             Call(FlyToGoal, ACTOR_SELF, 0, 1, EASING_SIN_OUT)
-            Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_UPSIDE_DOWN, TRUE)
+            Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_UPSIDE_DOWN, true)
             Call(SetIdleAnimations, ACTOR_SELF, PRT_MAIN, Ref(N(CeilingAnims)))
             Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Swooper_Gray_Anim0C)
             Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
@@ -163,7 +163,7 @@ EvtScript N(EVS_ReturnHome) = {
 };
 
 EvtScript N(EVS_Flying_HandleEvent) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(GetLastEvent, ACTOR_SELF, LVar0)
     Switch(LVar0)
@@ -188,14 +188,14 @@ EvtScript N(EVS_Flying_HandleEvent) = {
             ExecWait(EVS_Enemy_Death)
             Return
         CaseEq(EVENT_SHOCK_HIT)
-            Call(func_80269470)
+            Call(InterruptLeechActionCommand)
             SetConst(LVar0, PRT_MAIN)
             SetConst(LVar1, ANIM_Swooper_Gray_Anim15)
             ExecWait(EVS_Enemy_ShockHit)
             Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
             ExecWait(N(EVS_ReturnHome))
         CaseEq(EVENT_SHOCK_DEATH)
-            Call(func_80269470)
+            Call(InterruptLeechActionCommand)
             SetConst(LVar0, PRT_MAIN)
             SetConst(LVar1, ANIM_Swooper_Gray_Anim15)
             ExecWait(EVS_Enemy_ShockHit)
@@ -228,7 +228,7 @@ EvtScript N(EVS_Flying_HandleEvent) = {
             SetConst(LVar1, ANIM_Swooper_Gray_Anim02)
             ExecWait(EVS_Enemy_Recover)
         CaseEq(EVENT_SCARE_AWAY)
-            Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_FLYING, FALSE)
+            Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_FLYING, false)
             SetConst(LVar0, PRT_MAIN)
             SetConst(LVar1, ANIM_Swooper_Gray_Anim02)
             SetConst(LVar2, ANIM_Swooper_Gray_Anim15)
@@ -245,7 +245,7 @@ EvtScript N(EVS_Flying_HandleEvent) = {
             Return
     EndSwitch
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };
@@ -258,7 +258,7 @@ EvtScript N(EVS_FallFromCeiling) = {
     IfLe(LVar0, 0)
         Return
     EndIf
-    Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_UPSIDE_DOWN, FALSE)
+    Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_UPSIDE_DOWN, false)
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Swooper_Gray_Anim02)
     Call(SetActorDispOffset, ACTOR_SELF, 0, 0, 0)
     Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
@@ -269,12 +269,12 @@ EvtScript N(EVS_FallFromCeiling) = {
         Call(SetHomePos, ACTOR_SELF, LVar0, 45, LVar2)
         Call(SetActorJumpGravity, ACTOR_SELF, Float(0.8))
         Call(SetGoalToHome, ACTOR_SELF)
-        Call(JumpToGoal, ACTOR_SELF, 15, FALSE, FALSE, FALSE)
-        Call(JumpToGoal, ACTOR_SELF, 10, FALSE, FALSE, FALSE)
+        Call(JumpToGoal, ACTOR_SELF, 15, false, false, false)
+        Call(JumpToGoal, ACTOR_SELF, 10, false, false, false)
     Else
         Call(SetActorJumpGravity, ACTOR_SELF, Float(0.8))
         Call(SetGoalPos, ACTOR_SELF, LVar0, 45, LVar2)
-        Call(JumpToGoal, ACTOR_SELF, 15, FALSE, FALSE, FALSE)
+        Call(JumpToGoal, ACTOR_SELF, 15, false, false, false)
         Call(GetIndexFromPos, ACTOR_SELF, LVarA)
         Mod(LVarA, 4)
         Add(LVarA, 4)
@@ -283,13 +283,13 @@ EvtScript N(EVS_FallFromCeiling) = {
         Call(SetHomePos, ACTOR_SELF, LVarA, LVarB, LVarC)
         Call(SetActorJumpGravity, ACTOR_SELF, Float(0.8))
         Call(SetGoalToHome, ACTOR_SELF)
-        Call(JumpToGoal, ACTOR_SELF, 10, FALSE, FALSE, FALSE)
+        Call(JumpToGoal, ACTOR_SELF, 10, false, false, false)
     EndIf
     Call(SetProjectileTargetOffset, ACTOR_SELF, PRT_MAIN, 0, -10)
     Call(SetTargetOffset, ACTOR_SELF, PRT_MAIN, 0, 22)
     Call(N(SetAbsoluteStatusOffsets), -10, 20, 10, 20)
     Call(SetIdleAnimations, ACTOR_SELF, PRT_MAIN, Ref(N(FlyingAnims)))
-    Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_FLYING, TRUE)
+    Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_FLYING, true)
     Call(HPBarToHome, ACTOR_SELF)
     Call(SetActorVar, ACTOR_SELF, AVAR_IsFlying, 1)
     Return
@@ -302,7 +302,7 @@ EvtScript N(EVS_HandleEvent) = {
         ExecWait(N(EVS_Flying_HandleEvent))
         Return
     EndIf
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(GetLastEvent, ACTOR_SELF, LVar0)
     Switch(LVar0)
@@ -364,14 +364,14 @@ EvtScript N(EVS_HandleEvent) = {
             EndIf
             Return
         CaseEq(EVENT_SHOCK_HIT)
-            Call(func_80269470)
+            Call(InterruptLeechActionCommand)
             SetConst(LVar0, PRT_MAIN)
             SetConst(LVar1, ANIM_Swooper_Gray_Anim15)
             ExecWait(EVS_Enemy_ShockHit_Impl)
             Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
             ExecWait(N(EVS_ReturnHome))
         CaseEq(EVENT_SHOCK_DEATH)
-            Call(func_80269470)
+            Call(InterruptLeechActionCommand)
             SetConst(LVar0, PRT_MAIN)
             SetConst(LVar1, ANIM_Swooper_Gray_Anim15)
             ExecWait(EVS_Enemy_ShockHit_Impl)
@@ -410,7 +410,7 @@ EvtScript N(EVS_HandleEvent) = {
             EndIf
             Return
         CaseEq(EVENT_BEGIN_FIRST_STRIKE)
-            Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_UPSIDE_DOWN, FALSE)
+            Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_UPSIDE_DOWN, false)
             Call(SetIdleAnimations, ACTOR_SELF, PRT_MAIN, Ref(N(FlyingAnims)))
             Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Swooper_Gray_Anim02)
             Call(SetActorPos, ACTOR_SELF, 20, 0, 0)
@@ -420,8 +420,8 @@ EvtScript N(EVS_HandleEvent) = {
             Call(HPBarToHome, ACTOR_SELF)
         CaseEq(EVENT_RECOVER_STATUS)
         CaseEq(EVENT_SCARE_AWAY)
-            Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_FLYING, TRUE)
-            Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_UPSIDE_DOWN, FALSE)
+            Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_FLYING, true)
+            Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_UPSIDE_DOWN, false)
             Call(SetActorDispOffset, ACTOR_SELF, 0, -24, 0)
             SetConst(LVar0, PRT_MAIN)
             SetConst(LVar1, ANIM_Swooper_Gray_Anim02)
@@ -430,7 +430,7 @@ EvtScript N(EVS_HandleEvent) = {
             Return
     EndSwitch
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };
@@ -438,7 +438,7 @@ EvtScript N(EVS_HandleEvent) = {
 #include "common/SpawnEnemyDrainFX.inc.c"
 
 EvtScript N(EVS_Flying_TakeTurn) = {
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
     Call(GetBattlePhase, LVar0)
@@ -452,7 +452,7 @@ EvtScript N(EVS_Flying_TakeTurn) = {
     Else
         Call(UseBattleCamPreset, BTL_CAM_ENEMY_APPROACH)
         Call(BattleCamTargetActor, ACTOR_SELF)
-        Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_TARGET, BTL_CAM_XADJ_AVG, FALSE)
+        Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_TARGET, BTL_CAM_XADJ_AVG, false)
         Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Swooper_Gray_Anim02)
         Call(SetGoalToTarget, ACTOR_SELF)
         Call(AddGoalPos, ACTOR_SELF, 50, 10, 0)
@@ -470,7 +470,7 @@ EvtScript N(EVS_Flying_TakeTurn) = {
             Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Swooper_Gray_Anim06)
             Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
             Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-            Call(JumpToGoal, ACTOR_SELF, 10, FALSE, FALSE, FALSE)
+            Call(JumpToGoal, ACTOR_SELF, 10, false, false, false)
             Call(SetGoalToTarget, ACTOR_SELF)
             Call(GetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
             Sub(LVar0, 50)
@@ -492,15 +492,15 @@ EvtScript N(EVS_Flying_TakeTurn) = {
             Call(RemoveActorDecoration, ACTOR_SELF, PRT_MAIN, 0)
             Call(SetActorYaw, ACTOR_SELF, 0)
             Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-            Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+            Call(UseIdleAnimation, ACTOR_SELF, true)
             Return
         EndCaseGroup
         CaseEq(HIT_RESULT_HIT_STATIC)
             Call(GetStatusFlags, ACTOR_SELF, LVar0)
             IfFlag(LVar0, STATUS_FLAG_STATIC)
-                Set(LFlag0, FALSE)
+                Set(LFlag0, false)
             Else
-                Set(LFlag0, TRUE)
+                Set(LFlag0, true)
             EndIf
     EndSwitch
     Wait(10)
@@ -509,13 +509,13 @@ EvtScript N(EVS_Flying_TakeTurn) = {
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Swooper_Gray_Anim06)
     Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
     Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-    Call(JumpToGoal, ACTOR_SELF, 10, FALSE, FALSE, FALSE)
+    Call(JumpToGoal, ACTOR_SELF, 10, false, false, false)
     Call(SetGoalToTarget, ACTOR_SELF)
     Call(AddGoalPos, ACTOR_SELF, -4, -8, -15)
     Call(SetActorSpeed, ACTOR_SELF, Float(8.0))
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Swooper_Gray_Anim06)
     Call(FlyToGoal, ACTOR_SELF, 0, -10, EASING_LINEAR)
-    IfEq(LFlag0, TRUE)
+    IfEq(LFlag0, true)
         Call(EnemyDamageTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_IGNORE_DEFENSE, 0, 0, 0, BS_FLAGS1_TRIGGER_EVENTS)
         Return
     EndIf
@@ -565,277 +565,277 @@ EvtScript N(EVS_Flying_TakeTurn) = {
             Wait(30)
         EndLoop
     Else
-        Call(ShowMessageBox, BTL_MSG_ACTION_TIP_MASH_BUTTON, 32767)
-        Call(ShowActionHud, TRUE)
+        Call(ShowMessageBox, BTL_MSG_ACTION_TIP_MASH_BUTTON, AC_LEECH_MAX_TIME)
+        Call(ShowActionHud, true)
         Call(LoadActionCommand, ACTION_COMMAND_STOP_LEECH)
         Call(action_command_stop_leech_init)
         Call(SetupMashMeter, 1, 30, 0, 0, 0, 0)
         Wait(10)
-        Call(SetBattleFlagBits, BS_FLAGS1_4000, FALSE)
-        Call(action_command_stop_leech_start, 0, 32767, 3)
+        Call(SetBattleFlagBits, BS_FLAGS1_4000, false)
+        Call(action_command_stop_leech_start, 0, AC_LEECH_MAX_TIME, AC_DIFFICULTY_3)
         Set(LVarD, 0)
         Loop(MAX_LEECH_COUNT)
             Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Swooper_Gray_Anim02)
-            Set(LFlag0, FALSE)
+            Set(LFlag0, false)
             Loop(21)
-                Call(GetActionSuccessCopy, LVar1)
+                Call(GetMashActionQuality, LVar1)
                 IfEq(LVar1, 1)
-                    Set(LFlag0, TRUE)
+                    Set(LFlag0, true)
                     BreakLoop
                 EndIf
                 Wait(1)
             EndLoop
-            IfEq(LFlag0, TRUE)
-                Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+            IfEq(LFlag0, true)
+                Call(UseIdleAnimation, ACTOR_PLAYER, true)
                 BreakLoop
             EndIf
-            Call(UseIdleAnimation, ACTOR_PLAYER, FALSE)
+            Call(UseIdleAnimation, ACTOR_PLAYER, false)
             Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_MarioB1_Leeching)
             Loop(2)
                 Call(PlaySoundAtActor, ACTOR_SELF, SOUND_LEECH)
                 Call(SetActorScale, ACTOR_SELF, Float(1.0), Float(1.0), Float(1.0))
-                Set(LFlag0, FALSE)
+                Set(LFlag0, false)
                 Loop(1)
-                    Call(GetActionSuccessCopy, LVar1)
+                    Call(GetMashActionQuality, LVar1)
                     IfEq(LVar1, 1)
-                        Set(LFlag0, TRUE)
+                        Set(LFlag0, true)
                         BreakLoop
                     EndIf
                     Wait(1)
                 EndLoop
-                IfEq(LFlag0, TRUE)
-                    Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+                IfEq(LFlag0, true)
+                    Call(UseIdleAnimation, ACTOR_PLAYER, true)
                     BreakLoop
                 EndIf
                 Call(SetActorScale, ACTOR_SELF, Float(0.9), Float(1.2), Float(1.0))
-                Set(LFlag0, FALSE)
+                Set(LFlag0, false)
                 Loop(1)
-                    Call(GetActionSuccessCopy, LVar1)
+                    Call(GetMashActionQuality, LVar1)
                     IfEq(LVar1, 1)
-                        Set(LFlag0, TRUE)
+                        Set(LFlag0, true)
                         BreakLoop
                     EndIf
                     Wait(1)
                 EndLoop
-                IfEq(LFlag0, TRUE)
-                    Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+                IfEq(LFlag0, true)
+                    Call(UseIdleAnimation, ACTOR_PLAYER, true)
                     BreakLoop
                 EndIf
                 Call(SetActorScale, ACTOR_SELF, Float(0.8), Float(1.3), Float(1.0))
-                Set(LFlag0, FALSE)
+                Set(LFlag0, false)
                 Loop(1)
-                    Call(GetActionSuccessCopy, LVar1)
+                    Call(GetMashActionQuality, LVar1)
                     IfEq(LVar1, 1)
-                        Set(LFlag0, TRUE)
+                        Set(LFlag0, true)
                         BreakLoop
                     EndIf
                     Wait(1)
                 EndLoop
-                IfEq(LFlag0, TRUE)
-                    Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+                IfEq(LFlag0, true)
+                    Call(UseIdleAnimation, ACTOR_PLAYER, true)
                     BreakLoop
                 EndIf
                 Call(SetActorScale, ACTOR_SELF, Float(0.7), Float(1.4), Float(1.0))
-                Set(LFlag0, FALSE)
+                Set(LFlag0, false)
                 Loop(1)
-                    Call(GetActionSuccessCopy, LVar1)
+                    Call(GetMashActionQuality, LVar1)
                     IfEq(LVar1, 1)
-                        Set(LFlag0, TRUE)
+                        Set(LFlag0, true)
                         BreakLoop
                     EndIf
                     Wait(1)
                 EndLoop
-                IfEq(LFlag0, TRUE)
-                    Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+                IfEq(LFlag0, true)
+                    Call(UseIdleAnimation, ACTOR_PLAYER, true)
                     BreakLoop
                 EndIf
                 Call(SetActorScale, ACTOR_SELF, Float(0.7), Float(1.5), Float(1.0))
-                Set(LFlag0, FALSE)
+                Set(LFlag0, false)
                 Loop(1)
-                    Call(GetActionSuccessCopy, LVar1)
+                    Call(GetMashActionQuality, LVar1)
                     IfEq(LVar1, 1)
-                        Set(LFlag0, TRUE)
+                        Set(LFlag0, true)
                         BreakLoop
                     EndIf
                     Wait(1)
                 EndLoop
-                IfEq(LFlag0, TRUE)
-                    Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+                IfEq(LFlag0, true)
+                    Call(UseIdleAnimation, ACTOR_PLAYER, true)
                     BreakLoop
                 EndIf
                 Call(SetActorScale, ACTOR_SELF, Float(0.7), Float(1.4), Float(1.0))
-                Set(LFlag0, FALSE)
+                Set(LFlag0, false)
                 Loop(1)
-                    Call(GetActionSuccessCopy, LVar1)
+                    Call(GetMashActionQuality, LVar1)
                     IfEq(LVar1, 1)
-                        Set(LFlag0, TRUE)
+                        Set(LFlag0, true)
                         BreakLoop
                     EndIf
                     Wait(1)
                 EndLoop
-                IfEq(LFlag0, TRUE)
-                    Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+                IfEq(LFlag0, true)
+                    Call(UseIdleAnimation, ACTOR_PLAYER, true)
                     BreakLoop
                 EndIf
                 Call(SetActorScale, ACTOR_SELF, Float(0.8), Float(1.3), Float(1.0))
-                Set(LFlag0, FALSE)
+                Set(LFlag0, false)
                 Loop(1)
-                    Call(GetActionSuccessCopy, LVar1)
+                    Call(GetMashActionQuality, LVar1)
                     IfEq(LVar1, 1)
-                        Set(LFlag0, TRUE)
+                        Set(LFlag0, true)
                         BreakLoop
                     EndIf
                     Wait(1)
                 EndLoop
-                IfEq(LFlag0, TRUE)
-                    Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+                IfEq(LFlag0, true)
+                    Call(UseIdleAnimation, ACTOR_PLAYER, true)
                     BreakLoop
                 EndIf
                 Call(SetActorScale, ACTOR_SELF, Float(0.9), Float(1.2), Float(1.0))
-                Set(LFlag0, FALSE)
+                Set(LFlag0, false)
                 Loop(1)
-                    Call(GetActionSuccessCopy, LVar1)
+                    Call(GetMashActionQuality, LVar1)
                     IfEq(LVar1, 1)
-                        Set(LFlag0, TRUE)
+                        Set(LFlag0, true)
                         BreakLoop
                     EndIf
                     Wait(1)
                 EndLoop
-                IfEq(LFlag0, TRUE)
-                    Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+                IfEq(LFlag0, true)
+                    Call(UseIdleAnimation, ACTOR_PLAYER, true)
                     BreakLoop
                 EndIf
                 Call(SetActorScale, ACTOR_SELF, Float(1.0), Float(1.0), Float(1.0))
-                Set(LFlag0, FALSE)
+                Set(LFlag0, false)
                 Loop(1)
-                    Call(GetActionSuccessCopy, LVar1)
+                    Call(GetMashActionQuality, LVar1)
                     IfEq(LVar1, 1)
-                        Set(LFlag0, TRUE)
+                        Set(LFlag0, true)
                         BreakLoop
                     EndIf
                     Wait(1)
                 EndLoop
-                IfEq(LFlag0, TRUE)
-                    Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+                IfEq(LFlag0, true)
+                    Call(UseIdleAnimation, ACTOR_PLAYER, true)
                     BreakLoop
                 EndIf
             EndLoop
-            IfEq(LFlag0, TRUE)
+            IfEq(LFlag0, true)
                 BreakLoop
             EndIf
-            Set(LFlag0, FALSE)
+            Set(LFlag0, false)
             Loop(5)
-                Call(GetActionSuccessCopy, LVar1)
+                Call(GetMashActionQuality, LVar1)
                 IfEq(LVar1, 1)
-                    Set(LFlag0, TRUE)
+                    Set(LFlag0, true)
                     BreakLoop
                 EndIf
                 Wait(1)
             EndLoop
-            IfEq(LFlag0, TRUE)
-                Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+            IfEq(LFlag0, true)
+                Call(UseIdleAnimation, ACTOR_PLAYER, true)
                 BreakLoop
             EndIf
             Call(PlaySoundAtActor, ACTOR_SELF, SOUND_LEECH)
             Call(SetActorScale, ACTOR_SELF, Float(1.0), Float(1.0), Float(1.0))
-            Set(LFlag0, FALSE)
+            Set(LFlag0, false)
             Loop(1)
-                Call(GetActionSuccessCopy, LVar1)
+                Call(GetMashActionQuality, LVar1)
                 IfEq(LVar1, 1)
-                    Set(LFlag0, TRUE)
+                    Set(LFlag0, true)
                     BreakLoop
                 EndIf
                 Wait(1)
             EndLoop
-            IfEq(LFlag0, TRUE)
-                Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+            IfEq(LFlag0, true)
+                Call(UseIdleAnimation, ACTOR_PLAYER, true)
                 BreakLoop
             EndIf
             Call(SetActorScale, ACTOR_SELF, Float(0.9), Float(1.2), Float(1.0))
-            Set(LFlag0, FALSE)
+            Set(LFlag0, false)
             Loop(1)
-                Call(GetActionSuccessCopy, LVar1)
+                Call(GetMashActionQuality, LVar1)
                 IfEq(LVar1, 1)
-                    Set(LFlag0, TRUE)
+                    Set(LFlag0, true)
                     BreakLoop
                 EndIf
                 Wait(1)
             EndLoop
-            IfEq(LFlag0, TRUE)
-                Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+            IfEq(LFlag0, true)
+                Call(UseIdleAnimation, ACTOR_PLAYER, true)
                 BreakLoop
             EndIf
             Call(SetActorScale, ACTOR_SELF, Float(0.8), Float(1.3), Float(1.0))
-            Set(LFlag0, FALSE)
+            Set(LFlag0, false)
             Loop(1)
-                Call(GetActionSuccessCopy, LVar1)
+                Call(GetMashActionQuality, LVar1)
                 IfEq(LVar1, 1)
-                    Set(LFlag0, TRUE)
+                    Set(LFlag0, true)
                     BreakLoop
                 EndIf
                 Wait(1)
             EndLoop
-            IfEq(LFlag0, TRUE)
-                Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+            IfEq(LFlag0, true)
+                Call(UseIdleAnimation, ACTOR_PLAYER, true)
                 BreakLoop
             EndIf
             Call(SetActorScale, ACTOR_SELF, Float(0.7), Float(1.4), Float(1.0))
-            Set(LFlag0, FALSE)
+            Set(LFlag0, false)
             Loop(1)
-                Call(GetActionSuccessCopy, LVar1)
+                Call(GetMashActionQuality, LVar1)
                 IfEq(LVar1, 1)
-                    Set(LFlag0, TRUE)
+                    Set(LFlag0, true)
                     BreakLoop
                 EndIf
                 Wait(1)
             EndLoop
-            IfEq(LFlag0, TRUE)
-                Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+            IfEq(LFlag0, true)
+                Call(UseIdleAnimation, ACTOR_PLAYER, true)
                 BreakLoop
             EndIf
             Call(SetActorScale, ACTOR_SELF, Float(0.7), Float(1.5), Float(1.0))
-            Set(LFlag0, FALSE)
+            Set(LFlag0, false)
             Loop(2)
-                Call(GetActionSuccessCopy, LVar1)
+                Call(GetMashActionQuality, LVar1)
                 IfEq(LVar1, 1)
-                    Set(LFlag0, TRUE)
+                    Set(LFlag0, true)
                     BreakLoop
                 EndIf
                 Wait(1)
             EndLoop
-            IfEq(LFlag0, TRUE)
-                Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+            IfEq(LFlag0, true)
+                Call(UseIdleAnimation, ACTOR_PLAYER, true)
                 BreakLoop
             EndIf
             Call(SetActorScale, ACTOR_SELF, Float(0.6), Float(1.6), Float(1.0))
-            Set(LFlag0, FALSE)
+            Set(LFlag0, false)
             Loop(10)
-                Call(GetActionSuccessCopy, LVar1)
+                Call(GetMashActionQuality, LVar1)
                 IfEq(LVar1, 1)
-                    Set(LFlag0, TRUE)
+                    Set(LFlag0, true)
                     BreakLoop
                 EndIf
                 Wait(1)
             EndLoop
-            IfEq(LFlag0, TRUE)
-                Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+            IfEq(LFlag0, true)
+                Call(UseIdleAnimation, ACTOR_PLAYER, true)
                 BreakLoop
             EndIf
             Call(SetActorScale, ACTOR_SELF, Float(1.0), Float(1.0), Float(1.0))
-            Set(LFlag0, FALSE)
+            Set(LFlag0, false)
             Loop(2)
-                Call(GetActionSuccessCopy, LVar1)
+                Call(GetMashActionQuality, LVar1)
                 IfEq(LVar1, 1)
-                    Set(LFlag0, TRUE)
+                    Set(LFlag0, true)
                     BreakLoop
                 EndIf
                 Wait(1)
             EndLoop
-            IfEq(LFlag0, TRUE)
-                Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+            IfEq(LFlag0, true)
+                Call(UseIdleAnimation, ACTOR_PLAYER, true)
                 BreakLoop
             EndIf
-            Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+            Call(UseIdleAnimation, ACTOR_PLAYER, true)
             Call(EnemyDamageTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_UNBLOCKABLE | DAMAGE_TYPE_IGNORE_DEFENSE, 0, 0, 2, BS_FLAGS1_NICE_HIT)
             Call(GetLastDamage, ACTOR_PLAYER, LVar3)
             IfNe(LVar3, 0)
@@ -858,29 +858,29 @@ EvtScript N(EVS_Flying_TakeTurn) = {
             Else
                 Add(LVarD, 1)
                 IfGt(LVarD, 1)
-                    Call(func_80269470)
+                    Call(InterruptLeechActionCommand)
                     BreakLoop
                 EndIf
             EndIf
             Call(GetPlayerHP, LVar1)
             IfEq(LVar1, 0)
-                Call(func_80269470)
+                Call(InterruptLeechActionCommand)
                 BreakLoop
             EndIf
-            Set(LFlag0, FALSE)
+            Set(LFlag0, false)
             Loop(30)
-                Call(GetActionSuccessCopy, LVar1)
+                Call(GetMashActionQuality, LVar1)
                 IfEq(LVar1, 1)
-                    Set(LFlag0, TRUE)
+                    Set(LFlag0, true)
                     BreakLoop
                 EndIf
                 Wait(1)
             EndLoop
-            IfEq(LFlag0, TRUE)
+            IfEq(LFlag0, true)
                 BreakLoop
             EndIf
         EndLoop
-        Call(func_80269470)
+        Call(InterruptLeechActionCommand)
         Call(SetActorScale, ACTOR_SELF, Float(1.0), Float(1.0), Float(1.0))
     EndIf
     Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
@@ -893,7 +893,7 @@ EvtScript N(EVS_Flying_TakeTurn) = {
     Call(YieldTurn)
     ExecWait(N(EVS_ReturnHome))
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };
@@ -904,14 +904,14 @@ EvtScript N(EVS_TakeTurn) = {
         ExecWait(N(EVS_Flying_TakeTurn))
         Return
     EndIf
-    Call(UseIdleAnimation, ACTOR_SELF, FALSE)
+    Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
     Call(UseBattleCamPreset, BTL_CAM_ENEMY_APPROACH)
     Call(BattleCamTargetActor, ACTOR_SELF)
-    Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_TARGET, BTL_CAM_XADJ_AVG, FALSE)
+    Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_TARGET, BTL_CAM_XADJ_AVG, false)
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Swooper_Gray_Anim02)
-    Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_UPSIDE_DOWN, FALSE)
+    Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_UPSIDE_DOWN, false)
     Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
     Sub(LVar1, 24)
     Call(SetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
@@ -944,15 +944,15 @@ EvtScript N(EVS_TakeTurn) = {
             Call(RemoveActorDecoration, ACTOR_SELF, PRT_MAIN, 0)
             Call(SetActorYaw, ACTOR_SELF, 0)
             Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-            Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+            Call(UseIdleAnimation, ACTOR_SELF, true)
             Return
         EndCaseGroup
         CaseEq(HIT_RESULT_HIT_STATIC)
             Call(GetStatusFlags, ACTOR_SELF, LVar0)
             IfFlag(LVar0, STATUS_FLAG_STATIC)
-                Set(LFlag0, FALSE)
+                Set(LFlag0, false)
             Else
-                Set(LFlag0, TRUE)
+                Set(LFlag0, true)
             EndIf
     EndSwitch
     Wait(10)
@@ -964,7 +964,7 @@ EvtScript N(EVS_TakeTurn) = {
     Call(SetActorSpeed, ACTOR_SELF, Float(8.0))
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Swooper_Gray_Anim06)
     Call(FlyToGoal, ACTOR_SELF, 0, -40, EASING_LINEAR)
-    IfEq(LFlag0, TRUE)
+    IfEq(LFlag0, true)
         Call(EnemyDamageTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_IGNORE_DEFENSE, 0, 0, 0, BS_FLAGS1_TRIGGER_EVENTS)
         Return
     EndIf
@@ -1015,132 +1015,132 @@ EvtScript N(EVS_TakeTurn) = {
             Wait(30)
         EndLoop
     Else
-        Call(ShowMessageBox, BTL_MSG_ACTION_TIP_MASH_BUTTON, 32767)
-        Call(ShowActionHud, TRUE)
+        Call(ShowMessageBox, BTL_MSG_ACTION_TIP_MASH_BUTTON, AC_LEECH_MAX_TIME)
+        Call(ShowActionHud, true)
         Call(LoadActionCommand, ACTION_COMMAND_STOP_LEECH)
         Call(action_command_stop_leech_init)
         Call(SetupMashMeter, 1, 30, 0, 0, 0, 0)
         Wait(10)
-        Call(SetBattleFlagBits, BS_FLAGS1_4000, FALSE)
-        Call(action_command_stop_leech_start, 0, 32767, 3)
+        Call(SetBattleFlagBits, BS_FLAGS1_4000, false)
+        Call(action_command_stop_leech_start, 0, AC_LEECH_MAX_TIME, AC_DIFFICULTY_3)
         Set(LVarD, 0)
         Loop(MAX_LEECH_COUNT)
             Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Swooper_Gray_Anim02)
-            Set(LFlag0, FALSE)
+            Set(LFlag0, false)
             Loop(21)
-                Call(GetActionSuccessCopy, LVar1)
+                Call(GetMashActionQuality, LVar1)
                 IfEq(LVar1, 1)
-                    Set(LFlag0, TRUE)
+                    Set(LFlag0, true)
                     BreakLoop
                 EndIf
                 Wait(1)
             EndLoop
-            IfEq(LFlag0, TRUE)
-                Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+            IfEq(LFlag0, true)
+                Call(UseIdleAnimation, ACTOR_PLAYER, true)
                 BreakLoop
             EndIf
             Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_MarioB1_Leeching)
-            Call(UseIdleAnimation, ACTOR_PLAYER, FALSE)
+            Call(UseIdleAnimation, ACTOR_PLAYER, false)
             Call(PlaySoundAtActor, ACTOR_SELF, SOUND_LEECH)
             Call(SetActorScale, ACTOR_SELF, Float(1.0), Float(1.0), Float(1.0))
-            Set(LFlag0, FALSE)
+            Set(LFlag0, false)
             Loop(1)
-                Call(GetActionSuccessCopy, LVar1)
+                Call(GetMashActionQuality, LVar1)
                 IfEq(LVar1, 1)
-                    Set(LFlag0, TRUE)
+                    Set(LFlag0, true)
                     BreakLoop
                 EndIf
                 Wait(1)
             EndLoop
-            IfEq(LFlag0, TRUE)
-                Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+            IfEq(LFlag0, true)
+                Call(UseIdleAnimation, ACTOR_PLAYER, true)
                 BreakLoop
             EndIf
             Call(SetActorScale, ACTOR_SELF, Float(0.9), Float(1.2), Float(1.0))
-            Set(LFlag0, FALSE)
+            Set(LFlag0, false)
             Loop(1)
-                Call(GetActionSuccessCopy, LVar1)
+                Call(GetMashActionQuality, LVar1)
                 IfEq(LVar1, 1)
-                    Set(LFlag0, TRUE)
+                    Set(LFlag0, true)
                     BreakLoop
                 EndIf
                 Wait(1)
             EndLoop
-            IfEq(LFlag0, TRUE)
-                Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+            IfEq(LFlag0, true)
+                Call(UseIdleAnimation, ACTOR_PLAYER, true)
                 BreakLoop
             EndIf
             Call(SetActorScale, ACTOR_SELF, Float(0.8), Float(1.3), Float(1.0))
-            Set(LFlag0, FALSE)
+            Set(LFlag0, false)
             Loop(1)
-                Call(GetActionSuccessCopy, LVar1)
+                Call(GetMashActionQuality, LVar1)
                 IfEq(LVar1, 1)
-                    Set(LFlag0, TRUE)
+                    Set(LFlag0, true)
                     BreakLoop
                 EndIf
                 Wait(1)
             EndLoop
-            IfEq(LFlag0, TRUE)
-                Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+            IfEq(LFlag0, true)
+                Call(UseIdleAnimation, ACTOR_PLAYER, true)
                 BreakLoop
             EndIf
             Call(SetActorScale, ACTOR_SELF, Float(0.7), Float(1.4), Float(1.0))
-            Set(LFlag0, FALSE)
+            Set(LFlag0, false)
             Loop(1)
-                Call(GetActionSuccessCopy, LVar1)
+                Call(GetMashActionQuality, LVar1)
                 IfEq(LVar1, 1)
-                    Set(LFlag0, TRUE)
+                    Set(LFlag0, true)
                     BreakLoop
                 EndIf
                 Wait(1)
             EndLoop
-            IfEq(LFlag0, TRUE)
-                Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+            IfEq(LFlag0, true)
+                Call(UseIdleAnimation, ACTOR_PLAYER, true)
                 BreakLoop
             EndIf
             Call(SetActorScale, ACTOR_SELF, Float(0.7), Float(1.5), Float(1.0))
-            Set(LFlag0, FALSE)
+            Set(LFlag0, false)
             Loop(2)
-                Call(GetActionSuccessCopy, LVar1)
+                Call(GetMashActionQuality, LVar1)
                 IfEq(LVar1, 1)
-                    Set(LFlag0, TRUE)
+                    Set(LFlag0, true)
                     BreakLoop
                 EndIf
                 Wait(1)
             EndLoop
-            IfEq(LFlag0, TRUE)
-                Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+            IfEq(LFlag0, true)
+                Call(UseIdleAnimation, ACTOR_PLAYER, true)
                 BreakLoop
             EndIf
             Call(SetActorScale, ACTOR_SELF, Float(0.6), Float(1.6), Float(1.0))
-            Set(LFlag0, FALSE)
+            Set(LFlag0, false)
             Loop(10)
-                Call(GetActionSuccessCopy, LVar1)
+                Call(GetMashActionQuality, LVar1)
                 IfEq(LVar1, 1)
-                    Set(LFlag0, TRUE)
+                    Set(LFlag0, true)
                     BreakLoop
                 EndIf
                 Wait(1)
             EndLoop
-            IfEq(LFlag0, TRUE)
-                Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+            IfEq(LFlag0, true)
+                Call(UseIdleAnimation, ACTOR_PLAYER, true)
                 BreakLoop
             EndIf
             Call(SetActorScale, ACTOR_SELF, Float(1.0), Float(1.0), Float(1.0))
-            Set(LFlag0, FALSE)
+            Set(LFlag0, false)
             Loop(2)
-                Call(GetActionSuccessCopy, LVar1)
+                Call(GetMashActionQuality, LVar1)
                 IfEq(LVar1, 1)
-                    Set(LFlag0, TRUE)
+                    Set(LFlag0, true)
                     BreakLoop
                 EndIf
                 Wait(1)
             EndLoop
-            IfEq(LFlag0, TRUE)
-                Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+            IfEq(LFlag0, true)
+                Call(UseIdleAnimation, ACTOR_PLAYER, true)
                 BreakLoop
             EndIf
-            Call(UseIdleAnimation, ACTOR_PLAYER, TRUE)
+            Call(UseIdleAnimation, ACTOR_PLAYER, true)
             Call(EnemyDamageTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_UNBLOCKABLE | DAMAGE_TYPE_IGNORE_DEFENSE, 0, 0, DMG_LEECH, BS_FLAGS1_NICE_HIT)
             Call(GetLastDamage, ACTOR_PLAYER, LVar3)
             IfNe(LVar3, 0)
@@ -1163,29 +1163,29 @@ EvtScript N(EVS_TakeTurn) = {
             Else
                 Add(LVarD, 1)
                 IfGt(LVarD, 1)
-                    Call(func_80269470)
+                    Call(InterruptLeechActionCommand)
                     BreakLoop
                 EndIf
             EndIf
             Call(GetPlayerHP, LVar1)
             IfEq(LVar1, 0)
-                Call(func_80269470)
+                Call(InterruptLeechActionCommand)
                 BreakLoop
             EndIf
-            Set(LFlag0, FALSE)
+            Set(LFlag0, false)
             Loop(35)
-                Call(GetActionSuccessCopy, LVar1)
+                Call(GetMashActionQuality, LVar1)
                 IfEq(LVar1, 1)
-                    Set(LFlag0, TRUE)
+                    Set(LFlag0, true)
                     BreakLoop
                 EndIf
                 Wait(1)
             EndLoop
-            IfEq(LFlag0, TRUE)
+            IfEq(LFlag0, true)
                 BreakLoop
             EndIf
         EndLoop
-        Call(func_80269470)
+        Call(InterruptLeechActionCommand)
         Call(SetActorScale, ACTOR_SELF, Float(1.0), Float(1.0), Float(1.0))
     EndIf
     Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
@@ -1198,10 +1198,10 @@ EvtScript N(EVS_TakeTurn) = {
     Call(YieldTurn)
     ExecWait(N(EVS_ReturnHome))
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
-    Call(UseIdleAnimation, ACTOR_SELF, TRUE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
 };

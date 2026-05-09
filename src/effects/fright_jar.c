@@ -31,15 +31,15 @@ EffectInstance* fright_jar_main(
 
     bp.init = fright_jar_init;
     bp.update = fright_jar_update;
-    bp.renderWorld = fright_jar_render;
+    bp.renderScene = fright_jar_render;
     bp.unk_00 = 0;
-    bp.renderUI = NULL;
+    bp.renderUI = nullptr;
     bp.effectID = EFFECT_FRIGHT_JAR;
 
     effect = create_effect_instance(&bp);
     effect->numParts = numParts;
     data = effect->data.frightJar = general_heap_malloc(numParts * sizeof(*data));
-    ASSERT(effect->data.frightJar != NULL);
+    ASSERT(effect->data.frightJar != nullptr);
 
     data->unk_00 = arg0;
     data->unk_14 = 0;
@@ -124,7 +124,7 @@ void fright_jar_appendGfx(void* effect) {
     s32 i;
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
 
     guTranslateF(sp10, data->unk_04, data->unk_08, data->unk_0C);
     guScaleF(sp50, -data->unk_28, data->unk_28, data->unk_28);

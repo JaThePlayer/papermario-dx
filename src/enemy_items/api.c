@@ -4,7 +4,7 @@
 #include "misc_patches/custom_status.h"
 #include "misc_patches/misc_patches.h"
 
-static s32 isCalledByEnemy = FALSE;
+static s32 isCalledByEnemy = false;
 
 static Actor* get_actor_from_evt_var(Evt* script, s32 var) {
     s32 actorID = evt_get_variable(script, var);
@@ -140,7 +140,7 @@ void enemy_items_add_random_item(Actor* actor, ItemChance* items, f32 xOffset, f
 
     totalWeight = 0;
     item = items;
-    while(TRUE) {
+    while(true) {
         totalWeight += item->weight;
 
         if (item->itemID == ITEM_NONE)
@@ -151,7 +151,7 @@ void enemy_items_add_random_item(Actor* actor, ItemChance* items, f32 xOffset, f
     randNum = rand_int(totalWeight - 1);
     weightSoFar = 0;
     item = items;
-    while (TRUE) {
+    while (true) {
         weightSoFar += item->weight;
 
         if (randNum < weightSoFar) {
@@ -281,7 +281,7 @@ s32 enemy_items_count_items_with_move_id_in_all(s32 moveId) {
 
     for (s32 i = 0; i < ARRAY_COUNT(gBattleStatus.enemyActors); i++) {
         Actor* enemy = gBattleStatus.enemyActors[i];
-        if (enemy != NULL)
+        if (enemy != nullptr)
             sum += enemy_items_count_items_with_move_id(enemy, moveId);
     }
 
@@ -421,7 +421,7 @@ EvtScript EnemyItems_UseHealingItem = {
         EndThread
         Thread
             Call(FreezeBattleState, 1)
-            Call(HealActorNoPopupsOrEvents, LVar9, LVarB, FALSE)
+            Call(HealActorNoPopupsOrEvents, LVar9, LVarB, false)
             Call(FreezeBattleState, 0)
         EndThread
     EndIf
@@ -643,14 +643,14 @@ static API_CALLABLE(_HeldItemUseAI) {
     s32 outIndexVar = *args++;
 
     s32 missingHp, itemHeal;
-    s32 itemUsedOn = FALSE;
+    s32 itemUsedOn = false;
     s32 i, j;
 
     for (i = 0; i < MAX_ENEMY_ITEMS; i++) {
         ActorHeldItem* held = &actor->heldItems[i];
         ItemData* itemData = &gItemTable[held->itemID];
         s32 bestHeal = -1;
-        Actor* bestHealActor = NULL;
+        Actor* bestHealActor = nullptr;
 
         if (held->itemID == ITEM_NONE) {
             continue;
@@ -674,7 +674,7 @@ static API_CALLABLE(_HeldItemUseAI) {
 
         for (j = 0; j < ARRAY_COUNT(battleStatus->enemyActors); j++) {
             Actor* targetActor = battleStatus->enemyActors[j];
-            if (targetActor == NULL) {
+            if (targetActor == nullptr) {
                 continue;
             }
 
@@ -696,7 +696,7 @@ static API_CALLABLE(_HeldItemUseAI) {
             }
         }
 
-        if (itemUsedOn != FALSE)
+        if (itemUsedOn != false)
             break;
     }
 

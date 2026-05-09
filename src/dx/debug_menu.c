@@ -1,10 +1,12 @@
-#include "dx/debug_menu.h"
+// #include "dx/debug_menu.h"
+#include "common.h"
 #if DX_DEBUG_MENU || defined(DX_QUICK_LAUNCH_BATTLE)
 #include "game_modes.h"
 #include "battle/battle.h"
 #include "hud_element.h"
+#include "inventory.h"
 #include "qsort.h"
-#include "gcc/string.h"
+#include <string.h>
 #include "dx/utils.h"
 #include "msg.h"
 #include "fio.h"
@@ -20,13 +22,17 @@ const s32 BottomRowY      = 222;
 const s32 SubmenuPosX     = 140;
 const s32 SubmenuPosY     = MainMenuPosY;
 
-const s32 SubBoxPosX      = SubmenuPosX - 10;
-const s32 SubBoxPosY      = SubmenuPosY - 4;
+const s32 BoxOutsetX      = 10;
+const s32 BoxOutsetY      = 4;
+
+const s32 SubBoxPosX      = SubmenuPosX - BoxOutsetX;
+const s32 SubBoxPosY      = SubmenuPosY - BoxOutsetY;
 
 // which menu or submenu is open, only one is displayed at a time
 // pressing ACCEPT (R) or CANCEL (L) usually moves between these states
 enum DebugMenuStates {
     DBM_NONE,
+    // press D-left to open debug menu
     DBM_MAIN_MENU,
     DBM_QUICK_SAVE,
     DBM_SELECT_AREA,
@@ -50,10 +56,14 @@ enum DebugMenuStates {
     DBM_VIEW_COLLISION,
     DBM_CHEAT_MENU,
     DBM_SP_POOLS,
+    // press D-right to open script debugger
+    DBM_EVT_MAIN,
+    DBM_EVT_SELECT,
+    DBM_EVT_ATTACHED,
 };
 
 s32 DebugMenuState = DBM_NONE;
-b32 DebugStateChanged = FALSE;
+b32 DebugStateChanged = false;
 
 const s32 DefaultColor = MSG_PAL_WHITE;
 const s32 HoverColor   = MSG_PAL_GREEN;
@@ -72,7 +82,7 @@ void dx_debug_set_map_info(char* mapName, s32 entryID) {
     LastMapEntry = entryID;
 }
 
-void dx_debug_set_battle_info(s32 battleID, char* stageName) {
+void dx_debug_set_battle_info(s32 battleID, const char* stageName) {
     s32 len = strlen(stageName);
 
     strcpy(LastStageName, stageName);
@@ -154,7 +164,7 @@ void dx_debug_update_buttons() {
 
 void dx_debug_draw_box(s32 posX, s32 posY, s32 sizeX, s32 sizeY, int style, s32 opacity) {
     draw_box(0, (WindowStyle)style, posX, posY, 0, sizeX, sizeY, opacity,
-        0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, NULL, 0, NULL, SCREEN_WIDTH, SCREEN_HEIGHT, NULL);
+        0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, nullptr, 0, nullptr, SCREEN_WIDTH, SCREEN_HEIGHT, nullptr);
 }
 
 void dx_debug_draw_ascii(char* text, s32 color, s32 posX, s32 posY) {
@@ -174,8 +184,8 @@ void dx_debug_draw_ascii_with_effect(char* text, s32 color, s32 posX, s32 posY, 
 }
 
 void dx_debug_draw_msg(s32 msgID, s32 color, s32 alpha, s32 posX, s32 posY) {
-    char buf[128] = {
-        MSG_CHAR_READ_FUNCTION, MSG_READ_FUNC_SIZE, 12, 12
+    ALIGNED(8) char buf[128] = {
+        MSG_CHAR_READ_FUNCTION, MSG_READ_FUNC_SIZE, 12, 12,
     };
     dma_load_msg(msgID, &buf[4]);
     draw_msg((s32)buf, posX, posY, alpha, color, 0);
@@ -351,9 +361,9 @@ void dx_debug_nav_editable_num(DebugEditableNumber* num) {
     s32 max = num->isHex ? 0xF : 9;
 
     if (num->size > 1) {
-        num->pos = dx_debug_menu_nav_1D_horizontal(num->pos, 0, num->size - 1, FALSE);
+        num->pos = dx_debug_menu_nav_1D_horizontal(num->pos, 0, num->size - 1, false);
     }
-    num->digits[num->pos] = dx_debug_menu_nav_1D_vertical(num->digits[num->pos], 0, max, TRUE);
+    num->digits[num->pos] = dx_debug_menu_nav_1D_vertical(num->digits[num->pos], 0, max, true);
 }
 
 void dx_debug_draw_editable_num(DebugEditableNumber* num, s32 posX, s32 posY) {
@@ -424,23 +434,23 @@ typedef struct DebugMenuEntry {
 
 DebugMenuEntry DebugMainMenu[] = {
     { "Full Restore",   dx_debug_exec_full_restore },
-    { "Save/Load",      NULL, DBM_QUICK_SAVE },
-    { "Map Select",     NULL, DBM_SELECT_AREA },
-    { "Battle Select",  NULL, DBM_SELECT_BATTLE },
-    { "Set Story Byte", NULL, DBM_SET_STORY },
-    { "Sound Player",   NULL, DBM_SOUND_PLAYER },
-    { "Edit Partners",  NULL, DBM_EDIT_PARTNERS },
-    { "Edit Inventory", NULL, DBM_EDIT_INVENTORY },
-//  { "Edit Memory",    NULL, DBM_EDIT_MEMORY },
-    { "View Collision", NULL, DBM_VIEW_COLLISION },
-    { "Cheats",         NULL, DBM_CHEAT_MENU },
-    { "SP Pools",       NULL, DBM_SP_POOLS },
+    { "Save/Load",      nullptr, DBM_QUICK_SAVE },
+    { "Map Select",     nullptr, DBM_SELECT_AREA },
+    { "Battle Select",  nullptr, DBM_SELECT_BATTLE },
+    { "Set Story Byte", nullptr, DBM_SET_STORY },
+    { "Sound Player",   nullptr, DBM_SOUND_PLAYER },
+    { "Edit Partners",  nullptr, DBM_EDIT_PARTNERS },
+    { "Edit Inventory", nullptr, DBM_EDIT_INVENTORY },
+//  { "Edit Memory",    nullptr, DBM_EDIT_MEMORY },
+    { "View Collision", nullptr, DBM_VIEW_COLLISION },
+    { "Cheats",         nullptr, DBM_CHEAT_MENU },
+    { "SP Pools",       nullptr, DBM_SP_POOLS },
 };
 s32 MainMenuPos = 0;
 
 // position of the blue box containing the main menu options
-const s32 MainBoxPosX     = MainMenuPosX - 10;
-const s32 MainBoxPosY     = MainMenuPosY - 4;
+const s32 MainBoxPosX     = MainMenuPosX - BoxOutsetX;
+const s32 MainBoxPosY     = MainMenuPosY - BoxOutsetY;
 const s32 MainBoxWidth    = 96;
 const s32 MainBoxHeight   = ARRAY_COUNT(DebugMainMenu) * RowHeight + 8;
 
@@ -470,6 +480,10 @@ void dx_debug_update_edit_star_points();
 void dx_debug_update_edit_star_pieces();
 void dx_debug_update_view_collision();
 void dx_debug_update_cheat_menu();
+void dx_debug_update_evt_main();
+void dx_debug_update_evt_select();
+void dx_debug_update_evt_attached();
+void armageddon_debug_sp_pools(void);
 
 void dx_debug_menu_main() {
     s32 initialMenuState = DebugMenuState;
@@ -491,17 +505,28 @@ void dx_debug_menu_main() {
         if (PRESSED(BUTTON_D_LEFT)) {
             DebugMenuState = DBM_MAIN_MENU;
         }
+        if (PRESSED(BUTTON_D_RIGHT)) {
+            DebugMenuState = DBM_EVT_MAIN;
+        }
     } else if (DebugMenuState == DBM_MAIN_MENU) {
         if (PRESSED(BUTTON_D_LEFT | BUTTON_L)) {
+            DebugMenuState = DBM_NONE;
+        }
+    } else if (DebugMenuState == DBM_EVT_MAIN) {
+        if (PRESSED(BUTTON_D_RIGHT | BUTTON_L)) {
             DebugMenuState = DBM_NONE;
         }
     }
 
     if (DebugMenuState != DBM_NONE) {
         // main menu is always drawn if the debug menu is open at all
-        dx_debug_draw_main_menu();
+        if (DebugMenuState < DBM_EVT_MAIN) {
+            dx_debug_draw_main_menu();
+        }
 
-        switch(DebugMenuState) {
+        switch (DebugMenuState) {
+            case DBM_NONE: // to satisfy compiler
+                break;
             case DBM_MAIN_MENU:
                 dx_debug_update_main_menu();
                 break;
@@ -570,6 +595,15 @@ void dx_debug_menu_main() {
             case DBM_SP_POOLS:
                 armageddon_debug_sp_pools();
                 break;
+            case DBM_EVT_MAIN:
+                dx_debug_update_evt_main();
+                break;
+            case DBM_EVT_SELECT:
+                dx_debug_update_evt_select();
+                break;
+            case DBM_EVT_ATTACHED:
+                dx_debug_update_evt_attached();
+                break;
         }
     }
 
@@ -577,9 +611,9 @@ void dx_debug_menu_main() {
 }
 
 void dx_debug_update_main_menu() {
-    MainMenuPos = dx_debug_menu_nav_1D_vertical(MainMenuPos, 0, ARRAY_COUNT(DebugMainMenu) - 1, FALSE);
+    MainMenuPos = dx_debug_menu_nav_1D_vertical(MainMenuPos, 0, ARRAY_COUNT(DebugMainMenu) - 1, false);
     if (RELEASED(BUTTON_R | BUTTON_D_RIGHT)) {
-        if (DebugMainMenu[MainMenuPos].onSelect != NULL) {
+        if (DebugMainMenu[MainMenuPos].onSelect != nullptr) {
             DebugMainMenu[MainMenuPos].onSelect();
         } else {
             DebugMenuState = DebugMainMenu[MainMenuPos].nextState;
@@ -622,7 +656,7 @@ void dx_debug_exec_quick_load() {
 }
 
 DebugMenuEntry DebugQuickSaveMenu[] = {
-    { "Cancel", NULL, DBM_MAIN_MENU },
+    { "Cancel", nullptr, DBM_MAIN_MENU },
     { "Quick Save", dx_debug_exec_quick_save },
     { "Quick Load", dx_debug_exec_quick_load },
 };
@@ -632,11 +666,11 @@ void dx_debug_update_quick_save() {
     s32 idx;
 
     // handle input
-    QuickSaveMenuPos = dx_debug_menu_nav_1D_vertical(QuickSaveMenuPos, 0, ARRAY_COUNT(DebugQuickSaveMenu) - 1, FALSE);
+    QuickSaveMenuPos = dx_debug_menu_nav_1D_vertical(QuickSaveMenuPos, 0, ARRAY_COUNT(DebugQuickSaveMenu) - 1, false);
     if (RELEASED(BUTTON_L)) {
         DebugMenuState = DBM_MAIN_MENU;
     } else if (RELEASED(BUTTON_R)) {
-        if (DebugQuickSaveMenu[QuickSaveMenuPos].onSelect != NULL) {
+        if (DebugQuickSaveMenu[QuickSaveMenuPos].onSelect != nullptr) {
             DebugQuickSaveMenu[QuickSaveMenuPos].onSelect();
         } else {
             DebugMenuState = DebugQuickSaveMenu[QuickSaveMenuPos].nextState;
@@ -812,7 +846,7 @@ void dx_debug_update_select_map() {
 }
 
 void dx_debug_update_select_entry() {
-    s32 idx, areaID, mapID;
+    s32 idx;
     MapConfig map = gAreas[SelectAreaMenuPos].maps[SelectMapMenuPos];
 
     // handle input
@@ -849,7 +883,7 @@ void dx_debug_update_select_entry() {
         char fmtBuf[16];
         dx_debug_draw_ascii(map.id, DefaultColor, SubmenuPosX, SubmenuPosY + RowHeight);
         dx_debug_draw_ascii("Entry:", DefaultColor, SubmenuPosX, SubmenuPosY + 2 * RowHeight);
-        sprintf(fmtBuf, "%2X", SelectedEntryValue);
+        sprintf(fmtBuf, "%2lX", SelectedEntryValue);
         dx_debug_draw_ascii(fmtBuf, HighlightColor, SubmenuPosX + 40, SubmenuPosY + 2 * RowHeight);
     }
 }
@@ -892,7 +926,7 @@ Enemy DebugDummyEnemy = {
 
 Encounter DebugDummyEncounter = {
     .encounterID = DX_DEBUG_DUMMY_ID,
-    .enemy = &DebugDummyEnemy,
+    .enemy = { &DebugDummyEnemy },
     .count = 0,
     .battle = 0,
     .stage = 0,
@@ -908,8 +942,8 @@ void dx_debug_begin_battle_with_IDs(s16 battle, s16 stage) {
     es->curEnemy = &DebugDummyEnemy;
     es->hitType = ENCOUNTER_TRIGGER_NONE;
     es->firstStrikeType = FIRST_STRIKE_NONE;
-    es->forbidFleeing = FALSE;
-    es->scriptedBattle = TRUE;
+    es->forbidFleeing = false;
+    es->scriptedBattle = true;
     es->songID = -1;
     es->unk_18 = -1;
     es->fadeOutAmount = 0;
@@ -920,7 +954,7 @@ void dx_debug_begin_battle_with_IDs(s16 battle, s16 stage) {
 
     gEncounterState = ENCOUNTER_STATE_PRE_BATTLE;
     gEncounterSubState = ENCOUNTER_SUBSTATE_PRE_BATTLE_INIT;
-    EncounterStateChanged = TRUE;
+    EncounterStateChanged = true;
 }
 
 void dx_debug_begin_battle() {
@@ -935,7 +969,6 @@ void dx_debug_begin_battle() {
 
 void dx_debug_update_select_battle() {
     s32 idx;
-    char fmtBuf[16];
     s32 maxAreaTens = ARRAY_COUNT(gBattleAreas) >> 4;
 
     // handle input
@@ -946,7 +979,7 @@ void dx_debug_update_select_battle() {
         DebugMenuState = DBM_NONE;
     }
 
-    DebugBattleColumn = dx_debug_menu_nav_1D_horizontal(DebugBattleColumn, 0, 4, FALSE);
+    DebugBattleColumn = dx_debug_menu_nav_1D_horizontal(DebugBattleColumn, 0, 4, false);
     if (NAV_UP) {
         s32 value = DebugBattleNum[DebugBattleColumn] + 1;
         if (DebugBattleColumn == DEBUG_BATTLE_STAGE) {
@@ -990,7 +1023,7 @@ void dx_debug_update_select_battle() {
 // set story byte
 
 DebugEditableNumber DebugStoryProgress = {
-    .isHex = TRUE,
+    .isHex = true,
     .digits = { 0, 0 },
     .size = 2,
     .pos = 0,
@@ -998,7 +1031,7 @@ DebugEditableNumber DebugStoryProgress = {
 
 void dx_debug_update_edit_progress() {
     if (DebugStateChanged) {
-        s32 val = evt_get_variable(NULL, GB_StoryProgress);
+        s32 val = evt_get_variable(nullptr, GB_StoryProgress);
         dx_debug_set_editable_num(&DebugStoryProgress, val);
     }
 
@@ -1007,7 +1040,7 @@ void dx_debug_update_edit_progress() {
         DebugMenuState = DBM_MAIN_MENU;
     } else if (RELEASED(BUTTON_R)) {
         s32 val = dx_debug_get_editable_num(&DebugStoryProgress);
-        evt_set_variable(NULL, GB_StoryProgress, val);
+        evt_set_variable(nullptr, GB_StoryProgress, val);
         sfx_play_sound(SOUND_MENU_BADGE_EQUIP);
     }
 
@@ -1023,8 +1056,8 @@ void dx_debug_update_edit_progress() {
 // sound player
 
 DebugMenuEntry DebugSoundPlayerMenu[] = {
-    { "Play Sound", NULL, DBM_SELECT_SOUND },
-    { "Stop Sound", NULL, DBM_SELECT_SOUND },
+    { "Play Sound", nullptr, DBM_SELECT_SOUND },
+    { "Stop Sound", nullptr, DBM_SELECT_SOUND },
 };
 s32 SoundPlayerMenuPos = 0;
 
@@ -1046,18 +1079,18 @@ void dx_debug_draw_sound_player(b32 activeMenu) {
 
 void dx_debug_update_sound_player() {
     // handle input
-    SoundPlayerMenuPos = dx_debug_menu_nav_1D_vertical(SoundPlayerMenuPos, 0, ARRAY_COUNT(DebugSoundPlayerMenu) - 1, FALSE);
+    SoundPlayerMenuPos = dx_debug_menu_nav_1D_vertical(SoundPlayerMenuPos, 0, ARRAY_COUNT(DebugSoundPlayerMenu) - 1, false);
     if (RELEASED(BUTTON_L)) {
         DebugMenuState = DBM_MAIN_MENU;
     } else if (RELEASED(BUTTON_R)) {
         DebugMenuState = DBM_SELECT_SOUND;
     }
 
-    dx_debug_draw_sound_player(TRUE);
+    dx_debug_draw_sound_player(true);
 }
 
 DebugEditableNumber DebugSoundID = {
-    .isHex = TRUE,
+    .isHex = true,
     .digits = { 0, 0, 0, 0 },
     .size = 4,
     .pos = 0,
@@ -1077,7 +1110,7 @@ void dx_debug_update_select_sound() {
 
     dx_debug_nav_editable_num(&DebugSoundID);
 
-    dx_debug_draw_sound_player(FALSE);
+    dx_debug_draw_sound_player(false);
     dx_debug_draw_box(SubBoxPosX, SubBoxPosY + (4 * RowHeight), 75, 2 * RowHeight + 8, WINDOW_STYLE_20, 192);
     dx_debug_draw_ascii("Sound ID:", DefaultColor, SubmenuPosX, SubmenuPosY + 4 * RowHeight);
     dx_debug_draw_editable_num(&DebugSoundID, SubmenuPosX, SubmenuPosY + 5 * RowHeight);
@@ -1099,20 +1132,23 @@ void dx_debug_update_edit_partners() {
     }
 
     // handle input
-    SelectPartnerMenuPos = dx_debug_menu_nav_1D_vertical(SelectPartnerMenuPos, 1, ARRAY_COUNT(gPlayerData.partners) - 1, FALSE);
-    DebugPartnerLevels[SelectPartnerMenuPos] = dx_debug_menu_nav_1D_horizontal(DebugPartnerLevels[SelectPartnerMenuPos], -1, 2, FALSE);
+    SelectPartnerMenuPos = dx_debug_menu_nav_1D_vertical(SelectPartnerMenuPos, 1, ARRAY_COUNT(gPlayerData.partners) - 1, false);
+    DebugPartnerLevels[SelectPartnerMenuPos] = dx_debug_menu_nav_1D_horizontal(DebugPartnerLevels[SelectPartnerMenuPos], -1, 2, false);
     if (RELEASED(BUTTON_L)) {
         DebugMenuState = DBM_MAIN_MENU;
     } else if (RELEASED(BUTTON_R)) {
         for (idx = 1; idx < ARRAY_COUNT(gPlayerData.partners); idx++) {
             s32 val = DebugPartnerLevels[idx];
             if (val >= 0) {
-                gPlayerData.partners[idx].enabled = TRUE;
+                gPlayerData.partners[idx].enabled = true;
                 gPlayerData.partners[idx].level = val;
             } else {
-                gPlayerData.partners[idx].enabled = FALSE;
+                gPlayerData.partners[idx].enabled = false;
                 gPlayerData.partners[idx].level = 0;
             }
+        }
+        if (DebugPartnerLevels[SelectPartnerMenuPos] >= 0) {
+            switch_to_partner(SelectPartnerMenuPos);
         }
         sfx_play_sound(SOUND_MENU_BADGE_EQUIP);
     }
@@ -1149,14 +1185,14 @@ void dx_debug_update_edit_partners() {
 // edit inventory
 
 DebugMenuEntry DebugInventoryMenu[] = {
-    { "Items", NULL, DBM_INV_EDIT_ITEMS },
-    { "Badges", NULL, DBM_INV_EDIT_BADGES },
-    { "Key Items", NULL, DBM_INV_EDIT_KEYS },
-    { "Equipment", NULL, DBM_INV_EDIT_GEAR },
-    { "Stats", NULL, DBM_INV_EDIT_STATS },
-    { "Coins", NULL, DBM_INV_EDIT_COINS },
-    { "Star Points", NULL, DBM_INV_EDIT_STAR_POINTS },
-    { "Star Pieces", NULL, DBM_INV_EDIT_STAR_PIECES },
+    { "Items", nullptr, DBM_INV_EDIT_ITEMS },
+    { "Badges", nullptr, DBM_INV_EDIT_BADGES },
+    { "Key Items", nullptr, DBM_INV_EDIT_KEYS },
+    { "Equipment", nullptr, DBM_INV_EDIT_GEAR },
+    { "Stats", nullptr, DBM_INV_EDIT_STATS },
+    { "Coins", nullptr, DBM_INV_EDIT_COINS },
+    { "Star Points", nullptr, DBM_INV_EDIT_STAR_POINTS },
+    { "Star Pieces", nullptr, DBM_INV_EDIT_STAR_PIECES },
 };
 s32 InventoryMenuPos = 0;
 
@@ -1164,11 +1200,11 @@ void dx_debug_update_edit_inventory() {
     s32 idx;
 
     // handle input
-    InventoryMenuPos = dx_debug_menu_nav_1D_vertical(InventoryMenuPos, 0, ARRAY_COUNT(DebugInventoryMenu) - 1, FALSE);
+    InventoryMenuPos = dx_debug_menu_nav_1D_vertical(InventoryMenuPos, 0, ARRAY_COUNT(DebugInventoryMenu) - 1, false);
     if (RELEASED(BUTTON_L)) {
         DebugMenuState = DBM_MAIN_MENU;
     } else if (RELEASED(BUTTON_R)) {
-        if (DebugInventoryMenu[InventoryMenuPos].onSelect != NULL) {
+        if (DebugInventoryMenu[InventoryMenuPos].onSelect != nullptr) {
             DebugInventoryMenu[InventoryMenuPos].onSelect();
         } else {
             DebugMenuState = DebugInventoryMenu[InventoryMenuPos].nextState;
@@ -1184,7 +1220,7 @@ void dx_debug_update_edit_inventory() {
     }
 }
 
-b32 DebugEditingItem = FALSE;
+b32 DebugEditingItem = false;
 
 #define _MAX_INV_SIZE(a,b,c) MAX(MAX(ARRAY_COUNT(a), ARRAY_COUNT(b)), ARRAY_COUNT(c))
 s8 DebugItemDigits[_MAX_INV_SIZE(gPlayerData.invItems, gPlayerData.keyItems, gPlayerData.badges)][3];
@@ -1237,7 +1273,7 @@ void dx_debug_update_edit_items() {
     DebugItemsMenu* menu;
     s16* invItems;
     s32 invSize;
-    s32 i, j;
+    s32 i;
 
     switch (DebugMenuState) {
         case DBM_INV_EDIT_ITEMS:
@@ -1255,6 +1291,8 @@ void dx_debug_update_edit_items() {
             invItems = gPlayerData.badges;
             invSize = ARRAY_COUNT(gPlayerData.badges);
             break;
+        default:
+            PANIC_MSG("invalid debug menu state");
     }
 
     if (DebugStateChanged) {
@@ -1265,13 +1303,13 @@ void dx_debug_update_edit_items() {
 
     if (RELEASED(BUTTON_L)) {
         if (DebugEditingItem) {
-            DebugEditingItem = FALSE;
+            DebugEditingItem = false;
         } else {
             DebugMenuState = DBM_EDIT_INVENTORY;
         }
     } else if (RELEASED(BUTTON_R)) {
         if (!DebugEditingItem) {
-            DebugEditingItem = TRUE;
+            DebugEditingItem = true;
         } else {
             for (i = 0; i < invSize; i++) {
                 invItems[i] = dx_debug_get_item_id(i);
@@ -1282,9 +1320,9 @@ void dx_debug_update_edit_items() {
 
     if (DebugEditingItem) {
         s32 digit;
-        menu->col = dx_debug_menu_nav_1D_horizontal(menu->col, 0, 2, FALSE);
+        menu->col = dx_debug_menu_nav_1D_horizontal(menu->col, 0, 2, false);
         digit = DebugItemDigits[menu->pos][menu->col];
-        digit = dx_debug_menu_nav_1D_vertical(digit, 0, 0xF, TRUE);
+        digit = dx_debug_menu_nav_1D_vertical(digit, 0, 0xF, true);
         DebugItemDigits[menu->pos][menu->col] = digit;
     } else {
         if (NAV_UP) {
@@ -1316,11 +1354,11 @@ void dx_debug_update_edit_items() {
         b32 isSelectedRow = (menu->pos == i);
 
         if (DebugEditingItem) {
-            dx_debug_draw_editable_number(i, "%02X", -1, FALSE, SubmenuPosX, posY);
+            dx_debug_draw_editable_number(i, "%02X", -1, false, SubmenuPosX, posY);
             dx_debug_draw_editable_number(itemID, "%03X", menu->col, isSelectedRow, SubmenuPosX + 20, posY);
         } else {
             dx_debug_draw_editable_number(i, "%02X", -1, isSelectedRow, SubmenuPosX, posY);
-            dx_debug_draw_editable_number(itemID, "%03X", -1, FALSE, SubmenuPosX + 20, posY);
+            dx_debug_draw_editable_number(itemID, "%03X", -1, false, SubmenuPosX + 20, posY);
         }
 
         s32 itemMsg = MSG_NONE;
@@ -1372,7 +1410,7 @@ s32 DebugGearPos = 0;
 
 void dx_debug_update_edit_gear() {
     s32 idx;
-    s32 val, dx;
+    s32 dx;
 
     if (DebugStateChanged) {
         DebugGearValues[DEBUG_GEAR_BOOTS] = gPlayerData.bootsLevel;
@@ -1389,20 +1427,17 @@ void dx_debug_update_edit_gear() {
         gPlayerData.hasActionCommands = DebugGearValues[DEBUG_GEAR_LUCKY_STAR];
         gPlayerData.starBeamLevel = DebugGearValues[DEBUG_GEAR_STAR_BEAM];
 
-        //TODO functions do not exist yet
-        /*
-        if (gPlayerData.hasActionCommands && !has_key_item(ITEM_LUCKY_STAR)) {
-            add_key_item(ITEM_LUCKY_STAR);
+        if (gPlayerData.hasActionCommands && !has_item(ITEM_LUCKY_STAR)) {
+            add_item(ITEM_LUCKY_STAR);
         }
-        if (!gPlayerData.hasActionCommands && has_key_item(ITEM_LUCKY_STAR)) {
-            remove_key_item(ITEM_LUCKY_STAR);
+        if (!gPlayerData.hasActionCommands && has_item(ITEM_LUCKY_STAR)) {
+            remove_item(ITEM_LUCKY_STAR);
         }
-        */
 
         sfx_play_sound(SOUND_MENU_BADGE_EQUIP);
     }
 
-    DebugGearPos = dx_debug_menu_nav_1D_vertical(DebugGearPos, 0, ARRAY_COUNT(DebugGearValues) - 1, FALSE);
+    DebugGearPos = dx_debug_menu_nav_1D_vertical(DebugGearPos, 0, ARRAY_COUNT(DebugGearValues) - 1, false);
 
     dx = 0;
     if (NAV_RIGHT) {
@@ -1492,7 +1527,7 @@ void dx_debug_update_edit_stats() {
         sfx_play_sound(SOUND_MENU_BADGE_EQUIP);
     }
 
-    DebugStatPos = dx_debug_menu_nav_1D_vertical(DebugStatPos, 0, ARRAY_COUNT(DebugStatValues) - 1, FALSE);
+    DebugStatPos = dx_debug_menu_nav_1D_vertical(DebugStatPos, 0, ARRAY_COUNT(DebugStatValues) - 1, false);
 
     dx = 0;
     if (NAV_RIGHT) {
@@ -1542,7 +1577,7 @@ void dx_debug_update_edit_stats() {
 }
 
 DebugEditableNumber DebugCoins = {
-    .isHex = FALSE,
+    .isHex = false,
     .digits = { 0, 0, 0 },
     .size = 3,
     .pos = 0,
@@ -1570,7 +1605,7 @@ void dx_debug_update_edit_coins() {
 }
 
 DebugEditableNumber DebugStarPoints = {
-    .isHex = FALSE,
+    .isHex = false,
     .digits = { 0, 0 },
     .size = 2,
     .pos = 0,
@@ -1598,7 +1633,7 @@ void dx_debug_update_edit_star_points() {
 }
 
 DebugEditableNumber DebugStarPieces = {
-    .isHex = FALSE,
+    .isHex = false,
     .digits = { 0, 0, 0 },
     .size = 3,
     .pos = 0,
@@ -1650,13 +1685,13 @@ enum {
 };
 
 DebugCollisionEntry DebugCollisionMenu[] = {
-    [DBC_SHOW_COLLISION]  { "Show Collision",  FALSE },
-    [DBC_CULL_BACK]       { "Cull Back",       TRUE },
-    [DBC_SHOW_DISABLED]   { "Show Disabled",   TRUE },
-    [DBC_HIDE_MODELS]     { "Hide Models",     FALSE },
-    [DBC_EXTRUDE_FACES]   { "Extrude Faces",   FALSE },
-    [DBC_HIGHLIGHT_FLOOR] { "Highlight Floor", FALSE },
-    [DBC_HIGHLIGHT_WALL]  { "Highlight Wall",  FALSE },
+    [DBC_SHOW_COLLISION]  { "Show Collision",  false },
+    [DBC_CULL_BACK]       { "Cull Back",       true },
+    [DBC_SHOW_DISABLED]   { "Show Disabled",   true },
+    [DBC_HIDE_MODELS]     { "Hide Models",     false },
+    [DBC_EXTRUDE_FACES]   { "Extrude Faces",   false },
+    [DBC_HIGHLIGHT_FLOOR] { "Highlight Floor", false },
+    [DBC_HIGHLIGHT_WALL]  { "Highlight Wall",  false },
     [DBC_FADE_DIST]       { "Near Fade Dist",  1 },
 };
 
@@ -1676,10 +1711,10 @@ void dx_debug_update_view_collision() {
         }
     } else {
         s32 fadeDist = DebugCollisionMenu[DebugCollisionPos].state;
-        fadeDist = dx_debug_menu_nav_1D_horizontal(fadeDist, 0, 9, FALSE);
+        fadeDist = dx_debug_menu_nav_1D_horizontal(fadeDist, 0, 9, false);
         DebugCollisionMenu[DebugCollisionPos].state = fadeDist;
     }
-    DebugCollisionPos = dx_debug_menu_nav_1D_vertical(DebugCollisionPos, 0, ARRAY_COUNT(DebugCollisionMenu) - 1, FALSE);
+    DebugCollisionPos = dx_debug_menu_nav_1D_vertical(DebugCollisionPos, 0, ARRAY_COUNT(DebugCollisionMenu) - 1, false);
 
     // draw
     dx_debug_draw_box(SubBoxPosX, SubBoxPosY + RowHeight, 120, 8 * RowHeight + 8, WINDOW_STYLE_20, 192);
@@ -1748,7 +1783,7 @@ void dx_debug_draw_collision() {
     for (i = 0; i < gCollisionData.numColliders; i++) {
         Collider* collider = &gCollisionData.colliderList[i];
 
-        if (collider->flags & COLLIDER_FLAG_IGNORE_PLAYER && !DebugCollisionMenu[DBC_SHOW_DISABLED].state) {
+        if ((collider->flags & COLLIDER_FLAG_IGNORE_PLAYER) && !DebugCollisionMenu[DBC_SHOW_DISABLED].state) {
             continue;
         }
 
@@ -1793,10 +1828,10 @@ void dx_debug_draw_collision() {
 
     if (DebugCollisionMenu[DBC_CULL_BACK].state) {
         gSPSetGeometryMode(gMainGfxPos++, G_CULL_BACK | G_SHADING_SMOOTH);
-        culling = TRUE;
+        culling = true;
     } else {
         gSPSetGeometryMode(gMainGfxPos++, G_SHADING_SMOOTH);
-        culling = FALSE;
+        culling = false;
     }
 
     DebugVtxPos = 0;
@@ -1808,12 +1843,12 @@ void dx_debug_draw_collision() {
         ColliderTriangle* tri = debugTri->tri;
         s32 r, g, b, a;
 
-        b32 highlight = FALSE;
+        b32 highlight = false;
         if (DebugCollisionMenu[DBC_HIGHLIGHT_FLOOR].state && debugTri->colliderID == gCollisionStatus.curFloor) {
-            highlight = TRUE;
+            highlight = true;
         }
         if (DebugCollisionMenu[DBC_HIGHLIGHT_WALL].state && debugTri->colliderID == gCollisionStatus.curWall) {
-            highlight = TRUE;
+            highlight = true;
         }
 
         if (rdpBufPos == 0) {
@@ -1826,11 +1861,11 @@ void dx_debug_draw_collision() {
             if (!tri->oneSided && culling) {
                 gDPPipeSync(gMainGfxPos++);
                 gSPClearGeometryMode(gMainGfxPos++, G_CULL_BACK);
-                culling = FALSE;
+                culling = false;
             } else if (tri->oneSided && !culling) {
                 gDPPipeSync(gMainGfxPos++);
                 gSPSetGeometryMode(gMainGfxPos++, G_CULL_BACK);
-                culling = TRUE;
+                culling = true;
             }
         }
 
@@ -1888,11 +1923,11 @@ typedef struct DebugCheatEntry {
 } DebugCheatEntry;
 
 DebugCheatEntry DebugCheatMenu[] = {
-    [DEBUG_CHEAT_GOD_MODE]      { "God Mode",   FALSE },
-    [DEBUG_CHEAT_SPEED_MODE]    { "Speed Mode", FALSE },
-    [DEBUG_CHEAT_FLY]           { "Fly With L", FALSE },
-    [DEBUG_CHEAT_HIGH_JUMP]     { "High Jump", FALSE },
-    [DEBUG_CHEAT_IGNORE_WALLS]  { "Ignore Walls", FALSE },
+    [DEBUG_CHEAT_GOD_MODE]      { "God Mode",   false },
+    [DEBUG_CHEAT_SPEED_MODE]    { "Speed Mode", false },
+    [DEBUG_CHEAT_FLY]           { "Fly With L", false },
+    [DEBUG_CHEAT_HIGH_JUMP]     { "High Jump", false },
+    [DEBUG_CHEAT_IGNORE_WALLS]  { "Ignore Walls", false },
 };
 
 s32 DebugCheatPos = 0;
@@ -1928,7 +1963,7 @@ void dx_debug_update_cheat_menu() {
         }
 
     }
-    DebugCheatPos = dx_debug_menu_nav_1D_vertical(DebugCheatPos, 0, ARRAY_COUNT(DebugCheatMenu) - 1, FALSE);
+    DebugCheatPos = dx_debug_menu_nav_1D_vertical(DebugCheatPos, 0, ARRAY_COUNT(DebugCheatMenu) - 1, false);
 
     // draw
     dx_debug_draw_box(SubBoxPosX, SubBoxPosY + RowHeight, 120, ARRAY_COUNT(DebugCheatMenu) * RowHeight + 8, WINDOW_STYLE_20, 192);
@@ -1947,6 +1982,712 @@ b32 dx_debug_is_cheat_enabled(DebugCheat cheat) {
 }
 
 // ----------------------------------------------------------------------------
+// script debugger
+
+const s32 EvtDebugBoxWidth    = 72;
+const s32 EvtDebugBoxHeight   = BoxOutsetY + 10 * RowHeight + BoxOutsetY;
+
+const s32 EvtDebugMenuPosX    = 314 - EvtDebugBoxWidth; // right edge should be at 314
+const s32 EvtDebugMenuPosY    = 60;
+
+// position of the blue box containing the main menu options
+const s32 EvtDebugBoxPosX     = EvtDebugMenuPosX - BoxOutsetX;
+const s32 EvtDebugBoxPosY     = EvtDebugMenuPosY - BoxOutsetY;
+
+const s32 EvtDebugInfoX     = 26;
+const s32 EvtDebugInfoY     = 60;
+const s32 EvtDebugInfoWidth     = 212;
+const s32 EvtDebugInfoHeight    = BoxOutsetY + 10 * RowHeight + BoxOutsetY;
+
+char* EvtMainMenuOpts[] = {
+    "Attach",
+    "Break",
+    "Resume",
+    "Break All",
+    "Resume All",
+};
+
+s32 EvtMainMenuPos = 0;
+
+s32 EvtListCurPos = 0;
+s32 EvtListDrawPos = 0;
+
+s32 EvtAttachedMenuPos = 0;
+s32 EvtAttachedDispMode = 0;
+s32 EvtAttachedVarsMode = 0;
+
+extern ScriptList* gCurrentScriptListPtr;
+extern s32 gScriptIndexList[];
+extern s32 gScriptIdList[];
+extern s32 gScriptListCount;
+
+Evt* DebugEvtList[MAX_SCRIPTS];
+s32 DebugEvtCount;
+
+Evt* DebugEvtAttached;
+s32 DebugEvtPrevLVars[16];
+s32 DebugEvtPrevTemps[4];
+
+u16 DebugEvtLineOffsets[1024];
+s32 DebugEvtLineCount;
+s32 DebugEvtCurLine;
+s32 DebugEvtDrawLine;
+
+typedef struct DebugOpcode {
+    char* text;
+} DebugOpcode;
+
+DebugOpcode DebugOps[] = {
+    [EVT_OP_END]                { "End" },
+    [EVT_OP_RETURN]             { "Return" },
+    [EVT_OP_LABEL]              { "Label" },
+    [EVT_OP_GOTO]               { "Goto" },
+    [EVT_OP_LOOP]               { "Loop" },
+    [EVT_OP_END_LOOP]           { "EndLoop" },
+    [EVT_OP_BREAK_LOOP]         { "BreakLoop" },
+    [EVT_OP_WAIT_FRAMES]        { "Wait" },
+    [EVT_OP_WAIT_SECS]          { "WaitSecs" },
+    [EVT_OP_IF_EQ]              { "If EQ" },
+    [EVT_OP_IF_NE]              { "If NE" },
+    [EVT_OP_IF_LT]              { "If LT" },
+    [EVT_OP_IF_GT]              { "If GT" },
+    [EVT_OP_IF_LE]              { "If LE" },
+    [EVT_OP_IF_GE]              { "If GE" },
+    [EVT_OP_IF_FLAG]            { "If AND" },
+    [EVT_OP_IF_NOT_FLAG]        { "If NAND" },
+    [EVT_OP_ELSE]               { "Else" },
+    [EVT_OP_END_IF]             { "EndIf" },
+    [EVT_OP_SWITCH]             { "Switch" },
+    [EVT_OP_SWITCH_CONST]       { "SwitchConst" },
+    [EVT_OP_CASE_EQ]            { "Case EQ" },
+    [EVT_OP_CASE_NE]            { "Case NE" },
+    [EVT_OP_CASE_LT]            { "Case LT" },
+    [EVT_OP_CASE_GT]            { "Case GT" },
+    [EVT_OP_CASE_LE]            { "Case LE" },
+    [EVT_OP_CASE_GE]            { "Case GE" },
+    [EVT_OP_CASE_DEFAULT]       { "Default" },
+    [EVT_OP_CASE_OR_EQ]         { "CaseOR EQ" },
+    [EVT_OP_CASE_AND_EQ]        { "CaseAND EQ" },
+    [EVT_OP_CASE_FLAG]          { "Case AND" },
+    [EVT_OP_END_CASE_GROUP]     { "EndCaseGroup" },
+    [EVT_OP_CASE_RANGE]         { "Case Range" },
+    [EVT_OP_BREAK_SWITCH]       { "BreakSwitch" },
+    [EVT_OP_END_SWITCH]         { "EndSwitch" },
+    [EVT_OP_SET]                { "Set" },
+    [EVT_OP_SET_CONST]          { "SetConst" },
+    [EVT_OP_SETF]               { "SetF" },
+    [EVT_OP_ADD]                { "Add" },
+    [EVT_OP_SUB]                { "Sub" },
+    [EVT_OP_MUL]                { "Mul" },
+    [EVT_OP_DIV]                { "Div" },
+    [EVT_OP_MOD]                { "Mod" },
+    [EVT_OP_ADDF]               { "AddF" },
+    [EVT_OP_SUBF]               { "SubF" },
+    [EVT_OP_MULF]               { "MulF" },
+    [EVT_OP_DIVF]               { "DivF" },
+    [EVT_OP_USE_BUF]            { "UseBuf" },
+    [EVT_OP_BUF_READ1]          { "BufRead1" },
+    [EVT_OP_BUF_READ2]          { "BufRead2" },
+    [EVT_OP_BUF_READ3]          { "BufRead3" },
+    [EVT_OP_BUF_READ4]          { "BufRead4" },
+    [EVT_OP_BUF_PEEK]           { "BufPeek" },
+    [EVT_OP_USE_FBUF]           { "UseFBuf" },
+    [EVT_OP_FBUF_READ1]         { "FBufRead1" },
+    [EVT_OP_FBUF_READ2]         { "FBufRead2" },
+    [EVT_OP_FBUF_READ3]         { "FBufRead3" },
+    [EVT_OP_FBUF_READ4]         { "FBufRead4" },
+    [EVT_OP_FBUF_PEEK]          { "FBufPeek" },
+    [EVT_OP_USE_ARRAY]          { "UseArray" },
+    [EVT_OP_USE_FLAGS]          { "UseFlags" },
+    [EVT_OP_MALLOC_ARRAY]       { "MallocArray" },
+    [EVT_OP_BITWISE_AND]        { "AND" },
+    [EVT_OP_BITWISE_AND_CONST]  { "AND Const" },
+    [EVT_OP_BITWISE_OR]         { "OR" },
+    [EVT_OP_BITWISE_OR_CONST]   { "OR Const" },
+    [EVT_OP_CALL]               { "Call" },
+    [EVT_OP_EXEC]               { "Exec" },
+    [EVT_OP_EXEC_GET_TID]       { "ExecGet" },
+    [EVT_OP_EXEC_WAIT]          { "ExecWait" },
+    [EVT_OP_BIND_TRIGGER]       { "BindTrigger" },
+    [EVT_OP_UNBIND]             { "Unbind" },
+    [EVT_OP_KILL_THREAD]        { "KillThread" },
+    [EVT_OP_JUMP]               { "Jump" },
+    [EVT_OP_SET_PRIORITY]       { "SetPriority" },
+    [EVT_OP_SET_TIMESCALE]      { "SetTimescale" },
+    [EVT_OP_SET_GROUP]          { "SetGroup" },
+    [EVT_OP_BIND_PADLOCK]       { "BindPadlock" },
+    [EVT_OP_SUSPEND_GROUP]      { "SuspendGroup" },
+    [EVT_OP_RESUME_GROUP]       { "ResumeGroup" },
+    [EVT_OP_SUSPEND_OTHERS]     { "SuspendOthers" },
+    [EVT_OP_RESUME_OTHERS]      { "ResumeOthers" },
+    [EVT_OP_SUSPEND_THREAD]     { "SuspendThread" },
+    [EVT_OP_RESUME_THREAD]      { "ResumeThread" },
+    [EVT_OP_IS_THREAD_RUNNING]  { "IsRunning" },
+    [EVT_OP_THREAD]             { "Thread" },
+    [EVT_OP_END_THREAD]         { "EndThread" },
+    [EVT_OP_CHILD_THREAD]       { "ChildThread" },
+    [EVT_OP_END_CHILD_THREAD]   { "EndChildThread" },
+    [EVT_OP_DEBUG_LOG]          { "Log" },
+    [EVT_OP_DEBUG_PRINT_VAR]    { "PrintVar" },
+    [EVT_OP_92]                 { "Op92" },
+    [EVT_OP_93]                 { "Op93" },
+    [EVT_OP_94]                 { "Op94" },
+    [EVT_OP_DEBUG_BREAKPOINT]   { "Breakpoint" },
+};
+
+// main menu options for evt debugger
+enum {
+    DEBUG_EVT_MAIN_ATTACH           = 0,
+    DEBUG_EVT_MAIN_BREAK            = 1,
+    DEBUG_EVT_MAIN_RESUME           = 2,
+    DEBUG_EVT_MAIN_BREAK_ALL        = 3,
+    DEBUG_EVT_MAIN_RESUME_ALL       = 4,
+    DEBUG_EVT_MAIN_COUNT,
+};
+
+// menu options for evt debugger while attached
+enum {
+    DEBUG_EVT_ATTACHED_DETACH       = 0,
+    DEBUG_EVT_ATTACHED_BREAK        = 1,
+    DEBUG_EVT_ATTACHED_STEP_ONCE    = 2,
+    DEBUG_EVT_ATTACHED_STEP_OVER    = 3,
+    DEBUG_EVT_ATTACHED_DISP_MODE    = 4,
+    DEBUG_EVT_ATTACHED_COUNT,
+};
+
+// display modes for evt debugger vars
+enum {
+    DEBUG_EVT_DISP_MODE_RAW         = 0,
+    DEBUG_EVT_DISP_MODE_INT         = 1,
+    DEBUG_EVT_DISP_MODE_FIXED       = 2,
+    DEBUG_EVT_DISP_MODE_FLOAT       = 3,
+    DEBUG_EVT_DISP_MODE_COUNT,
+};
+
+void dx_debug_update_evt_list() {
+    s32 i;
+
+    DebugEvtCount = 0;
+
+    for (i = 0; i < gScriptListCount; i++) {
+        Evt* script = (*gCurrentScriptListPtr)[gScriptIndexList[i]];
+
+        if (script != nullptr
+            && script->id == gScriptIdList[i]
+            && script->stateFlags != 0
+        ) {
+            DebugEvtList[DebugEvtCount] = script;
+            DebugEvtCount++;
+        }
+    }
+
+    for (i = DebugEvtCount; i < MAX_SCRIPTS; i++) {
+        DebugEvtList[i] = nullptr;
+    }
+}
+
+void dx_debug_evt_capture_vars() {
+    s32 i;
+
+    if (DebugEvtAttached == nullptr) {
+        return;
+    }
+
+    for (i = 0; i < 16; i++) {
+        DebugEvtPrevLVars[i] = DebugEvtAttached->varTable[i];
+    }
+    for (i = 0; i < 4; i++) {
+        DebugEvtPrevTemps[i] = DebugEvtAttached->functionTemp[i];
+    }
+}
+
+s32 dx_debug_scroll_to_line(s32 drawnLine, s32 selectedLine, s32 maxLine, s32 maxVisible) {
+    // if all lines can fit, do not scroll
+    if (maxLine <= maxVisible) {
+        return 0;
+    }
+
+    // scroll up to show selectedLine with an extra line before, if available
+    if (selectedLine < drawnLine + 1) {
+        return MAX(0, selectedLine - 1);
+    }
+
+    // last line selected, scroll to it without end padding
+    if (selectedLine == maxLine - 1) {
+        return selectedLine - (maxVisible - 1);
+    }
+
+    //scroll down to show selectedLine with an extra line after
+    if (selectedLine > drawnLine + (maxVisible - 2)) {
+        return selectedLine - (maxVisible - 2);
+    }
+
+    // no change
+    return drawnLine;
+}
+
+void dx_debug_draw_evt_list() {
+    s32 i;
+
+    const s32 BoxStartX = EvtDebugInfoX - BoxOutsetX;
+    const s32 BoxStartY = EvtDebugInfoY - BoxOutsetY;
+    const s32 BoxHeight = BoxOutsetY + 10 * RowHeight + BoxOutsetY;
+    const s32 BoxWidth = 212;
+
+    // script list box
+    dx_debug_draw_box(BoxStartX, BoxStartY, BoxWidth, BoxHeight, WINDOW_STYLE_20, 192);
+
+    dx_debug_draw_ascii("Grp", DefaultColor, EvtDebugInfoX - 3, EvtDebugInfoY);
+    dx_debug_draw_ascii("Start", DefaultColor, EvtDebugInfoX + 20 + 8, EvtDebugInfoY);
+    dx_debug_draw_ascii("Current", DefaultColor, EvtDebugInfoX + 80, EvtDebugInfoY);
+
+    EvtListDrawPos = dx_debug_scroll_to_line(EvtListDrawPos, EvtListCurPos, DebugEvtCount, 9);
+    s32 last = MIN(EvtListDrawPos + 9, DebugEvtCount);
+    s32 row = 0;
+
+    for (i = EvtListDrawPos; i < last; i++) {
+        Evt* script = DebugEvtList[i];
+
+        s32 posY = EvtDebugInfoY + (1 + row) * RowHeight;
+        s32 color = DefaultColor;
+
+        if (script->debugPaused) {
+            color = MSG_PAL_RED;
+        }
+
+        if (DebugMenuState == DBM_EVT_SELECT && EvtListCurPos == i) {
+            color = HighlightColor;
+        }
+
+        dx_debug_draw_number(script->groupFlags, "%02X", color, 255, EvtDebugInfoX, posY);
+        dx_debug_draw_number(script->ptrFirstLine, "%08X", color, 255, EvtDebugInfoX + 20, posY);
+        dx_debug_draw_number((u8*)script->ptrCurLine - (u8*)script->ptrFirstLine, "%X", color, 255, EvtDebugInfoX + 80, posY);
+
+        row++;
+    }
+
+    // animated down arrow
+    if (DebugEvtCount > last) {
+        char msgDownArrow[] = {
+            MSG_CHAR_DOWN, MSG_CHAR_READ_END
+        };
+        s32 posY = EvtDebugInfoY + (9) * RowHeight;
+        draw_msg((s32)msgDownArrow, EvtDebugInfoX + 185, posY - round(2.0f * ArrowAnimOffset), 255, DefaultColor, 0);
+    }
+    // animated up arrow
+    if (EvtListDrawPos > 0) {
+        char msgUpArrow[] = {
+            MSG_CHAR_UP, MSG_CHAR_READ_END
+        };
+        s32 posY = EvtDebugInfoY + (1) * RowHeight;
+        draw_msg((s32)msgUpArrow, EvtDebugInfoX + 185, posY + round(2.0f * ArrowAnimOffset), 255, DefaultColor, 0);
+    }
+
+    // menu box (upper right)
+    dx_debug_draw_box(EvtDebugBoxPosX, EvtDebugBoxPosY, EvtDebugBoxWidth, ARRAY_COUNT(EvtMainMenuOpts) * RowHeight + 8, WINDOW_STYLE_4, 192);
+
+    for (i = 0; i < ARRAY_COUNT(EvtMainMenuOpts); i++) {
+        s32 color = DefaultColor;
+        if (EvtMainMenuPos == i) {
+            color = (DebugMenuState != DBM_EVT_SELECT) ? HighlightColor : HoverColor;
+        }
+        dx_debug_draw_ascii(EvtMainMenuOpts[i], color, EvtDebugMenuPosX, EvtDebugMenuPosY + i * RowHeight);
+    }
+
+    // count box (lower right)
+    dx_debug_draw_box(EvtDebugBoxPosX, EvtDebugBoxPosY + 9 * RowHeight, EvtDebugBoxWidth, RowHeight + 8, WINDOW_STYLE_4, 192);
+    dx_debug_draw_number(DebugEvtCount, "%d running", DefaultColor, 255, EvtDebugMenuPosX, EvtDebugMenuPosY + 9 * RowHeight);
+}
+
+void dx_debug_evt_break_all() {
+    s32 i;
+
+    debug_printf("count: %d", DebugEvtCount);
+
+    for (i = 0; i < DebugEvtCount; i++) {
+        Evt* script = DebugEvtList[i];
+        script->debugPaused = true;
+        script->debugStep = DEBUG_EVT_STEP_NONE;
+    }
+}
+
+void dx_debug_evt_resume_all() {
+    s32 i;
+
+    for (i = 0; i < DebugEvtCount; i++) {
+        Evt* script = DebugEvtList[i];
+        script->debugPaused = false;
+        script->debugStep = DEBUG_EVT_STEP_NONE;
+    }
+}
+
+void dx_debug_update_evt_main() {
+
+    dx_debug_update_evt_list();
+
+    EvtMainMenuPos = dx_debug_menu_nav_1D_vertical(EvtMainMenuPos, 0, DEBUG_EVT_MAIN_COUNT - 1, false);
+
+    // handle input
+    if (RELEASED(BUTTON_R)) {
+        switch (EvtMainMenuPos) {
+            case DEBUG_EVT_MAIN_ATTACH:
+            case DEBUG_EVT_MAIN_BREAK:
+            case DEBUG_EVT_MAIN_RESUME:
+                DebugMenuState = DBM_EVT_SELECT;
+                break;
+            case DEBUG_EVT_MAIN_BREAK_ALL:
+                dx_debug_evt_break_all();
+                break;
+            case DEBUG_EVT_MAIN_RESUME_ALL:
+                dx_debug_evt_resume_all();
+                break;
+        }
+    }
+
+    dx_debug_draw_evt_list();
+}
+
+void dx_debug_update_evt_select() {
+
+    dx_debug_update_evt_list();
+
+    if (DebugEvtCount > 1) {
+        EvtListCurPos = dx_debug_menu_nav_1D_vertical(EvtListCurPos, 0, DebugEvtCount - 1, false);
+    } else {
+        EvtListCurPos = 0;
+    }
+
+    // handle input
+    if (RELEASED(BUTTON_L)) {
+        DebugMenuState = DBM_EVT_MAIN;
+    } else if (RELEASED(BUTTON_R)) {
+        if (DebugEvtCount > 0) {
+            switch (EvtMainMenuPos) {
+                case DEBUG_EVT_MAIN_ATTACH:
+                    DebugMenuState = DBM_EVT_ATTACHED;
+                    DebugEvtAttached = DebugEvtList[EvtListCurPos];
+                    DebugEvtAttached->debugStep = DEBUG_EVT_STEP_NONE;
+                    DebugEvtDrawLine = 0;
+                    dx_debug_evt_capture_vars();
+                    break;
+                case DEBUG_EVT_MAIN_BREAK:
+                    DebugEvtList[EvtListCurPos]->debugPaused = true;
+                    DebugEvtList[EvtListCurPos]->debugStep = DEBUG_EVT_STEP_NONE;
+                    break;
+                case DEBUG_EVT_MAIN_RESUME:
+                    DebugEvtList[EvtListCurPos]->debugPaused = false;
+                    DebugEvtList[EvtListCurPos]->debugStep = DEBUG_EVT_STEP_NONE;
+                    break;
+            }
+        }
+    }
+
+    dx_debug_draw_evt_list();
+}
+
+void dx_debug_evt_draw_menu_line(s32 idx, char* text) {
+    s32 color = DefaultColor;
+    if (EvtAttachedMenuPos == idx) {
+        color = (DebugMenuState != DBM_EVT_SELECT) ? HighlightColor : HoverColor;
+    }
+    dx_debug_draw_ascii(text, color, EvtDebugMenuPosX, EvtDebugMenuPosY + idx * RowHeight);
+}
+
+void dx_debug_draw_var(s32 i, s32 number, char* fmt, s32 color, s32 alpha, s32 posX, s32 posY) {
+    char fmtBuf[64];
+    char buf[64] = {
+        MSG_CHAR_READ_FUNCTION, MSG_READ_FUNC_SIZE, 12, 12
+    };
+    sprintf(fmtBuf, fmt, i, number);
+    dx_string_to_msg(&buf[4], fmtBuf);
+    draw_msg((s32)buf, posX, posY, alpha, color, 0);
+}
+
+void dx_debug_draw_fvar(s32 i, f32 number, char* fmt, s32 color, s32 alpha, s32 posX, s32 posY) {
+    char fmtBuf[64];
+    char buf[64] = {
+        MSG_CHAR_READ_FUNCTION, MSG_READ_FUNC_SIZE, 12, 12
+    };
+    sprintf(fmtBuf, fmt, i, number);
+    dx_string_to_msg(&buf[4], fmtBuf);
+    draw_msg((s32)buf, posX, posY, alpha, color, 0);
+}
+
+void dx_debug_evt_draw_vars() {
+    #define MAX_VALID_FLOAT 1e9
+    s32 val;
+    f32 fval;
+    s32 i;
+
+    for (i = 0; i < 16; i++) {
+        s32 posX = EvtDebugInfoX + (i / 8) * 106;
+        s32 posY = EvtDebugInfoY + (i % 8) * RowHeight;
+        s32 color = DebugEvtPrevLVars[i] == DebugEvtAttached->varTable[i] ? DefaultColor : HoverColor;
+
+        switch (EvtAttachedVarsMode) {
+                case DEBUG_EVT_DISP_MODE_RAW:
+                dx_debug_draw_var(i, DebugEvtAttached->varTable[i], "LVar%X  %08X", color, 255, posX, posY);
+                break;
+            case DEBUG_EVT_DISP_MODE_INT:
+                dx_debug_draw_var(i, DebugEvtAttached->varTable[i], "LVar%X  %d", color, 255, posX, posY);
+                break;
+            case DEBUG_EVT_DISP_MODE_FLOAT:
+                fval = DebugEvtAttached->varTableF[i];
+                if (fabsf(fval) < MAX_VALID_FLOAT) {
+                    dx_debug_draw_fvar(i, fval, "LVar%X  %f", color, 255, posX, posY);
+                } else {
+                    dx_debug_draw_var(i, 0, "LVar%X  ---", color, 255, posX, posY);
+                }
+                break;
+            case DEBUG_EVT_DISP_MODE_FIXED:
+                val = DebugEvtAttached->varTable[i];
+                if (val > EVT_FIXED_END && val < EVT_FIXED_CUTOFF) {
+                    dx_debug_draw_fvar(i, EVT_FIXED_TO_FLOAT(val), "LVar%X  %f", color, 255, posX, posY);
+                } else {
+                    dx_debug_draw_var(i, 0, "LVar%X  ---", color, 255, posX, posY);
+                }
+                break;
+        }
+    }
+
+    for (i = 0; i < 4; i++) {
+        s32 posX = EvtDebugInfoX + (i / 2) * 106;
+        s32 posY = EvtDebugInfoY + (8 + (i % 2)) * RowHeight;
+        s32 color = DebugEvtPrevTemps[i] == DebugEvtAttached->functionTemp[i] ? DefaultColor : HoverColor;
+
+        switch (EvtAttachedVarsMode) {
+            case DEBUG_EVT_DISP_MODE_RAW:
+                dx_debug_draw_var(i, DebugEvtAttached->functionTemp[i], "Temp%X  %08X", color, 255, posX, posY);
+                break;
+            case DEBUG_EVT_DISP_MODE_INT:
+                dx_debug_draw_var(i, DebugEvtAttached->functionTemp[i], "Temp%X  %d", color, 255, posX, posY);
+                break;
+            case DEBUG_EVT_DISP_MODE_FLOAT:
+                fval = DebugEvtAttached->functionTempF[i];
+                if (fabsf(fval) < MAX_VALID_FLOAT) {
+                    dx_debug_draw_fvar(i, fval, "Temp%X  %f", color, 255, posX, posY);
+                } else {
+                    dx_debug_draw_var(i, 0, "Temp%X  ---", color, 255, posX, posY);
+                }
+                dx_debug_draw_fvar(i, DebugEvtAttached->functionTempF[i], "Temp%X  %f", color, 255, posX, posY);
+                break;
+            case DEBUG_EVT_DISP_MODE_FIXED:
+                val = DebugEvtAttached->functionTemp[i];
+                if (val > EVT_FIXED_END && val < EVT_FIXED_CUTOFF) {
+                    dx_debug_draw_fvar(i, EVT_FIXED_TO_FLOAT(val), "Temp%X  %f", color, 255, posX, posY);
+                } else {
+                    dx_debug_draw_var(i, 0, "Temp%X  ---", color, 255, posX, posY);
+                }
+                break;
+        }
+    }
+}
+
+void dx_debug_evt_draw_arg(u32 value, b32 asDecimal, s32 color, s32 posX, s32 posY) {
+    if (value >= LVar0 && value <= LVarF) {
+        dx_debug_draw_number(value - LVar0, "LVar%X", color, 255, posX, posY);
+    } else if (asDecimal) {
+        dx_debug_draw_number(value, "%d", color, 255, posX, posY);
+    } else {
+        dx_debug_draw_number(value, "%08X", color, 255, posX, posY);
+    }
+}
+
+void dx_debug_evt_draw_disasm() {
+    Bytecode* pos;
+    s32 i, j;
+    s32 op, nargs;
+
+    if (DebugEvtAttached == nullptr) {
+        return;
+    }
+
+    pos = DebugEvtAttached->ptrFirstLine;
+    DebugEvtLineCount = 0;
+
+    // find offsets for all lines in script
+    while (true) {
+        DebugEvtLineOffsets[DebugEvtLineCount] = (u16)(pos - DebugEvtAttached->ptrFirstLine);
+
+        if (pos == DebugEvtAttached->ptrCurLine) {
+            DebugEvtCurLine = DebugEvtLineCount;
+        }
+
+        op = *pos++;
+        nargs = *pos++;
+        pos += nargs;
+
+        DebugEvtLineCount++;
+
+        if (op == EVT_OP_END || DebugEvtLineCount == ARRAY_COUNT(DebugEvtLineOffsets)) {
+            break;
+        }
+    }
+
+    DebugEvtDrawLine = dx_debug_scroll_to_line(DebugEvtDrawLine, DebugEvtCurLine, DebugEvtLineCount, 10);
+    s32 last = MIN(DebugEvtDrawLine + 10, DebugEvtLineCount);
+    s32 row = 0;
+
+    for (i = DebugEvtDrawLine; i < last; i++) {
+        pos = DebugEvtAttached->ptrFirstLine + DebugEvtLineOffsets[i];
+        op = *pos++;
+        nargs = *pos++;
+        s32* args = pos;
+        pos += nargs;
+
+        s32 posY = EvtDebugInfoY + row * RowHeight;
+        s32 color = (i == DebugEvtCurLine) ? HoverColor : DefaultColor;
+
+        dx_debug_draw_number(i, "%d", color, 255, EvtDebugInfoX, posY);
+
+        if (op > 0 && op < ARRAY_COUNT(DebugOps)) {
+            dx_debug_draw_ascii(DebugOps[op].text, color, EvtDebugInfoX + 15, posY);
+        } else {
+            dx_debug_draw_number(op, "%08X", color, 255, EvtDebugInfoX + 15, posY);
+        }
+
+        switch (op) {
+            case EVT_OP_LABEL:
+            case EVT_OP_GOTO:
+            case EVT_OP_LOOP:
+            case EVT_OP_WAIT_FRAMES:
+            case EVT_OP_WAIT_SECS:
+                dx_debug_evt_draw_arg(args[0], true, color, EvtDebugInfoX + 15 + 55, posY);
+                break;
+            default:
+                for (j = 0; j < MIN(2, nargs); j++) {
+                    dx_debug_evt_draw_arg(args[j], false, color, EvtDebugInfoX + 15 + 55 * (j + 1), posY);
+                }
+                break;
+        }
+
+        if (nargs > 2) {
+            dx_debug_draw_ascii("...", color, EvtDebugInfoX + 15 + 55 * 3, posY);
+        }
+
+        row++;
+    }
+}
+
+void dx_debug_update_evt_attached() {
+    s32 posY;
+
+    if (DebugEvtAttached == nullptr) {
+        DebugMenuState = DBM_EVT_MAIN;
+        return;
+    }
+
+    // saves worrying about null checks while drawing on the frame we detach the evt
+    b32 detachAfter = false;
+
+    EvtAttachedMenuPos = dx_debug_menu_nav_1D_vertical(EvtAttachedMenuPos, 0, DEBUG_EVT_ATTACHED_COUNT - 1, false);
+    EvtAttachedDispMode = dx_debug_menu_nav_1D_horizontal(EvtAttachedDispMode, 0, 1, false);
+
+    // handle input
+    if (RELEASED(BUTTON_L)) {
+        DebugMenuState = DBM_EVT_MAIN;
+    } else if (RELEASED(BUTTON_R)) {
+        switch (EvtAttachedMenuPos) {
+            case DEBUG_EVT_ATTACHED_DETACH:
+                detachAfter = true;
+                break;
+            case DEBUG_EVT_ATTACHED_BREAK:
+                DebugEvtAttached->debugPaused = !DebugEvtAttached->debugPaused;
+                break;
+            case DEBUG_EVT_ATTACHED_STEP_ONCE:
+                dx_debug_evt_capture_vars();
+                DebugEvtAttached->debugStep = DEBUG_EVT_STEP_ONCE;
+                break;
+            case DEBUG_EVT_ATTACHED_STEP_OVER:
+                dx_debug_evt_capture_vars();
+                DebugEvtAttached->debugStep = DEBUG_EVT_STEP_OVER;
+                break;
+            case DEBUG_EVT_ATTACHED_DISP_MODE:
+                EvtAttachedVarsMode++;
+                if (EvtAttachedVarsMode >= DEBUG_EVT_DISP_MODE_COUNT) {
+                    EvtAttachedVarsMode = 0;
+                }
+                break;
+        }
+    }
+
+    // draw menu (upper right)
+    dx_debug_draw_box(EvtDebugBoxPosX, EvtDebugBoxPosY, EvtDebugBoxWidth, 5 * RowHeight + 8, WINDOW_STYLE_4, 192);
+
+    dx_debug_evt_draw_menu_line(0, "Detach");
+    if (DebugEvtAttached->debugPaused) {
+        dx_debug_evt_draw_menu_line(1, "Resume");
+    } else {
+        dx_debug_evt_draw_menu_line(1, "Break");
+    }
+    dx_debug_evt_draw_menu_line(2, "Step Once");
+    dx_debug_evt_draw_menu_line(3, "Step Over");
+    switch (EvtAttachedVarsMode) {
+        case DEBUG_EVT_DISP_MODE_INT:
+            dx_debug_evt_draw_menu_line(4, "Vars: Int");
+            break;
+        case DEBUG_EVT_DISP_MODE_FIXED:
+            dx_debug_evt_draw_menu_line(4, "Vars: Fixed");
+            break;
+        case DEBUG_EVT_DISP_MODE_FLOAT:
+            dx_debug_evt_draw_menu_line(4, "Vars: Float");
+            break;
+        case DEBUG_EVT_DISP_MODE_RAW:
+            dx_debug_evt_draw_menu_line(4, "Vars: Raw");
+            break;
+    }
+
+    // header box
+    posY = EvtDebugInfoY - 4;
+    posY -= RowHeight + 3; // move up one line and include a small gap
+    dx_debug_draw_box(EvtDebugInfoX - 10, posY - 4, EvtDebugInfoWidth, 18, WINDOW_STYLE_20, 192);
+
+    dx_debug_draw_number(DebugEvtAttached->ptrFirstLine, "%08X", DefaultColor, 255, EvtDebugInfoX + 40, posY);
+
+    // evt info box
+    dx_debug_draw_box(EvtDebugInfoX - 10, EvtDebugInfoY - 4, EvtDebugInfoWidth, EvtDebugInfoHeight, WINDOW_STYLE_20, 192);
+
+    switch (EvtAttachedDispMode) {
+        case 0:
+            dx_debug_draw_ascii("Vars", DefaultColor, EvtDebugInfoX, posY);
+            dx_debug_evt_draw_vars();
+            break;
+        case 1:
+            dx_debug_draw_ascii("Disasm", DefaultColor, EvtDebugInfoX, posY);
+            dx_debug_evt_draw_disasm();
+            break;
+    }
+
+    if (!DebugEvtAttached->debugPaused) {
+        dx_debug_evt_capture_vars();
+    }
+
+    if (detachAfter) {
+        DebugMenuState = DBM_EVT_SELECT;
+        DebugEvtAttached = nullptr;
+    }
+}
+
+void dx_debug_evt_force_detach(Evt* evt) {
+    if (DebugEvtAttached != nullptr && (DebugEvtAttached == evt)) {
+        DebugEvtAttached = nullptr;
+
+        if (DebugMenuState == DBM_EVT_ATTACHED) {
+            DebugMenuState = DBM_EVT_MAIN;
+        }
+    }
+}
+
+void dx_debug_evt_reset() {
+    if (DebugEvtAttached != nullptr) {
+        DebugEvtAttached = nullptr;
+    }
+
+    EvtListCurPos = 0;
+    EvtListDrawPos = 0;
+}
+
+// ----------------------------------------------------------------------------
 // banner info
 
 void dx_debug_update_banner() {
@@ -1954,20 +2695,20 @@ void dx_debug_update_banner() {
     s32 effect;
 
     if (gGameStatus.context == CONTEXT_WORLD) {
-        sprintf(fmtBuf, "Map: %7s (%X)", LastMapName, LastMapEntry);
+        sprintf(fmtBuf, "Map: %7s (%lX)", LastMapName, LastMapEntry);
         dx_debug_draw_ascii(fmtBuf, DefaultColor, 220, BottomRowY);
 
         dx_debug_draw_ascii("Pos:", DefaultColor, 20, BottomRowY);
 
         effect = dx_debug_is_cheat_enabled(DEBUG_CHEAT_SPEED_MODE) ? DRAW_MSG_STYLE_RAINBOW : 0;
 
-        sprintf(fmtBuf, "%5d", round(gPlayerStatus.pos.x));
+        sprintf(fmtBuf, "%5ld", round(gPlayerStatus.pos.x));
         dx_debug_draw_ascii_with_effect(fmtBuf, DefaultColor, 48, BottomRowY, effect);
 
-        sprintf(fmtBuf, "%5d", round(gPlayerStatus.pos.y));
+        sprintf(fmtBuf, "%5ld", round(gPlayerStatus.pos.y));
         dx_debug_draw_ascii_with_effect(fmtBuf, DefaultColor, 80, BottomRowY, effect);
 
-        sprintf(fmtBuf, "%5d", round(gPlayerStatus.pos.z));
+        sprintf(fmtBuf, "%5ld", round(gPlayerStatus.pos.z));
         dx_debug_draw_ascii_with_effect(fmtBuf, DefaultColor, 112, BottomRowY, effect);
 
         if (dx_debug_is_cheat_enabled(DEBUG_CHEAT_GOD_MODE)) {
@@ -1978,7 +2719,7 @@ void dx_debug_update_banner() {
         s32 battleID = (LastBattleID >> 16) & 0xFF;
         s32 stageID = LastBattleID & 0xFFFF;
 
-        sprintf(fmtBuf, "Battle:  %02X-%02X (%X)", areaID, battleID, stageID);
+        sprintf(fmtBuf, "Battle:  %02lX-%02lX (%lX)", areaID, battleID, stageID);
         dx_debug_draw_ascii(fmtBuf, DefaultColor, 200, BottomRowY);
 
         sprintf(fmtBuf, "Stage:  %-15s", LastStageName);
@@ -2022,11 +2763,11 @@ DebugConsoleLine *DebugConsole[8] = {
     &DebugConsoleLine7,
 };
 
-u32 dx_debug_hash_location(char* filename, s32 line) {
+u32 dx_debug_hash_location(const char* filename, s32 line) {
     u32 hash = 5381;
     s32 c;
 
-    while (c = *filename++) {
+    while ((c = *filename++)) {
         hash = ((hash << 5) + hash) + c;
     }
 
@@ -2097,9 +2838,9 @@ API_CALLABLE(_dxDebugIntPrintf) {
     s32 nargs = 0;
     s32 idx;
 
-    char* filename = *args++;
+    char* filename = (char*)*args++;
     s32 line = *args++;
-    char* fmt = *args++;
+    char* fmt = (char*)*args++;
 
     for (idx = 0; idx < 8; idx++) {
         s32 var = *args++;
@@ -2130,9 +2871,9 @@ API_CALLABLE(_dxDebugFloatPrintf) {
     s32 nargs = 0;
     s32 idx;
 
-    char* filename = *args++;
+    char* filename = (char*)*args++;
     s32 line = *args++;
-    char* fmt = *args++;
+    char* fmt = (char*)*args++;
 
     for (idx = 0; idx < 8; idx++) {
         s32 var = *args++;
@@ -2176,7 +2917,7 @@ void dx_debug_console_main() {
                 alpha = round(254 * (timeLeft / 20.0f));
             }
 
-            draw_msg(DebugConsole[idx]->buf, 32, 200 - 15 * idx, alpha, DefaultColor, 0);
+            draw_msg((s32)DebugConsole[idx]->buf, 32, 200 - 15 * idx, alpha, DefaultColor, 0);
             DebugConsole[idx]->timeLeft--;
         }
     }
@@ -2201,7 +2942,7 @@ void armageddon_debug_sp_pools(void) {
         sfx_play_sound(SOUND_MENU_BADGE_EQUIP);
     }
 
-    spPoolsPos = dx_debug_menu_nav_1D_vertical(spPoolsPos, 0, ARRAY_COUNT(sp_pool_caps) - 1, FALSE);
+    spPoolsPos = dx_debug_menu_nav_1D_vertical(spPoolsPos, 0, ARRAY_COUNT(sp_pool_caps) - 1, false);
 
     // draw
     dx_debug_draw_box(SubBoxPosX, SubBoxPosY + RowHeight, 95, 5 * RowHeight + 8, WINDOW_STYLE_20, 192);

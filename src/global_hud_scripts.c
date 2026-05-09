@@ -31,8 +31,8 @@ INCLUDE_PAL("ui/input/analog_stick_down.pal", ui_input_analog_stick_down_pal);
 INCLUDE_IMG("ui/input/analog_stick_up.png", ui_input_analog_stick_up_png);
 INCLUDE_PAL("ui/input/analog_stick_up.pal", ui_input_analog_stick_up_pal);
 
-INCLUDE_IMG("ui/unk_bar.png", ui_unk_bar_png);
-INCLUDE_PAL("ui/unk_bar.pal", ui_unk_bar_pal);
+INCLUDE_IMG("ui/input/mash_bar.png", ui_input_mash_bar_png);
+INCLUDE_PAL("ui/input/mash_bar.pal", ui_input_mash_bar_pal);
 
 INCLUDE_IMG("ui/ok.png", ui_ok_png);
 INCLUDE_PAL("ui/ok.pal", ui_ok_pal);
@@ -1873,9 +1873,9 @@ HudScript HES_GreenArrowDown = {
     hs_SetVisible
     hs_SetCustomSize(16, 8)
     hs_Loop
-        hs_ClearFlags(HUD_ELEMENT_FLAG_200000)
+        hs_ClearFlags(HUD_ELEMENT_FLAG_INVISIBLE)
         hs_SetCI(9, ui_green_arrow_down)
-        hs_SetFlags(HUD_ELEMENT_FLAG_200000)
+        hs_SetFlags(HUD_ELEMENT_FLAG_INVISIBLE)
         hs_SetCI(6, ui_green_arrow_down)
     hs_Restart
     hs_End
@@ -1885,9 +1885,9 @@ HudScript HES_GreenArrowUp = {
     hs_SetVisible
     hs_SetCustomSize(16, 8)
     hs_Loop
-        hs_ClearFlags(HUD_ELEMENT_FLAG_200000)
+        hs_ClearFlags(HUD_ELEMENT_FLAG_INVISIBLE)
         hs_SetCI(9, ui_green_arrow_up)
-        hs_SetFlags(HUD_ELEMENT_FLAG_200000)
+        hs_SetFlags(HUD_ELEMENT_FLAG_INVISIBLE)
         hs_SetCI(6, ui_green_arrow_up)
     hs_Restart
     hs_End
@@ -2095,7 +2095,7 @@ HudScript HES_StatusCoin = {
     hs_SetVisible
     hs_SetTileSize(HUD_ELEMENT_SIZE_16x16)
     hs_Loop
-        hs_op_15(0)
+        hs_SetVariable(0)
         hs_SetCI(3, ui_status_coin_0)
         hs_SetCI(3, ui_status_coin_1)
         hs_SetCI(3, ui_status_coin_4)
@@ -2105,7 +2105,7 @@ HudScript HES_StatusCoin = {
         hs_SetCI(3, ui_status_coin_8)
         hs_SetCI(3, ui_status_coin_9)
         hs_RandomRestart(100, 70)
-        hs_op_15(1)
+        hs_SetVariable(1)
         hs_SetCI(3, ui_status_coin_0)
         hs_SetCI(2, ui_status_coin_1)
         hs_SetCI(1, ui_status_coin_2)
@@ -2191,9 +2191,9 @@ HudScript HES_Peril = {
     hs_SetTileSize(HUD_ELEMENT_SIZE_40x16)
     hs_Loop
         hs_PlaySound(SOUND_PERIL)
-        hs_ClearFlags(HUD_ELEMENT_FLAG_200000)
+        hs_ClearFlags(HUD_ELEMENT_FLAG_INVISIBLE)
         hs_SetCI(15, ui_battle_status_peril)
-        hs_SetFlags(HUD_ELEMENT_FLAG_200000)
+        hs_SetFlags(HUD_ELEMENT_FLAG_INVISIBLE)
         hs_SetCI(10, ui_battle_status_peril)
     hs_Restart
     hs_End
@@ -2204,9 +2204,9 @@ HudScript HES_Danger = {
     hs_SetTileSize(HUD_ELEMENT_SIZE_40x16)
     hs_Loop
         hs_PlaySound(SOUND_DANGER)
-        hs_ClearFlags(HUD_ELEMENT_FLAG_200000)
+        hs_ClearFlags(HUD_ELEMENT_FLAG_INVISIBLE)
         hs_SetCI(15, ui_battle_status_danger)
-        hs_SetFlags(HUD_ELEMENT_FLAG_200000)
+        hs_SetFlags(HUD_ELEMENT_FLAG_INVISIBLE)
         hs_SetCI(10, ui_battle_status_danger)
     hs_Restart
     hs_End
@@ -2216,9 +2216,9 @@ HudScript HES_Refund = {
     hs_SetVisible
     hs_SetTileSize(HUD_ELEMENT_SIZE_40x24)
     hs_Loop
-        hs_ClearFlags(HUD_ELEMENT_FLAG_200000)
+        hs_ClearFlags(HUD_ELEMENT_FLAG_INVISIBLE)
         hs_SetCI(8, ui_battle_status_refund)
-        hs_SetFlags(HUD_ELEMENT_FLAG_200000)
+        hs_SetFlags(HUD_ELEMENT_FLAG_INVISIBLE)
         hs_SetCI(4, ui_battle_status_refund)
     hs_Restart
     hs_End
@@ -2235,9 +2235,9 @@ HudScript HES_Peril_de = {
     hs_SetTileSize(HUD_ELEMENT_SIZE_40x16)
     hs_Loop
         hs_PlaySound(SOUND_PERIL)
-        hs_ClearFlags(HUD_ELEMENT_FLAG_200000)
+        hs_ClearFlags(HUD_ELEMENT_FLAG_INVISIBLE)
         hs_SetCI(15, ui_battle_status_peril_de)
-        hs_SetFlags(HUD_ELEMENT_FLAG_200000)
+        hs_SetFlags(HUD_ELEMENT_FLAG_INVISIBLE)
         hs_SetCI(10, ui_battle_status_peril_de)
     hs_Restart
     hs_End
@@ -2248,9 +2248,9 @@ HudScript HES_Danger_de = {
     hs_SetTileSize(HUD_ELEMENT_SIZE_40x16)
     hs_Loop
         hs_PlaySound(SOUND_DANGER)
-        hs_ClearFlags(HUD_ELEMENT_FLAG_200000)
+        hs_ClearFlags(HUD_ELEMENT_FLAG_INVISIBLE)
         hs_SetCI(15, ui_battle_status_danger_de)
-        hs_SetFlags(HUD_ELEMENT_FLAG_200000)
+        hs_SetFlags(HUD_ELEMENT_FLAG_INVISIBLE)
         hs_SetCI(10, ui_battle_status_danger_de)
     hs_Restart
     hs_End
@@ -2260,9 +2260,9 @@ HudScript HES_Refund_de = {
     hs_SetVisible
     hs_SetTileSize(HUD_ELEMENT_SIZE_40x24)
     hs_Loop
-        hs_ClearFlags(HUD_ELEMENT_FLAG_200000)
+        hs_ClearFlags(HUD_ELEMENT_FLAG_INVISIBLE)
         hs_SetCI(8, ui_battle_status_refund_de)
-        hs_SetFlags(HUD_ELEMENT_FLAG_200000)
+        hs_SetFlags(HUD_ELEMENT_FLAG_INVISIBLE)
         hs_SetCI(4, ui_battle_status_refund_de)
     hs_Restart
     hs_End
@@ -2278,9 +2278,9 @@ HudScript HES_Peril_fr = {
     hs_SetTileSize(HUD_ELEMENT_SIZE_40x16)
     hs_Loop
         hs_PlaySound(SOUND_PERIL)
-        hs_ClearFlags(HUD_ELEMENT_FLAG_200000)
+        hs_ClearFlags(HUD_ELEMENT_FLAG_INVISIBLE)
         hs_SetCI(15, ui_battle_status_peril_fr)
-        hs_SetFlags(HUD_ELEMENT_FLAG_200000)
+        hs_SetFlags(HUD_ELEMENT_FLAG_INVISIBLE)
         hs_SetCI(10, ui_battle_status_peril_fr)
     hs_Restart
     hs_End
@@ -2291,9 +2291,9 @@ HudScript HES_Danger_fr = {
     hs_SetTileSize(HUD_ELEMENT_SIZE_40x16)
     hs_Loop
         hs_PlaySound(SOUND_DANGER)
-        hs_ClearFlags(HUD_ELEMENT_FLAG_200000)
+        hs_ClearFlags(HUD_ELEMENT_FLAG_INVISIBLE)
         hs_SetCI(15, ui_battle_status_danger_fr)
-        hs_SetFlags(HUD_ELEMENT_FLAG_200000)
+        hs_SetFlags(HUD_ELEMENT_FLAG_INVISIBLE)
         hs_SetCI(10, ui_battle_status_danger_fr)
     hs_Restart
     hs_End
@@ -2303,9 +2303,9 @@ HudScript HES_Refund_fr = {
     hs_SetVisible
     hs_SetTileSize(HUD_ELEMENT_SIZE_40x24)
     hs_Loop
-        hs_ClearFlags(HUD_ELEMENT_FLAG_200000)
+        hs_ClearFlags(HUD_ELEMENT_FLAG_INVISIBLE)
         hs_SetCI(8, ui_battle_status_refund_fr)
-        hs_SetFlags(HUD_ELEMENT_FLAG_200000)
+        hs_SetFlags(HUD_ELEMENT_FLAG_INVISIBLE)
         hs_SetCI(4, ui_battle_status_refund_fr)
     hs_Restart
     hs_End
@@ -2321,9 +2321,9 @@ HudScript HES_Peril_es = {
     hs_SetTileSize(HUD_ELEMENT_SIZE_40x16)
     hs_Loop
         hs_PlaySound(SOUND_PERIL)
-        hs_ClearFlags(HUD_ELEMENT_FLAG_200000)
+        hs_ClearFlags(HUD_ELEMENT_FLAG_INVISIBLE)
         hs_SetCI(15, ui_battle_status_peril_es)
-        hs_SetFlags(HUD_ELEMENT_FLAG_200000)
+        hs_SetFlags(HUD_ELEMENT_FLAG_INVISIBLE)
         hs_SetCI(10, ui_battle_status_peril_es)
     hs_Restart
     hs_End
@@ -2334,9 +2334,9 @@ HudScript HES_Danger_es = {
     hs_SetTileSize(HUD_ELEMENT_SIZE_40x16)
     hs_Loop
         hs_PlaySound(SOUND_DANGER)
-        hs_ClearFlags(HUD_ELEMENT_FLAG_200000)
+        hs_ClearFlags(HUD_ELEMENT_FLAG_INVISIBLE)
         hs_SetCI(15, ui_battle_status_danger_es)
-        hs_SetFlags(HUD_ELEMENT_FLAG_200000)
+        hs_SetFlags(HUD_ELEMENT_FLAG_INVISIBLE)
         hs_SetCI(10, ui_battle_status_danger_es)
     hs_Restart
     hs_End
@@ -2346,9 +2346,9 @@ HudScript HES_Refund_es = {
     hs_SetVisible
     hs_SetTileSize(HUD_ELEMENT_SIZE_40x24)
     hs_Loop
-        hs_ClearFlags(HUD_ELEMENT_FLAG_200000)
+        hs_ClearFlags(HUD_ELEMENT_FLAG_INVISIBLE)
         hs_SetCI(8, ui_battle_status_refund_es)
-        hs_SetFlags(HUD_ELEMENT_FLAG_200000)
+        hs_SetFlags(HUD_ELEMENT_FLAG_INVISIBLE)
         hs_SetCI(4, ui_battle_status_refund_es)
     hs_Restart
     hs_End
@@ -2359,7 +2359,7 @@ HudScript HES_Happy_es = HES_TEMPLATE_CI_ENUM_SIZE(ui_battle_status_happy_es, 40
 HudScript HES_HPDrain_es = HES_TEMPLATE_CI_ENUM_SIZE(ui_battle_status_hp_drain_es, 40, 16);
 #endif
 
-HudScript HES_BlueMeter = HES_TEMPLATE_CI_CUSTOM_SIZE(ui_unk_bar, 72, 16);
+HudScript HES_BlueMeter = HES_TEMPLATE_CI_CUSTOM_SIZE(ui_input_mash_bar, 72, 16);
 
 HudScript HES_AButton = HES_TEMPLATE_CI_CUSTOM_SIZE(ui_input_a_button_unpressed, 48, 40);
 

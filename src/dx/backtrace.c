@@ -2,31 +2,20 @@
 // Heavily based on libdragon: https://github.com/DragonMinded/libdragon/blob/trunk/src/backtrace.c
 
 #include "common.h"
-#include "gcc/string.h"
+#include <string.h>
+#include <stdint.h>
+#include <stdbool.h>
 #include "nu/nusys.h"
 #include "backtrace.h"
 #include "PR/osint.h"
 
-/** @brief Enable to debug why a backtrace is wrong */
+/** Enable to debug why a backtrace is wrong */
 #define BACKTRACE_DEBUG 0
 
-/** @brief Function alignment enfored by the compiler (-falign-functions). */
+/** Function alignment enfored by the compiler (-falign-functions). */
 #define FUNCTION_ALIGNMENT      32
 
-typedef s64 int64_t;
-typedef s32 int32_t;
-typedef s16 int16_t;
-typedef s8 int8_t;
-typedef u64 uint64_t;
-typedef u32 uint32_t;
-typedef u16 uint16_t;
-typedef u8 uint8_t;
-
-typedef s32 bool;
-#define true 1
-#define false 0
-
-/** @brief The "type" of funciton as categorized by the backtrace heuristic (__bt_analyze_func) */
+/** The "type" of funciton as categorized by the backtrace heuristic (__bt_analyze_func) */
 typedef enum {
     BT_FUNCTION,                ///< Regular function with a stack frame
     BT_FUNCTION_FRAMEPOINTER,   ///< The function uses the register fp as frame pointer (normally, this happens only when the function uses alloca)
@@ -34,7 +23,7 @@ typedef enum {
     BT_LEAF                     ///< Leaf function (no calls), no stack frame allocated, sp/ra not modified
 } bt_func_type;
 
-/** @brief Description of a function for the purpose of backtracing (filled by __bt_analyze_func) */
+/** Description of a function for the purpose of backtracing (filled by __bt_analyze_func) */
 typedef struct {
     bt_func_type type;       ///< Type of the function
     int stack_size;          ///< Size of the stack frame
@@ -53,11 +42,11 @@ typedef struct {
 #define MIPS_OP_NOP(op)        ((op) == 0x00000000)                  ///< Matches: nop
 #define MIPS_OP_MOVE_FP_SP(op) ((op) == 0x03A0F025)                  ///< Matches: move $fp, $sp
 
-#define debugf osSyncPrintf
+#define debugf printf
 
 bool __bt_analyze_func(bt_func_t *func, uint32_t *ptr, uint32_t func_start, bool from_exception);
 
-/** @brief Converts virtual addresses to physical
+/** Converts virtual addresses to physical
  *
  * If addr is a virtual address, its physical equivalent is returned. If it's already physical, it will be unchanged. If
  * the address is invalid, -1 is returned.
@@ -66,7 +55,7 @@ static u32 get_physical_address(u32 addr) {
     return 0x80000000 | osVirtualToPhysical((void*)addr);
 }
 
-/** @brief Check if addr is a valid PC address */
+/** Check if addr is a valid PC address */
 static bool is_valid_address(uint32_t addr) {
     addr = get_physical_address(addr);
     return addr >= 0x80000400 && addr < 0x80800000 && (addr & 3) == 0;
@@ -101,7 +90,7 @@ static void backtrace_foreach(void (*cb)(void *arg, void *ptr), void *arg) {
     debugf("backtrace: start\n");
     #endif
 
-    exception_ra = NULL;      // If != NULL,
+    exception_ra = nullptr;      // If != nullptr,
     func_start = 0;            // Start of the current function (when known)
 
     // Start from the backtrace function itself. Put the start pointer somewhere after the initial
@@ -129,7 +118,7 @@ static void backtrace_foreach(void (*cb)(void *arg, void *ptr), void *arg) {
                     // Use the frame pointer to refer to the current frame.
                     sp = fp;
                     if (!is_valid_address((uint32_t)sp)) {
-                        debugf("backtrace: interrupted because of invalid frame pointer 0x%08lx\n", (uint32_t)sp);
+                        debugf("backtrace: interrupted because of invalid frame pointer 0x%08x\n", (uint32_t)sp);
                         return;
                     }
                 }
@@ -139,7 +128,7 @@ static void backtrace_foreach(void (*cb)(void *arg, void *ptr), void *arg) {
                     fp = *(uint32_t**)((uint32_t)sp + func.fp_offset);
                 ra = *(uint32_t**)((uint32_t)sp + func.ra_offset) - 2;
                 sp = (uint32_t*)((uint32_t)sp + func.stack_size);
-                exception_ra = NULL;
+                exception_ra = nullptr;
                 func_start = 0;
                 break;
             /*
@@ -183,7 +172,7 @@ static void backtrace_foreach(void (*cb)(void *arg, void *ptr), void *arg) {
                     // The function that jumped into an invalid PC was not interrupted by the exception: it
                     // is a regular function
                     // call now.
-                    exception_ra = NULL;
+                    exception_ra = nullptr;
                     break;
                 }
 
@@ -210,8 +199,10 @@ static void backtrace_foreach(void (*cb)(void *arg, void *ptr), void *arg) {
                 // beginning of a standard function (before RA is saved), does have a stack but
                 // will be marked as a leaf function. In this case, we mus update the stack pointer.
                 sp = (uint32_t*)((uint32_t)sp + func.stack_size);
-                exception_ra = NULL;
+                exception_ra = nullptr;
                 func_start = 0;
+                break;
+            case BT_EXCEPTION:
                 break;
         }
 
@@ -226,7 +217,7 @@ static void backtrace_foreach_foreign(void (*cb)(void *arg, void *ptr), void *ar
     uint32_t* exception_ra;
     uint32_t func_start;
 
-    exception_ra = NULL;      // If != NULL,
+    exception_ra = nullptr;      // If != nullptr,
     func_start = 0;            // Start of the current function (when known)
 
     while (1) {
@@ -250,7 +241,7 @@ static void backtrace_foreach_foreign(void (*cb)(void *arg, void *ptr), void *ar
                     // Use the frame pointer to refer to the current frame.
                     sp = fp;
                     if (!is_valid_address((uint32_t)sp)) {
-                        debugf("backtrace: interrupted because of invalid frame pointer 0x%08lx\n", (uint32_t)sp);
+                        debugf("backtrace: interrupted because of invalid frame pointer 0x%08x\n", (uint32_t)sp);
                         return;
                     }
                 }
@@ -260,7 +251,7 @@ static void backtrace_foreach_foreign(void (*cb)(void *arg, void *ptr), void *ar
                     fp = *(uint32_t**)((uint32_t)sp + func.fp_offset);
                 ra = *(uint32_t**)((uint32_t)sp + func.ra_offset) - 2;
                 sp = (uint32_t*)((uint32_t)sp + func.stack_size);
-                exception_ra = NULL;
+                exception_ra = nullptr;
                 func_start = 0;
                 break;
             case BT_LEAF:
@@ -269,8 +260,10 @@ static void backtrace_foreach_foreign(void (*cb)(void *arg, void *ptr), void *ar
                 // beginning of a standard function (before RA is saved), does have a stack but
                 // will be marked as a leaf function. In this case, we mus update the stack pointer.
                 sp = (uint32_t*)((uint32_t)sp + func.stack_size);
-                exception_ra = NULL;
+                exception_ra = nullptr;
                 func_start = 0;
+                break;
+            case BT_EXCEPTION:
                 break;
         }
 
@@ -320,13 +313,12 @@ int backtrace_thread(void **buffer, int size, OSThread *thread) {
 }
 
 /**
- * @brief Uses the symbol table to look up the symbol corresponding to the given address.
+ * Uses the symbol table to look up the symbol corresponding to the given address.
  *
  * The address should be inside some function, otherwise an incorrect symbol will be returned.
  *
- * @param address Address to look up
- * @param out Output symbol
- * @return Offset into out->address, -1 if not found
+ * Looks up `address` and writes the result into `out`.
+ * Returns offset into `out->address`, -1 if not found.
  */
 s32 address2symbol(u32 address, Symbol* out) {
     #define symbolsPerChunk 0x1000
@@ -336,8 +328,8 @@ s32 address2symbol(u32 address, Symbol* out) {
     nuPiReadRom(0, &romHeader, sizeof(romHeader));
 
     u32 symbolTableRomAddr = romHeader[SYMBOL_TABLE_PTR_ROM_ADDR / sizeof(*romHeader)];
-    if (symbolTableRomAddr == NULL) {
-        osSyncPrintf("address2symbol: no symbols available (SYMBOL_TABLE_PTR is NULL)\n");
+    if (symbolTableRomAddr == nullptr) {
+        debugf("address2symbol: no symbols available (SYMBOL_TABLE_PTR is nullptr)\n");
         return -1;
     }
 
@@ -345,11 +337,11 @@ s32 address2symbol(u32 address, Symbol* out) {
     SymbolTable symt;
     nuPiReadRom(symbolTableRomAddr, &symt, sizeof(SymbolTable));
     if (symt.magic[0] != 'S' || symt.magic[1] != 'Y' || symt.magic[2] != 'M' || symt.magic[3] != 'S') {
-        osSyncPrintf("address2symbol: no symbols available (invalid magic '%c%c%c%c')\n", symt.magic[0], symt.magic[1], symt.magic[2], symt.magic[3]);
+        debugf("address2symbol: no symbols available (invalid magic '%c%c%c%c')\n", symt.magic[0], symt.magic[1], symt.magic[2], symt.magic[3]);
         return -1;
     }
     if (symt.symbolCount <= 0) {
-        osSyncPrintf("address2symbol: no symbols available (symbolCount=%d)\n", symt.symbolCount);
+        debugf("address2symbol: no symbols available (symbolCount=%lu)\n", symt.symbolCount);
         return -1;
     }
 
@@ -381,8 +373,8 @@ s32 address2symbol(u32 address, Symbol* out) {
 }
 
 char* load_symbol_string(char* dest, u32 addr, int n) {
-    if (addr == NULL) {
-        return NULL;
+    if (addr == nullptr) {
+        return nullptr;
     }
 
     u32 aligned = addr & ~3;
@@ -405,18 +397,18 @@ void backtrace_address_to_string(u32 address, char* dest) {
 
         offset = 0; // Don't show offsets
 
-        if (filep == NULL)
+        if (filep == nullptr)
             if (offset == 0)
                 sprintf(dest, "%s", namep);
             else
-                sprintf(dest, "%s+0x%X", namep, offset);
+                sprintf(dest, "%s+0x%lX", namep, offset);
         else
             if (offset == 0)
                 sprintf(dest, "%s (%s)", namep, filep);
             else
-                sprintf(dest, "%s (%s+0x%X)", namep, filep, offset);
+                sprintf(dest, "%s (%s+0x%lX)", namep, filep, offset);
     } else {
-        sprintf(dest, "%p", address);
+        sprintf(dest, "0x%lX", address);
     }
 }
 
@@ -426,15 +418,15 @@ void debug_backtrace(void) {
     s32 i;
     char buf[128];
 
-    osSyncPrintf("Backtrace:\n");
+    debugf("Backtrace:\n");
     for (i = 0; i < max; i++) {
         backtrace_address_to_string(bt[i], buf);
-        osSyncPrintf("    %s\n", buf);
+        debugf("    %s\n", buf);
     }
 }
 
 /**
- * @brief Analyze a function to find out its stack frame layout and properties (useful for backtracing).
+ * Analyze a function to find out its stack frame layout and properties (useful for backtracing).
  *
  * This function implements the core heuristic used by the backtrace engine. It analyzes the actual
  * code of a function in memory instruction by instruction, trying to find out whether the function
@@ -474,18 +466,15 @@ void debug_backtrace(void) {
  *      properly aligned), but it is the best we can do. Worst case, in this specific case of a leaf
  *      function interrupted by the exception, the stack trace will be wrong from this point on.
  *
- * @param func                        Output function description structure
- * @param ptr                         Pointer to the function code at the point where the backtrace starts.
- *                                    This is normally the point where a JAL opcode is found, as we are walking
- *                                    up the call stack.
- * @param func_start                  Start of the function being analyzed. This is optional: the heuristic can work
- *                                    without this hint, but it is useful in certain situations (eg: to better
- *                                    walk up after an exception).
- * @param from_exception              If true, this function was interrupted by an exception. This is a hint that
- *                                    the function *might* even be a leaf function without a stack frame, and that
- *                                    we must use special heuristics for it.
+ * `func` is the output function description structure. `ptr` is a pointer to the function code at the
+ * point where the backtrace starts; this is normally the point where a JAL opcode is found, as we are
+ * walking up the call stack. `func_start` is the start of the function being analyzed. This is optional:
+ * the heuristic can work without this hint, but it is useful in certain situations (eg: to better walk
+ * up after an exception). If `from_exception` is true, this function was interrupted by an exception.
+ * This is a hint that the function *might* even be a leaf function without a stack frame, and that we
+ * must use special heuristics for it.
  *
- * @return true if the backtrace can continue, false if must be aborted (eg: we are within invalid memory)
+ * Returns true if the backtrace can continue, false if must be aborted (eg: we are within invalid memory).
  */
 bool __bt_analyze_func(bt_func_t *func, uint32_t *ptr, uint32_t func_start, bool from_exception) {
     // exceptasm.s
@@ -506,7 +495,7 @@ bool __bt_analyze_func(bt_func_t *func, uint32_t *ptr, uint32_t func_start, bool
         // Validate that we can dereference the virtual address without raising an exception
         if (!is_valid_address(addr)) {
             // This address is invalid, probably something is corrupted. Avoid looking further.
-            osSyncPrintf("backtrace: interrupted because of invalid return address 0x%08x\n", addr);
+            debugf("backtrace: interrupted because of invalid return address 0x%08x\n", addr);
             return false;
         }
         op = *(uint32_t*)get_physical_address(addr);

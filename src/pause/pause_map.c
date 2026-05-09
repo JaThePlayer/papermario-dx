@@ -1,4 +1,4 @@
-#include "pause_common.h"
+#include "pause/pause_common.h"
 #include "message_ids.h"
 
 #if VERSION_PAL
@@ -21,7 +21,7 @@ void pause_map_handle_input(MenuPanel* tab);
 void pause_map_update(MenuPanel* tab);
 void pause_map_cleanup(MenuPanel* tab);
 
-static s32 PauseMapIconIDs[1];
+static HudElemID PauseMapHIDs[1];
 static f32 PauseMapCameraX;
 static f32 PauseMapCameraY;
 static s32 PauseMapMarioX;
@@ -32,7 +32,7 @@ static s32 PauseMapCursorCurrentOption;
 static s32 PauseMapCursorCurrentOptionCopy;
 static s32 PauseMapSpacesInSnapRange;
 
-HudScript* PauseMapIconScripts[] = { &HES_MapWalk0 };
+HudScript* PauseMapHudScripts[] = { &HES_MapWalk0 };
 s32 D_8024FA34 = -1;
 
 #include "world_map.inc.c"
@@ -47,7 +47,7 @@ MenuWindowBP PauseMapWindowBPs[] = {
         .height = 154,
         .priority = WINDOW_PRIORITY_1,
         .fpDrawContents = &pause_map_draw_contents,
-        .tab = NULL,
+        .tab = nullptr,
         .parentID = WIN_PAUSE_MAIN,
         .fpUpdate = { WINDOW_UPDATE_HIDE },
         .extraFlags = 0,
@@ -61,7 +61,7 @@ MenuWindowBP PauseMapWindowBPs[] = {
         .height = 20,
         .priority = WINDOW_PRIORITY_0,
         .fpDrawContents = &pause_map_draw_title,
-        .tab = NULL,
+        .tab = nullptr,
         .parentID = WIN_PAUSE_MAP,
         .fpUpdate = { WINDOW_UPDATE_SHOW },
         .extraFlags = 0,
@@ -74,7 +74,7 @@ MenuWindowBP PauseMapWindowBPs[] = {
     {}
 };
 MenuPanel gPausePanelMap = {
-    .initialized = FALSE,
+    .initialized = false,
     .col = 0,
     .row = 0,
     .selected = 0,
@@ -82,7 +82,7 @@ MenuPanel gPausePanelMap = {
     .numCols = 0,
     .numRows = 0,
     .numPages = 0,
-    .gridData = NULL,
+    .gridData = nullptr,
     .fpInit = &pause_map_init,
     .fpHandleInput = &pause_map_handle_input,
     .fpUpdate = &pause_map_update,
@@ -136,7 +136,6 @@ void pause_map_draw_contents(MenuPanel* menu, s32 baseX, s32 baseY, s32 width, s
     s32 i, j;
     s32 tileHeight;
     s32 x1, y1, x2, y2;
-    s32 x1a, y1a, x2a, y2a;
     s32 posX, posY;
     s32 ult;
     PauseMapSpace* mapSpace;
@@ -204,8 +203,7 @@ void pause_map_draw_contents(MenuPanel* menu, s32 baseX, s32 baseY, s32 width, s
         posX = mapSpace->pos.x;
         posY = mapSpace->pos.y;
 
-
-        if (evt_get_variable(NULL, GF_MAP_ToadTown + i) == 0) {
+        if (evt_get_variable(nullptr, GF_MAP_ToadTown + i) == 0) {
             continue;
         }
 
@@ -238,8 +236,8 @@ void pause_map_draw_contents(MenuPanel* menu, s32 baseX, s32 baseY, s32 width, s
 
     mapULX = baseX + 26 + cameraX;
     mapULY = baseY + 22 + cameraY;
-    hud_element_set_render_pos(PauseMapIconIDs[0], mapULX + PauseMapMarioX, mapULY + PauseMapMarioY - 7);
-    hud_element_draw_without_clipping(PauseMapIconIDs[0]);
+    hud_element_set_render_pos(PauseMapHIDs[0], mapULX + PauseMapMarioX, mapULY + PauseMapMarioY - 7);
+    hud_element_draw_without_clipping(PauseMapHIDs[0]);
 
     currentTab = gPauseMenuCurrentTab;
     if (currentTab == 6) {
@@ -323,9 +321,9 @@ void pause_map_init(MenuPanel* tab) {
     s32 currentLocation;
     s32 i;
 
-    for (i = 0; i < ARRAY_COUNT(PauseMapIconScripts); i++) {
-        PauseMapIconIDs[i] = hud_element_create(PauseMapIconScripts[i]);
-        hud_element_set_flags(PauseMapIconIDs[i], HUD_ELEMENT_FLAG_80);
+    for (i = 0; i < ARRAY_COUNT(PauseMapHudScripts); i++) {
+        PauseMapHIDs[i] = hud_element_create(PauseMapHudScripts[i]);
+        hud_element_set_flags(PauseMapHIDs[i], HUD_ELEMENT_FLAG_MANUAL_RENDER);
     }
 
     for (i = 0; i < ARRAY_COUNT(PauseMapWindowBPs); i++) {
@@ -373,7 +371,7 @@ void pause_map_init(MenuPanel* tab) {
         PauseMapCameraY = -209.0f;
     }
 
-    tab->initialized = TRUE;
+    tab->initialized = true;
 }
 
 void pause_map_handle_input(MenuPanel* tab) {
@@ -501,7 +499,7 @@ void pause_map_update(MenuPanel* tab) {
 void pause_map_cleanup(MenuPanel* tab) {
     s32 i;
 
-    for (i = 0; i < ARRAY_COUNT(PauseMapIconIDs); i++) {
-        hud_element_free(PauseMapIconIDs[i]);
+    for (i = 0; i < ARRAY_COUNT(PauseMapHIDs); i++) {
+        hud_element_free(PauseMapHIDs[i]);
     }
 }

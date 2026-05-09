@@ -89,15 +89,15 @@ EffectInstance* something_rotating_main(
 
     bp.init = something_rotating_init;
     bp.update = something_rotating_update;
-    bp.renderWorld = something_rotating_render;
+    bp.renderScene = something_rotating_render;
     bp.unk_00 = 0;
-    bp.renderUI = NULL;
+    bp.renderUI = nullptr;
     bp.effectID = EFFECT_SOMETHING_ROTATING;
 
     effect = create_effect_instance(&bp);
     effect->numParts = numParts;
     part = effect->data.somethingRotating = general_heap_malloc(numParts * sizeof(*part));
-    ASSERT(effect->data.somethingRotating != NULL);
+    ASSERT(effect->data.somethingRotating != nullptr);
 
     part->unk_00 = arg0;
     part->unk_14 = 0;
@@ -285,7 +285,7 @@ void something_rotating_appendGfx(void* effect) {
     s32 i;
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
 
     gSPDisplayList(gMainGfxPos++, D_090042E0_3FE790);
     gDPSetEnvColor(gMainGfxPos++, 0, 0, 0, 255);

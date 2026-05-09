@@ -35,7 +35,6 @@ EffectInstance* embers_main(
     EffectBlueprint bp;
     EffectInstance* effect;
     EmbersFXData* part;
-    s32 numParts;
     f32 temp1;
     s32 i;
 
@@ -43,15 +42,15 @@ EffectInstance* embers_main(
 
     bp.init = embers_init;
     bp.update = embers_update;
-    bp.renderWorld = embers_render;
+    bp.renderScene = embers_render;
     bp.unk_00 = 0;
-    bp.renderUI = NULL;
+    bp.renderUI = nullptr;
     bp.effectID = EFFECT_EMBERS;
 
     effect = create_effect_instance(&bp);
     effect->numParts = arg7;
     part = effect->data.embers = general_heap_malloc(arg7 * sizeof(*part));
-    ASSERT(effect->data.embers != NULL);
+    ASSERT(effect->data.embers != nullptr);
 
     part->unk_00 = arg0;
     part->lifetime = 0;
@@ -194,7 +193,7 @@ void embers_appendGfx(void* effect) {
     s32 i;
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
 
     guTranslateF(sp10, part->unk_04, part->unk_08, part->unk_0C);
     guScaleF(sp50, part->unk_40, part->unk_40, part->unk_40);

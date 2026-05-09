@@ -41,15 +41,15 @@ EffectInstance* radial_shimmer_main(s32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 
 
     bp.init = radial_shimmer_init;
     bp.update = radial_shimmer_update;
-    bp.renderWorld = radial_shimmer_render;
+    bp.renderScene = radial_shimmer_render;
     bp.unk_00 = 0;
-    bp.renderUI = NULL;
+    bp.renderUI = nullptr;
     bp.effectID = EFFECT_RADIAL_SHIMMER;
 
     effect = create_effect_instance(&bp);
     effect->numParts = numParts;
     data = effect->data.radialShimmer = general_heap_malloc(numParts * sizeof(*data));
-    ASSERT(effect->data.radialShimmer != NULL);
+    ASSERT(effect->data.radialShimmer != nullptr);
 
     data->unk_00 = arg0;
     data->timeLeft = arg5_2;
@@ -288,7 +288,6 @@ void radial_shimmer_appendGfx(void* effect) {
     Matrix4f sp20, sp60;
     u16 spA0;
     EffectInstance* effectTemp = effect;
-    RadialShimmerFXData* dataOrig = effectTemp->data.radialShimmer;
     RadialShimmerFXData* data = effectTemp->data.radialShimmer;
     Camera* camera = &gCameras[gCurrentCameraID];
     s32 temp_f0;
@@ -298,12 +297,9 @@ void radial_shimmer_appendGfx(void* effect) {
     Gfx* dlist2;
     Gfx* dlist1;
     s32 temp_s5;
-    s32 temp_t1;
     s32 var_a3;
     s32 alpha;
     s32 other;
-    s32 t1;
-    s32 t2;
     s32 i;
 
     temp_s5 = data->unk_00;
@@ -311,7 +307,7 @@ void radial_shimmer_appendGfx(void* effect) {
     dlist2 = D_E0066C50[temp_s5];
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
 
     guTranslateF(sp20, data->unk_10, data->unk_14, data->unk_18);
     guScaleF(sp60, data->unk_1C, data->unk_1C, 1.0f);

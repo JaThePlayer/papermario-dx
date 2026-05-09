@@ -22,8 +22,8 @@ EffectInstance* debuff_main(s32 type, f32 x, f32 y, f32 z) {
     bp.unk_00 = 0;
     bp.init = debuff_init;
     bp.update = debuff_update;
-    bp.renderWorld = debuff_render;
-    bp.renderUI = NULL;
+    bp.renderScene = debuff_render;
+    bp.renderUI = nullptr;
     bp.effectID = EFFECT_DEBUFF;
 
     effect = create_effect_instance(&bp);
@@ -31,7 +31,7 @@ EffectInstance* debuff_main(s32 type, f32 x, f32 y, f32 z) {
 
     effect->data.debuff = data = general_heap_malloc(numParts * sizeof(*data));
 
-    ASSERT(data != NULL);
+    ASSERT(data != nullptr);
 
     mem_clear(data, numParts * sizeof(*data));
 
@@ -141,7 +141,7 @@ void debuff_appendGfx(void* effect) {
     s32 i;
 
     gDPPipeSync(gMainGfxPos++);
-    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(eff->graphics->data));
+    gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(eff->shared->graphics));
     gSPDisplayList(gMainGfxPos++, dlist2);
 
     guTranslateF(mtxTranslate, data->pos.x, data->pos.y, data->pos.z);

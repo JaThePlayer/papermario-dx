@@ -9,7 +9,7 @@ Gfx* D_E00C6C90[] = {
 };
 
 Gfx* D_E00C6C9C[] = {
-    D_09001B70_3CF250, D_09001B70_3CF250, D_09001B70_3CF250, NULL, NULL
+    D_09001B70_3CF250, D_09001B70_3CF250, D_09001B70_3CF250, nullptr, nullptr
 };
 
 void effect_63_init(EffectInstance* effect);
@@ -45,15 +45,15 @@ EffectInstance* effect_63_main(
 
     bpPtr->init = effect_63_init;
     bpPtr->update = effect_63_update;
-    bpPtr->renderWorld = effect_63_render;
+    bpPtr->renderScene = effect_63_render;
     bpPtr->unk_00 = 0;
-    bpPtr->renderUI = NULL;
+    bpPtr->renderUI = nullptr;
     bpPtr->effectID = EFFECT_63;
 
     effect = create_effect_instance(bpPtr);
     effect->numParts = numParts;
     part = effect->data.unk_63 = general_heap_malloc(numParts * sizeof(*part));
-    ASSERT(effect->data.unk_63 != NULL);
+    ASSERT(effect->data.unk_63 != nullptr);
 
     if (arg9 <= 0) {
         part->unk_20 = 1000;
@@ -222,7 +222,7 @@ void effect_63_appendGfx(void* effect) {
 
     if (part->unk_00 != 0) {
         gDPPipeSync(gMainGfxPos++);
-        gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->graphics->data));
+        gSPSegment(gMainGfxPos++, 0x09, VIRTUAL_TO_PHYSICAL(((EffectInstance*)effect)->shared->graphics));
         gDPSetPrimColor(gMainGfxPos++, 0, 0, part->unk_28, part->unk_2C, part->unk_30, unk_34);
         gDPSetEnvColor(gMainGfxPos++, part->unk_38, part->unk_3C, part->unk_40, part->unk_44);
         gSPDisplayList(gMainGfxPos++, D_E00C6C9C[unk_00]);

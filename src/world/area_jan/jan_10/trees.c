@@ -1,14 +1,11 @@
 #include "jan_10.h"
-
-#define NAME_SUFFIX _Trees
-#include "common/foliage.inc.c"
-#define NAME_SUFFIX
+#include "foliage.h"
 
 API_CALLABLE(N(IsJungleFuzzyAlive)) {
-    if (get_enemy_safe(NPC_JungleFuzzy) == NULL) {
-        script->varTable[0] = FALSE;
+    if (get_enemy_safe(NPC_JungleFuzzy) == nullptr) {
+        script->varTable[0] = false;
     } else {
-        script->varTable[0] = TRUE;
+        script->varTable[0] = true;
     }
     return ApiStatus_DONE2;
 }
@@ -16,7 +13,7 @@ API_CALLABLE(N(IsJungleFuzzyAlive)) {
 EvtScript N(EVS_OnShakeTree1) = {
     Wait(15)
     Call(N(IsJungleFuzzyAlive))
-    IfEq(LVar0, TRUE)
+    IfEq(LVar0, true)
         Call(SetNpcVar, NPC_JungleFuzzy, 7, 1)
     EndIf
     Return
@@ -48,8 +45,8 @@ BombTrigger N(BombPos_Tree1) = {
 
 EvtScript N(EVS_SetupTrees) = {
     Set(LVar0, Ref(N(ShakeTree_Tree1)))
-    BindTrigger(Ref(N(EVS_ShakeTree_Trees)), TRIGGER_WALL_HAMMER, COLLIDER_o91, 1, 0)
-    BindTrigger(Ref(N(EVS_ShakeTree_Trees)), TRIGGER_POINT_BOMB, Ref(N(BombPos_Tree1)), 1, 0)
+    BindTrigger(Ref(EVS_ShakeTree), TRIGGER_WALL_HAMMER, COLLIDER_o91, 1, 0)
+    BindTrigger(Ref(EVS_ShakeTree), TRIGGER_POINT_BOMB, Ref(N(BombPos_Tree1)), 1, 0)
     Return
     End
 };
