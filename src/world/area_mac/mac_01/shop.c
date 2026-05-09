@@ -13,7 +13,7 @@ RowfBadgeOption N(RowfBadgeInventory)[] = {
     { .itemID = ITEM_D_DOWN_POUND,   .price =  75, .story = STORY_CH1_STAR_SPRIT_DEPARTED  },
 
     { .itemID = ITEM_DODGE_MASTER,   .price = 100, .story = STORY_CH2_STAR_SPRIT_DEPARTED },
-    { .itemID = ITEM_SLEEP_STOMP,    .price =  75, .story = STORY_CH2_STAR_SPRIT_DEPARTED },
+    { .itemID = ITEM_SHRINK_STOMP,   .price =  75, .story = STORY_CH2_STAR_SPRIT_DEPARTED },
     { .itemID = ITEM_DOUBLE_DIP,     .price = 100, .story = STORY_CH2_STAR_SPRIT_DEPARTED },
 
     { .itemID = ITEM_JUMP_CHARGE,    .price =  50, .story = STORY_CH3_STAR_SPRIT_DEPARTED },
