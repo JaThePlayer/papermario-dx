@@ -775,7 +775,7 @@ void btl_state_update_player_menu(void) {
                 MovesOptionIndices[i] = i;
                 MovesOptionEnabled[i] = battleStatus->submenuStatus[i];
                 MovesOptionNames[i] = moveData->nameMsg;
-                MovesOptionDesc[i] = moveData->shortDescMsg;
+                MovesOptionDesc[i] = moveData->fullDescMsg;
 
             }
             UsingSpiritsSubmenu = false;
@@ -977,7 +977,7 @@ void btl_state_update_player_menu(void) {
                 popup->userIndex[entryIdx] = playerData->invItems[i];
                 popup->enabled[entryIdx] = true;
                 popup->nameMsg[entryIdx] = itemData->nameMsg;
-                popup->descMsg[entryIdx] = itemData->shortDescMsg;
+                popup->descMsg[entryIdx] = itemData->fullDescMsg;
                 if (playerActor->targetListLength == 0) {
                     popup->ptrIcon[entryIdx] = hudScriptPair->disabled;
                     popup->enabled[entryIdx] = 0;
@@ -1086,7 +1086,7 @@ void btl_state_update_player_menu(void) {
                 popup->userIndex[entryIdx] = playerData->invItems[i];
                 popup->enabled[entryIdx] = true;
                 popup->nameMsg[entryIdx] = itemData->nameMsg;
-                popup->descMsg[entryIdx] = itemData->shortDescMsg;
+                popup->descMsg[entryIdx] = itemData->fullDescMsg;
                 if (playerActor->targetListLength == 0) {
                     popup->ptrIcon[entryIdx] = hudScriptPair->disabled;
                     popup->enabled[entryIdx] = 0;
@@ -1192,7 +1192,7 @@ void btl_state_update_player_menu(void) {
                 MovesOptionIndices[i] = i;
                 MovesOptionEnabled[i] = battleStatus->submenuStatus[i];
                 MovesOptionNames[i] = moveData->nameMsg;
-                MovesOptionDesc[i] = moveData->shortDescMsg;
+                MovesOptionDesc[i] = moveData->fullDescMsg;
                 MovesOptionDiscounts[i] = 0;
                 MovesOptionDiscountColors[i] = 0;
             }
@@ -1295,7 +1295,7 @@ void btl_state_update_player_menu(void) {
                     popup->userIndex[entryIdx] = playerData->invItems[i];
                     popup->enabled[entryIdx] = true;
                     popup->nameMsg[entryIdx] = itemData->nameMsg;
-                    popup->descMsg[entryIdx] = itemData->shortDescMsg;
+                    popup->descMsg[entryIdx] = itemData->fullDescMsg;
                     if (playerActor->targetListLength == 0) {
                         popup->ptrIcon[entryIdx] = hudScriptPair->disabled;
                         popup->enabled[entryIdx] = false;

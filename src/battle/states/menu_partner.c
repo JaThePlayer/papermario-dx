@@ -563,7 +563,7 @@ void btl_state_update_partner_menu(void) {
             MovesOptionIndices[i] = battleStatus->submenuMoves[i];
             MovesOptionEnabled[i] = battleStatus->submenuStatus[i];
             MovesOptionNames[i] = moveData->nameMsg;
-            MovesOptionDesc[i] = moveData->shortDescMsg;
+            MovesOptionDesc[i] = moveData->fullDescMsg;
             MovesOptionDisplayCosts[i] = moveData->costFP;
             MovesOptionBPCosts[i] = get_bp_cost_of_move(battleStatus->submenuMoves[i]);
             MovesOptionSortPriority[i] = i;
@@ -661,7 +661,7 @@ void btl_state_update_partner_menu(void) {
             popupMenu->userIndex[popupIndex] = playerData->invItems[i];
             popupMenu->enabled[popupIndex] = true;
             popupMenu->nameMsg[popupIndex] = item->nameMsg;
-            popupMenu->descMsg[popupIndex] = item->shortDescMsg;
+            popupMenu->descMsg[popupIndex] = item->fullDescMsg;
             popupIndex++;
         }
         if (battleStatus->lastPartnerMenuSelection[BTL_MENU_IDX_PARTNER_ITEM] < 0) {
@@ -838,7 +838,7 @@ void btl_state_update_partner_menu(void) {
             MovesOptionSortPriority[i] = i;
             MovesOptionEnabled[i] = battleStatus->submenuStatus[i];
             MovesOptionNames[i] = moveData->nameMsg;
-            MovesOptionDesc[i] = moveData->shortDescMsg;
+            MovesOptionDesc[i] = moveData->fullDescMsg;
             MovesOptionDiscounts[i] = 0;
             MovesOptionDiscountColors[i] = 0;
         }
