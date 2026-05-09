@@ -93,6 +93,7 @@ void btl_state_update_run_away(void) {
             } else {
                 currentEncounter->battleOutcome = OUTCOME_PLAYER_FLED;
                 if (!is_ability_active(ABILITY_RUNAWAY_PAY)) {
+                    sp_pool_return_this_battle();
                     gBattleSubState = BTL_SUBSTATE_DONE;
                 } else {
                     status_bar_start_blinking_starpoints();

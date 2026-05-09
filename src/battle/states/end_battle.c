@@ -22,6 +22,8 @@ void btl_state_update_end_battle(void) {
 
     switch (gBattleSubState) {
         case BTL_SUBSTATE_INIT:
+            sp_pool_end_of_battle();
+
             BattleScreenFadeAmt = 0;
             if (gGameStatusPtr->debugEnemyContact == DEBUG_CONTACT_DIE_ON_TOUCH) {
                 BattleScreenFadeAmt = 255;

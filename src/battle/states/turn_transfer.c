@@ -26,7 +26,7 @@ void btl_state_update_transfer_turn(void) {
     s32 oldKoDuration;
 
     if (gBattleSubState == BTL_SUBSTATE_INIT) {
-        if (!(gBattleStatus.flags2 & BS_FLAGS2_PLAYER_TURN_USED)) {
+        if (!(gBattleStatus.flags2 & BS_FLAGS2_PLAYER_TURN_USED) && battleStatus->selectedMoveID != MOVE_TATTLE) {
             btl_set_state(BATTLE_STATE_SWITCH_TO_PLAYER);
             return;
         }
