@@ -1616,3 +1616,10 @@
 #message:26:(ItemFullDesc_SPPlus) {
 	Increases maximum SE by 1 bar.[End]
 }
+
+#message:25:(ItemFullDesc_MapleCream) {
+	Delicious, but excessively sweet[BR]
+	maple cream. Restores 16 FP,[BR]
+	but increases FP costs by 1[BR]
+	for 2 turns.[End]
+}

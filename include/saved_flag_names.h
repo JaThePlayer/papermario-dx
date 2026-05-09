@@ -371,7 +371,7 @@ enum GameFlags {
     GF_MGM_Met_SmashAttack                      = GameFlag(0x16F),
     GF_MAC01_BoughtBadgeFromRowf                = GameFlag(0x170),
     GF_Unused_MAC_EF                            = GameFlag(0x171),
-    GF_Unused_MAC_F0                            = GameFlag(0x172),
+    GF_MAC02_DiscoveredRecipe_MapleCream        = GameFlag(0x172),
     GF_Unused_MAC_F1                            = GameFlag(0x173),
     GF_Unused_MAC_F2                            = GameFlag(0x174),
     GF_Unused_MAC_F3                            = GameFlag(0x175),

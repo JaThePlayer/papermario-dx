@@ -1141,3 +1141,7 @@
 #message:26:(ItemName_SPPlus) {
 	SE Plus[End]
 }
+
+#message:26:(ItemName_MapleCream) {
+	Maple Cream[End]
+}

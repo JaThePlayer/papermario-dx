@@ -51,6 +51,7 @@ Products:
   - [ ITEM_KOOKY_COOKIE,  QUALITY_OK ]
   - [ ITEM_FIRE_FLOWER,   QUALITY_ODD ]
   - [ ITEM_STRANGE_CAKE,  QUALITY_GOOD ]
+  - [ ITEM_MAPLE_CREAM,  QUALITY_OK ]
 # Cooking a Mystery has 50% to make MISTAKE and 50% change to create any of these with equal probability
 MysteryProducts:
   - ITEM_FIRE_FLOWER
@@ -87,7 +88,7 @@ SingleRecipes:
   - [ ITEM_LIME,          ITEM_TASTY_TONIC ]
   - [ ITEM_LEMON,         ITEM_TASTY_TONIC ]
   - [ ITEM_HONEY_SYRUP,   ITEM_SUPER_SODA ]
-  - [ ITEM_MAPLE_SYRUP,   ITEM_SUPER_SODA ]
+  - [ ITEM_MAPLE_SYRUP,   ITEM_MAPLE_CREAM ] # New in Armageddon, used to make Super Soda
   - [ ITEM_JAMMIN_JELLY,  ITEM_SUPER_SODA ]
   - [ ITEM_APPLE,         ITEM_SUPER_SODA ]
   - [ ITEM_RED_BERRY,     ITEM_MISTAKE, ITEM_SUPER_SODA ]
@@ -356,3 +357,4 @@ CookingRecords:
   - [ ITEM_SLEEPY_SHEEP,  GF_MAC02_DiscoveredRecipe_31 ]
   - [ ITEM_THUNDER_RAGE,  GF_MAC02_DiscoveredRecipe_32 ]
   - [ ITEM_FIRE_FLOWER,   GF_MAC02_DiscoveredRecipe_33 ]
+  - [ ITEM_MAPLE_CREAM,   GF_MAC02_DiscoveredRecipe_MapleCream ]

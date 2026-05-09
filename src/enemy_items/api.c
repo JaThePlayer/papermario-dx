@@ -381,6 +381,9 @@ API_CALLABLE(ApplyCustomItemEffects) {
         case ITEM_MISTAKE:
             POISON(3, 1);
             break;
+        case ITEM_MAPLE_CREAM:
+            FP_COST(2, +1)
+            break;
     }
 
     {
