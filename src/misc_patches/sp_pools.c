@@ -6,7 +6,7 @@
 u8 sp_pool_caps[SP_POOL_COUNT] = {
     [SP_POOL_PROLOGUE] = 60,
     [SP_POOL_PLEASANT_PATH] = 125,
-    [SP_POOL_KOOPA_BROS_FORT] = 90,
+    [SP_POOL_KOOPA_BROS_FORT] = 125,
 
     [SP_POOL_MT_RUGGED] = 100,
     [SP_POOL_DESERT] = 75, // no need to force grinding the desert...
