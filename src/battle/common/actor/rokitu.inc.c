@@ -8,8 +8,6 @@
 
 #define NAMESPACE A(rokitu)
 
-extern ActorBlueprint A(cleft);
-
 extern EvtScript N(EVS_Init);
 extern EvtScript N(EVS_Idle);
 extern EvtScript N(EVS_TakeTurn);
@@ -406,7 +404,7 @@ EvtScript N(EVS_Attack_SpinyToss) = {
 Vec3i N(SummonPos) = { NPC_DISPOSE_LOCATION };
 
 Formation N(SpinyFormation) = {
-    ACTOR_BY_POS(A(cleft), N(SummonPos), 100, 1),
+    OVL_ACTOR_BY_POS("cleft", N(SummonPos), 100, 1),
 };
 
 EvtScript N(EVS_Move_SummonSpiny) = {

@@ -4,4 +4,4 @@
 #include "script_api/battle.h"
 
 #define AREA b_area_kzn
-#define CURRENT_SP_POOL SP_POOL_VOLCANO
+#define AREA_SP_POOL SP_POOL_VOLCANO

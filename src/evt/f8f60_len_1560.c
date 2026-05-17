@@ -28,13 +28,13 @@ API_CALLABLE(MakeLerp) {
 }
 
 API_CALLABLE(UpdateLerp) {
-    script->varTable[0x0] = (s32) update_lerp(
+    evt_set_variable(script, LocalVar(LERP_VAR_0), update_lerp(
         script->varTable[LERP_VAR_B],
         script->varTable[LERP_VAR_C],
         script->varTable[LERP_VAR_D],
         script->varTable[LERP_VAR_E],
         script->varTable[LERP_VAR_F]
-    );
+    ));
 
     if (script->varTable[LERP_VAR_E] >= script->varTable[LERP_VAR_F]) {
         script->varTable[LERP_VAR_1] = false; // finished

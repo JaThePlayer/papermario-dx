@@ -6,4 +6,4 @@
 #define AREA b_area_kmr_part_2
 
 #include "misc_patches/sp_pools.h"
-#define CURRENT_SP_POOL SP_POOL_PROLOGUE
+#define AREA_SP_POOL SP_POOL_PROLOGUE

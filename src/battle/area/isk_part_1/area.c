@@ -2,11 +2,6 @@
 
 #include "battle/common/actor/red_paragoomba.inc.c"
 
-extern ActorBlueprint A(pokey_mummy);
-extern ActorBlueprint A(swooper);
-extern ActorBlueprint A(stone_chomp);
-extern ActorBlueprint A(buzzy_beetle);
-
 extern Stage A(isk_00);
 extern Stage A(isk_01);
 extern Stage A(isk_02);
@@ -44,136 +39,136 @@ Vec3i A(vector3D_80224630) = { 120, 112, -25 };
 // isk_02 - first room
 
 Formation A(Formation_00) = { // isk_02
-    ACTOR_BY_IDX(A(pokey_mummy), BTL_POS_GROUND_B, 10),
-    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_C, 9),
-    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_D, 8),
+    OVL_ACTOR_BY_IDX("pokey_mummy", BTL_POS_GROUND_B, 10),
+    OVL_ACTOR_BY_IDX("buzzy_beetle", BTL_POS_GROUND_C, 9),
+    OVL_ACTOR_BY_IDX("buzzy_beetle", BTL_POS_GROUND_D, 8),
 };
 
 Formation A(Formation_0B) = { // isk_02
-    ACTOR_BY_IDX(A(pokey_mummy), BTL_POS_GROUND_A, 10),
-    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_B, 9),
-    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_C, 8, true),
+    OVL_ACTOR_BY_IDX("pokey_mummy", BTL_POS_GROUND_A, 10),
+    OVL_ACTOR_BY_IDX("buzzy_beetle", BTL_POS_GROUND_B, 9),
+    OVL_ACTOR_BY_IDX("swooper", BTL_POS_AIR_C, 8, true),
 };
 
 Formation A(Formation_01) = { // isk_02
-    ACTOR_BY_IDX(A(pokey_mummy), BTL_POS_GROUND_A, 10),
-    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_B, 9),
-    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_B, 8, true),
-    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_C, 7, true),
+    OVL_ACTOR_BY_IDX("pokey_mummy", BTL_POS_GROUND_A, 10),
+    OVL_ACTOR_BY_IDX("buzzy_beetle", BTL_POS_GROUND_B, 9),
+    OVL_ACTOR_BY_IDX("swooper", BTL_POS_AIR_B, 8, true),
+    OVL_ACTOR_BY_IDX("swooper", BTL_POS_AIR_C, 7, true),
 };
 
 
 Formation A(Formation_09) = { // isk_04
-    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_A, 10),
-    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_B, 9),
-    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_C, 8),
-    ACTOR_BY_IDX_ITEM(A(red_paragoomba), BTL_POS_AIR_D, 7, ITEM_HP_PLUS_A),
+    OVL_ACTOR_BY_IDX("buzzy_beetle", BTL_POS_GROUND_A, 10),
+    OVL_ACTOR_BY_IDX("buzzy_beetle", BTL_POS_GROUND_B, 9),
+    OVL_ACTOR_BY_IDX("buzzy_beetle", BTL_POS_GROUND_C, 8),
+    OVL_ACTOR_BY_IDX_ITEM("red_paragoomba", BTL_POS_AIR_D, 7, ITEM_HP_PLUS_A),
 };
 
 Formation A(Formation_0D) = { // isk_04
-    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_B, 10),
-    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_B, 9, true),
-    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_C, 8),
-    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_C, 7, true),
+    OVL_ACTOR_BY_IDX("buzzy_beetle", BTL_POS_GROUND_B, 10),
+    OVL_ACTOR_BY_IDX("swooper", BTL_POS_AIR_B, 9, true),
+    OVL_ACTOR_BY_IDX("buzzy_beetle", BTL_POS_GROUND_C, 8),
+    OVL_ACTOR_BY_IDX("swooper", BTL_POS_AIR_C, 7, true),
 };
 
 
 // 3-fight pit
 Formation A(Formation_02) = { // isk_07
-    ACTOR_BY_IDX(A(pokey_mummy), BTL_POS_GROUND_B, 9),
-    ACTOR_BY_POS(A(swooper), A(vector3D_80224088), 8),
-    ACTOR_BY_POS(A(buzzy_beetle), A(vector3D_80224094), 7, 1),
-    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_D, 6, true),
+    OVL_ACTOR_BY_IDX("pokey_mummy", BTL_POS_GROUND_B, 9),
+    OVL_ACTOR_BY_POS("swooper", A(vector3D_80224088), 8),
+    OVL_ACTOR_BY_POS("buzzy_beetle", A(vector3D_80224094), 7, 1),
+    OVL_ACTOR_BY_IDX("swooper", BTL_POS_AIR_D, 6, true),
 };
 
 Formation A(Formation_03) = { // isk_07
-    ACTOR_BY_IDX(A(pokey_mummy), BTL_POS_GROUND_A, 10),
-    ACTOR_BY_IDX(A(pokey_mummy), BTL_POS_GROUND_B, 9),
-    ACTOR_BY_POS(A(swooper), A(vector3D_80224088), 8),
-    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_D, 7),
+    OVL_ACTOR_BY_IDX("pokey_mummy", BTL_POS_GROUND_A, 10),
+    OVL_ACTOR_BY_IDX("pokey_mummy", BTL_POS_GROUND_B, 9),
+    OVL_ACTOR_BY_POS("swooper", A(vector3D_80224088), 8),
+    OVL_ACTOR_BY_IDX("buzzy_beetle", BTL_POS_GROUND_D, 7),
 };
 
 Formation A(Formation_06) = { // isk_07
-    ACTOR_BY_IDX(A(pokey_mummy), BTL_POS_GROUND_A, 10),
-    ACTOR_BY_IDX(A(pokey_mummy), BTL_POS_GROUND_B, 9),
-    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_C, 8),
-    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_C, 7, true),
-    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_D, 6, true),
+    OVL_ACTOR_BY_IDX("pokey_mummy", BTL_POS_GROUND_A, 10),
+    OVL_ACTOR_BY_IDX("pokey_mummy", BTL_POS_GROUND_B, 9),
+    OVL_ACTOR_BY_IDX("buzzy_beetle", BTL_POS_GROUND_C, 8),
+    OVL_ACTOR_BY_IDX("swooper", BTL_POS_AIR_C, 7, true),
+    OVL_ACTOR_BY_IDX("swooper", BTL_POS_AIR_D, 6, true),
 };
 
 
 Formation A(Formation_0A) = { // isk_08
-    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_A, 10),
-    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_B, 9),
-    ACTOR_BY_IDX_ITEM(A(buzzy_beetle), BTL_POS_GROUND_C, 8, ITEM_FIRE_FLOWER),
-    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_C, 7, true),
+    OVL_ACTOR_BY_IDX("buzzy_beetle", BTL_POS_GROUND_A, 10),
+    OVL_ACTOR_BY_IDX("buzzy_beetle", BTL_POS_GROUND_B, 9),
+    OVL_ACTOR_BY_IDX_ITEM("buzzy_beetle", BTL_POS_GROUND_C, 8, ITEM_FIRE_FLOWER),
+    OVL_ACTOR_BY_IDX("swooper", BTL_POS_AIR_C, 7, true),
 };
 
 
 Formation A(Formation_0C) = { // isk_18
-    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_B, 10),
-    ACTOR_BY_POS(A(swooper), A(vector3D_802240B8), 9),
+    OVL_ACTOR_BY_IDX("buzzy_beetle", BTL_POS_GROUND_B, 10),
+    OVL_ACTOR_BY_POS("swooper", A(vector3D_802240B8), 9),
 };
 
 Formation A(Formation_0F) = { // isk_18
-    ACTOR_BY_POS(A(buzzy_beetle), A(vector3D_802240AC), 10, 1),
-    ACTOR_BY_POS(A(buzzy_beetle), A(vector3D_802240B8), 9, 1),
-    ACTOR_BY_IDX(A(swooper), BTL_POS_AIR_D, 8, true),
+    OVL_ACTOR_BY_POS("buzzy_beetle", A(vector3D_802240AC), 10, 1),
+    OVL_ACTOR_BY_POS("buzzy_beetle", A(vector3D_802240B8), 9, 1),
+    OVL_ACTOR_BY_IDX("swooper", BTL_POS_AIR_D, 8, true),
 };
 
 Formation A(Formation_13) = { // isk_18
-    ACTOR_BY_POS(A(buzzy_beetle), A(vector3D_802240A0), 10, 1),
-    ACTOR_BY_POS(A(buzzy_beetle), A(vector3D_802240AC), 9, 1),
-    ACTOR_BY_POS(A(swooper), A(vector3D_802240B8), 8),
+    OVL_ACTOR_BY_POS("buzzy_beetle", A(vector3D_802240A0), 10, 1),
+    OVL_ACTOR_BY_POS("buzzy_beetle", A(vector3D_802240AC), 9, 1),
+    OVL_ACTOR_BY_POS("swooper", A(vector3D_802240B8), 8),
 };
 
 
 Formation A(Formation_07) = { // isk_05, isk_13, isk_14
-    ACTOR_BY_IDX(A(stone_chomp), BTL_POS_GROUND_B, 10),
-    ACTOR_BY_IDX(A(stone_chomp), BTL_POS_GROUND_C, 9),
+    OVL_ACTOR_BY_IDX("stone_chomp", BTL_POS_GROUND_B, 10),
+    OVL_ACTOR_BY_IDX("stone_chomp", BTL_POS_GROUND_C, 9),
 };
 
 Formation A(Formation_08) = {
-    ACTOR_BY_IDX(A(stone_chomp), BTL_POS_GROUND_A, 10),
-    ACTOR_BY_IDX(A(stone_chomp), BTL_POS_GROUND_B, 9),
-    ACTOR_BY_IDX(A(stone_chomp), BTL_POS_GROUND_C, 8),
+    OVL_ACTOR_BY_IDX("stone_chomp", BTL_POS_GROUND_A, 10),
+    OVL_ACTOR_BY_IDX("stone_chomp", BTL_POS_GROUND_B, 9),
+    OVL_ACTOR_BY_IDX("stone_chomp", BTL_POS_GROUND_C, 8),
 };
 
 
 Formation A(Formation_04) = {
-    ACTOR_BY_IDX(A(pokey_mummy), BTL_POS_GROUND_A, 10),
-    ACTOR_BY_IDX(A(pokey_mummy), BTL_POS_GROUND_B, 9),
-    ACTOR_BY_POS(A(swooper), A(vector3D_802241E8), 8),
-    ACTOR_BY_POS(A(swooper), A(vector3D_802241F4), 7),
+    OVL_ACTOR_BY_IDX("pokey_mummy", BTL_POS_GROUND_A, 10),
+    OVL_ACTOR_BY_IDX("pokey_mummy", BTL_POS_GROUND_B, 9),
+    OVL_ACTOR_BY_POS("swooper", A(vector3D_802241E8), 8),
+    OVL_ACTOR_BY_POS("swooper", A(vector3D_802241F4), 7),
 };
 
 Formation A(Formation_05) = {
-    ACTOR_BY_POS(A(swooper), A(vector3D_8022407C), 10),
-    ACTOR_BY_POS(A(swooper), A(vector3D_80224088), 9),
+    OVL_ACTOR_BY_POS("swooper", A(vector3D_8022407C), 10),
+    OVL_ACTOR_BY_POS("swooper", A(vector3D_80224088), 9),
 };
 
 Formation A(Formation_0E) = {
-    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_B, 10),
-    ACTOR_BY_POS(A(buzzy_beetle), A(vector3D_802240B8), 9, 1),
+    OVL_ACTOR_BY_IDX("buzzy_beetle", BTL_POS_GROUND_B, 10),
+    OVL_ACTOR_BY_POS("buzzy_beetle", A(vector3D_802240B8), 9, 1),
 };
 
 Formation A(Formation_10) = {
-    ACTOR_BY_IDX(A(buzzy_beetle), BTL_POS_GROUND_A, 10),
-    ACTOR_BY_POS(A(buzzy_beetle), A(vector3D_802240AC), 9, 1),
-    ACTOR_BY_POS(A(buzzy_beetle), A(vector3D_802240B8), 8, 1),
+    OVL_ACTOR_BY_IDX("buzzy_beetle", BTL_POS_GROUND_A, 10),
+    OVL_ACTOR_BY_POS("buzzy_beetle", A(vector3D_802240AC), 9, 1),
+    OVL_ACTOR_BY_POS("buzzy_beetle", A(vector3D_802240B8), 8, 1),
 };
 
 Formation A(Formation_11) = {
-    ACTOR_BY_POS(A(buzzy_beetle), A(vector3D_802240A0), 10, 1),
-    ACTOR_BY_POS(A(buzzy_beetle), A(vector3D_802240AC), 9, 1),
-    ACTOR_BY_POS(A(buzzy_beetle), A(vector3D_802240B8), 8, 1),
+    OVL_ACTOR_BY_POS("buzzy_beetle", A(vector3D_802240A0), 10, 1),
+    OVL_ACTOR_BY_POS("buzzy_beetle", A(vector3D_802240AC), 9, 1),
+    OVL_ACTOR_BY_POS("buzzy_beetle", A(vector3D_802240B8), 8, 1),
 };
 
 Formation A(Formation_12) = {
-    ACTOR_BY_POS(A(buzzy_beetle), A(vector3D_8022460C), 10, 1),
-    ACTOR_BY_POS(A(buzzy_beetle), A(vector3D_80224618), 9, 1),
-    ACTOR_BY_POS(A(buzzy_beetle), A(vector3D_80224624), 8, 1),
-    ACTOR_BY_POS(A(buzzy_beetle), A(vector3D_80224630), 7, 1),
+    OVL_ACTOR_BY_POS("buzzy_beetle", A(vector3D_8022460C), 10, 1),
+    OVL_ACTOR_BY_POS("buzzy_beetle", A(vector3D_80224618), 9, 1),
+    OVL_ACTOR_BY_POS("buzzy_beetle", A(vector3D_80224624), 8, 1),
+    OVL_ACTOR_BY_POS("buzzy_beetle", A(vector3D_80224630), 7, 1),
 };
 
 BattleList A(Formations) = {

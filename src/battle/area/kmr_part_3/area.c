@@ -10,7 +10,6 @@ extern ActorBlueprint A(mage_jr_troopa);
 extern ActorBlueprint A(final_jr_troopa);
 
 // Egg Jr Troopa Summons
-extern ActorBlueprint A(fuzzy);
 extern ActorBlueprint A(koopa_troopa);
 extern ActorBlueprint A(egg_jr_troopa_final_wave_notifier);
 
@@ -42,22 +41,22 @@ Formation A(Formation_03_Wave4) = {
 };
 
 Formation A(Formation_03_Wave3) = {
-    ACTOR_BY_IDX(A(koopa_troopa), BTL_POS_GROUND_A, 10),
-    ACTOR_BY_IDX(A(fuzzy), BTL_POS_GROUND_B, 9),
+    OVL_ACTOR_BY_IDX("koopa_troopa", BTL_POS_GROUND_A, 10),
+    OVL_ACTOR_BY_IDX("fuzzy", BTL_POS_GROUND_B, 9),
 
     NEXT_WAVE(A(Formation_03_Wave4)),
 };
 
 Formation A(Formation_03_Wave2) = {
-    ACTOR_BY_IDX(A(fuzzy), BTL_POS_GROUND_A, 10),
-    ACTOR_BY_IDX(A(fuzzy), BTL_POS_GROUND_B, 9),
+    OVL_ACTOR_BY_IDX("fuzzy", BTL_POS_GROUND_A, 10),
+    OVL_ACTOR_BY_IDX("fuzzy", BTL_POS_GROUND_B, 9),
 
     NEXT_WAVE(A(Formation_03_Wave3)),
 };
 
 Formation A(Formation_03) = {
-    ACTOR_BY_IDX(A(koopa_troopa), BTL_POS_GROUND_A, 10),
-    ACTOR_BY_IDX(A(koopa_troopa), BTL_POS_GROUND_B, 9),
+    OVL_ACTOR_BY_IDX("koopa_troopa", BTL_POS_GROUND_A, 10),
+    OVL_ACTOR_BY_IDX("koopa_troopa", BTL_POS_GROUND_B, 9),
 
     ACTOR_BY_IDX(A(egg_jr_troopa), BTL_POS_GROUND_D, 11),
     WAVE_BATTLE(A(Formation_03_Wave2), 4),

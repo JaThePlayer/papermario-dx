@@ -247,10 +247,9 @@ EvtScript N(EVS_HandleEvent) = {
 };
 
 Vec3i N(SummonPos) = { NPC_DISPOSE_LOCATION };
-extern ActorBlueprint A(bandit);
 
 Formation N(SummonFormation) = {
-    ACTOR_BY_POS(A(bandit), N(SummonPos), 100),
+    OVL_ACTOR_BY_POS("bandit", N(SummonPos), 100),
 };
 
 EvtScript N(EVS_TryFindLocation) = {

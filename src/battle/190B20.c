@@ -9,6 +9,7 @@
 #include "enemy_items/api.h"
 #include "misc_patches/custom_status.h"
 #include "misc_patches/misc_patches.h"
+#include "dx/overlay.h"
 
 #define DEDUCT_FP_COST(fpCost, player) \
     if (fpCost != 0) { \
@@ -1435,7 +1436,16 @@ Actor* create_actor(Formation formation) {
         z = formation->home.vec->z;
     }
 
-    formationActor = formation->actor;
+    if (formation->actor != nullptr) {
+        formationActor = formation->actor;
+    } else if (formation->overlay != nullptr) {
+        Overlay* mod = ovl_load(formation->overlay, OVL_ACTOR);
+        formationActor = ovl_import(mod, "blueprint");
+        ASSERT_MSG(formationActor != nullptr, "Actor '%s' does not export 'blueprint'", formation->overlay);
+    } else {
+        PANIC();
+    }
+
     partCount = formationActor->partCount;
 
     for (i = 0; i < ARRAY_COUNT(battleStatus->enemyActors); i++) {

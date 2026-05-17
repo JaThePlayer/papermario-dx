@@ -10,8 +10,6 @@ extern EvtScript N(EVS_Idle);
 extern EvtScript N(EVS_TakeTurn);
 extern EvtScript N(EVS_HandleEvent);
 
-extern EvtScript A(bob_omb_EVS_Ignite);
-
 enum N(ActorPartIDs) {
     PRT_MAIN        = 1,
     PRT_FIREBALL    = 2,
@@ -369,8 +367,9 @@ EvtScript N(fireThrowAtMario) = {
 #define BobombId LVarE
 
 EvtScript N(bobombIgnite) = {
-    Call(SetOwnerID, BobombId)
-    ExecWait(A(bob_omb_EVS_Ignite))
+    //Call(SetOwnerID, BobombId)
+    //ExecWait(A(bob_omb_EVS_Ignite))
+    Call(SetActorVar, BobombId, /*AVAR_ShouldIgniteImmediately*/ 7, true)
     Return
     End
 };

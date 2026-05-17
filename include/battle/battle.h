@@ -160,18 +160,19 @@ typedef struct ActorBlueprint {
 
 typedef struct FormationRow {
     /* 0x00 */ ActorBlueprint* actor;
-    /* 0x04 */ union {
+    /* 0x04 */ const char* overlay; ///< Overlay name, if `actor` is to be loaded dynamically.
+    /* 0x08 */ union {
                    s32    index;
                    Vec3i* vec;
                } home;
-    /* 0x08 */ s32 priority; ///< Actors with higher priority values take their turn first.
-    /* 0x0C */ s32 var0;
-    /* 0x10 */ s32 var1;
-    /* 0x14 */ s32 var2;
-    /* 0x18 */ s32 var3;
+    /* 0x0C */ s32 priority; ///< Actors with higher priority values take their turn first.
+    /* 0x10 */ s32 var0;
+    /* 0x14 */ s32 var1;
+    /* 0x18 */ s32 var2;
+    /* 0x1C */ s32 var3;
     /* new  */ s16 item; // first held item
     /* new  */ s16* items; // pointer to a list of items of length equal to 'item'.
-} FormationRow; // size = 0x1C * n
+} FormationRow; // size = 0x20 * n
 
 typedef FormationRow Formation[];
 
@@ -207,6 +208,7 @@ typedef struct Battle {
     /* 0x08 */ Formation* formation;
     /* 0x0C */ Stage* stage;
     /* 0x10 */ EvtScript* onBattleStart;    // sets BattleStatus::controlScript on battle start, overrides Stage::preBattle
+    /* new  */ u8 spPool;                   // SP Pool to use as the default pool in all battles in this stage.
 } Battle; // size = 0x14
 
 typedef Battle BattleList[];
@@ -232,11 +234,14 @@ typedef struct BattleArea {
 
 EXTERN_C BattleArea gBattleAreas[0x30];
 
-#define BATTLE(formation, stage, name) { name, ARRAY_COUNT(formation), (Formation*) formation, &stage }
-#define BATTLE_WITH_SCRIPT(formation, stage, script, name) { name, ARRAY_COUNT(formation), (Formation*) formation, &stage, &script }
+#define BATTLE(formation, stage, name) { name, ARRAY_COUNT(formation), (Formation*) formation, &stage, nullptr, .spPool = AREA_SP_POOL }
+#define BATTLE_WITH_SCRIPT(formation, stage, script, name) { name, ARRAY_COUNT(formation), (Formation*) formation, &stage, &script, .spPool = AREA_SP_POOL }
 
 #define ACTOR_BY_IDX(_name, _idx, _priority, args...) { .actor = &_name, .home = { .index = _idx }, .priority = _priority, args }
 #define ACTOR_BY_POS(_name, _pos, _priority, args...) { .actor = &_name, .home = { .vec = &_pos }, .priority = _priority, args }
+
+#define OVL_ACTOR_BY_IDX(_name, _idx, _priority, args...) { .overlay = _name, .home = { .index = _idx }, .priority = _priority, args }
+#define OVL_ACTOR_BY_POS(_name, _pos, _priority, args...) { .overlay = _name, .home = { .vec = &_pos }, .priority = _priority, args }
 
 #define STAGE(_name, _stage) { .name = _name, .stage = &_stage }
 
@@ -287,6 +292,9 @@ Actor* create_actor(Formation formation);
 
 #define POPUP_MSG_ON 99
 #define POPUP_MSG_OFF 0
+
+// Makes the actor use the current area's default SP Pool
+#define CURRENT_SP_POOL 254
 
 #ifdef _LANGUAGE_C_PLUS_PLUS
 } // extern "C"

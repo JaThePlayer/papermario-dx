@@ -1,7 +1,6 @@
 #include "../area.h"
 #include "sprite/npc/KoopaBros.h"
 #include "mapfs/trd_bt00_shape.h"
-#include "battle/common/actor/bob_omb.inc.c"
 
 #define NAMESPACE A(fake_bowser)
 
@@ -1498,7 +1497,7 @@ EvtScript N(EVS_GetUsedColumns) = {
 
 // TODO: Summon koopas?
 // TODO: KILL ALL SUMMONS BEFORE KOOPA BROS SHOW UP!
-
+/*
 Vec3i N(SummonPos) = { 0, 300, 0 };
 
 Formation N(form_1_bobomb) = {
@@ -1515,6 +1514,7 @@ EvtScript N(summon_enemy) = {
     Return
     End
 };
+*/
 
 EvtScript N(EVS_FakeBowser_TakeTurn) = {
     /*

@@ -82,4 +82,7 @@ void sp_pool_setup_fake_pool(u8 amt, b8 shouldEndAfterBattle);
 /// Manually ends the fake pool that was previously created by sp_pool_setup_fake_pool.
 void sp_pool_end_fake_pool(void);
 
+/// Sets the default SP pool referred to by CURRENT_SP_POOL.
+void sp_pool_set_current(u8 index);
+
 #endif

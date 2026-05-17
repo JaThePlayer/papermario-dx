@@ -273,6 +273,8 @@ void btl_state_update_normal_start(void) {
                 actor->takeTurnScript = nullptr;
             }
 
+            sp_pool_set_current(battle->spPool); // new
+
             if (battle->onBattleStart != nullptr) {
                 script = start_script(battle->onBattleStart, EVT_PRIORITY_A, 0);
                 battleStatus->controlScript = script;

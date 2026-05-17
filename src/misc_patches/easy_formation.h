@@ -1,7 +1,7 @@
 // Contains macros for fast creation of enemy formations
 
-#define ENEMY(name, homeIndex, prio) { &A(name), .home = { .index = homeIndex }, .priority = prio }
-#define ENEMY_ITEM(name, homeIndex, prio, itemId) { &A(name), .home = { .index = homeIndex }, .priority = prio, .item = itemId }
+#define ENEMY(name, homeIndex, prio) { .overlay = name, .home = { .index = homeIndex }, .priority = prio }
+#define ENEMY_ITEM(name, homeIndex, prio, itemId) { .overlay = name, .home = { .index = homeIndex }, .priority = prio, .item = itemId }
 
 // declares the first ground enemy in the battle (prio 10)
 #define ENEMY0(name) ENEMY(name, BTL_POS_GROUND_A, 10)
@@ -27,6 +27,8 @@
 //A(paragoomba), BTL_POS_AIR_C, 8, ITEM_MUSHROOM
 #define ACTOR_BY_IDX_ITEM(enemy, pos, _priority, itemId) { .actor = &enemy, .home = { .index = pos }, .priority = _priority, .item = itemId }
 #define ACTOR_BY_IDX_ITEMS(enemy, pos, _priority, itemArray) { .actor = &enemy, .home = { .index = pos }, .priority = _priority, .item = ARRAY_COUNT(itemArray), .items = &itemArray }
+#define OVL_ACTOR_BY_IDX_ITEM(_name, pos, _priority, itemId, args...) { .overlay = _name, .home = { .index = pos }, .priority = _priority, .item = itemId, args }
+#define OVL_ACTOR_BY_IDX_ITEMS(_name, pos, _priority, itemArray) { .overlay = _name, .home = { .index = pos }, .priority = _priority, .item = ARRAY_COUNT(itemArray), .items = &itemArray }
 
 ///Allows setting actor var 0
 #define ACTOR_BY_IDX_ARG(enemy, pos, _priority, _var0) { .actor = &enemy, .home = { .index = pos }, .priority = _priority, .var0 = _var0 }
@@ -34,11 +36,16 @@
 #define ACTOR_BY_IDX_ARG_ITEMS(enemy, pos, _priority, _var0, itemArray) { .actor = &enemy, .home = { .index = pos }, .priority = _priority, .item = ARRAY_COUNT(itemArray), .items = &itemArray, .var0 = _var0 }
 #define ACTOR_BY_POS_ARG(enemy, _pos, _priority, _var0) { .actor = &enemy, .home = { .vec = &_pos }, .priority = _priority, .var0 = _var0 }
 
+#define OVL_ACTOR_BY_IDX_ARG(_name, pos, _priority, _var0) { .overlay = _name, .home = { .index = pos }, .priority = _priority, .var0 = _var0 }
+#define OVL_ACTOR_BY_IDX_ARG_ITEM(_name, pos, _priority, _var0, itemId) { .overlay = _name, .home = { .index = pos }, .priority = _priority, .item = itemId, .var0 = _var0 }
+#define OVL_ACTOR_BY_IDX_ARG_ITEMS(_name, pos, _priority, _var0, itemArray) { .overlay = _name, .home = { .index = pos }, .priority = _priority, .item = ARRAY_COUNT(itemArray), .items = &itemArray, .var0 = _var0 }
+#define OVL_ACTOR_BY_POS_ARG(_name, _pos, _priority, _var0) { .overlay = _name, .home = { .vec = &_pos }, .priority = _priority, .var0 = _var0 }
+
 ///Allows setting actor var 0 and 1
 #define ACTOR_BY_IDX_ARG_2(enemy, pos, _priority, _var0, _var1) { .actor = &enemy, .home = { .index = pos }, .priority = _priority, .var0 = _var0, .var1 = _var1 }
 
 ///Allows setting actor var 0 and 1 and 2
 #define ACTOR_BY_IDX_ARG_3(enemy, pos, _priority, _var0, _var1, _var2) { .actor = &enemy, .home = { .index = pos }, .priority = _priority, .var0 = _var0, .var1 = _var1, .var2 = _var2 }
 
-#define WAVE_BATTLE(nextWaveFormation, waveCount) ACTOR_BY_IDX_ARG_3(A(wave_battle_controller), BTL_POS_GROUND_D, 20, &nextWaveFormation, ARRAY_COUNT(nextWaveFormation), waveCount)
+#define WAVE_BATTLE(nextWaveFormation, waveCount) ACTOR_BY_IDX_ARG_3(A(wave_battle_controller), BTL_POS_GROUND_D, 20, (s32)&nextWaveFormation, ARRAY_COUNT(nextWaveFormation), waveCount)
 #define NEXT_WAVE(nextWaveFormation) WAVE_BATTLE(nextWaveFormation, 0)

@@ -4,4 +4,4 @@
 #include "script_api/battle.h"
 
 #define AREA b_area_hos
-#define CURRENT_SP_POOL SP_POOL_STAR_ROAD
+#define AREA_SP_POOL SP_POOL_STAR_ROAD
