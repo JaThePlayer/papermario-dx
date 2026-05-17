@@ -7,7 +7,6 @@ extern Stage A(nok_02);
 extern Stage A(nok_03);
 extern Stage A(nok_04);
 
-#include "actor/spiked_paragoomba.c"
 #include "actor/flower_fuzzy.c"
 
 /*
