@@ -198,6 +198,7 @@ EvtScript N(EVS_Idle) = {
         IfEq(LVar0, true)
             ExecWait(N(EVS_Ignite))
         EndIf
+        Wait(1)
     EndLoop
     Return
     End
