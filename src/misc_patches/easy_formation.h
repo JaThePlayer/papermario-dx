@@ -46,6 +46,7 @@
 
 ///Allows setting actor var 0 and 1 and 2
 #define ACTOR_BY_IDX_ARG_3(enemy, pos, _priority, _var0, _var1, _var2) { .actor = &enemy, .home = { .index = pos }, .priority = _priority, .var0 = _var0, .var1 = _var1, .var2 = _var2 }
+#define OVL_ACTOR_BY_IDX_ARG_3(enemy, pos, _priority, _var0, _var1, _var2) { .overlay = enemy, .home = { .index = pos }, .priority = _priority, .var0 = _var0, .var1 = _var1, .var2 = _var2 }
 
-#define WAVE_BATTLE(nextWaveFormation, waveCount) ACTOR_BY_IDX_ARG_3(A(wave_battle_controller), BTL_POS_GROUND_D, 20, (s32)&nextWaveFormation, ARRAY_COUNT(nextWaveFormation), waveCount)
+#define WAVE_BATTLE(nextWaveFormation, waveCount) OVL_ACTOR_BY_IDX_ARG_3("wave_battle_controller", BTL_POS_GROUND_D, 20, (s32)&nextWaveFormation, ARRAY_COUNT(nextWaveFormation), waveCount)
 #define NEXT_WAVE(nextWaveFormation) WAVE_BATTLE(nextWaveFormation, 0)

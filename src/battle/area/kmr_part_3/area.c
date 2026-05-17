@@ -1,7 +1,5 @@
 #include "area.h"
 
-#include "battle/common/actor/wave_battle_controller.inc.c"
-
 extern ActorBlueprint A(jr_troopa);
 extern ActorBlueprint A(egg_jr_troopa);
 extern ActorBlueprint A(para_jr_troopa);

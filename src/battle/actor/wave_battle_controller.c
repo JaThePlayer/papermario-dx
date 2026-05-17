@@ -1,6 +1,7 @@
 // ACTOR_FLAG_NO_DMG_APPLY
 #include "common.h"
 #include "battle/battle.h"
+#include "dx/overlay.h"
 #include "script_api/battle.h"
 
 #define NAMESPACE A(wave_battle_controller)
@@ -65,7 +66,7 @@ ActorPartBlueprint N(ActorParts)[] = {
 
 #define WAVE_BATTLE_CONTROLLER_TYPE ACTOR_TYPE_CONTROLLER
 
-ActorBlueprint NAMESPACE = {
+export ActorBlueprint blueprint = {
     .flags = ACTOR_FLAG_INVISIBLE | ACTOR_FLAG_NO_SHADOW | ACTOR_FLAG_NO_HEALTH_BAR,// | ACTOR_FLAG_NO_DMG_APPLY,
     .type = WAVE_BATTLE_CONTROLLER_TYPE,
     .level = 0,
@@ -175,9 +176,19 @@ API_CALLABLE(N(SummonAllEnemies)) {
 
     for (s32 i = 0; i < count; i++) {
         f32 x, y, z;
+        ActorBlueprint* formationActor;
 
+        if (formation->actor != nullptr) {
+            formationActor = formation->actor;
+        } else if (formation->overlay != nullptr) {
+            Overlay* mod = ovl_load(formation->overlay, OVL_ACTOR);
+            formationActor = ovl_import(mod, "blueprint");
+            ASSERT_MSG(formationActor != nullptr, "Actor '%s' does not export 'blueprint'", formation->overlay);
+        } else {
+            PANIC();
+        }
 
-        if (!(formation->actor->flags & ACTOR_FLAG_INVISIBLE)) {
+        if (!(formationActor->flags & ACTOR_FLAG_INVISIBLE)) {
             // Copypasta from create_actor :/
             if (formation->home.index >= EVT_LIMIT) {
                 x = StandardActorHomePositions[formation->home.index].x;

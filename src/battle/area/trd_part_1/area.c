@@ -1,6 +1,5 @@
 #include "area.h"
 
-#include "battle/common/actor/wave_battle_controller.inc.c"
 #include "battle/common/actor/goomba.inc.c"
 
 Vec3i A(BlasterPos1) = { 50, 0, -20 };
