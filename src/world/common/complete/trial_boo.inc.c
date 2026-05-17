@@ -125,7 +125,7 @@ API_CALLABLE(N(BooTrials_TrialSelectorPopup)) {
 
         gCurrentTrialFormationId = 0;
         gCurrentEncounter.encounterList[enemy->encounterIndex]->battle = selectedItem->formations[0];
-        sp_pool_setup_fake_pool(is_trial_completed(selectedItem) ? 0 : selectedItem->rewardSp);
+        sp_pool_setup_fake_pool(is_trial_completed(selectedItem) ? 0 : selectedItem->rewardSp, false);
 
         playerData->coins -= menu->value[selected - 1];
     } else {
@@ -201,6 +201,7 @@ API_CALLABLE(N(CheckForNextBattle)) {
 
     gCurrentTrialFormationId++;
     if (trial->formations[gCurrentTrialFormationId] == nullptr) {
+        sp_pool_end_fake_pool();
         script->varTable[0x9] = false;
         return ApiStatus_DONE2;
     }

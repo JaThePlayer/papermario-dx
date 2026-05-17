@@ -1,5 +1,6 @@
 #include "misc_patches/sp_pools.h"
 #include "common.h"
+#include "common_structs.h"
 
 u8 sp_pool_caps[SP_POOL_COUNT] = {
     [SP_POOL_PROLOGUE] = 60,
@@ -16,6 +17,7 @@ u8 sp_pool_caps[SP_POOL_COUNT] = {
 u8 fake_pool_max = 0;
 u8 fake_pool_used = 0;
 b8 has_fake_pool = false;
+b8 fake_pool_ends_at_battle_end = false;
 
 // stores how much sp was taken from each pool in the current battle
 u8 sp_pool_used_up_this_battle[SP_POOL_COUNT] = { };
@@ -96,23 +98,30 @@ void sp_pool_return_this_battle() {
         sp_pool_used_up_this_battle[i] = 0;
     }
 
-    has_fake_pool = false;
-    fake_pool_max = 0;
-    fake_pool_used = 0;
+    if (fake_pool_ends_at_battle_end)
+        sp_pool_end_fake_pool();
 }
 
 void sp_pool_end_of_battle() {
     for (s32 i = 0; i < SP_POOL_COUNT; i++) {
         sp_pool_used_up_this_battle[i] = 0;
     }
-    has_fake_pool = false;
-    fake_pool_max = 0;
-    fake_pool_used = 0;
+
+    if (fake_pool_ends_at_battle_end)
+        sp_pool_end_fake_pool();
 }
 
 /// Sets up a fake SP pool for the current battle with the provided amount of Star Points in it
-void sp_pool_setup_fake_pool(u8 amt) {
+void sp_pool_setup_fake_pool(u8 amt, b8 shouldEndAfterBattle) {
     has_fake_pool = true;
     fake_pool_max = amt;
     fake_pool_used = 0;
+    fake_pool_ends_at_battle_end = shouldEndAfterBattle;
+}
+
+void sp_pool_end_fake_pool(void) {
+    has_fake_pool = false;
+    fake_pool_max = 0;
+    fake_pool_used = 0;
+    fake_pool_ends_at_battle_end = false;
 }
