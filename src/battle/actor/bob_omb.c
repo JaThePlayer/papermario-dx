@@ -196,6 +196,7 @@ EvtScript N(EVS_Idle) = {
     Loop(0)
         Call(GetActorVar, ACTOR_SELF, AVAR_ShouldIgniteImmediately, LVar0)
         IfEq(LVar0, true)
+            Call(SetActorVar, ACTOR_SELF, AVAR_ShouldIgniteImmediately, false)
             ExecWait(N(EVS_Ignite))
         EndIf
         Wait(1)
