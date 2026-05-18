@@ -98,7 +98,7 @@ ActorPartBlueprint N(ActorParts)[] = {
     }
 };
 
-ActorBlueprint NAMESPACE = {
+export ActorBlueprint blueprint = {
     .flags = 0,
     .type = ACTOR_TYPE_FIRE_BROS,
     .level = ACTOR_LEVEL_FIRE_BROS,

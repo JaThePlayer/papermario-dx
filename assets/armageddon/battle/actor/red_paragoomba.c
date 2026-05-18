@@ -68,7 +68,7 @@ ActorPartBlueprint N(ActorParts)[] = {
     }
 };
 
-ActorBlueprint NAMESPACE = {
+export ActorBlueprint blueprint = {
     .flags = ACTOR_FLAG_FLYING,
     .type = ACTOR_TYPE_RED_PARAGOOMBA,
     .level = ACTOR_LEVEL_RED_PARAGOOMBA,

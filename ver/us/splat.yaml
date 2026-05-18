@@ -6245,7 +6245,6 @@ segments:
     - [auto, c, area]
     - [auto, c, actor/bullet_bill]
     - [auto, c, actor/bill_blaster]
-    - [auto, c, actor/fire_bros]
     - [auto, c, stage/trd_01]
     - [auto, c, stage/trd_02]
     - [auto, c, stage/trd_02b]

@@ -1,9 +1,5 @@
 #include "area.h"
 
-#include "battle/common/actor/rokitu.inc.c"
-#include "battle/common/actor/red_goomba.inc.c"
-#include "battle/common/actor/red_paragoomba.inc.c"
-
 extern Stage A(iwa_01);
 extern Stage A(iwa_01b);
 extern Stage A(iwa_02);

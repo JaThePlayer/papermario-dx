@@ -11,7 +11,6 @@ extern ActorBlueprint A(paratroopa);
 extern ActorBlueprint A(bob_omb);
 extern ActorBlueprint A(bill_blaster);
 extern ActorBlueprint A(bullet_bill);
-extern ActorBlueprint A(fire_bros);
 
 extern Stage A(trd_00);
 extern Stage A(trd_01);
@@ -35,7 +34,7 @@ Fire Bros
 Bullet Bill
 Bill Blaster (miniboss)
 */
-//OVL_ACTOR_BY_IDX("koopa_troopa", BTL_POS_GROUND_B, 10),
+
 Formation A(Formation_03_Wave2) = { // trd_01 - KEY
     OVL_ACTOR_BY_IDX("bob_omb", BTL_POS_GROUND_A,  10, 0),
     OVL_ACTOR_BY_IDX("bob_omb", BTL_POS_GROUND_B,  9,  4),
@@ -55,7 +54,7 @@ Formation A(Formation_0F) = { // trd_02
     OVL_ACTOR_BY_IDX("bob_omb", BTL_POS_GROUND_A, 10, 0), // troll
     OVL_ACTOR_BY_IDX("bob_omb", BTL_POS_GROUND_B, 9, 3),
     OVL_ACTOR_BY_IDX("bob_omb", BTL_POS_GROUND_C, 8, 3),
-    ACTOR_BY_IDX(A(fire_bros), BTL_POS_GROUND_D, 7),
+    OVL_ACTOR_BY_IDX("fire_bros", BTL_POS_GROUND_D, 7),
 };
 
 Formation A(Formation_10) = { // trd_02
@@ -67,7 +66,7 @@ Formation A(Formation_10) = { // trd_02
 Formation A(Formation_07) = { // trd_02
     OVL_ACTOR_BY_IDX("koopa_troopa", BTL_POS_GROUND_A, 10),
     OVL_ACTOR_BY_IDX("bob_omb", BTL_POS_GROUND_B, 8, 3),
-    ACTOR_BY_IDX(A(fire_bros), BTL_POS_GROUND_C, 7),
+    OVL_ACTOR_BY_IDX("fire_bros", BTL_POS_GROUND_C, 7),
 };
 
 
@@ -79,7 +78,7 @@ Formation A(Formation_09) = { // trd_03
 
 Formation A(Formation_02) = { // trd_03
     OVL_ACTOR_BY_IDX("koopa_troopa", BTL_POS_GROUND_A, 10),
-    ACTOR_BY_IDX(A(fire_bros), BTL_POS_GROUND_B, 9),
+    OVL_ACTOR_BY_IDX("fire_bros", BTL_POS_GROUND_B, 9),
     OVL_ACTOR_BY_IDX("koopa_troopa", BTL_POS_GROUND_C, 8),
 };
 
@@ -94,7 +93,7 @@ s16 A(Formation_05_Wave2_HammerBroItems)[] = {
 };
 
 Formation A(Formation_05_Wave2) = {
-    ACTOR_BY_IDX_ITEMS(A(fire_bros), BTL_POS_GROUND_B, 10, A(Formation_05_Wave2_HammerBroItems)),
+    OVL_ACTOR_BY_IDX_ITEMS("fire_bros", BTL_POS_GROUND_B, 10, A(Formation_05_Wave2_HammerBroItems)),
 };
 
 Formation A(Formation_05) = { // trd_04 - switch
@@ -125,7 +124,7 @@ Formation A(Formation_0A) = { // trd_07 (ambush)
 Formation A(Formation_16) = { // trd_07 (ambush)
     OVL_ACTOR_BY_IDX("koopa_troopa", BTL_POS_GROUND_A, 10),
     OVL_ACTOR_BY_IDX_ARG_ITEM("bob_omb", BTL_POS_GROUND_B, 9, 3, ITEM_POWER_PLUS_A),
-    ACTOR_BY_IDX(A(fire_bros), BTL_POS_GROUND_C, 8),
+    OVL_ACTOR_BY_IDX("fire_bros", BTL_POS_GROUND_C, 8),
 };
 
 s16 A(Formation_06_Wave3_GoombaItems)[] = {
@@ -166,7 +165,7 @@ Formation A(Formation_00) = { // trd_01 (upper)
 
 Formation A(Formation_01) = { // trd_01 (upper)
     OVL_ACTOR_BY_IDX("koopa_troopa", BTL_POS_GROUND_B, 10),
-    ACTOR_BY_IDX_ITEM(A(fire_bros), BTL_POS_GROUND_C, 9, ITEM_P_DOWN_D_UP),
+    OVL_ACTOR_BY_IDX_ITEM("fire_bros", BTL_POS_GROUND_C, 9, ITEM_P_DOWN_D_UP),
     OVL_ACTOR_BY_IDX_ARG_ITEM("bob_omb", BTL_POS_GROUND_D, 8, 2, ITEM_MUSHROOM),
 };
 
@@ -239,8 +238,8 @@ s16 A(Formation_18_FireBrosItems)[] = {
 
 Formation A(Formation_18) = { // Boo Trial - ch1 - part 5
     OVL_ACTOR_BY_IDX("bob_omb", BTL_POS_GROUND_A, 10),
-    ACTOR_BY_IDX(A(fire_bros), BTL_POS_GROUND_B, 9),
-    ACTOR_BY_IDX_ITEMS(A(fire_bros), BTL_POS_GROUND_C, 8, A(Formation_18_FireBrosItems)),
+    OVL_ACTOR_BY_IDX("fire_bros", BTL_POS_GROUND_B, 9),
+    OVL_ACTOR_BY_IDX_ITEMS("fire_bros", BTL_POS_GROUND_C, 8, A(Formation_18_FireBrosItems)),
     OVL_ACTOR_BY_IDX_ITEMS("goomba", BTL_POS_GROUND_D, 7, A(Formation_18_GoombaItems)),
 };
 

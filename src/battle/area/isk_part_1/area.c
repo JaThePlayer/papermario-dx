@@ -1,7 +1,5 @@
 #include "area.h"
 
-#include "battle/common/actor/red_paragoomba.inc.c"
-
 extern Stage A(isk_00);
 extern Stage A(isk_01);
 extern Stage A(isk_02);
