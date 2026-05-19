@@ -17,6 +17,8 @@
 #define POISON_STATUS 9
 #define PAIN_FOCUS_STATUS 10
 
+// Applies this status chance to all custom statuses
+#define STATUS_KEY_CUSTOM_DEFAULT 0x100
 #define STATUS_KEY_CUSTOM(status) (0x100 + status)
 #define STATUS_TURN_MOD_CUSTOM(status) (0x200 + status)
 
@@ -37,6 +39,7 @@ enum StackingBehaviours {
     STATUS_STACKING_OVERRIDE = 0, /// New applications of the status override the previous
     STATUS_STACKING_ADD_POTENCY = 1, /// Adds the potency of the new application on top of the previous potency.
     STATUS_STACKING_ADD_TURNS = 2, /// Adds the turns of the new application on top of the previous turn count.
+    STATUS_STACKING_USE_STRONGER = 3, /// If the new application has a higher potency, it overrides the old. If potency is lower, nothing happens. If equal, the higher turn count is used.
 
     STATUS_STACKING_BURN = 10, /// Specific to burn, handles Ember Emblem
 };
@@ -107,7 +110,22 @@ Vec3f get_expected_arrow_pos(Actor* actor);
 /// Clears the status from the given actor.
 void custom_status_clear(Actor* actor, s8 customStatusId);
 
+/// Clears all custom status from the given actor, returns how many statuses were cleared.
+s32 custom_status_clear_all(Actor* actor);
+
+/// Clears all custom statuses, returns how many statuses were cleared.
+/// @evtapi
+/// @param actorId
+/// @param clearedCountOutVar
+API_CALLABLE(ClearAllActorCustomStatus);
+
 /// Clears all debufs, returns how many debuffs were cleared.
 s32 custom_status_clear_debuffs(Actor* actor);
+
+/// Clears all debufs, returns how many debuffs were cleared.
+/// @evtapi
+/// @param actorId
+/// @param clearedCountOutVar
+API_CALLABLE(ClearAllActorCustomDebuffs);
 
 #endif

@@ -1,4 +1,5 @@
 #include "../area.h"
+#include "misc_patches/custom_status.h"
 #include "sprite/npc/KoopaBros.h"
 #include "mapfs/trd_bt00_shape.h"
 
@@ -446,6 +447,8 @@ EvtScript N(EVS_AnimBowser_HurtHead) = {
 };
 
 EvtScript N(EVS_AnimBowser_DeathMain) = {
+    Call(ClearAllActorCustomStatus, ACTOR_SELF, LVarE)
+
     UseArray(FakeBowserAnimState)
     Call(N(StartRumbleWithParams), 256, 30)
     Thread

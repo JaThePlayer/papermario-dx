@@ -26,15 +26,15 @@
 
 StatusType gCustomStatusTypes[CUSTOM_STATUS_AMT] = {
     [NONE_CUSTOM_STATUS] = {},
-    [ATK_DOWN_TEMP_STATUS] = STATUS_ENTRY(temp_atk_down, true, true, STATUS_STACKING_OVERRIDE),
-    [DEF_DOWN_TEMP_STATUS] = STATUS_ENTRY(temp_def_down, true, true, STATUS_STACKING_OVERRIDE),
-    [ATK_UP_TEMP_STATUS] = STATUS_ENTRY(temp_atk_up, false, true, STATUS_STACKING_OVERRIDE),
-    [DEF_UP_TEMP_STATUS] = STATUS_ENTRY(temp_def_up, false, true, STATUS_STACKING_OVERRIDE),
+    [ATK_DOWN_TEMP_STATUS] = STATUS_ENTRY(temp_atk_down, true, true, STATUS_STACKING_USE_STRONGER),
+    [DEF_DOWN_TEMP_STATUS] = STATUS_ENTRY(temp_def_down, true, true, STATUS_STACKING_USE_STRONGER),
+    [ATK_UP_TEMP_STATUS] = STATUS_ENTRY(temp_atk_up, false, true, STATUS_STACKING_USE_STRONGER),
+    [DEF_UP_TEMP_STATUS] = STATUS_ENTRY(temp_def_up, false, true, STATUS_STACKING_USE_STRONGER),
     [CLOSE_CALL_STATUS] = STATUS_ENTRY(close_call, false, true, STATUS_STACKING_OVERRIDE),
     [BURN_STATUS] = STATUS_ENTRY(burn_status, true, true, STATUS_STACKING_BURN),
-    [FP_COST_STATUS] = STATUS_ENTRY(fp_cost_status, false, true, STATUS_STACKING_OVERRIDE),
+    [FP_COST_STATUS] = STATUS_ENTRY(fp_cost_status, false, true, STATUS_STACKING_USE_STRONGER),
     [CHARGE_STATUS] = STATUS_ENTRY(charge_status, false, false, STATUS_STACKING_ADD_POTENCY),
-    [POISON_STATUS] = STATUS_ENTRY(poison_status, true, true, STATUS_STACKING_OVERRIDE),
+    [POISON_STATUS] = STATUS_ENTRY(poison_status, true, true, STATUS_STACKING_USE_STRONGER),
     [PAIN_FOCUS_STATUS] = STATUS_ENTRY(pain_focus_status, false, true, STATUS_STACKING_ADD_POTENCY),
 };
 
@@ -118,6 +118,10 @@ s32 try_inflict_custom_status(Actor* actor, Vec3f position, s8 customStatusId, u
 
     if (chance <= 100) { // allow passing >100 chance to prevent status table from doing anything (like for copying status)
         while (statusTable[DICTIONARY_KEY] != STATUS_END) {
+            if (statusTable[DICTIONARY_KEY] == STATUS_KEY_CUSTOM_DEFAULT) {
+                actorChance = statusTable[DICTIONARY_VALUE];
+            }
+
             if (statusTable[DICTIONARY_KEY] == STATUS_KEY_CUSTOM(customStatusId)) {
                 actorChance = statusTable[DICTIONARY_VALUE];
             }
@@ -142,7 +146,7 @@ s32 try_inflict_custom_status(Actor* actor, Vec3f position, s8 customStatusId, u
     // Handle stack behaviours that toggle different behaviours based on some condition (like badges)
     switch (stackBehaviour) {
         case STATUS_STACKING_BURN:
-            stackBehaviour = badge_count_by_move_id_in_opposing_team(actor, MOVE_EMBER_EMBLEM) > 0 ? STATUS_STACKING_ADD_TURNS : STATUS_STACKING_OVERRIDE;
+            stackBehaviour = badge_count_by_move_id_in_opposing_team(actor, MOVE_EMBER_EMBLEM) > 0 ? STATUS_STACKING_ADD_TURNS : STATUS_STACKING_USE_STRONGER;
             break;
     }
 
@@ -167,6 +171,16 @@ s32 try_inflict_custom_status(Actor* actor, Vec3f position, s8 customStatusId, u
                 status->turns = turns;
                 status->potency = potency;
             }
+            break;
+        case STATUS_STACKING_USE_STRONGER:
+            if (status->potency == potency) {
+                status->turns = MAX(turns, status->turns);
+            }
+            if (status->potency < potency) {
+                status->turns = turns;
+                status->potency = potency;
+            }
+            break;
     }
 
 
@@ -361,7 +375,24 @@ void custom_status_clear(Actor* actor, s8 customStatusId) {
     StatusType* statusType = &gCustomStatusTypes[customStatusId];
 
     if (status->turns > 0)
-        custom_status_decrease_turn_count_impl(actor, 0, status, statusType, false);
+    custom_status_decrease_turn_count_impl(actor, 0, status, statusType, false);
+}
+
+s32 custom_status_clear_all(Actor* actor) {
+    s32 amt = 0;
+
+    for (s32 i = 0; i < ARRAY_COUNT(actor->customStatuses); i++)
+    {
+        StatusInfo* status = &actor->customStatuses[i];
+        StatusType* statusType = &gCustomStatusTypes[i];
+
+        if (status->turns > 0) {
+            amt += 1;
+            custom_status_decrease_turn_count_impl(actor, 0, status, statusType, false);
+        }
+    }
+
+    return amt;
 }
 
 s32 custom_status_clear_debuffs(Actor* actor) {
@@ -379,4 +410,34 @@ s32 custom_status_clear_debuffs(Actor* actor) {
     }
 
     return amt;
+}
+
+API_CALLABLE(ClearAllActorCustomStatus) {
+    Bytecode* args = script->ptrReadPos;
+    Actor* actor;
+
+    s32 actorID = evt_get_variable(script, *args++);
+
+    if (actorID == ACTOR_SELF) {
+        actorID = script->owner1.actorID;
+    }
+    actor = get_actor(actorID);
+
+    evt_set_variable(script, *args++, custom_status_clear_all(actor));
+    return ApiStatus_DONE2;
+}
+
+API_CALLABLE(ClearAllActorCustomDebuffs) {
+    Bytecode* args = script->ptrReadPos;
+    Actor* actor;
+
+    s32 actorID = evt_get_variable(script, *args++);
+
+    if (actorID == ACTOR_SELF) {
+        actorID = script->owner1.actorID;
+    }
+    actor = get_actor(actorID);
+
+    evt_set_variable(script, *args++, custom_status_clear_debuffs(actor));
+    return ApiStatus_DONE2;
 }
