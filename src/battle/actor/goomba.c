@@ -1,5 +1,9 @@
 #include "battle/battle.h"
+#include "enemy_items/api.h"
+#include "enums.h"
+#include "misc_patches/actor_interfaces.h"
 #include "script_api/battle.h"
+#include "script_api/macros.h"
 #include "sprite/npc/Goomba.h"
 
 #ifndef NESTED_GOOMBA_INCLUDE
@@ -67,6 +71,9 @@ ActorPartBlueprint N(ActorParts)[] = {
         .projectileTargetOffset = { 0, -10 },
     },
 };
+
+IMPLEMENT(IGoomba, GOOMBA_TYPE_Normal);
+IMPLEMENT(IYieldable, &IYieldable_DontYieldIfWillUseItem);
 
 export ActorBlueprint blueprint = {
     .flags = 0,
@@ -297,13 +304,32 @@ EvtScript N(EVS_HandleEvent) = {
     End
 };
 
+EvtScript N(EVS_Headbonk);
+
 EvtScript N(EVS_TakeTurn) = {
+    STANDARD_ITEM_USE_AI()
+
+    Set(LVar0, INTERFACE(IGoomba))
+    Set(LVar1, 10)
+    ExecWait(YieldIfNextActorImplements)
+    ExecWait(N(EVS_Headbonk))
+    Return
+    End
+};
+
+EvtScript N(EVS_Headbonk) = {
+    #define LVarA_YieldedTo LVarA
     Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
-    Call(UseBattleCamPreset, BTL_CAM_ENEMY_APPROACH)
-    Call(BattleCamTargetActor, ACTOR_SELF)
-    Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_TARGET, BTL_CAM_XADJ_AVG, false)
+
+    Call(GetBattleCamPreset, LVar0)
+    IfEq(LVar0, BTL_CAM_DEFAULT)
+        Call(UseBattleCamPreset, BTL_CAM_ENEMY_APPROACH)
+        Call(BattleCamTargetActor, ACTOR_SELF)
+        Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_TARGET, BTL_CAM_XADJ_AVG, false)
+    EndIf
+
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Goomba_Run)
     Call(SetGoalToTarget, ACTOR_SELF)
     Call(AddGoalPos, ACTOR_SELF, 50, 0, 0)
@@ -382,7 +408,11 @@ EvtScript N(EVS_TakeTurn) = {
             Call(JumpToGoal, ACTOR_SELF, 15, false, true, false)
             Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Goomba_Dizzy)
             Wait(5)
-            Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
+            IfEq(LVarA_YieldedTo, 0)
+                Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
+            Else
+                Call(BattleCamTargetActor, LVarA_YieldedTo)
+            EndIf
             Call(YieldTurn)
             Call(SetActorYaw, ACTOR_SELF, 180)
             Call(AddActorDecoration, ACTOR_SELF, PRT_MAIN, 0, ACTOR_DECORATION_SWEAT)
@@ -432,7 +462,11 @@ EvtScript N(EVS_TakeTurn) = {
     Switch(LVar0)
         CaseOrEq(HIT_RESULT_HIT)
         CaseOrEq(HIT_RESULT_NO_DAMAGE)
-            Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
+            IfEq(LVarA_YieldedTo, 0)
+                Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
+            Else
+                Call(BattleCamTargetActor, LVarA_YieldedTo)
+            EndIf
             Call(SetActorScale, ACTOR_SELF, Float(1.1), Float(0.8), Float(1.0))
             Wait(1)
             Call(SetActorScale, ACTOR_SELF, Float(1.0), Float(1.0), Float(1.0))
