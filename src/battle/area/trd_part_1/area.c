@@ -1,7 +1,5 @@
 #include "area.h"
 
-#include "battle/common/actor/goomba.inc.c"
-
 Vec3i A(BlasterPos1) = { 50, 0, -20 };
 Vec3i A(BlasterPos2) = { 80, 0, 0 };
 Vec3i A(BlasterPos3) = { 110, 0, 20 };
