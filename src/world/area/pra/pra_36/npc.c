@@ -1,6 +1,6 @@
 #include "pra_36.h"
 
-#include "world/common/enemy/Duplighost_Wander.inc.c"
+#include "world/common/enemy/Duplighost/wander.inc.c"
 
 EvtScript N(EVS_NpcInit_Duplighost) = {
     Call(SetNpcFlagBits, NPC_SELF, NPC_FLAG_REFLECT_FLOOR, true)
@@ -29,7 +29,7 @@ NpcData N(NpcData_Duplighost) = {
     .flags = ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING | ENEMY_FLAG_ACTIVE_WHILE_OFFSCREEN,
     .drops = DUPLIGHOST_DROPS,
     .animations = DUPLIGHOST_ANIMS,
-    .aiDetectFlags = AI_DETECT_SENSITIVE_MOTION,
+    .aiDetectFlags = AI_DETECT_MOTION_SENSITIVE,
 };
 
 NpcGroupList N(DefaultNPCs) = {

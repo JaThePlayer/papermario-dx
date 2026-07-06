@@ -1,13 +1,9 @@
 #include "kmr_04.h"
 #include "effects.h"
 
-NpcSettings N(NpcSettings_JrTroopa) = {
-    .height = 32,
-    .radius = 24,
-    .level = ACTOR_LEVEL_NONE,
-};
+#include "world/common/npc/JrTroopa/idle.inc.c"
 
-EvtScript N(EVS_NpcAuxAI_Goompa) = {
+EvtScript N(EVS_NpcCreate_Goompa) = {
     Call(SetNpcFlagBits, NPC_SELF, NPC_FLAG_GRAVITY, false)
     Call(SetNpcFlagBits, NPC_SELF, NPC_FLAG_FLYING | NPC_FLAG_IGNORE_WORLD_COLLISION, true)
     Call(SetNpcPos, NPC_SELF, NPC_DISPOSE_LOCATION)
@@ -47,13 +43,13 @@ EvtScript N(EVS_NpcAI_Goompa) = {
                 EndIf
             EndLoop
             Call(DisablePlayerInput, true)
-            Call(func_802CF56C, 0)
+            Call(SetPartnerFollowMode, PARTNER_FORCED_FOLLOW_NONE)
             Call(GetPlayerPos, LVar0, LVar1, LVar2)
             Add(LVar0, 30)
             Call(SetNpcSpeed, NPC_PARTNER, Float(2.0 / DT))
             Call(NpcMoveTo, LVar0, LVar1, LVar2, 0)
             Wait(5 * DT)
-            Call(DisablePartnerAI, 0)
+            Call(DisablePartnerAI, false)
             Call(SpeakToPlayer, NPC_PARTNER, ANIM_Goompa_Talk, ANIM_Goompa_Idle, 0, MSG_CH0_00A9)
             Call(SetNpcAnimation, NPC_PARTNER, ANIM_Goompa_Idle)
             Call(EnablePartnerAI)
@@ -61,7 +57,7 @@ EvtScript N(EVS_NpcAI_Goompa) = {
             Call(DisablePlayerInput, false)
             Set(GB_StoryProgress, STORY_CH0_LOOKING_FOR_HAMMER)
         CaseEq(STORY_CH0_FOUND_HAMMER)
-            IfEq(AB_KMR_0, 0)
+            IfEq(AB_KMR04_JrTroopaAmbushState, 0)
                 Label(10)
                 Wait(1)
                 Call(GetPlayerPos, LVar0, LVar1, LVar2)
@@ -79,7 +75,7 @@ EvtScript N(EVS_NpcAI_Goompa) = {
                 EndIf
                 Call(DisablePlayerInput, true)
                 Call(N(AwaitPartnerGrounded))
-                Call(DisablePartnerAI, 0)
+                Call(DisablePartnerAI, false)
                 Call(SetNpcFlagBits, NPC_PARTNER, NPC_FLAG_IGNORE_WORLD_COLLISION, true)
                 Call(SetNpcAnimation, NPC_PARTNER, ANIM_Goompa_Walk)
                 Call(SetNpcSpeed, NPC_PARTNER, Float(3.0))
@@ -133,7 +129,7 @@ EvtScript N(EVS_NpcAI_Goompa) = {
                         Wait(3)
                     EndLoop
                 EndThread
-                Set(AB_KMR_0, 1)
+                Set(AB_KMR04_JrTroopaAmbushState, 1)
             EndIf
     EndSwitch
     Wait(1)
@@ -153,54 +149,44 @@ EvtScript N(EVS_NpcDefeat_Goompa) = {
 };
 
 EvtScript N(EVS_NpcIdle_JrTroopa) = {
-    Call(func_800445D4, LVar0)
-    Switch(LVar0)
-        CaseEq(100)
-            Label(0)
-            Switch(AB_KMR_0)
-                CaseEq(1)
-                    Exec(N(EVS_SetJrTroopaMusic))
-                    Thread
-                        Wait(20 * DT)
-                        Call(GetPlayerPos, LVar0, LVar1, LVar2)
-                        Call(UseSettingsFrom, CAM_DEFAULT, LVar0, LVar1, LVar2)
-                        Call(SetPanTarget, CAM_DEFAULT, 430, LVar1, LVar2)
-                        Call(SetCamDistance, CAM_DEFAULT, Float(275.0))
-                        Call(SetCamPitch, CAM_DEFAULT, Float(17.5), Float(-7.5))
-                        Call(SetCamSpeed, CAM_DEFAULT, Float(2.0 / DT))
-                        Call(PanToTarget, CAM_DEFAULT, 0, true)
-                        Call(WaitForCam, CAM_DEFAULT, Float(1.0))
-                    EndThread
-                    Call(SetNpcPos, NPC_JrTroopa, 630, 0, 0)
-                    Call(EnableNpcShadow, NPC_SELF, true)
-                    Wait(1)
-                    Call(PlayerFaceNpc, NPC_JrTroopa, 3)
-                    Call(SetNpcSpeed, NPC_JrTroopa, Float(3.0 / DT))
-                    Call(SetNpcAnimation, NPC_JrTroopa, ANIM_JrTroopa_Run)
-                    Call(NpcMoveTo, NPC_JrTroopa, 465, 0, 0)
-                    Call(SetNpcAnimation, NPC_JrTroopa, ANIM_JrTroopa_PointIdle)
-                    Call(PlayerFaceNpc, NPC_JrTroopa, 3)
-                    Call(SpeakToPlayer, NPC_JrTroopa, ANIM_JrTroopa_PointTalk, ANIM_JrTroopa_PointIdle, 0, MSG_CH0_00AE)
-                    Wait(10 * DT)
-                    Thread
-                        Call(GetPlayerPos, LVar0, LVar1, LVar2)
-                        Call(UseSettingsFrom, CAM_DEFAULT, LVar0, LVar1, LVar2)
-                        Call(SetPanTarget, CAM_DEFAULT, 430, LVar1, LVar2)
-                        Call(SetCamSpeed, CAM_DEFAULT, Float(4.0 / DT))
-                        Call(PanToTarget, CAM_DEFAULT, 0, true)
-                        Call(WaitForCam, CAM_DEFAULT, Float(1.0))
-                        Call(PanToTarget, CAM_DEFAULT, 0, false)
-                    EndThread
-                    Call(StartBossBattle, SONG_JR_TROOPA_BATTLE)
-            EndSwitch
+    Label(0)
+        IfEq(AB_KMR04_JrTroopaAmbushState, 1)
+            Exec(N(EVS_SetJrTroopaMusic))
+            Thread
+                Wait(20 * DT)
+                Call(GetPlayerPos, LVar0, LVar1, LVar2)
+                Call(UseSettingsFrom, CAM_DEFAULT, LVar0, LVar1, LVar2)
+                Call(SetPanTarget, CAM_DEFAULT, 430, LVar1, LVar2)
+                Call(SetCamDistance, CAM_DEFAULT, Float(275.0))
+                Call(SetCamPitch, CAM_DEFAULT, Float(17.5), Float(-7.5))
+                Call(SetCamSpeed, CAM_DEFAULT, Float(2.0 / DT))
+                Call(PanToTarget, CAM_DEFAULT, 0, true)
+                Call(WaitForCam, CAM_DEFAULT, Float(1.0))
+            EndThread
+            Call(SetNpcPos, NPC_JrTroopa, 630, 0, 0)
+            Call(EnableNpcShadow, NPC_SELF, true)
             Wait(1)
-            Goto(0)
-        CaseOrEq(101)
-        CaseOrEq(102)
-        CaseOrEq(3)
-        CaseOrEq(103)
-        EndCaseGroup
-    EndSwitch
+            Call(PlayerFaceNpc, NPC_JrTroopa, 3)
+            Call(SetNpcSpeed, NPC_JrTroopa, Float(3.0 / DT))
+            Call(SetNpcAnimation, NPC_JrTroopa, ANIM_JrTroopa_Run)
+            Call(NpcMoveTo, NPC_JrTroopa, 465, 0, 0)
+            Call(SetNpcAnimation, NPC_JrTroopa, ANIM_JrTroopa_PointIdle)
+            Call(PlayerFaceNpc, NPC_JrTroopa, 3)
+            Call(SpeakToPlayer, NPC_JrTroopa, ANIM_JrTroopa_PointTalk, ANIM_JrTroopa_PointIdle, 0, MSG_CH0_00AE)
+            Wait(10 * DT)
+            Thread
+                Call(GetPlayerPos, LVar0, LVar1, LVar2)
+                Call(UseSettingsFrom, CAM_DEFAULT, LVar0, LVar1, LVar2)
+                Call(SetPanTarget, CAM_DEFAULT, 430, LVar1, LVar2)
+                Call(SetCamSpeed, CAM_DEFAULT, Float(4.0 / DT))
+                Call(PanToTarget, CAM_DEFAULT, 0, true)
+                Call(WaitForCam, CAM_DEFAULT, Float(1.0))
+                Call(PanToTarget, CAM_DEFAULT, 0, false)
+            EndThread
+            Call(StartBossBattle, SONG_JR_TROOPA_BATTLE)
+        EndIf
+        Wait(1)
+        Goto(0)
     Return
     End
 };
@@ -239,7 +225,7 @@ EvtScript N(EVS_NpcDefeat_JrTroopa) = {
 #endif
             EndThread
             Exec(N(EVS_SetNormalMusic))
-            Set(AB_KMR_0, 0)
+            Set(AB_KMR04_JrTroopaAmbushState, 0)
             Set(GB_StoryProgress, STORY_CH0_DEFEATED_JR_TROOPA)
             Call(DisablePlayerInput, false)
     EndSwitch
@@ -251,10 +237,10 @@ NpcSettings N(NpcSettings_Goompa) = {
     .defaultAnim = ANIM_Goompa_Idle,
     .height = 24,
     .radius = 24,
-    .otherAI = &N(EVS_NpcAuxAI_Goompa),
+    .doAux = &N(EVS_NpcAux_Goompa),
+    .doAI = &N(EVS_NpcAI_Goompa),
+    .onCreate = &N(EVS_NpcCreate_Goompa),
     .onInteract = &N(EVS_NpcInteract_Goompa),
-    .ai = &N(EVS_NpcAI_Goompa),
-    .aux = &N(EVS_NpcAux_Goompa),
     .onDefeat = &N(EVS_NpcDefeat_Goompa),
     .flags = ENEMY_FLAG_PASSIVE | ENEMY_FLAG_DO_NOT_KILL | ENEMY_FLAG_IGNORE_WORLD_COLLISION,
 };
@@ -276,27 +262,10 @@ NpcData N(NpcData_JrTroopa) = {
     .settings = &N(NpcSettings_JrTroopa),
     .flags = ENEMY_FLAG_IGNORE_WORLD_COLLISION | ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING | ENEMY_FLAG_NO_DELAY_AFTER_FLEE | ENEMY_FLAG_ACTIVE_WHILE_OFFSCREEN | ENEMY_FLAG_NO_DROPS,
     .drops = NO_DROPS,
-    .animations = {
-        .idle   = ANIM_JrTroopa_Idle,
-        .walk   = ANIM_JrTroopa_Walk,
-        .run    = ANIM_JrTroopa_Walk,
-        .chase  = ANIM_JrTroopa_Walk,
-        .anim_4 = ANIM_JrTroopa_Idle,
-        .anim_5 = ANIM_JrTroopa_Idle,
-        .death  = ANIM_JrTroopa_Idle,
-        .hit    = ANIM_JrTroopa_Idle,
-        .anim_8 = ANIM_JrTroopa_Idle,
-        .anim_9 = ANIM_JrTroopa_Idle,
-        .anim_A = ANIM_JrTroopa_Idle,
-        .anim_B = ANIM_JrTroopa_Idle,
-        .anim_C = ANIM_JrTroopa_Idle,
-        .anim_D = ANIM_JrTroopa_Idle,
-        .anim_E = ANIM_JrTroopa_Idle,
-        .anim_F = ANIM_JrTroopa_Idle,
-    },
+    .animations = JR_TROOPA_ANIMS,
 };
 
-NpcData N(NpcData_GoombaFamily) = {
+NpcData N(NpcData_Goompa) = {
     .id = NPC_Goompa,
     .pos = { -58.0f, 0.0f, 130.0f },
     .yaw = 0,
@@ -309,6 +278,6 @@ NpcData N(NpcData_GoombaFamily) = {
 
 NpcGroupList N(DefaultNPCs) = {
     NPC_GROUP(N(NpcData_JrTroopa), BTL_KMR_3_FORMATION_02),
-    NPC_GROUP(N(NpcData_GoombaFamily)),
+    NPC_GROUP(N(NpcData_Goompa)),
     {}
 };

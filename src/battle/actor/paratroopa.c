@@ -30,7 +30,7 @@ extern s32 A(koopa_troopa_StatusTable)[];
 extern s32 A(koopa_troopa_DefaultAnims)[];
 
 #include "common/StartRumbleWithParams.inc.c"
-#include "common/battle/SetAbsoluteStatusOffsets.inc.c"
+#include "battle/common/SetAbsoluteStatusOffsets.inc.c"
 
 enum N(ActorPartIDs) {
     PRT_DOWNED          = 1,

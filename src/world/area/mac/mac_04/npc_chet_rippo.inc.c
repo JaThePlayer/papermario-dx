@@ -1,10 +1,14 @@
-#include "enums.h"
 #include "hud_element.h"
-#include "item_enum.h"
+#include "mac_04.h"
+
+#include "common.h"
 #include "pause/pause_common.h"
 #include "misc_patches/misc_patches.h"
 
-#include "world/common/todo/GetPlayerCoins.inc.c"
+API_CALLABLE(N(GetPlayerCoins)) {
+    script->varTable[0] = gPlayerData.coins;
+    return ApiStatus_DONE2;
+}
 
 extern s32 gPopupState;
 
@@ -395,7 +399,7 @@ EvtScript N(EVS_NpcInteract_ChetRippo) = {
     Call(PlaySoundAtNpc, NPC_ChetRippo, SOUND_VANISH_IN_SMOKE, SOUND_SPACE_DEFAULT)
     PlayEffect(EFFECT_BIG_SMOKE_PUFF, LVar0, LVar1, LVar2, 1, 1, 1, 1)
     Call(SetNpcPos, NPC_ChetRippo, NPC_DISPOSE_LOCATION)
-    Set(AF_MAC_32, true)
+    Set(AF_MAC04_UsedChetRippo, true)
     Call(N(ForceStatusBarToAppear))
     */
     Return
@@ -403,7 +407,7 @@ EvtScript N(EVS_NpcInteract_ChetRippo) = {
 };
 
 EvtScript N(EVS_NpcInit_ChetRippo) = {
-    IfEq(AF_MAC_32, false)
+    IfEq(AF_MAC04_UsedChetRippo, false)
         Set(LVar0, 0)
     Else
         Set(LVar0, 1)

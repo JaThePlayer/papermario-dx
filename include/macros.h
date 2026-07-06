@@ -25,18 +25,25 @@
 #define EXTERN_C extern
 #endif
 
-#define NAME_SUFFIX
 #define NAME_PREFIX
 #ifdef _LANGUAGE_C_PLUS_PLUS
 // use C++ namespaces instead of these macros!
 #define A(sym) sym
 #define N(sym) sym
 #else
-#define A(sym) NS(AREA, NAME_PREFIX, sym, NAME_SUFFIX)
-#define N(sym) NS(NAMESPACE, NAME_PREFIX, sym, NAME_SUFFIX)
+#define A(sym) NS(AREA, NAME_PREFIX, sym, )
+#define N(sym) NS(NAMESPACE, NAME_PREFIX, sym, )
 #endif
 
 #define ARRAY_COUNT(arr) (s32)(sizeof(arr) / sizeof(arr[0]))
+
+#define _PAD_CONCAT_INNER(a, b) a ## b
+#define _PAD_CONCAT(a, b) _PAD_CONCAT_INNER(a, b)
+#ifdef __COUNTER__
+#define PAD(x) u8 _PAD_CONCAT(pad_, __COUNTER__)[x]
+#else
+#define PAD(x) u8 _PAD_CONCAT(pad_, __LINE__)[x]
+#endif
 
 #define PTR_LIST_END ((void*) -1)
 
@@ -54,7 +61,7 @@
 #define PANIC() IS_DEBUG_PANIC("Panic")
 #define PANIC_MSG(msg, args...) \
     do { \
-        char panicMsg[0x40]; \
+        char panicMsg[0x100]; \
         sprintf(panicMsg, msg, ##args); \
         IS_DEBUG_PANIC(msg); \
     } while (0)
@@ -64,7 +71,7 @@
     }
 #define ASSERT_MSG(condition, msg, args...) \
     if (!(condition)) { \
-        char assertMsg[0x40]; \
+        char assertMsg[0x100]; \
         sprintf(assertMsg, msg, ##args); \
         IS_DEBUG_PANIC(assertMsg); \
     }
@@ -200,27 +207,7 @@ typedef s32 Difficulty2D[AC_DIFFICULTY_LEN][2];
     (ptr)[2] = -0.18230f; \
     (ptr)[3] =  0.01152f; \
 
-/* common AI function and script variables */
-// ai script
-#define AI_TEMP_STATE                  functionTemp[0]
-#define AI_TEMP_STATE_AFTER_SUSPEND    functionTemp[1]
-#define AI_PATROL_GOAL_INDEX           functionTemp[2]
-// melee enemy
-#define AI_VAR_ATTACK_STATE    varTable[0]
-#define AI_VAR_MELEE_PRE_TIME  varTable[1]
-#define AI_VAR_MELEE_HIT_TIME  varTable[2]
-#define AI_VAR_MELEE_MISS_TIME varTable[3]
-#define AI_VAR_NEXT_STATE      varTable[7]
-// melee hitbox
-#define AI_VAR_HITNPC_YOFFSET  varTable[0]
-#define AI_VAR_HITNPC_DIST     varTable[1]
-#define AI_VAR_HITNPC_2        varTable[2]
-#define AI_VAR_HITNPC_3        varTable[3]
-#define AI_VAR_HITNPC_4        varTable[4]
-#define AI_VAR_HITNPC_SOUND    varTable[15]
-// projectile hitbox
-#define VAR_PROJECTILE_HITBOX_STATE varTable[0]
-#define AI_PROJECTILE_AMMO_COUNT varTable[3]
+#define CLAMP(value, min, max) MIN(MAX((value), (min)), (max))
 
 #define INTEGER_LOG2(x) ((x) <= 2 ? 1 : (x) <= 4 ? 2 : (x) <= 8 ? 3 : (x) <= 16 ? 4 : (x) <= 32 ? 5 : (x) <= 64 ? 6 : (x) <= 128 ? 7 : (x) <= 256 ? 8 : (x) <= 512 ? 9 : 10)
 
@@ -273,7 +260,7 @@ typedef s32 Difficulty2D[AC_DIFFICULTY_LEN][2];
             _RDP_PACK_FRAC(Dz, Dw), \
         } \
     } \
-};
+}
 
 #define UNPACK_PAL_R(color) (((color) >> 11) & 0x1F)
 #define UNPACK_PAL_G(color) (((color) >> 6) & 0x1F)
@@ -521,6 +508,8 @@ typedef s32 Difficulty2D[AC_DIFFICULTY_LEN][2];
 #define PM_CC_CONST_ALPHA_1         0, 0, 0, 0, 0, 0, 0, 1
 #define PM_CC_CONST_0               0, 0, 0, 0, 0, 0, 0, 0
 #define PM_CC_CONST_1               0, 0, 0, 1, 0, 0, 0, 1
+
+#define	G_TX_EXTRA_TILE 1
 
 #ifdef OLD_GCC
 #define VLA 0

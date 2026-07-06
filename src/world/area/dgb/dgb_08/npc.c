@@ -1,20 +1,15 @@
 #include "dgb_08.h"
 
-#include "world/common/enemy/TubbaBlubba_Patrol.inc.c"
-#include "world/common/enemy/TubbaBlubba.inc.c"
+#include "world/common/npc/Yakkey/idle.inc.c"
 
-NpcSettings N(NpcSettings_Yakkey) = {
-    .height = 24,
-    .radius = 24,
-    .level = ACTOR_LEVEL_CLUBBA,
-};
+#include "world/common/enemy/TubbaBlubba/patrol.inc.c"
+#include "world/common/enemy/TubbaBlubba/idle.inc.c"
 
-#define INCLUDE_CLUBBA_WANDER
-#include "world/common/enemy/Clubba_Multi.inc.c"
+#include "world/common/enemy/Clubba/wander.inc.c"
 
 #define AI_SENTINEL_FIRST_NPC NPC_Sentinel_01
-#define AI_SENTINEL_LAST_NPC  NPC_Tubba
-#include "world/common/enemy/Sentinel.inc.c"
+#define AI_SENTINEL_LAST_NPC  NPC_Sentinel_02
+#include "world/common/enemy/Sentinel/wander.inc.c"
 
 NpcSettings N(NpcSettings_LastClubba) = {
     .height = 24,
@@ -45,7 +40,7 @@ EvtScript N(EVS_NpcIdle_Tubba) = {
             BreakLoop
         EndIf
     EndLoop
-    Call(SetNpcAnimation, NPC_Tubba, ANIM_WorldTubba_Anim0A)
+    Call(SetNpcAnimation, NPC_Tubba, ANIM_WorldTubba_WalkAngry)
     Call(SetNpcPos, NPC_SELF, -665, 210, 180)
     Call(SetNpcYaw, NPC_SELF, 90)
     Call(NpcMoveTo, NPC_SELF, -530, 180, 30)
@@ -69,8 +64,6 @@ EvtScript N(EVS_NpcIdle_Tubba) = {
     End
 };
 
-#include "world/common/todo/UnkFunc1.inc.c"
-
 API_CALLABLE(N(SetTubbaPatrolTerritory)) {
     if (get_enemy_safe(NPC_Tubba)) {
         Enemy* enemy = get_enemy(NPC_Tubba);
@@ -90,7 +83,7 @@ API_CALLABLE(N(SetTubbaPatrolTerritory)) {
 API_CALLABLE(N(SetTubbaPatrolMode)) {
     if (get_enemy_safe(NPC_Tubba)) {
         Enemy* enemy = get_enemy(NPC_Tubba);
-        enemy->aiFlags |= AI_FLAG_80;
+        enemy->aiFlags |= AI_FLAG_CAN_RESUME_PATROL;
         return ApiStatus_DONE2;
     }
 
@@ -127,8 +120,15 @@ EvtScript N(EVS_NpcAI_Tubba) = {
     End
 };
 
+API_CALLABLE(N(PostBattleHideWorld)) {
+    increment_status_bar_disabled();
+    set_screen_overlay_params_back(OVERLAY_SCREEN_COLOR, 255.0f);
+    return ApiStatus_DONE2;
+}
+
+// failsafe if the player somehow defeats Tubba
 EvtScript N(EVS_NpcDefeat_Tubba) = {
-    Call(N(UnkFunc1))
+    Call(N(PostBattleHideWorld))
     Call(GotoMap, Ref("dgb_01"), dgb_01_ENTRY_2)
     Wait(100)
     Return
@@ -225,8 +225,8 @@ NpcData N(NpcData_Clubba_01)[] = {
         .flags = ENEMY_FLAG_IGNORE_ENTITY_COLLISION,
         .drops = CLUBBA_DROPS,
         .animations = CLUBBA_ANIMS,
-        .extraAnimations = N(ExtraAnims_Clubba),
-        .aiDetectFlags = AI_DETECT_SENSITIVE_MOTION,
+        .limitAnimations = N(LimitAnims_Clubba),
+        .aiDetectFlags = AI_DETECT_MOTION_SENSITIVE,
     },
     CLUBBA_MACE_HITBOX(NPC_Clubba_01_Hitbox),
 };
@@ -252,8 +252,8 @@ NpcData N(NpcData_Clubba_02)[] = {
         .flags = ENEMY_FLAG_IGNORE_ENTITY_COLLISION,
         .drops = CLUBBA_DROPS,
         .animations = CLUBBA_ANIMS,
-        .extraAnimations = N(ExtraAnims_Clubba),
-        .aiDetectFlags = AI_DETECT_SENSITIVE_MOTION,
+        .limitAnimations = N(LimitAnims_Clubba),
+        .aiDetectFlags = AI_DETECT_MOTION_SENSITIVE,
     },
     CLUBBA_MACE_HITBOX(NPC_Clubba_02_Hitbox),
 };
@@ -279,8 +279,8 @@ NpcData N(NpcData_Clubba_03)[] = {
         .flags = ENEMY_FLAG_IGNORE_ENTITY_COLLISION,
         .drops = CLUBBA_DROPS,
         .animations = CLUBBA_ANIMS,
-        .extraAnimations = N(ExtraAnims_Clubba),
-        .aiDetectFlags = AI_DETECT_SIGHT | AI_DETECT_SENSITIVE_MOTION,
+        .limitAnimations = N(LimitAnims_Clubba),
+        .aiDetectFlags = AI_DETECT_SIGHT | AI_DETECT_MOTION_SENSITIVE,
     },
     CLUBBA_MACE_HITBOX(NPC_Clubba_03_Hitbox),
 };
@@ -301,7 +301,7 @@ NpcData N(NpcData_Sentinel_01) = {
             .detectSize = { 250, 55 },
         }
     },
-    .settings = &N(NpcSettings_Sentinel),
+    .settings = &N(NpcSettings_Sentinel_Wander),
     .flags = ENEMY_FLAG_IGNORE_ENTITY_COLLISION,
     .drops = NO_DROPS,
     .animations = SENTINEL_ANIMS,
@@ -323,7 +323,7 @@ NpcData N(NpcData_Sentinel_02) = {
             .detectSize = { 250, 145 },
         }
     },
-    .settings = &N(NpcSettings_Sentinel),
+    .settings = &N(NpcSettings_Sentinel_Wander),
     .flags = ENEMY_FLAG_IGNORE_ENTITY_COLLISION,
     .drops = NO_DROPS,
     .animations = SENTINEL_ANIMS,
@@ -336,21 +336,21 @@ API_CALLABLE(N(PlayAlertSound)) {
 
 EvtScript N(EVS_NpcIdle_LastClubba) = {
     Label(0)
-        Call(SetNpcAnimation, NPC_SELF, ANIM_WorldClubba_Anim07)
+        Call(SetNpcAnimation, NPC_SELF, ANIM_WorldClubba_Sleep)
         Wait(30)
         Loop(15)
             Call(N(PlayAlertSound))
             Wait(60)
         EndLoop
-        Call(SetNpcAnimation, NPC_SELF, ANIM_WorldClubba_Anim0C)
+        Call(SetNpcAnimation, NPC_SELF, ANIM_WorldClubba_Hurt)
         Wait(20)
-        Call(SetNpcAnimation, NPC_SELF, ANIM_WorldClubba_Anim07)
+        Call(SetNpcAnimation, NPC_SELF, ANIM_WorldClubba_Sleep)
         Wait(30)
         Loop(5)
             Call(N(PlayAlertSound))
             Wait(60)
         EndLoop
-        Call(SetNpcAnimation, NPC_SELF, ANIM_WorldClubba_Anim0C)
+        Call(SetNpcAnimation, NPC_SELF, ANIM_WorldClubba_Hurt)
         Wait(15)
         Goto(0)
     Return
@@ -358,10 +358,10 @@ EvtScript N(EVS_NpcIdle_LastClubba) = {
 };
 
 EvtScript N(EVS_NpcInteract_LastClubba) = {
-    Call(SetNpcAnimation, NPC_SELF, ANIM_WorldClubba_Anim08)
+    Call(SetNpcAnimation, NPC_SELF, ANIM_WorldClubba_WakeUp)
     Call(PlaySoundAtNpc, NPC_SELF, SOUND_SNAP_AWAKE_A, SOUND_SPACE_DEFAULT)
     Wait(10)
-    Call(SetNpcAnimation, NPC_SELF, ANIM_WorldClubba_Anim02)
+    Call(SetNpcAnimation, NPC_SELF, ANIM_WorldClubba_Idle)
     Wait(20)
     Call(GetNpcYaw, NPC_SELF, LVar0)
     Add(LVar0, 180)
@@ -376,18 +376,18 @@ EvtScript N(EVS_NpcInteract_LastClubba) = {
     Call(InterpNpcYaw, NPC_SELF, LVar0, 0)
     Wait(15)
     Call(NpcFacePlayer, NPC_SELF, 0)
-    Call(SpeakToPlayer, NPC_SELF, ANIM_WorldClubba_Anim05, ANIM_WorldClubba_Anim02, 0, MSG_CH3_00F2)
+    Call(SpeakToPlayer, NPC_SELF, ANIM_WorldClubba_Talk, ANIM_WorldClubba_Idle, 0, MSG_CH3_00F2)
     Wait(10)
-    Call(SetNpcAnimation, NPC_SELF, ANIM_WorldClubba_Anim06)
+    Call(SetNpcAnimation, NPC_SELF, ANIM_WorldClubba_FallAsleep)
     Wait(10)
-    Call(SetNpcAnimation, NPC_SELF, ANIM_WorldClubba_Anim07)
+    Call(SetNpcAnimation, NPC_SELF, ANIM_WorldClubba_Sleep)
     Return
     End
 };
 
 EvtScript N(EVS_NpcInit_LastClubba) = {
     Call(SetNpcCollisionSize, NPC_SELF, 36, 30)
-    Call(SetNpcAnimation, NPC_SELF, ANIM_WorldClubba_Anim07)
+    Call(SetNpcAnimation, NPC_SELF, ANIM_WorldClubba_Sleep)
     Call(BindNpcInteract, NPC_SELF, Ref(N(EVS_NpcInteract_LastClubba)))
     Call(BindNpcIdle, NPC_SELF, Ref(N(EVS_NpcIdle_LastClubba)))
     Return
@@ -415,7 +415,7 @@ NpcData N(NpcData_LastClubba) = {
     .flags = BASE_PASSIVE_FLAGS | ENEMY_FLAG_ACTIVE_WHILE_OFFSCREEN | ENEMY_FLAG_DO_NOT_AUTO_FACE_PLAYER,
     .drops = NO_DROPS,
     .animations = CLUBBA_ANIMS,
-    .aiDetectFlags = AI_DETECT_SENSITIVE_MOTION,
+    .aiDetectFlags = AI_DETECT_MOTION_SENSITIVE,
     .tattle = MSG_NpcTattle_LastClubba,
 };
 
@@ -452,8 +452,8 @@ NpcData N(NpcData_Clubba_Unused) = {
     .flags = ENEMY_FLAG_PASSIVE | ENEMY_FLAG_IGNORE_ENTITY_COLLISION,
     .drops = CLUBBA_DROPS,
     .animations = CLUBBA_ANIMS,
-    .extraAnimations = N(ExtraAnims_Clubba),
-    .aiDetectFlags = AI_DETECT_SENSITIVE_MOTION,
+    .limitAnimations = N(LimitAnims_Clubba),
+    .aiDetectFlags = AI_DETECT_MOTION_SENSITIVE,
 };
 
 NpcGroupList N(BeforeNPCs) = {

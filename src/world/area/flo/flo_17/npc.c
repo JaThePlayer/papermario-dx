@@ -1,10 +1,10 @@
 #include "flo_17.h"
 
-#include "world/common/npc/Dummy.inc.c"
+#include "world/common/npc/Dummy/idle.inc.c"
 
 #define AI_LAKITU_FIRST_SPINY_ID    NPC_Spiny_01
 #define AI_LAKITU_LAST_SPINY_ID     NPC_Spiny_04
-#include "world/common/enemy/Lakitu_SpinySpawner.inc.c"
+#include "world/common/enemy/Lakitu/spiny_spawner.inc.c"
 
 NpcData N(NpcData_Lakitu_01) = {
     .id = NPC_Lakitu_01,
@@ -26,7 +26,7 @@ NpcData N(NpcData_Lakitu_01) = {
     .flags = ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING,
     .drops = LAKITU_DROPS,
     .animations = LAKITU_ANIMS,
-    .aiDetectFlags = AI_DETECT_SIGHT | AI_DETECT_SENSITIVE_MOTION,
+    .aiDetectFlags = AI_DETECT_SIGHT | AI_DETECT_MOTION_SENSITIVE,
 };
 
 NpcData N(NpcData_Lakitu_02) = {
@@ -49,7 +49,7 @@ NpcData N(NpcData_Lakitu_02) = {
     .flags = ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING,
     .drops = LAKITU_DROPS,
     .animations = LAKITU_ANIMS,
-    .aiDetectFlags = AI_DETECT_SIGHT | AI_DETECT_SENSITIVE_MOTION,
+    .aiDetectFlags = AI_DETECT_SIGHT | AI_DETECT_MOTION_SENSITIVE,
 };
 
 NpcData N(NpcData_Spiny_01) = {
@@ -72,7 +72,7 @@ NpcData N(NpcData_Spiny_01) = {
     .flags = ENEMY_FLAG_DO_NOT_KILL | ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING,
     .drops = SPINY_DROPS,
     .animations = SPINY_ANIMS,
-    .aiDetectFlags = AI_DETECT_SIGHT | AI_DETECT_SENSITIVE_MOTION,
+    .aiDetectFlags = AI_DETECT_SIGHT | AI_DETECT_MOTION_SENSITIVE,
 };
 
 NpcData N(NpcData_Spiny_02) = {
@@ -95,7 +95,7 @@ NpcData N(NpcData_Spiny_02) = {
     .flags = ENEMY_FLAG_DO_NOT_KILL | ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING,
     .drops = SPINY_DROPS,
     .animations = SPINY_ANIMS,
-    .aiDetectFlags = AI_DETECT_SIGHT | AI_DETECT_SENSITIVE_MOTION,
+    .aiDetectFlags = AI_DETECT_SIGHT | AI_DETECT_MOTION_SENSITIVE,
 };
 
 NpcData N(NpcData_Spiny_03) = {
@@ -118,7 +118,7 @@ NpcData N(NpcData_Spiny_03) = {
     .flags = ENEMY_FLAG_DO_NOT_KILL | ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING,
     .drops = SPINY_DROPS,
     .animations = SPINY_ANIMS,
-    .aiDetectFlags = AI_DETECT_SIGHT | AI_DETECT_SENSITIVE_MOTION,
+    .aiDetectFlags = AI_DETECT_SIGHT | AI_DETECT_MOTION_SENSITIVE,
 };
 
 NpcData N(NpcData_Spiny_04) = {
@@ -141,7 +141,7 @@ NpcData N(NpcData_Spiny_04) = {
     .flags = ENEMY_FLAG_DO_NOT_KILL | ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING,
     .drops = SPINY_DROPS,
     .animations = SPINY_ANIMS,
-    .aiDetectFlags = AI_DETECT_SIGHT | AI_DETECT_SENSITIVE_MOTION,
+    .aiDetectFlags = AI_DETECT_SIGHT | AI_DETECT_MOTION_SENSITIVE,
 };
 
 NpcGroupList N(DefaultNPCs) = {

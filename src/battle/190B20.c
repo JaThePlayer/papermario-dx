@@ -490,21 +490,22 @@ void create_home_target_list(Actor* actor) {
     create_target_list(actor, true);
 }
 
-s32 func_80263064(Actor* actor, Actor* targetActor, b32 unused) {
-    s32 count = 0;
+s32 create_single_actor_target_list(Actor* actor, Actor* targetActor) {
     SelectableTarget* target = actor->targetData;
     ActorPartBlueprint* partData;
     s32 numParts;
     ActorPart* part;
     f32 x, y, z;
+    s32 count;
     s32 i;
 
     if (targetActor == nullptr) {
-        return count;
+        return 0;
     }
 
     numParts = targetActor->numParts;
     part = targetActor->partsTable;
+    count = 0;
 
     for (i = 0; i < numParts; i++) {
         if (part->flags & ACTOR_PART_FLAG_NO_TARGET) {
@@ -520,36 +521,29 @@ s32 func_80263064(Actor* actor, Actor* targetActor, b32 unused) {
 
         partData = part->staticData;
 
-        if (!(part->flags & ACTOR_PART_FLAG_USE_ABSOLUTE_POSITION)) {
+        if (part->flags & ACTOR_PART_FLAG_USE_ABSOLUTE_POSITION) {
+            x = part->absolutePos.x;
+            y = part->absolutePos.y;
+            z = part->absolutePos.z;
+        } else {
             x = targetActor->curPos.x;
             y = targetActor->curPos.y;
             z = targetActor->curPos.z;
 
             x += part->partOffset.x;
-            if (!(targetActor->flags & ACTOR_FLAG_UPSIDE_DOWN)) {
-                y += part->partOffset.y;
-            } else {
+            if (targetActor->flags & ACTOR_FLAG_UPSIDE_DOWN) {
                 y -= part->partOffset.y;
+            } else {
+                y += part->partOffset.y;
             }
             z += part->partOffset.z;
+        }
 
-            x += part->targetOffset.x;
-            if (!(targetActor->flags & ACTOR_FLAG_UPSIDE_DOWN)) {
-                y += part->targetOffset.y;
-            } else {
-                y -= part->targetOffset.y;
-            }
+        x += part->targetOffset.x;
+        if (targetActor->flags & ACTOR_FLAG_UPSIDE_DOWN) {
+            y -= part->targetOffset.y;
         } else {
-            x = part->absolutePos.x;
-            y = part->absolutePos.y;
-            z = part->absolutePos.z;
-
-            x += part->targetOffset.x;
-            if (!(targetActor->flags & ACTOR_FLAG_UPSIDE_DOWN)) {
-                y += part->targetOffset.y;
-            } else {
-                y -= part->targetOffset.y;
-            }
+            y += part->targetOffset.y;
         }
 
         actor->targetActorID = target->actorID = targetActor->actorID;
@@ -566,14 +560,6 @@ s32 func_80263064(Actor* actor, Actor* targetActor, b32 unused) {
 
     actor->targetListLength = count;
     return count;
-}
-
-s32 func_80263230(Actor* actor, Actor* targetActor) {
-    return func_80263064(actor, targetActor, false);
-}
-
-s32 func_8026324C(Actor* actor, Actor* targetActor) {
-    return func_80263064(actor, targetActor, true);
 }
 
 void btl_check_can_change_partner(void) {
@@ -1187,12 +1173,12 @@ void load_partner_actor(void) {
         nuPiReadRom(partnerData->dmaStart, partnerData->dmaDest, partnerData->dmaEnd - partnerData->dmaStart);
         if ((gBattleStatus.flags2 & BS_FLAGS2_PEACH_BATTLE) || (gGameStatusPtr->demoBattleFlags & DEMO_BTL_FLAG_PARTNER_ACTING)) {
             x = -95.0f;
-            y = partnerData->y;
+            y = partnerData->posY;
             z = 0.0f;
             gBattleStatus.flags1 |= BS_FLAGS1_PLAYER_IN_BACK;
         } else {
             x = -130.0f;
-            y = partnerData->y;
+            y = partnerData->posY;
             z = -10.0f;
         }
         partCount = actorBP->partCount;
@@ -1436,11 +1422,12 @@ Actor* create_actor(Formation formation) {
         z = formation->home.vec->z;
     }
 
+    Overlay* ovl = nullptr;
     if (formation->actor != nullptr) {
         formationActor = formation->actor;
     } else if (formation->overlay != nullptr) {
-        Overlay* mod = ovl_load(formation->overlay, OVL_ACTOR);
-        formationActor = ovl_import(mod, "blueprint");
+        ovl = ovl_load(formation->overlay, OVL_ACTOR);
+        formationActor = ovl_import(ovl, "blueprint");
         ASSERT_MSG(formationActor != nullptr, "Actor '%s' does not export 'blueprint'", formation->overlay);
     } else {
         PANIC();
@@ -1461,6 +1448,7 @@ Actor* create_actor(Formation formation) {
     actor->ordinal = battleStatus->nextActorOrdinal++;
     actor->footStepCounter = 0;
     actor->actorBlueprint = formationActor;
+    actor->overlay = ovl;
     actor->actorType = formationActor->type;
     actor->flags = formationActor->flags;
     actor->homePos.x = actor->curPos.x = x;
@@ -1682,7 +1670,7 @@ Actor* create_actor(Formation formation) {
     actor->actorID = actor->enemyIndex | ACTOR_CLASS_ENEMY;
     takeTurnScript = start_script(actor->takeTurnSource, EVT_PRIORITY_A, 0);
     actor->takeTurnScriptID = takeTurnScript->id;
-    takeTurnScript->owner1.enemyID = actor->enemyIndex | ACTOR_CLASS_ENEMY;
+    takeTurnScript->owner1.actorID = actor->actorID;
     actor->shadow.id = create_shadow_type(SHADOW_VARYING_CIRCLE, actor->curPos.x, actor->curPos.y, actor->curPos.z);
     actor->shadowScale = actor->size.x / 24.0;
     actor->disableEffect = fx_disable_x(0, -142.0f, 34.0f, 1.0f, 0);
@@ -2629,7 +2617,7 @@ void remove_part_shadow(s32 actorID, s32 partID) {
     delete_shadow(part->shadowIndex);
 }
 
-void create_part_shadow_by_ref(UNK_TYPE arg0, ActorPart* part) {
+void create_part_shadow_by_ref(ActorPart* part) {
     part->flags &= ~ACTOR_PART_FLAG_NO_SHADOW;
     part->shadowIndex = create_shadow_type(SHADOW_VARYING_CIRCLE, part->curPos.x, part->curPos.y, part->curPos.z);
     part->shadowScale = part->size.x / 24.0;

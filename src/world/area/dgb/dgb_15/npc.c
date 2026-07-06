@@ -1,15 +1,8 @@
 #include "dgb_15.h"
 
-#define INCLUDE_CLUBBA_WANDER
-#include "world/common/enemy/Clubba_Multi.inc.c"
-
-#include "world/common/enemy/TubbaBlubba.inc.c"
-
-NpcSettings N(NpcSettings_Yakkey) = {
-    .height = 24,
-    .radius = 24,
-    .level = ACTOR_LEVEL_CLUBBA,
-};
+#include "world/common/npc/Yakkey/idle.inc.c"
+#include "world/common/enemy/Clubba/wander.inc.c"
+#include "world/common/enemy/TubbaBlubba/idle.inc.c"
 
 extern EvtScript N(EVS_NpcAI_Tubba);
 
@@ -24,7 +17,7 @@ EvtScript N(EVS_WaitForCloseCall) = {
         Wait(1)
     EndLoop
     Set(GF_DGB15_CloseCallWithTubba, true)
-    Set(AF_DGB_01, true)
+    Set(AF_DGB_CloseCallWithTubba, true)
     Return
     End
 };
@@ -48,13 +41,13 @@ EvtScript N(EVS_NpcIdle_Tubba) = {
     EndThread
     Set(GB_ARN_Tubba_MapID, 15)
     Call(SetNpcPos, NPC_SELF, 0, 0, 88)
-    Call(SetNpcAnimation, NPC_Tubba, ANIM_WorldTubba_Anim09)
+    Call(SetNpcAnimation, NPC_Tubba, ANIM_WorldTubba_Walk)
     Call(SetNpcYaw, NPC_SELF, 270)
     Call(NpcMoveTo, NPC_SELF, -53, 180, 60)
     Call(SetMusic, 0, SONG_TUBBA_BLUBBA_THEME, 0, VOL_LEVEL_FULL)
-    Call(SetNpcAnimation, NPC_SELF, ANIM_WorldTubba_Anim06)
+    Call(SetNpcAnimation, NPC_SELF, ANIM_WorldTubba_Idle)
     Wait(15)
-    Call(SpeakToPlayer, NPC_SELF, ANIM_WorldTubba_Anim10, ANIM_WorldTubba_Anim06, 0, MSG_CH3_00F3)
+    Call(SpeakToPlayer, NPC_SELF, ANIM_WorldTubba_Talk, ANIM_WorldTubba_Idle, 0, MSG_CH3_00F3)
     Wait(15)
     Thread
         Call(GetPlayerPos, LVar0, LVar1, LVar2)
@@ -120,25 +113,30 @@ MobileAISettings N(AISettings_Tubba) = {
     .chaseUpdateInterval = 2,
     .chaseRadius = 160.0f,
     .chaseOffsetDist = 80.0f,
-    .unk_AI_2C = 1,
+    .loiterMode = 1,
 };
 
-#include "world/common/enemy/ai/PatrolNoAttackAI.inc.c"
+#include "world/common/ai/PatrolNoAttackAI.inc.c"
 
 EvtScript N(EVS_NpcAI_Tubba) = {
     Exec(N(EVS_WaitForCloseCall))
     Call(SetNpcFlagBits, NPC_SELF, NPC_FLAG_GRAVITY, true)
-    Call(SetNpcAnimation, NPC_Tubba, ANIM_WorldTubba_Anim0C)
+    Call(SetNpcAnimation, NPC_Tubba, ANIM_WorldTubba_Run)
     Exec(N(EVS_PlayFootstepFX))
     Call(N(PatrolNoAttackAI_Main), Ref(N(AISettings_Tubba)))
     Return
     End
 };
 
-#include "world/common/todo/UnkFunc1.inc.c"
+API_CALLABLE(N(PostBattleHideWorld)) {
+    increment_status_bar_disabled();
+    set_screen_overlay_params_back(OVERLAY_SCREEN_COLOR, 255.0f);
+    return ApiStatus_DONE2;
+}
 
+// failsafe if the player somehow defeats Tubba
 EvtScript N(EVS_NpcDefeat_Tubba) = {
-    Call(N(UnkFunc1))
+    Call(N(PostBattleHideWorld))
     Call(GotoMap, Ref("dgb_14"), dgb_14_ENTRY_1)
     Wait(100)
     Return
@@ -190,7 +188,7 @@ NpcData N(NpcData_Tubba) = {
     .flags = ENEMY_FLAG_IGNORE_WORLD_COLLISION | ENEMY_FLAG_FLYING | ENEMY_FLAG_NO_DELAY_AFTER_FLEE | ENEMY_FLAG_ACTIVE_WHILE_OFFSCREEN | ENEMY_FLAG_NO_DROPS,
     .drops = CLUBBA_DROPS,
     .animations = TUBBA_ANIMS,
-    .aiDetectFlags = AI_DETECT_SENSITIVE_MOTION,
+    .aiDetectFlags = AI_DETECT_MOTION_SENSITIVE,
 };
 
 NpcGroupList N(DefaultNPCs) = {

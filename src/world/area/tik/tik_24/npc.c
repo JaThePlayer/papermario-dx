@@ -1,6 +1,6 @@
 #include "tik_24.h"
 
-#include "world/common/enemy/DarkTroopa_Wander.inc.c"
+#include "world/common/enemy/DarkTroopa/wander.inc.c"
 
 NpcData N(NpcData_DarkTroopa_01) = {
     .id = NPC_DarkTroopa_01,
@@ -22,7 +22,7 @@ NpcData N(NpcData_DarkTroopa_01) = {
     .flags = ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING,
     .drops = DARK_TROOPA_DROPS,
     .animations = DARK_TROOPA_ANIMS,
-    .aiDetectFlags = AI_DETECT_SENSITIVE_MOTION,
+    .aiDetectFlags = AI_DETECT_MOTION_SENSITIVE,
 };
 
 NpcData N(NpcData_DarkTroopa_02) = {
@@ -45,7 +45,7 @@ NpcData N(NpcData_DarkTroopa_02) = {
     .flags = ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING,
     .drops = DARK_TROOPA_DROPS,
     .animations = DARK_TROOPA_ANIMS,
-    .aiDetectFlags = AI_DETECT_SENSITIVE_MOTION,
+    .aiDetectFlags = AI_DETECT_MOTION_SENSITIVE,
 };
 
 NpcGroupList N(DefaultNPCs) = {

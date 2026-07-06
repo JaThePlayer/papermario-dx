@@ -1037,7 +1037,7 @@ API_CALLABLE(func_8027FC90) {
     s32 outVar;
 
     if (actorID == ACTOR_SELF) {
-        actorID = script->owner1.enemyID;
+        actorID = script->owner1.actorID;
     }
 
     outVar = *args++;
@@ -1059,7 +1059,7 @@ API_CALLABLE(GetActorLevel) {
     Bytecode outVar;
 
     if (actorID == ACTOR_SELF) {
-        actorID = script->owner1.enemyID;
+        actorID = script->owner1.actorID;
     }
 
     outVar = *args++;
@@ -1071,7 +1071,7 @@ API_CALLABLE(GetActorLevel) {
 API_CALLABLE(PartnerDamageEnemy) {
     BattleStatus* battleStatus = &gBattleStatus;
     Bytecode* args = script->ptrReadPos;
-    Actor* enemy = get_actor(script->owner1.enemyID);
+    Actor* enemy = get_actor(script->owner1.actorID);
     s32 retVar = *args++;
     s32 flags;
     s32 damageResult;
@@ -1157,7 +1157,7 @@ API_CALLABLE(PartnerDamageEnemy) {
 API_CALLABLE(PartnerAfflictEnemy) {
     BattleStatus* battleStatus = &gBattleStatus;
     Bytecode* args = script->ptrReadPos;
-    Actor* actor = get_actor(script->owner1.enemyID);
+    Actor* actor = get_actor(script->owner1.actorID);
     s32 returnValue = *args++;
     s32 flags;
     u8 statusChance;
@@ -1234,7 +1234,7 @@ API_CALLABLE(PartnerAfflictEnemy) {
 API_CALLABLE(PartnerPowerBounceEnemy) {
     BattleStatus* battleStatus = &gBattleStatus;
     Bytecode* args = script->ptrReadPos;
-    Actor* actor = get_actor(script->owner1.enemyID);
+    Actor* actor = get_actor(script->owner1.actorID);
     s32 returnValue = *args++;
     s32 flags;
     u8 statusChance;
@@ -1311,7 +1311,7 @@ API_CALLABLE(PartnerPowerBounceEnemy) {
 API_CALLABLE(PartnerTestEnemy) {
     BattleStatus* battleStatus = &gBattleStatus;
     Bytecode* args = script->ptrReadPos;
-    Actor* enemy = get_actor(script->owner1.enemyID);
+    Actor* enemy = get_actor(script->owner1.actorID);
     s32 outVar;
     s32 flags;
     s32 damageResult;

@@ -302,7 +302,7 @@ def write_ninja_rules(
     ninja.rule(
         "msg_combine",
         description="Combining messages",
-        command=f"$python {BUILD_TOOLS}/msg/combine.py $out $in",
+        command=f"$python {BUILD_TOOLS}/msg/combine.py $out --layer-sizes $layer_sizes $in",
     )
 
     ninja.rule(
@@ -1137,13 +1137,27 @@ class Configure:
 
             elif seg.type == "pm_msg":
                 msg_bins = []
+                layer_sizes = []
+                bin_idx = 0
 
-                for section_idx, msg_path in enumerate(entry.src_paths):
-                    bin_path = (
-                        entry.object_path.with_suffix("") / f"{section_idx:02X}.bin"
-                    )
-                    msg_bins.append(bin_path)
-                    build(bin_path, [msg_path], "msg")
+                # Process each asset stack layer, lowest priority first
+                for stack_dir in reversed(self.asset_stack):
+                    msg_dir = Path(f"assets/{stack_dir}/msg")
+                    layer_count = 0
+                    if msg_dir.exists():
+                        for msg_file in sorted(msg_dir.glob("*.msg")):
+                            bin_path = entry.object_path.with_suffix("") / f"{bin_idx:02X}.bin"
+                            msg_bins.append(bin_path)
+                            skip_outputs.add(posix(bin_path))
+                            ninja.build(
+                                outputs=[posix(bin_path)],
+                                rule="msg",
+                                inputs=[posix(msg_file)],
+                                variables={"version": self.version},
+                            )
+                            bin_idx += 1
+                            layer_count += 1
+                    layer_sizes.append(str(layer_count))
 
                 build(
                     [
@@ -1152,6 +1166,7 @@ class Configure:
                     ],
                     msg_bins,
                     "msg_combine",
+                    variables={"layer_sizes": ",".join(layer_sizes)},
                 )
                 build(entry.object_path, [entry.object_path.with_suffix(".bin")], "bin")
 
@@ -1732,7 +1747,27 @@ if __name__ == "__main__":
         file_list = _walk_source_file_list()
         new_content = "\n".join(file_list) + "\n"
         if stamp.exists() and stamp.read_text() == new_content:
-            exit(0)
+            build_ninja = ROOT / "build.ninja"
+            configure_inputs = [ROOT / BUILD_TOOLS / "configure.py"]
+            for version in VERSIONS:
+                configure_inputs.append(ROOT / f"ver/{version}/splat.yaml")
+                if args.debug:
+                    configure_inputs.append(ROOT / f"ver/{version}/splat-debug.yaml")
+                if args.shift:
+                    configure_inputs.append(ROOT / f"ver/{version}/splat-shift.yaml")
+            newest_config_input = max(
+                p.stat().st_mtime_ns for p in configure_inputs if p.exists()
+            )
+            if (
+                build_ninja.exists()
+                and build_ninja.stat().st_mtime_ns >= newest_config_input
+            ):
+                # Generated files can refresh source-directory mtimes after
+                # build.ninja is written. If the source list and real configure
+                # inputs are unchanged, refresh the manifest timestamp so ninja
+                # does not rebuild it until hitting its 100-try dirty limit.
+                os.utime(build_ninja, None)
+                exit(0)
 
     version_err_msg = ""
     missing_tools = []
@@ -1814,7 +1849,7 @@ if __name__ == "__main__":
     if args.shift:
         extra_cppflags += " -DSHIFT"
 
-    extra_cflags += " -Wall -Wno-narrowing -Winline"
+    extra_cflags += " -Wall -Wno-unused-variable -Wno-narrowing -Winline"
 
     # Warnings made into errors by default in GCC 14
     # https://gcc.gnu.org/gcc-14/porting_to.html#warnings-as-errors

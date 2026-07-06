@@ -27,7 +27,7 @@ CelebrationAnimOptions bPlayerCelebrations = {
 
 #include "battle/actor_types.inc.c"
 
-u32 bMarioIdleAnims[] = {
+s32 bMarioIdleAnims[] = {
     STATUS_KEY_NORMAL,            ANIM_Mario1_Walk,
     STATUS_KEY_DANGER,            ANIM_Mario1_TiredIdle,
     STATUS_KEY_STONE,             ANIM_MarioB3_Petrified,
@@ -114,7 +114,7 @@ s32 bPlayerStatusTable[] = {
     STATUS_KEY_POISON,          100,
     STATUS_KEY_FROZEN,          100,
     STATUS_KEY_DIZZY,           100,
-    STATUS_KEY_UNUSED,   100,
+    STATUS_KEY_UNUSED,          100,
     STATUS_KEY_STATIC,          100,
     STATUS_KEY_PARALYZE,        100,
     STATUS_KEY_SHRINK,          100,
@@ -124,7 +124,7 @@ s32 bPlayerStatusTable[] = {
     STATUS_TURN_MOD_POISON,   0,
     STATUS_TURN_MOD_FROZEN,   0,
     STATUS_TURN_MOD_DIZZY,    0,
-    STATUS_TURN_MOD_UNUSED, 0,
+    STATUS_TURN_MOD_UNUSED,   0,
     STATUS_TURN_MOD_STATIC,   0,
     STATUS_TURN_MOD_PARALYZE, 0,
     STATUS_TURN_MOD_SHRINK,   0,

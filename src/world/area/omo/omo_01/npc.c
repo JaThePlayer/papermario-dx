@@ -1,6 +1,6 @@
 #include "omo_01.h"
 
-#include "world/common/enemy/ShyGuy_AvoidPlayer.inc.c"
+#include "world/common/enemy/ShyGuy/avoid_player.inc.c"
 
 EvtScript N(EVS_ShyGuy_CarryItem) = {
     Set(LVarA, LVar0) // npcID
@@ -45,7 +45,7 @@ EvtScript N(EVS_NpcDefeat_ShyGuy) = {
             Wait(2)
             Call(DoNpcDefeat)
         CaseEq(OUTCOME_PLAYER_FLED)
-            Call(OnPlayerFled, 0)
+            Call(OnPlayerFled, false)
         CaseEq(OUTCOME_ENEMY_FLED)
             Call(SetEnemyFlagBits, NPC_SELF, ENEMY_FLAG_FLED, true)
             Call(RemoveNpc, NPC_SELF)

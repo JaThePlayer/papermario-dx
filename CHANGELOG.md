@@ -21,12 +21,18 @@ First versioned release. The following changes are relative to [vanilla Paper Ma
     - Backtraces provide filenames and line numbers for files with debug symbols.
 - `assets/star_rod_build` directory for Star Rod to write assets to.
 - Link with [libgcc_vr4300] to provide compiler intrinsics.
+- EVT script instructions `ExecOnActor` and `ExecWaitOnActor`, which are similar to `Exec` and `ExecWait` but execute the script as a specific actor.
+- EVT API function `DoesActorExport` to query whether an actor's overlay exports a symbol.
 
 ### Changed
 
 - Modern compiler toolchain (GCC).
 - Enemy max HP increased to 32767.
 - Badges can cost negative BP.
+- Message file improvements:
+    - Messages are automatically discovered at `assets/*/msg/*.msg`.
+    - You can now override a message using its name, e.g. `#message:0C:(CH1_0000)`.
+    - It is now an error to have duplicate message names or IDs (within the same layer of the asset stack).
 
 ### Removed
 

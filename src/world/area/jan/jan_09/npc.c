@@ -1,7 +1,7 @@
 #include "jan_09.h"
 
-#include "world/common/enemy/MBush.inc.c"
-#include "world/common/enemy/SpearGuy_Wander.inc.c"
+#include "world/common/enemy/MBush/idle.inc.c"
+#include "world/common/enemy/SpearGuy/wander.inc.c"
 
 NpcData N(NpcData_SpearGuy)[] = {
     {
@@ -24,7 +24,7 @@ NpcData N(NpcData_SpearGuy)[] = {
         .flags = ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING | ENEMY_FLAG_NO_SHADOW_RAYCAST,
         .drops = SPEAR_GUY_DROPS,
         .animations = SPEAR_GUY_ANIMS,
-        .aiDetectFlags = AI_DETECT_SIGHT | AI_DETECT_SENSITIVE_MOTION,
+        .aiDetectFlags = AI_DETECT_SIGHT | AI_DETECT_MOTION_SENSITIVE,
     },
     SPEAR_GUY_HITBOX(NPC_SpearGuy_Hitbox)
 };

@@ -1,5 +1,4 @@
 #pragma once
-/// Toad Town - Plaza District
 /// @file mac_01.h
 /// @brief Toad Town - Plaza District
 
@@ -12,7 +11,6 @@
 #include "mapfs/mac_01_hit.h"
 
 #include "sprite/npc/Merlon.h"
-#include "sprite/npc/ChuckQuizmo.h"
 #include "sprite/npc/Toad.h"
 #include "sprite/npc/WorldParakarry.h"
 #include "sprite/npc/Kolorado.h"
@@ -31,8 +29,6 @@
 #include "sprite/npc/WorldBobomb.h"
 #include "sprite/npc/Koopa.h"
 #include "sprite/npc/Dryite.h"
-#include "sprite/npc/Chanterelle.h"
-#include "sprite/npc/Musician.h"
 
 enum {
     // intro NPCs
@@ -86,17 +82,16 @@ enum {
     MV_RowfRugRippleAmount  = MapVar(0),
     MV_RowfRugRotateAngle   = MapVar(1),
     MV_RowfShopBuyFlags     = MapVar(2),
-    MV_KnockdownWorker      = MapVar(10),
     MV_FortuneFXHandles     = MapVar(12),
     MV_BadgeShopOpenState   = MapVar(13),
     MV_BadgeShopCloseState  = MapVar(14),
 };
 
 enum {
-    MF_MusicMixTrigger1     = MapFlag(10),
-    MF_MusicMixTrigger2     = MapFlag(11),
-    MF_MusicMixTrigger3     = MapFlag(12),
     MF_BadgeShopOpen        = MapFlag(11),
+    MF_MusicMixTrigger1     = MapFlag(10),
+    MF_MusicMixTrigger2     = MF_BadgeShopOpen,
+    MF_MusicMixTrigger3     = MapFlag(12),
     MF_SpawnFlag_Tree1      = MapFlag(13),
     MF_SetupMusicMixes      = MapFlag(14),
     MF_InsideToadHouse      = MapFlag(15),
@@ -149,3 +144,6 @@ extern NpcGroupList N(NinjiMeetingNPCs);
 extern NpcGroupList N(DefaultNPCs);
 
 extern API_CALLABLE(N(func_80244984_805204));
+extern NpcData N(NpcData_Townsfolk)[10];
+
+extern EvtScript N(EVS_PlayShyGuyRunSounds);

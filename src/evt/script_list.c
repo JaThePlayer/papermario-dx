@@ -124,14 +124,14 @@ void find_script_labels(Evt* script) {
 
     for (i = 0; i < ARRAY_COUNT(script->labelIndices); i++) {
         script->labelIndices[i] = -1;
-        script->labelPositions[i] = 0;
+        script->labelPositions[i] = nullptr;
     }
 
     j = 0;
     curLine = script->ptrNextLine;
     while (j < ARRAY_COUNT(script->labelIndices)) {
         type = *curLine++;
-        numArgs = *curLine++;
+        numArgs = EVT_CMD_ARGC(*curLine++);
         label = *curLine;
         curLine += numArgs;
 
@@ -604,20 +604,7 @@ void update_scripts(void) {
         }
     }
     IsUpdatingScripts = false;
-}
-
-// Does nothing, is cursed
-void func_802C3EE4(void) {
-    s32 temp;
-    s32 i;
-
-    for (i = 0; i < gScriptListCount; i++) {
-        temp = (s32) (*gCurrentScriptListPtr)[gScriptIndexList[i]];
-        temp = *((s32*) temp);
-        if (temp == gScriptIdList[i]) {
-            temp = 1;
-        }
-    }
+    EvtCurrentScript = nullptr;
 }
 
 void kill_script(Evt* instanceToKill) {

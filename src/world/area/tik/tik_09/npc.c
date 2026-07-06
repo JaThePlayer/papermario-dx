@@ -1,8 +1,6 @@
 #include "tik_09.h"
 
-#include "world/common/enemy/DarkTroopa_Wander.inc.c"
-
-#include "world/common/util/GetDefeatedEnemyCount.inc.c"
+#include "world/common/enemy/DarkTroopa/wander.inc.c"
 
 EvtScript N(EVS_OpenGates) = {
     Call(MakeLerp, 0, 60, 25, EASING_COS_IN_OUT)
@@ -25,7 +23,7 @@ EvtScript N(EVS_NpcDefeat_DarkTroopa) = {
     Call(GetBattleOutcome, LVar0)
     Switch(LVar0)
         CaseEq(OUTCOME_PLAYER_WON)
-            Call(N(GetDefeatedEnemyCount), LVar0)
+            Call(GetRemainingEnemyCount, LVar0)
             IfEq(LVar0, 1)
                 Set(GF_TIK09_Defeated_Ambush, true)
                 Exec(N(EVS_SpawnSwitch))
@@ -70,7 +68,7 @@ NpcData N(NpcData_KoopaTroopa_01) = {
     .flags = ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING | ENEMY_FLAG_NO_DELAY_AFTER_FLEE,
     .drops = DARK_TROOPA_DROPS,
     .animations = DARK_TROOPA_ANIMS,
-    .aiDetectFlags = AI_DETECT_SENSITIVE_MOTION,
+    .aiDetectFlags = AI_DETECT_MOTION_SENSITIVE,
 };
 
 NpcData N(NpcData_KoopaTroopa_02) = {
@@ -94,7 +92,7 @@ NpcData N(NpcData_KoopaTroopa_02) = {
     .flags = ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING | ENEMY_FLAG_NO_DELAY_AFTER_FLEE,
     .drops = DARK_TROOPA_DROPS,
     .animations = DARK_TROOPA_ANIMS,
-    .aiDetectFlags = AI_DETECT_SENSITIVE_MOTION,
+    .aiDetectFlags = AI_DETECT_MOTION_SENSITIVE,
 };
 
 NpcData N(NpcData_KoopaTroopa_03) = {
@@ -118,7 +116,7 @@ NpcData N(NpcData_KoopaTroopa_03) = {
     .flags = ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING | ENEMY_FLAG_NO_DELAY_AFTER_FLEE,
     .drops = DARK_TROOPA_DROPS,
     .animations = DARK_TROOPA_ANIMS,
-    .aiDetectFlags = AI_DETECT_SENSITIVE_MOTION,
+    .aiDetectFlags = AI_DETECT_MOTION_SENSITIVE,
 };
 
 NpcGroupList N(DefaultNPCs) = {

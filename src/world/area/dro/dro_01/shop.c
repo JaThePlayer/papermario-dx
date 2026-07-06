@@ -1,5 +1,4 @@
 #include "dro_01.h"
-#define NAMESPACE dro_01_Shop
 #include "sprite/player.h"
 
 s32 N(ShopMessages)[] = {
@@ -38,7 +37,7 @@ ShopItemData N(Inventory)[] = {
     {},
 };
 
-ShopSellPriceData N(PriceList)[] = {
+ShopSellPriceData N(ShopPriceList)[] = {
     { .itemID = ITEM_SNOWMAN_DOLL,  .sellPrice = 12 },
     { .itemID = ITEM_MELON,         .sellPrice = 10 },
     { .itemID = ITEM_ICED_POTATO,   .sellPrice = 10 },
@@ -48,8 +47,6 @@ ShopSellPriceData N(PriceList)[] = {
     { .itemID = ITEM_DRIED_PASTA,   .sellPrice =  2 },
     {},
 };
-
-#include "world/common/complete/GiveReward.inc.c"
 
 API_CALLABLE(N(HideCoinCounter)) {
     hide_coin_counter_immediately();
@@ -75,7 +72,7 @@ EvtScript N(EVS_OnBuy) = {
     End
 };
 
-ShopItemLocation N(ItemPositions)[] = {
+ShopItemLocation N(ShopItemPositions)[] = {
     { .posModelID = MODEL_o741, .triggerColliderID = COLLIDER_mono1 },
     { .posModelID = MODEL_o740, .triggerColliderID = COLLIDER_mono2 },
     { .posModelID = MODEL_o738, .triggerColliderID = COLLIDER_mono3 },
@@ -84,12 +81,10 @@ ShopItemLocation N(ItemPositions)[] = {
     { .posModelID = MODEL_o736, .triggerColliderID = COLLIDER_mono6 },
 };
 
-ShopOwner N(Owner) = {
+ShopOwner N(MouserShopOwner) = {
     .npcID = NPC_Mouser_ShopOwner,
     .idleAnim = ANIM_Mouser_Purple_Idle,
     .talkAnim = ANIM_Mouser_Purple_Talk,
     .onBuyEvt = &N(EVS_OnBuy),
     .shopMsgIDs = N(ShopMessages),
 };
-
-#define NAMESPACE dro_01

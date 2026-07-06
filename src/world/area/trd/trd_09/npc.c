@@ -1,7 +1,8 @@
 #include "trd_09.h"
 #include "effects.h"
 
-#include "world/common/enemy/BulletBill.h"
+#include "world/common/enemy/BillBlaster/base.h"
+#include "world/common/enemy/BulletBill/base.h"
 
 API_CALLABLE(N(GetBulletBillVar)) {
     Bytecode* args = script->ptrReadPos;
@@ -24,43 +25,8 @@ API_CALLABLE(N(GetBulletBillVar)) {
     return ApiStatus_DONE2;
 }
 
-EvtScript N(EVS_NpcAuxAI_BillBlaster) = {
+EvtScript N(EVS_NpcCreate_BillBlaster) = {
     Call(SetSelfEnemyFlagBits, ENEMY_FLAG_ACTIVE_WHILE_OFFSCREEN, true)
-    Return
-    End
-};
-
-EvtScript N(D_80240844_9BDEA4) = {
-    Label(0)
-        SetF(LVar0, Float(400.0))
-        Set(LVar1, 1)
-        Call(GetNpcYaw, NPC_SELF, LVar2)
-        Set(LVar3, 10)
-        Set(LVarA, ANIM_BillBlaster_Idle)
-        Set(LVarB, ANIM_BillBlaster_Idle)
-        ExecWait(EVS_800936C0)
-        Call(SetNpcAnimation, NPC_SELF, ANIM_BillBlaster_Fire)
-        Wait(15)
-        Call(GetNpcPos, NPC_SELF, LVar0, LVar1, LVar2)
-        Call(GetNpcYaw, NPC_SELF, LVar3)
-        Call(AddVectorPolar, LVar0, LVar2, Float(20.0), LVar3)
-        Add(LVar1, 12)
-        Call(SetNpcAnimation, NPC_SELF, ANIM_BillBlaster_Idle)
-        Call(GetSelfNpcID, LVar0)
-        Add(LVar0, 1)
-        Call(SetNpcVar, LVar0, 0, 1)
-        Label(1)
-            Call(GetSelfNpcID, LVar0)
-            Add(LVar0, 1)
-            Call(GetNpcVar, LVar0, 0, LVar1)
-            IfEq(LVar1, 0)
-                Wait(1)
-                Goto(1)
-            EndIf
-        Call(RandInt, 30, LVar0)
-        Add(LVar0, 30)
-        Wait(LVar0)
-        Goto(0)
     Return
     End
 };
@@ -77,7 +43,7 @@ EvtScript N(EVS_NpcHit_BillBlaster) = {
             ExecWait(EVS_NpcHitRecoil)
         CaseEq(ENCOUNTER_TRIGGER_SPIN)
             Thread
-                Call(func_800458CC, LVar0)
+                Call(EnemyHasNoSpinReaction, LVar0)
                 IfEq(LVar0, 0)
                     Set(LVarA, 0)
                     Loop(30)
@@ -93,68 +59,12 @@ EvtScript N(EVS_NpcHit_BillBlaster) = {
     End
 };
 
-EvtScript N(D_80240B80_9BE1E0) = {
-    Call(GetBattleOutcome, LVar0)
-    Switch(LVar0)
-        CaseEq(OUTCOME_PLAYER_WON)
-            Call(DoNpcDefeat)
-        CaseEq(OUTCOME_PLAYER_FLED)
-        CaseEq(OUTCOME_ENEMY_FLED)
-            Call(SetEnemyFlagBits, NPC_SELF, ENEMY_FLAG_FLED, true)
-            Call(RemoveNpc, NPC_SELF)
-    EndSwitch
+EvtScript N(EVS_NpcCreate_BulletBill) = {
     Return
     End
 };
 
-EvtScript N(EVS_NpcAuxAI_BulletBill) = {
-    Return
-    End
-};
-
-EvtScript N(D_80240C1C_9BE27C) = {
-    Return
-    End
-};
-
-EvtScript N(D_80240C2C_9BE28C) = {
-    Call(SetNpcRotation, NPC_SELF, 0, 0, 0)
-    Call(GetBattleOutcome, LVar0)
-    Switch(LVar0)
-        CaseEq(OUTCOME_PLAYER_WON)
-            Call(DoNpcDefeat)
-            Call(SetNpcPos, NPC_SELF, NPC_DISPOSE_LOCATION)
-        CaseEq(OUTCOME_PLAYER_FLED)
-        CaseEq(OUTCOME_ENEMY_FLED)
-            Call(SetNpcPos, NPC_SELF, NPC_DISPOSE_LOCATION)
-    EndSwitch
-    Return
-    End
-};
-
-NpcSettings N(missing_80240CE4) = {
-    .defaultAnim = ANIM_BillBlaster_Idle,
-    .height = 26,
-    .radius = 32,
-    .level = ACTOR_LEVEL_BILL_BLASTER,
-    .otherAI = &N(EVS_NpcAuxAI_BillBlaster),
-    .ai = &N(D_80240844_9BDEA4),
-    .onHit = &N(EVS_NpcHit_BillBlaster),
-    .onDefeat = &N(D_80240B80_9BE1E0),
-};
-
-NpcSettings N(missing_80240D10) = {
-    .defaultAnim = ANIM_BulletBill_Idle,
-    .height = 14,
-    .radius = 31,
-    .level = ACTOR_LEVEL_BULLET_BILL,
-    .otherAI = &N(EVS_NpcAuxAI_BulletBill),
-    .ai = &N(D_80240C1C_9BE27C),
-    .onHit = &EnemyNpcHit,
-    .onDefeat = &N(D_80240C2C_9BE28C),
-};
-
-EvtScript N(EVS_NpcAuxAI_KoopaBros_Red) = {
+EvtScript N(EVS_NpcCreate_KoopaBros_Red) = {
     IfGe(GB_StoryProgress, STORY_CH1_KOOPA_BROS_FIRING_BLASTERS)
         Call(RemoveNpc, NPC_SELF)
     EndIf
@@ -240,7 +150,7 @@ EvtScript N(EVS_NpcAI_KoopaBros_Red) = {
     End
 };
 
-EvtScript N(EVS_NpcAuxAI_KoopaBros_Black) = {
+EvtScript N(EVS_NpcCreate_KoopaBros_Black) = {
     IfGe(GB_StoryProgress, STORY_CH1_KOOPA_BROS_FIRING_BLASTERS)
         Call(RemoveNpc, NPC_SELF)
     EndIf
@@ -248,7 +158,7 @@ EvtScript N(EVS_NpcAuxAI_KoopaBros_Black) = {
     End
 };
 
-EvtScript N(EVS_NpcAuxAI_KoopaBros_Yellow) = {
+EvtScript N(EVS_NpcCreate_KoopaBros_Yellow) = {
     IfGe(GB_StoryProgress, STORY_CH1_KOOPA_BROS_FIRING_BLASTERS)
         Call(RemoveNpc, NPC_SELF)
     EndIf
@@ -256,7 +166,7 @@ EvtScript N(EVS_NpcAuxAI_KoopaBros_Yellow) = {
     End
 };
 
-EvtScript N(EVS_NpcAuxAI_KoopaBros_Green) = {
+EvtScript N(EVS_NpcCreate_KoopaBros_Green) = {
     IfGe(GB_StoryProgress, STORY_CH1_KOOPA_BROS_FIRING_BLASTERS)
         Call(RemoveNpc, NPC_SELF)
     EndIf
@@ -394,7 +304,7 @@ EvtScript N(EVS_NpcAI_BulletBill) = {
     Label(1)
         Call(SetSelfVar, 0, 0)
         Call(EnableNpcShadow, NPC_SELF, false)
-        Call(SelfEnemyOverrideSyncPos, 0)
+        Call(EnemyEnableFirstStrike, false)
         Call(SetNpcFlagBits, NPC_SELF, NPC_FLAG_INVISIBLE, true)
         Call(SetNpcPos, NPC_SELF, NPC_DISPOSE_LOCATION)
         Label(2)
@@ -407,14 +317,14 @@ EvtScript N(EVS_NpcAI_BulletBill) = {
         Call(SetNpcAnimation, NPC_SELF, ANIM_BulletBill_Fire)
         Call(EnableNpcShadow, NPC_SELF, true)
         Call(SetNpcFlagBits, NPC_SELF, NPC_FLAG_INVISIBLE, false)
-        Call(SelfEnemyOverrideSyncPos, 1)
+        Call(EnemyEnableFirstStrike, true)
         Call(GetNpcPos, LVar0, LVar1, LVar2, LVar3)
         Call(GetNpcYaw, LVar0, LVar4)
         Call(AddVectorPolar, LVar1, LVar3, Float(14.0), LVar4)
         Add(LVar2, 11)
         Call(SetNpcPos, NPC_SELF, LVar1, LVar2, LVar3)
         Call(InterpNpcYaw, NPC_SELF, LVar4, 0)
-        Call(func_80045838, -1, SOUND_BLASTER_FIRE, SOUND_PARAM_MORE_QUIET)
+        Call(PlaySoundAtEnemy, NPC_SELF, SOUND_BLASTER_FIRE, SOUND_PARAM_MORE_QUIET)
         Set(LVarA, LVar1)
         Sub(LVarA, 10)
         Set(LVarB, LVar2)
@@ -431,7 +341,7 @@ EvtScript N(EVS_NpcAI_BulletBill) = {
             CaseEq(NPC_BillBlaster_03)
                 Call(NpcMoveTo, NPC_SELF, -450, LVar3, 0)
         EndSwitch
-        Call(func_80045838, -1, SOUND_SEQ_BULLET_BILL_EXPLODE, 0)
+        Call(PlaySoundAtEnemy, NPC_SELF, SOUND_SEQ_BULLET_BILL_EXPLODE, SOUND_SPACE_DEFAULT)
         Call(SetNpcAnimation, NPC_SELF, ANIM_BulletBill_Hurt)
         Call(GetNpcPos, NPC_SELF, LVar0, LVar1, LVar2)
         Add(LVar1, 5)
@@ -458,7 +368,7 @@ EvtScript N(EVS_NpcDefeat_BulletBill) = {
             EndThread
             Call(DoNpcDefeat)
         CaseEq(OUTCOME_PLAYER_FLED)
-            Call(OnPlayerFled, 0)
+            Call(OnPlayerFled, false)
     EndSwitch
     Return
     End
@@ -469,8 +379,8 @@ NpcSettings N(NpcSettings_KoopaBros_Red) = {
     .height = 34,
     .radius = 24,
     .level = ACTOR_LEVEL_NONE,
-    .otherAI = &N(EVS_NpcAuxAI_KoopaBros_Red),
-    .ai = &N(EVS_NpcAI_KoopaBros_Red),
+    .doAI = &N(EVS_NpcAI_KoopaBros_Red),
+    .onCreate = &N(EVS_NpcCreate_KoopaBros_Red),
     .flags = ENEMY_FLAG_IGNORE_WORLD_COLLISION | ENEMY_FLAG_IGNORE_PLAYER_COLLISION | ENEMY_FLAG_IGNORE_ENTITY_COLLISION,
 };
 
@@ -479,8 +389,8 @@ NpcSettings N(NpcSettings_KoopaBros_Black) = {
     .height = 34,
     .radius = 24,
     .level = ACTOR_LEVEL_NONE,
-    .otherAI = &N(EVS_NpcAuxAI_KoopaBros_Black),
-    .ai = &N(EVS_NpcAI_KoopaBros_Black),
+    .doAI = &N(EVS_NpcAI_KoopaBros_Black),
+    .onCreate = &N(EVS_NpcCreate_KoopaBros_Black),
     .flags = ENEMY_FLAG_IGNORE_WORLD_COLLISION | ENEMY_FLAG_IGNORE_PLAYER_COLLISION | ENEMY_FLAG_IGNORE_ENTITY_COLLISION,
 };
 
@@ -489,8 +399,8 @@ NpcSettings N(NpcSettings_KoopaBros_Yellow) = {
     .height = 34,
     .radius = 24,
     .level = ACTOR_LEVEL_NONE,
-    .otherAI = &N(EVS_NpcAuxAI_KoopaBros_Yellow),
-    .ai = &N(EVS_NpcAI_KoopaBros_Yellow),
+    .doAI = &N(EVS_NpcAI_KoopaBros_Yellow),
+    .onCreate = &N(EVS_NpcCreate_KoopaBros_Yellow),
     .flags = ENEMY_FLAG_IGNORE_WORLD_COLLISION | ENEMY_FLAG_IGNORE_PLAYER_COLLISION | ENEMY_FLAG_IGNORE_ENTITY_COLLISION,
 };
 
@@ -499,8 +409,8 @@ NpcSettings N(NpcSettings_KoopaBros_Green) = {
     .height = 34,
     .radius = 24,
     .level = ACTOR_LEVEL_NONE,
-    .otherAI = &N(EVS_NpcAuxAI_KoopaBros_Green),
-    .ai = &N(EVS_NpcAI_KoopaBros_Green),
+    .doAI = &N(EVS_NpcAI_KoopaBros_Green),
+    .onCreate = &N(EVS_NpcCreate_KoopaBros_Green),
     .flags = ENEMY_FLAG_IGNORE_WORLD_COLLISION | ENEMY_FLAG_IGNORE_PLAYER_COLLISION | ENEMY_FLAG_IGNORE_ENTITY_COLLISION,
 };
 
@@ -509,8 +419,8 @@ NpcSettings N(NpcSettings_BillBlaster) = {
     .height = 26,
     .radius = 32,
     .level = ACTOR_LEVEL_BILL_BLASTER,
-    .otherAI = &N(EVS_NpcAuxAI_BillBlaster),
-    .ai = &N(EVS_NpcAI_BillBlaster),
+    .doAI = &N(EVS_NpcAI_BillBlaster),
+    .onCreate = &N(EVS_NpcCreate_BillBlaster),
     .onHit = &N(EVS_NpcHit_BillBlaster),
 };
 
@@ -519,8 +429,8 @@ NpcSettings N(NpcSettings_BulletBill) = {
     .height = 14,
     .radius = 31,
     .level = ACTOR_LEVEL_BULLET_BILL,
-    .otherAI = &N(EVS_NpcAuxAI_BulletBill),
-    .ai = &N(EVS_NpcAI_BulletBill),
+    .doAI = &N(EVS_NpcAI_BulletBill),
+    .onCreate = &N(EVS_NpcCreate_BulletBill),
     .onHit = &EnemyNpcHit,
     .onDefeat = &N(EVS_NpcDefeat_BulletBill),
 };
@@ -686,7 +596,7 @@ EvtScript N(EVS_NpcIdle_BulletBill_Demo) = {
 
 EvtScript N(EVS_NpcInit_BulletBill_Demo) = {
     Call(BindNpcIdle, NPC_SELF, Ref(N(EVS_NpcIdle_BulletBill_Demo)))
-    Call(SelfEnemyOverrideSyncPos, 1)
+    Call(EnemyEnableFirstStrike, true)
     Return
     End
 };
@@ -712,33 +622,8 @@ NpcData N(NpcData_BulletBill_Demo1) = {
     .initVar = { .value = 0 },
     .settings = &N(NpcSettings_BulletBill),
     .flags = ENEMY_FLAG_DO_NOT_KILL | ENEMY_FLAG_IGNORE_WORLD_COLLISION | ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING | ENEMY_FLAG_DONT_SUSPEND_SCRIPTS,
-    .drops = {
-        .dropFlags = NPC_DROP_FLAG_80,
-        .itemDropChance = 3,
-        .itemDrops = {
-            { ITEM_MUSHROOM, 10, 0 },
-        },
-        .heartDrops  = STANDARD_HEART_DROPS(2),
-        .flowerDrops = STANDARD_FLOWER_DROPS(2),
-    },
-    .animations = {
-        .idle   = ANIM_BulletBill_Idle,
-        .walk   = ANIM_BulletBill_TenseCopy,
-        .run    = ANIM_BulletBill_Tense,
-        .chase  = ANIM_BulletBill_Tense,
-        .anim_4 = ANIM_BulletBill_Idle,
-        .anim_5 = ANIM_BulletBill_Fire,
-        .death  = ANIM_BulletBill_Hurt,
-        .hit    = ANIM_BulletBill_Hurt,
-        .anim_8 = ANIM_BulletBill_Idle,
-        .anim_9 = ANIM_BulletBill_Idle,
-        .anim_A = ANIM_BulletBill_Idle,
-        .anim_B = ANIM_BulletBill_Idle,
-        .anim_C = ANIM_BulletBill_Idle,
-        .anim_D = ANIM_BulletBill_Idle,
-        .anim_E = ANIM_BulletBill_Idle,
-        .anim_F = ANIM_BulletBill_Idle,
-    },
+    .drops = BULLET_BILL_DROPS,
+    .animations = BULLET_BILL_ANIMS,
 };
 
 NpcData N(NpcData_BulletBill_Demo2) = {
@@ -762,33 +647,8 @@ NpcData N(NpcData_BulletBill_Demo2) = {
     .initVar = { .value = 0 },
     .settings = &N(NpcSettings_BulletBill),
     .flags = ENEMY_FLAG_DO_NOT_KILL | ENEMY_FLAG_IGNORE_WORLD_COLLISION | ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING | ENEMY_FLAG_DONT_SUSPEND_SCRIPTS,
-    .drops = {
-        .dropFlags = NPC_DROP_FLAG_80,
-        .itemDropChance = 3,
-        .itemDrops = {
-            { ITEM_MUSHROOM, 10, 0 },
-        },
-        .heartDrops  = STANDARD_HEART_DROPS(2),
-        .flowerDrops = STANDARD_FLOWER_DROPS(2),
-    },
-    .animations = {
-        .idle   = ANIM_BulletBill_Idle,
-        .walk   = ANIM_BulletBill_TenseCopy,
-        .run    = ANIM_BulletBill_Tense,
-        .chase  = ANIM_BulletBill_Tense,
-        .anim_4 = ANIM_BulletBill_Idle,
-        .anim_5 = ANIM_BulletBill_Fire,
-        .death  = ANIM_BulletBill_Hurt,
-        .hit    = ANIM_BulletBill_Hurt,
-        .anim_8 = ANIM_BulletBill_Idle,
-        .anim_9 = ANIM_BulletBill_Idle,
-        .anim_A = ANIM_BulletBill_Idle,
-        .anim_B = ANIM_BulletBill_Idle,
-        .anim_C = ANIM_BulletBill_Idle,
-        .anim_D = ANIM_BulletBill_Idle,
-        .anim_E = ANIM_BulletBill_Idle,
-        .anim_F = ANIM_BulletBill_Idle,
-    },
+    .drops = BULLET_BILL_DROPS,
+    .animations = BULLET_BILL_ANIMS,
 };
 
 NpcData N(NpcData_BulletBill_Demo3) = {
@@ -812,33 +672,8 @@ NpcData N(NpcData_BulletBill_Demo3) = {
     .initVar = { .value = 0 },
     .settings = &N(NpcSettings_BulletBill),
     .flags = ENEMY_FLAG_DO_NOT_KILL | ENEMY_FLAG_IGNORE_WORLD_COLLISION | ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING | ENEMY_FLAG_DONT_SUSPEND_SCRIPTS,
-    .drops = {
-        .dropFlags = NPC_DROP_FLAG_80,
-        .itemDropChance = 3,
-        .itemDrops = {
-            { ITEM_MUSHROOM, 10, 0 },
-        },
-        .heartDrops  = STANDARD_HEART_DROPS(2),
-        .flowerDrops = STANDARD_FLOWER_DROPS(2),
-    },
-    .animations = {
-        .idle   = ANIM_BulletBill_Idle,
-        .walk   = ANIM_BulletBill_TenseCopy,
-        .run    = ANIM_BulletBill_Tense,
-        .chase  = ANIM_BulletBill_Tense,
-        .anim_4 = ANIM_BulletBill_Idle,
-        .anim_5 = ANIM_BulletBill_Fire,
-        .death  = ANIM_BulletBill_Hurt,
-        .hit    = ANIM_BulletBill_Hurt,
-        .anim_8 = ANIM_BulletBill_Idle,
-        .anim_9 = ANIM_BulletBill_Idle,
-        .anim_A = ANIM_BulletBill_Idle,
-        .anim_B = ANIM_BulletBill_Idle,
-        .anim_C = ANIM_BulletBill_Idle,
-        .anim_D = ANIM_BulletBill_Idle,
-        .anim_E = ANIM_BulletBill_Idle,
-        .anim_F = ANIM_BulletBill_Idle,
-    },
+    .drops = BULLET_BILL_DROPS,
+    .animations = BULLET_BILL_ANIMS,
 };
 
 NpcData N(NpcData_BulletBill_Demo4) = {
@@ -862,33 +697,8 @@ NpcData N(NpcData_BulletBill_Demo4) = {
     .initVar = { .value = 0 },
     .settings = &N(NpcSettings_BulletBill),
     .flags = ENEMY_FLAG_DO_NOT_KILL | ENEMY_FLAG_IGNORE_WORLD_COLLISION | ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING | ENEMY_FLAG_DONT_SUSPEND_SCRIPTS,
-    .drops = {
-        .dropFlags = NPC_DROP_FLAG_80,
-        .itemDropChance = 3,
-        .itemDrops = {
-            { ITEM_MUSHROOM, 10, 0 },
-        },
-        .heartDrops  = STANDARD_HEART_DROPS(2),
-        .flowerDrops = STANDARD_FLOWER_DROPS(2),
-    },
-    .animations = {
-        .idle   = ANIM_BulletBill_Idle,
-        .walk   = ANIM_BulletBill_TenseCopy,
-        .run    = ANIM_BulletBill_Tense,
-        .chase  = ANIM_BulletBill_Tense,
-        .anim_4 = ANIM_BulletBill_Idle,
-        .anim_5 = ANIM_BulletBill_Fire,
-        .death  = ANIM_BulletBill_Hurt,
-        .hit    = ANIM_BulletBill_Hurt,
-        .anim_8 = ANIM_BulletBill_Idle,
-        .anim_9 = ANIM_BulletBill_Idle,
-        .anim_A = ANIM_BulletBill_Idle,
-        .anim_B = ANIM_BulletBill_Idle,
-        .anim_C = ANIM_BulletBill_Idle,
-        .anim_D = ANIM_BulletBill_Idle,
-        .anim_E = ANIM_BulletBill_Idle,
-        .anim_F = ANIM_BulletBill_Idle,
-    },
+    .drops = BULLET_BILL_DROPS,
+    .animations = BULLET_BILL_ANIMS,
 };
 
 NpcData N(NpcData_BulletBill_Demo5) = {
@@ -912,33 +722,8 @@ NpcData N(NpcData_BulletBill_Demo5) = {
     .initVar = { .value = 0 },
     .settings = &N(NpcSettings_BulletBill),
     .flags = ENEMY_FLAG_DO_NOT_KILL | ENEMY_FLAG_IGNORE_WORLD_COLLISION | ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING | ENEMY_FLAG_DONT_SUSPEND_SCRIPTS,
-    .drops = {
-        .dropFlags = NPC_DROP_FLAG_80,
-        .itemDropChance = 3,
-        .itemDrops = {
-            { ITEM_MUSHROOM, 10, 0 },
-        },
-        .heartDrops  = STANDARD_HEART_DROPS(2),
-        .flowerDrops = STANDARD_FLOWER_DROPS(2),
-    },
-    .animations = {
-        .idle   = ANIM_BulletBill_Idle,
-        .walk   = ANIM_BulletBill_TenseCopy,
-        .run    = ANIM_BulletBill_Tense,
-        .chase  = ANIM_BulletBill_Tense,
-        .anim_4 = ANIM_BulletBill_Idle,
-        .anim_5 = ANIM_BulletBill_Fire,
-        .death  = ANIM_BulletBill_Hurt,
-        .hit    = ANIM_BulletBill_Hurt,
-        .anim_8 = ANIM_BulletBill_Idle,
-        .anim_9 = ANIM_BulletBill_Idle,
-        .anim_A = ANIM_BulletBill_Idle,
-        .anim_B = ANIM_BulletBill_Idle,
-        .anim_C = ANIM_BulletBill_Idle,
-        .anim_D = ANIM_BulletBill_Idle,
-        .anim_E = ANIM_BulletBill_Idle,
-        .anim_F = ANIM_BulletBill_Idle,
-    },
+    .drops = BULLET_BILL_DROPS,
+    .animations = BULLET_BILL_ANIMS,
 };
 
 NpcGroupList N(DemoNPCs) = {

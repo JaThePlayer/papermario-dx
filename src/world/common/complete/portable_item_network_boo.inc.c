@@ -1,6 +1,6 @@
 #include "common.h"
 #include "message_ids.h"
-#include "world/common/npc/Boo.inc.c"
+#include "world/common/npc/Boo/idle.h"
 
 #ifndef NPC_PINBoo
     #error NPC_PINBoo must be defined for portable_item_network_boo.inc.c

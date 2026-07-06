@@ -151,7 +151,7 @@ EvtScript N(EVS_RoomListener_Hideout) = {
 EvtScript N(EVS_OpenSecretDoor_FromOutside) = {
     SetGroup(EVT_GROUP_NEVER_PAUSE)
     Call(DisablePlayerInput, true)
-    Call(func_802D2C14, 1)
+    Call(SetPartnerForcedFollowMode, 1)
     Call(PlayerMoveTo, 230, 10, 20)
     Call(ModifyColliderFlags, MODIFY_COLLIDER_FLAGS_SET_BITS, COLLIDER_o1287, COLLIDER_FLAGS_UPPER_MASK)
     Call(PlaySoundAtCollider, COLLIDER_o1287, SOUND_BASIC_DOOR_OPEN, SOUND_SPACE_DEFAULT)
@@ -176,7 +176,7 @@ EvtScript N(EVS_OpenSecretDoor_FromOutside) = {
     EndLoop
     Call(PlaySoundAtCollider, COLLIDER_o1287, SOUND_BASIC_DOOR_CLOSE, SOUND_SPACE_DEFAULT)
     Call(ModifyColliderFlags, MODIFY_COLLIDER_FLAGS_CLEAR_BITS, COLLIDER_o1287, COLLIDER_FLAGS_UPPER_MASK)
-    Call(func_802D2C14, 0)
+    Call(SetPartnerForcedFollowMode, 0)
     Call(DisablePlayerInput, false)
     Return
     End
@@ -185,7 +185,7 @@ EvtScript N(EVS_OpenSecretDoor_FromOutside) = {
 EvtScript N(EVS_OpenSecretDoor_FromInside) = {
     SetGroup(EVT_GROUP_NEVER_PAUSE)
     Call(DisablePlayerInput, true)
-    Call(func_802D2C14, 1)
+    Call(SetPartnerForcedFollowMode, 1)
     Call(PlayerMoveTo, 230, -70, 20)
     Call(ModifyColliderFlags, MODIFY_COLLIDER_FLAGS_SET_BITS, COLLIDER_o1289, COLLIDER_FLAGS_UPPER_MASK)
     Call(PlaySoundAtCollider, COLLIDER_o1289, SOUND_BASIC_DOOR_OPEN, SOUND_SPACE_DEFAULT)
@@ -210,7 +210,7 @@ EvtScript N(EVS_OpenSecretDoor_FromInside) = {
     EndLoop
     Call(PlaySoundAtCollider, COLLIDER_o1289, SOUND_BASIC_DOOR_CLOSE, SOUND_SPACE_DEFAULT)
     Call(ModifyColliderFlags, MODIFY_COLLIDER_FLAGS_CLEAR_BITS, COLLIDER_o1289, COLLIDER_FLAGS_UPPER_MASK)
-    Call(func_802D2C14, 0)
+    Call(SetPartnerForcedFollowMode, 0)
     Call(DisablePlayerInput, false)
     Return
     End

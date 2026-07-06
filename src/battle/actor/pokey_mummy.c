@@ -229,6 +229,8 @@ s32 N(ThrownPartAnims)[] = {
     STATUS_END,
 };
 
+#include "battle/common/SetAbsoluteStatusOffsets.inc.c"
+
 EvtScript N(EVS_Init) = {
     Call(BindTakeTurn, ACTOR_SELF, Ref(N(EVS_TakeTurn)))
     Call(BindIdle, ACTOR_SELF, Ref(N(EVS_Idle)))
@@ -776,8 +778,6 @@ EvtScript N(EVS_Pokey_SpinSmashHit) = {
     Return
     End
 };
-
-#include "common/battle/SetAbsoluteStatusOffsets.inc.c"
 
 // set actor vars for new size one unit smaller than previous
 EvtScript N(EVS_DecrementSize) = {

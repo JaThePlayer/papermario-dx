@@ -1,10 +1,10 @@
 #include "jan_14.h"
 
-#include "world/common/enemy/JungleFuzzy.h"
+#include "world/common/enemy/JungleFuzzy/base.h"
 
 // uses base fuzzy includes instead of JungleFuzzy!
-#include "world/common/enemy/Fuzzy_Wander.inc.c"
-#include "world/common/enemy/Fuzzy.inc.c"
+#include "world/common/enemy/Fuzzy/wander.inc.c"
+#include "world/common/enemy/Fuzzy/idle.inc.c"
 
 EvtScript N(EVS_NpcIdle_JungleFuzzy) = {
     Label(0)
@@ -47,7 +47,7 @@ NpcData N(NpcData_JungleFuzzy_01) = {
     .flags = ENEMY_FLAG_IGNORE_WORLD_COLLISION | ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING,
     .drops = JUNGLE_FUZZY_DROPS,
     .animations = JUNGLE_FUZZY_ANIMS,
-    .aiDetectFlags = AI_DETECT_SIGHT | AI_DETECT_SENSITIVE_MOTION,
+    .aiDetectFlags = AI_DETECT_SIGHT | AI_DETECT_MOTION_SENSITIVE,
 };
 
 NpcData N(NpcData_JungleFuzzy_02) = {
@@ -59,7 +59,7 @@ NpcData N(NpcData_JungleFuzzy_02) = {
     .flags = ENEMY_FLAG_IGNORE_WORLD_COLLISION | ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING,
     .drops = JUNGLE_FUZZY_DROPS,
     .animations = JUNGLE_FUZZY_ANIMS,
-    .aiDetectFlags = AI_DETECT_SIGHT | AI_DETECT_SENSITIVE_MOTION,
+    .aiDetectFlags = AI_DETECT_SIGHT | AI_DETECT_MOTION_SENSITIVE,
 };
 
 NpcGroupList N(DefaultNPCs) = {

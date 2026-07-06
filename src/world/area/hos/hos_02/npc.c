@@ -1,6 +1,6 @@
 #include "hos_02.h"
 
-#include "world/common/enemy/Ember.inc.c"
+#include "world/common/enemy/Ember/wander.inc.c"
 
 NpcData N(NpcData_Ember) = {
     .id = NPC_Ember_01,
@@ -18,11 +18,11 @@ NpcData N(NpcData_Ember) = {
             .detectSize = { 1000 },
         }
     },
-    .settings = &N(NpcSettings_Ember),
+    .settings = &N(NpcSettings_Ember_Wander),
     .flags = ENEMY_FLAG_IGNORE_WORLD_COLLISION | ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING,
     .drops = EMBER_DROPS,
     .animations = EMBER_ANIMS,
-    .aiDetectFlags = AI_DETECT_SENSITIVE_MOTION,
+    .aiDetectFlags = AI_DETECT_MOTION_SENSITIVE,
 };
 
 NpcData N(NpcData_Ember_02) = {
@@ -41,11 +41,11 @@ NpcData N(NpcData_Ember_02) = {
             .detectSize = { 1000 },
         }
     },
-    .settings = &N(NpcSettings_Ember),
+    .settings = &N(NpcSettings_Ember_Wander),
     .flags = ENEMY_FLAG_IGNORE_WORLD_COLLISION | ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING,
     .drops = EMBER_DROPS,
     .animations = EMBER_ANIMS,
-    .aiDetectFlags = AI_DETECT_SENSITIVE_MOTION,
+    .aiDetectFlags = AI_DETECT_MOTION_SENSITIVE,
 };
 
 NpcData N(NpcData_Ember_03) = {
@@ -64,11 +64,11 @@ NpcData N(NpcData_Ember_03) = {
             .detectSize = { 1000 },
         }
     },
-    .settings = &N(NpcSettings_Ember),
+    .settings = &N(NpcSettings_Ember_Wander),
     .flags = ENEMY_FLAG_IGNORE_WORLD_COLLISION | ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING,
     .drops = EMBER_DROPS,
     .animations = EMBER_ANIMS,
-    .aiDetectFlags = AI_DETECT_SENSITIVE_MOTION,
+    .aiDetectFlags = AI_DETECT_MOTION_SENSITIVE,
 };
 
 NpcGroupList N(DefaultNPCs) = {

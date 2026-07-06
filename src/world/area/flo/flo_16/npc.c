@@ -1,7 +1,7 @@
 #include "flo_16.h"
 #include "entity.h"
 
-#include "world/common/enemy/RuffPuff.inc.c"
+#include "world/common/enemy/RuffPuff/wander.inc.c"
 
 NpcData N(NpcData_RuffPuff_01) = {
     .id = NPC_RuffPuff_01,
@@ -19,11 +19,11 @@ NpcData N(NpcData_RuffPuff_01) = {
             .detectSize = { 225, 95 },
         }
     },
-    .settings = &N(NpcSettings_RuffPuff),
+    .settings = &N(NpcSettings_RuffPuff_Wander),
     .flags = ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING,
     .drops = RUFF_PUFF_DROPS,
     .animations = RUFF_PUFF_ANIMS,
-    .aiDetectFlags = AI_DETECT_SIGHT | AI_DETECT_SENSITIVE_MOTION,
+    .aiDetectFlags = AI_DETECT_SIGHT | AI_DETECT_MOTION_SENSITIVE,
 };
 
 NpcData N(NpcData_RuffPuff_02) = {
@@ -42,11 +42,11 @@ NpcData N(NpcData_RuffPuff_02) = {
             .detectSize = { 225, 95 },
         }
     },
-    .settings = &N(NpcSettings_RuffPuff),
+    .settings = &N(NpcSettings_RuffPuff_Wander),
     .flags = ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING,
     .drops = RUFF_PUFF_DROPS,
     .animations = RUFF_PUFF_ANIMS,
-    .aiDetectFlags = AI_DETECT_SIGHT | AI_DETECT_SENSITIVE_MOTION,
+    .aiDetectFlags = AI_DETECT_SIGHT | AI_DETECT_MOTION_SENSITIVE,
 };
 
 NpcGroupList N(DefaultNPCs) = {

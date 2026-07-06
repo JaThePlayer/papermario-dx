@@ -1,14 +1,13 @@
 #include "isk_16.h"
 #include "sprite/player.h"
 
-#include "world/common/atomic/ApplyTint.inc.c"
 
 EvtScript N(EVS_Scene_TutankoopaAppears) = {
     Call(DisablePlayerInput, true)
-    Call(DisablePartnerAI, 0)
-    Call(N(SetModelTintMode), APPLY_TINT_MODELS, -1, ENV_TINT_SHROUD)
-    Call(N(SetModelTintMode), APPLY_TINT_BG, nullptr, ENV_TINT_SHROUD)
-    Call(N(SetModelTintParams), ENV_TINT_SHROUD, 0, 0, 0, 255, 0, 0, 0, 0, 0)
+    Call(DisablePartnerAI, false)
+    Call(SetModelTintMode, APPLY_TINT_MODELS, -1, ENV_TINT_SHROUD)
+    Call(SetModelTintMode, APPLY_TINT_BG, nullptr, ENV_TINT_SHROUD)
+    Call(SetModelTintParams, ENV_TINT_SHROUD, 0, 0, 0, 255, 0, 0, 0, 0, 0)
     Call(UseSettingsFrom, CAM_DEFAULT, 410, -910, 410)
     Call(SetCamDistance, CAM_DEFAULT, Float(300.0))
     Call(SetPanTarget, CAM_DEFAULT, 336, -910, 467)
@@ -56,13 +55,13 @@ EvtScript N(EVS_Scene_TutankoopaAppears) = {
         Call(PlaySoundAtNpc, NPC_Tutankoopa_01, SOUND_BOWSER_CHARGE_LIGHTNING, SOUND_SPACE_DEFAULT)
     EndThread
     Call(SetNpcImgFXParams, NPC_Tutankoopa_01, IMGFX_SET_ALPHA, 255, 0, 0, 0)
-    Call(SetNpcImgFXFlags, NPC_Tutankoopa_01, IMGFX_FLAG_800)
+    Call(SetNpcImgFXFlags, NPC_Tutankoopa_01, IMGFX_FLAG_HOLD_DONE)
     Call(SetNpcImgFXParams, NPC_Tutankoopa_01, IMGFX_SET_ANIM, IMGFX_ANIM_TUTANKOOPA_SWIRL_1, 2, 1, 0)
     Wait(39)
-    Call(SetNpcImgFXFlags, NPC_Tutankoopa_01, IMGFX_FLAG_800)
+    Call(SetNpcImgFXFlags, NPC_Tutankoopa_01, IMGFX_FLAG_HOLD_DONE)
     Call(SetNpcImgFXParams, NPC_Tutankoopa_01, IMGFX_SET_ANIM, IMGFX_ANIM_TUTANKOOPA_SWIRL_2, 2, 1, 0)
     Wait(39)
-    Call(SetNpcImgFXFlags, NPC_Tutankoopa_01, IMGFX_FLAG_800)
+    Call(SetNpcImgFXFlags, NPC_Tutankoopa_01, IMGFX_FLAG_HOLD_DONE)
     Call(SetNpcImgFXParams, NPC_Tutankoopa_01, IMGFX_SET_ANIM, IMGFX_ANIM_TUTANKOOPA_GATHER, 2, 1, 0)
     Wait(55)
     Call(SetNpcImgFXParams, NPC_Tutankoopa_01, IMGFX_CLEAR, 0, 0, 0, 0)

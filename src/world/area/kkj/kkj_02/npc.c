@@ -4,8 +4,9 @@
 #include "pause/pause_common.h"
 #include "inventory.h"
 
-#include "world/common/npc/Toad_Wander.inc.c"
-#include "world/common/npc/Toad_Stationary.inc.c"
+#include "world/common/npc/ToadGuard/idle.inc.c"
+#include "world/common/npc/Toad/wander.inc.c"
+#include "world/common/npc/Toad/idle.inc.c"
 
 #include "sprite/npc/Nomadimouse.h"
 
@@ -204,7 +205,7 @@ NpcData N(NpcData_Toads)[] = {
         .pos = { 1175.0f, 110.0f, 60.0f },
         .yaw = 270,
         .init = &N(EVS_NpcInit_ToadGuard),
-        .settings = &N(NpcSettings_Toad_Stationary),
+        .settings = &N(NpcSettings_ToadGuard),
         .flags = ENEMY_FLAG_PASSIVE | ENEMY_FLAG_DO_NOT_KILL | ENEMY_FLAG_ENABLE_HIT_SCRIPT | ENEMY_FLAG_IGNORE_WORLD_COLLISION | ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING,
         .drops = NO_DROPS,
         .animations = TOAD_GUARD_RED_ANIMS,

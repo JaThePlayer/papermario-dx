@@ -2,23 +2,21 @@
 
 extern EvtScript N(EVS_RestoreMagicDoors);
 
-#include "world/common/enemy/KoopaTroopa_Wander.inc.c"
-#include "world/common/enemy/Paratroopa.inc.c"
-
-#include "world/common/util/GetDefeatedEnemyCount.inc.c"
+#include "world/common/enemy/KoopaTroopa/wander.inc.c"
+#include "world/common/enemy/Paratroopa/wander.inc.c"
 
 EvtScript N(EVS_NpcDefeat_KoopaTroopa) = {
     Call(GetBattleOutcome, LVar0)
     Switch(LVar0)
         CaseEq(OUTCOME_PLAYER_WON)
-            Call(N(GetDefeatedEnemyCount), LVar0)
-            IfEq(LVar0, 1) // ???
+            Call(GetRemainingEnemyCount, LVar0)
+            IfEq(LVar0, 1)
                 Set(GF_TRD07_Defeated_DungeonAmbush, true)
                 Exec(N(EVS_RestoreMagicDoors))
             EndIf
             Call(DoNpcDefeat)
         CaseEq(OUTCOME_PLAYER_FLED)
-            Call(OnPlayerFled, 0)
+            Call(OnPlayerFled, false)
         CaseEq(OUTCOME_ENEMY_FLED)
             Call(SetEnemyFlagBits, NPC_SELF, ENEMY_FLAG_FLED, true)
             Call(RemoveNpc, NPC_SELF)
@@ -77,7 +75,7 @@ NpcData N(NpcData_ParaTroopa_01) = {
         }
     },
     .init = &N(EVS_NpcInit_KoopaTroopa),
-    .settings = &N(NpcSettings_ParaTroopa),
+    .settings = &N(NpcSettings_ParaTroopa_Wander),
     .flags = ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING | ENEMY_FLAG_NO_DELAY_AFTER_FLEE,
     .drops = PARATROOPA_DROPS,
     .animations = PARATROOPA_ANIMS,
@@ -100,7 +98,7 @@ NpcData N(NpcData_ParaTroopa_02) = {
         }
     },
     .init = &N(EVS_NpcInit_KoopaTroopa),
-    .settings = &N(NpcSettings_ParaTroopa),
+    .settings = &N(NpcSettings_ParaTroopa_Wander),
     .flags = ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING | ENEMY_FLAG_NO_DELAY_AFTER_FLEE,
     .drops = PARATROOPA_DROPS,
     .animations = PARATROOPA_ANIMS,

@@ -1,6 +1,6 @@
 #include "tik_23.h"
 
-#include "world/common/enemy/Spiny.inc.c"
+#include "world/common/enemy/Spiny/wander.inc.c"
 
 NpcData N(NpcData_Spiny_01) = {
     .id = NPC_Spiny_01,
@@ -18,11 +18,11 @@ NpcData N(NpcData_Spiny_01) = {
             .detectSize = { 200 },
         }
     },
-    .settings = &N(NpcSettings_Spiny),
+    .settings = &N(NpcSettings_Spiny_Wander),
     .flags = ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING,
     .drops = SPINY_DROPS,
     .animations = SPINY_ANIMS,
-    .aiDetectFlags = AI_DETECT_SIGHT | AI_DETECT_SENSITIVE_MOTION,
+    .aiDetectFlags = AI_DETECT_SIGHT | AI_DETECT_MOTION_SENSITIVE,
 };
 
 NpcData N(NpcData_Spiny_02) = {
@@ -41,11 +41,11 @@ NpcData N(NpcData_Spiny_02) = {
             .detectSize = { 200 },
         }
     },
-    .settings = &N(NpcSettings_Spiny),
+    .settings = &N(NpcSettings_Spiny_Wander),
     .flags = ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING,
     .drops = SPINY_DROPS,
     .animations = SPINY_ANIMS,
-    .aiDetectFlags = AI_DETECT_SIGHT | AI_DETECT_SENSITIVE_MOTION,
+    .aiDetectFlags = AI_DETECT_SIGHT | AI_DETECT_MOTION_SENSITIVE,
 };
 
 NpcData N(NpcData_Spiny_03) = {
@@ -64,11 +64,11 @@ NpcData N(NpcData_Spiny_03) = {
             .detectSize = { 200 },
         }
     },
-    .settings = &N(NpcSettings_Spiny),
+    .settings = &N(NpcSettings_Spiny_Wander),
     .flags = ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING,
     .drops = SPINY_DROPS,
     .animations = SPINY_ANIMS,
-    .aiDetectFlags = AI_DETECT_SIGHT | AI_DETECT_SENSITIVE_MOTION,
+    .aiDetectFlags = AI_DETECT_SIGHT | AI_DETECT_MOTION_SENSITIVE,
 };
 
 NpcGroupList N(DefaultNPCs) = {
