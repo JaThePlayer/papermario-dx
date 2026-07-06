@@ -1,4 +1,6 @@
 #include "common.h"
+#include "evt.h"
+#include "macros.h"
 #include "script_api/battle.h"
 
 // lerp from a to b as alpha goes from 1.0 to 0.0
@@ -36,6 +38,13 @@ static EvtScript* BattleCam_ControlScript;
 
 s8 BattleCam_IsFrozen = false;
 s32 BattleCam_CurrentPresetID = -1;
+
+API_CALLABLE(GetBattleCamPreset) {
+    Bytecode* args = script->ptrReadPos;
+    evt_set_variable(script, *args++, BattleCam_CurrentPresetID);
+
+    return ApiStatus_DONE2;
+}
 
 typedef struct CamSubjects {
     Vec3f actorPos;

@@ -99,6 +99,11 @@ extern EvtScript EnemyItems_UseHeldItem;
 // might clobber a *lot* of LVar's, so just assume all of them got messed up after calling this.
 extern EvtScript EnemyItems_TryUseHeldItem;
 
+
+/// Simple AI to choose whether to use an item or not.
+/// EnemyItems_ItemUseAI(ActorID, out var(ActorId || 0) choice, out var(int) index).
+API_CALLABLE(EnemyItems_ItemUseAI);
+
 // Script which makes the enemy use an item if it has one, with a simple AI that will check whether its worth to use the item first.
 // Returns 0 on LVar0 if the enemy didn't use an item, 1 if it did.
 // might clobber a *lot* of LVar's, so just assume all of them got messed up after calling this.

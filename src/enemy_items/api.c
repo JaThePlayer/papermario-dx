@@ -636,8 +636,8 @@ EvtScript EnemyItems_TryUseHeldItem = {
 };
 
 // simple AI to choose whether to use an item or not
-//_HeldItemUseAI(ActorID, out var choice, out var index)
-static API_CALLABLE(_HeldItemUseAI) {
+//EnemyItems_ItemUseAI(ActorID, out var choice, out var index)
+API_CALLABLE(EnemyItems_ItemUseAI) {
     Bytecode* args = script->ptrReadPos;
     Actor* actor = get_actor_from_evt_var(script, *args++);
     BattleStatus* battleStatus = &gBattleStatus;
@@ -712,7 +712,7 @@ static API_CALLABLE(_HeldItemUseAI) {
 EvtScript EnemyItems_TryUseHeldItem_WithAI = {
     // ai
     // also loads up LVar8 with the index of the item, for EnemyItems_UseHeldItem
-    Call(_HeldItemUseAI, ACTOR_SELF, LVar0, LVar8)
+    Call(EnemyItems_ItemUseAI, ACTOR_SELF, LVar0, LVar8)
     IfEq(LVar0, 0)
         Return // no item, early return
     EndIf

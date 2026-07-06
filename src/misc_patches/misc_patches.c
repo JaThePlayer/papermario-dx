@@ -10,6 +10,7 @@
 #include "misc_patches/scrollable_desc_draw.h"
 
 #include "misc_events.c"
+#include "actor_interfaces.c"
 
 // returns how much fp costs are changed by
 s32 getFpCostChange(Actor* player) {
