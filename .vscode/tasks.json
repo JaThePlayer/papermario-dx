@@ -22,6 +22,30 @@
       "group": {
         "kind": "none"
       },
-    }
+    },
+    {
+      "label": "Run Configure",
+      "type": "shell",
+      "command": "nix --extra-experimental-features \"flakes nix-command\" develop --profile .nix-profile --command ./configure",
+      "problemMatcher": "$gcc",
+      "group": {
+        "kind": "none",
+      },
+      "windows": {
+        "command": "build.bat"
+      }
+    },
+    {
+      "label": "Run Configure --clean",
+      "type": "shell",
+      "command": "nix --extra-experimental-features \"flakes nix-command\" develop --profile .nix-profile --command ./configure --clean",
+      "problemMatcher": "$gcc",
+      "group": {
+        "kind": "none",
+      },
+      "windows": {
+        "command": "build.bat"
+      }
+    },
   ]
 }
