@@ -715,7 +715,7 @@ EvtScript N(EVS_TakeTurn) = {
 };
 
 #define ResummonShell(Part) \
-    Call(SetAnimation, ACTOR_SELF, Part, ANIM_BuzzyBeetle_Anim06) \
+    Call(SetAnimation, ACTOR_SELF, Part, ANIM_BuzzyBeetle_ShellStill) \
     Call(BattleCamTargetActorPart, ACTOR_SELF, Part) \
     Wait(8) \
     Call(PlaySoundAtActor, ACTOR_SELF, SOUND_VANISH_IN_SMOKE) \

@@ -483,15 +483,15 @@ s32 A(buzzy_beetle_UprightDefense)[] = {
 };
 
 s32 A(buzzy_beetle_GroundAnims)[] = {
-    STATUS_KEY_NORMAL,    ANIM_BuzzyBeetle_Anim01,
-    STATUS_KEY_STONE,     ANIM_BuzzyBeetle_Anim00,
-    STATUS_KEY_SLEEP,     ANIM_BuzzyBeetle_Anim09,
-    STATUS_KEY_POISON,    ANIM_BuzzyBeetle_Anim01,
-    STATUS_KEY_STOP,      ANIM_BuzzyBeetle_Anim00,
-    STATUS_KEY_STATIC,    ANIM_BuzzyBeetle_Anim01,
-    STATUS_KEY_PARALYZE,  ANIM_BuzzyBeetle_Anim00,
-    STATUS_KEY_DIZZY,     ANIM_BuzzyBeetle_Anim0A,
-    STATUS_KEY_UNUSED,    ANIM_BuzzyBeetle_Anim0A,
+    STATUS_KEY_NORMAL,    ANIM_BuzzyBeetle_Idle,
+    STATUS_KEY_STONE,     ANIM_BuzzyBeetle_Still,
+    STATUS_KEY_SLEEP,     ANIM_BuzzyBeetle_Sleep,
+    STATUS_KEY_POISON,    ANIM_BuzzyBeetle_Idle,
+    STATUS_KEY_STOP,      ANIM_BuzzyBeetle_Still,
+    STATUS_KEY_STATIC,    ANIM_BuzzyBeetle_Idle,
+    STATUS_KEY_PARALYZE,  ANIM_BuzzyBeetle_Still,
+    STATUS_KEY_DIZZY,     ANIM_BuzzyBeetle_Dizzy,
+    STATUS_KEY_UNUSED,    ANIM_BuzzyBeetle_Dizzy,
     STATUS_END,
 };
 
@@ -500,7 +500,7 @@ EvtScript N(BeetleDrop_BeetlePart) = {
 
     Call(SetActorSounds, ACTOR_SELF, ACTOR_SOUND_JUMP, SOUND_FALL_QUICK, 0)
     Call(SetActorYaw, ACTOR_SELF, 180)
-    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_BuzzyBeetle_Anim08)
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_BuzzyBeetle_FallDown)
     Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
     Sub(LVar1, 24)
     Call(SetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
@@ -525,7 +525,7 @@ EvtScript N(BeetleDrop_BeetlePart) = {
             Call(JumpToGoal, ACTOR_SELF, 15, false, true, false)
             Thread
                 Wait(5)
-                Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_BuzzyBeetle_Anim00)
+                Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_BuzzyBeetle_Still)
             EndThread
             Add(LVar0, 20)
             Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
@@ -533,7 +533,7 @@ EvtScript N(BeetleDrop_BeetlePart) = {
             Wait(8)
             Thread
                 SetConst(LVar0, PRT_MAIN)
-                SetConst(LVar1, ANIM_BuzzyBeetle_Anim04)
+                SetConst(LVar1, ANIM_BuzzyBeetle_Run)
                 Call(SetActorVar, ACTOR_SELF, 8, 1) // Call(SetActorVar, ACTOR_SELF, AVAR_ToppleState, AVAL_State_Ground)
                 Call(SetActorVar, ACTOR_SELF, 9, 0) // Call(SetActorVar, ACTOR_SELF, AVAR_ToppleTurns, 0)
                 ExecWait(EVS_Enemy_ReturnHome)
@@ -545,7 +545,7 @@ EvtScript N(BeetleDrop_BeetlePart) = {
                 Call(BindIdle, ACTOR_SELF, Ref(N(EVS_Idle)))
                 Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_FLIPPED, false)
 
-                Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_BuzzyBeetle_Anim01)
+                Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_BuzzyBeetle_Idle)
                 Call(UseIdleAnimation, ACTOR_SELF, false)
                 Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
             EndThread
@@ -575,7 +575,7 @@ EvtScript N(EVS_BeetleDrop) = {
 
     // Move to beetle
     Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_TARGET, BTL_CAM_XADJ_AVG, false)
-    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Swooper_Anim02)
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Swooper_Idle)
     Call(SetGoalToTarget, ACTOR_SELF)
     Call(SetActorSpeed, ACTOR_SELF, Float(8.0))
     Call(UseBattleCamPreset, BTL_CAM_ENEMY_APPROACH)
@@ -588,7 +588,7 @@ EvtScript N(EVS_BeetleDrop) = {
     Call(EnableIdleScript, LVarE, IDLE_SCRIPT_DISABLE)
     Wait(24)
     Call(AddActorDecoration, ACTOR_SELF, PRT_MAIN, 0, ACTOR_DECORATION_SWEAT)
-    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Swooper_Anim13)
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Swooper_Sleep)
 
     // Fly with beetle
     ExecGetTID(N(BeetleDrop_SyncBeetlePos), LVarD)
@@ -599,7 +599,7 @@ EvtScript N(EVS_BeetleDrop) = {
     Wait(16)
 
     // drop beetle
-    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Swooper_Anim02)
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Swooper_Idle)
     Call(RemoveActorDecoration, ACTOR_SELF, PRT_MAIN, 0)
     KillThread(LVarD)
     ExecGetTID(N(BeetleDrop_BeetlePart), LVarF)

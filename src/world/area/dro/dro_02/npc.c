@@ -467,7 +467,7 @@ NpcData N(PassiveNPCs)[] = {
     },
 };
 
-#include "world/common/enemy/Bandit.h"
+#include "world/common/enemy/Bandit/base.h"
 
 NpcSettings N(NpcSettings_Bandit) = {
     .defaultAnim = ANIM_Bandit_Leader_Idle,

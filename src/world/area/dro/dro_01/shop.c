@@ -27,7 +27,7 @@ s32 N(ShopMessages)[] = {
     [SHOP_MSG_FAREWELL         ] MSG_Shop_16_DR001,
 };
 
-ShopItemData N(Inventory)[] = {
+ShopItemData N(ShopInventory)[] = {
     { .itemID = ITEM_THUNDER_BOLT,   .price = 5, .descMsg = MSG_ItemFullDesc_ThunderBolt },
     { .itemID = ITEM_DRIED_FRUIT,    .price = 11, .descMsg = MSG_ItemFullDesc_DriedFruit },
     { .itemID = ITEM_POISON_SHROOM,  .price = 4, .descMsg = MSG_ItemFullDesc_PoisonShroom },

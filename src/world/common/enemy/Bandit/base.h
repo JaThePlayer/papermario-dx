@@ -41,8 +41,8 @@
     .walk   = ANIM_Bandit_Leader_Walk, \
     .run    = ANIM_Bandit_Leader_Run, \
     .chase  = ANIM_Bandit_Leader_Run, \
-    .anim_4 = ANIM_Bandit_Leader_Idle, \
-    .anim_5 = ANIM_Bandit_Leader_Idle, \
+    .alert = ANIM_Bandit_Leader_Idle, \
+    .unused = ANIM_Bandit_Leader_Idle, \
     .death  = ANIM_Bandit_Leader_Hurt, \
     .hit    = ANIM_Bandit_Leader_Hurt, \
     .anim_8 = ANIM_Bandit_Leader_Still, \

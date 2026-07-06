@@ -13,7 +13,7 @@
     #error TRIAL_BOO_NPC_ID must be defined for trial_boo.inc.c
 #endif
 
-#include "world/common/complete/GiveReward.inc.c"
+#include "world/common/deprecated/GiveReward.inc.c"
 
 typedef struct Trial {
     s32 gameFlag;
@@ -144,8 +144,8 @@ API_CALLABLE(N(BooTrials_TrialSelectorPopup)) {
     .walk   = ANIM_Boo_Walk, \
     .run    = ANIM_Boo_Run, \
     .chase  = ANIM_Boo_Run, \
-    .anim_4 = ANIM_Boo_Idle, \
-    .anim_5 = ANIM_Boo_Idle, \
+    .alert = ANIM_Boo_Idle, \
+    .unused = ANIM_Boo_Idle, \
     .death  = ANIM_Boo_Still, \
     .hit    = ANIM_Boo_Still, \
     .anim_8 = ANIM_Boo_Run, \
@@ -188,9 +188,9 @@ NpcSettings N(NpcSettings_TrialBoo) = {
     .defaultAnim = ANIM_Boo_Idle,
     .height = 35,
     .radius = 28,
-    .otherAI = &N(EVS_TrialBoo_NPC_OtherAI),
+    .onCreate = &N(EVS_TrialBoo_NPC_OtherAI),
     .onInteract = &N(EVS_TrialBoo_NPC_Interact),
-    .aux = &N(EVS_TrialBoo_NPC_Aux),
+    .doAux = &N(EVS_TrialBoo_NPC_Aux),
     .flags = ENEMY_FLAG_PASSIVE | ENEMY_FLAG_IGNORE_WORLD_COLLISION | ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING,
     .level = ACTOR_LEVEL_NONE,
 };

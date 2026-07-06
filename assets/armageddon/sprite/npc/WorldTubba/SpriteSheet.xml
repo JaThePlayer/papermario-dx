@@ -14,89 +14,89 @@ Fixed via find+replace.
         <Palette id="7" src="Tear_Shocked.png"/>
     </PaletteList>
     <RasterList>
-        <Raster id="0" palette="0" src="Raster00.png"/>
-        <Raster id="1" palette="0" src="Raster01.png"/>
-        <Raster id="2" palette="0" src="Raster02.png"/>
-        <Raster id="3" palette="0" src="Raster03.png"/>
-        <Raster id="4" palette="0" src="Raster04.png"/>
-        <Raster id="5" palette="0" src="Raster05.png"/>
-        <Raster id="6" palette="0" src="Raster06.png"/>
-        <Raster id="7" palette="0" src="Raster07.png"/>
-        <Raster id="8" palette="0" src="Raster08.png"/>
-        <Raster id="9" palette="0" src="Raster09.png"/>
-        <Raster id="A" palette="0" src="Raster0A.png"/>
-        <Raster id="B" palette="0" src="Raster0B.png"/>
-        <Raster id="C" palette="0" src="Raster0C.png"/>
-        <Raster id="D" palette="0" src="Raster0D.png"/>
-        <Raster id="E" palette="0" src="Raster0E.png"/>
-        <Raster id="F" palette="0" src="Raster0F.png"/>
-        <Raster id="10" palette="0" src="Raster10.png"/>
-        <Raster id="11" palette="0" src="Raster11.png"/>
-        <Raster id="12" palette="0" src="Raster12.png"/>
-        <Raster id="13" palette="0" src="Raster13.png"/>
-        <Raster id="14" palette="0" src="Raster14.png"/>
-        <Raster id="15" palette="0" src="Raster15.png"/>
-        <Raster id="16" palette="0" src="Raster16.png"/>
-        <Raster id="17" palette="0" src="Raster17.png"/>
-        <Raster id="18" palette="0" src="Raster18.png"/>
-        <Raster id="19" palette="0" src="Raster19.png"/>
-        <Raster id="1A" palette="0" src="Raster1A.png"/>
-        <Raster id="1B" palette="0" src="Raster1B.png"/>
-        <Raster id="1C" palette="0" src="Raster1C.png"/>
-        <Raster id="1D" palette="0" src="Raster1D.png"/>
-        <Raster id="1E" palette="0" src="Raster1E.png"/>
-        <Raster id="1F" palette="0" src="Raster1F.png"/>
-        <Raster id="20" palette="0" src="Raster20.png"/>
-        <Raster id="21" palette="0" src="Raster21.png"/>
-        <Raster id="22" palette="0" src="Raster22.png"/>
-        <Raster id="23" palette="0" src="Raster23.png"/>
-        <Raster id="24" palette="0" src="Raster24.png"/>
-        <Raster id="25" palette="0" src="Raster25.png"/>
-        <Raster id="26" palette="0" src="Raster26.png"/>
-        <Raster id="27" palette="0" src="Raster27.png"/>
-        <Raster id="28" palette="0" src="Raster28.png"/>
-        <Raster id="29" palette="0" src="Raster29.png"/>
-        <Raster id="2A" palette="0" src="Raster2A.png"/>
-        <Raster id="2B" palette="0" src="Raster2B.png"/>
-        <Raster id="2C" palette="0" src="Raster2C.png"/>
-        <Raster id="2D" palette="0" src="Raster2D.png"/>
-        <Raster id="2E" palette="0" src="Raster2E.png"/>
-        <Raster id="2F" palette="0" src="Raster2F.png"/>
-        <Raster id="30" palette="0" src="Raster30.png"/>
-        <Raster id="31" palette="0" src="Raster31.png"/>
-        <Raster id="32" palette="0" src="Raster32.png"/>
-        <Raster id="33" palette="0" src="Raster33.png"/>
-        <Raster id="34" palette="0" src="Raster34.png"/>
-        <Raster id="35" palette="0" src="Raster35.png"/>
-        <Raster id="36" palette="1" src="Raster36.png"/>
-        <Raster id="37" palette="1" src="Raster37.png"/>
-        <Raster id="38" palette="1" src="Raster38.png"/>
-        <Raster id="39" palette="1" src="Raster39.png"/>
-        <Raster id="3A" palette="1" src="Raster3A.png"/>
-        <Raster id="3B" palette="1" src="Raster3B.png"/>
-        <Raster id="3C" palette="0" src="Raster3C.png"/>
-        <Raster id="3D" palette="0" src="Raster3D.png"/>
-        <Raster id="3E" palette="0" src="Raster3E.png"/>
-        <Raster id="3F" palette="0" src="Raster3F.png"/>
-        <Raster id="40" palette="0" src="Raster40.png"/>
-        <Raster id="41" palette="0" src="Raster41.png"/>
-        <Raster id="42" palette="0" src="Raster42.png"/>
-        <Raster id="43" palette="0" src="Raster43.png"/>
-        <Raster id="44" palette="0" src="Raster44.png"/>
-        <Raster id="45" palette="0" src="Raster45.png"/>
-        <Raster id="46" palette="0" src="Raster46.png"/>
-        <Raster id="47" palette="0" src="Raster47.png"/>
-        <Raster id="48" palette="0" src="Raster48.png"/>
-        <Raster id="49" palette="0" src="Raster49.png"/>
-        <Raster id="4A" palette="0" src="Raster4A.png"/>
-        <Raster id="4B" palette="0" src="Raster4B.png"/>
-        <Raster id="4C" palette="0" src="Raster4C.png"/>
-        <Raster id="4D" palette="0" src="Raster4D.png"/>
-        <Raster id="4E" palette="0" src="Raster4E.png"/>
-        <Raster id="4F" palette="0" src="Raster4F.png"/>
+        <Raster id="0" palette="0" src="Body.png"/>
+        <Raster id="1" palette="0" src="Eyes.png"/>
+        <Raster id="2" palette="0" src="MouthClosed.png"/>
+        <Raster id="3" palette="0" src="LArm.png"/>
+        <Raster id="4" palette="0" src="RArm.png"/>
+        <Raster id="5" palette="0" src="LFoot.png"/>
+        <Raster id="6" palette="0" src="RFoot.png"/>
+        <Raster id="7" palette="0" src="LFootStep1.png"/>
+        <Raster id="8" palette="0" src="RFootStep1.png"/>
+        <Raster id="9" palette="0" src="LFootStep2.png"/>
+        <Raster id="A" palette="0" src="RFootStep2.png"/>
+        <Raster id="B" palette="0" src="LFootStep3.png"/>
+        <Raster id="C" palette="0" src="RFootStep3.png"/>
+        <Raster id="D" palette="0" src="HairWave1.png"/>
+        <Raster id="E" palette="0" src="HairWave2.png"/>
+        <Raster id="F" palette="0" src="HairWave3.png"/>
+        <Raster id="10" palette="0" src="HairWave4.png"/>
+        <Raster id="11" palette="0" src="HairWave5.png"/>
+        <Raster id="12" palette="0" src="EyesBlink1.png"/>
+        <Raster id="13" palette="0" src="EyesBlink2.png"/>
+        <Raster id="14" palette="0" src="BodyLean.png"/>
+        <Raster id="15" palette="0" src="LArmJump.png"/>
+        <Raster id="16" palette="0" src="RArmJump1.png"/>
+        <Raster id="17" palette="0" src="RArmJump2.png"/>
+        <Raster id="18" palette="0" src="LFootJump.png"/>
+        <Raster id="19" palette="0" src="RFootJump.png"/>
+        <Raster id="1A" palette="0" src="HairSettle.png"/>
+        <Raster id="1B" palette="0" src="HairFall1.png"/>
+        <Raster id="1C" palette="0" src="HairFall2.png"/>
+        <Raster id="1D" palette="0" src="HairLand1.png"/>
+        <Raster id="1E" palette="0" src="HairLand2.png"/>
+        <Raster id="1F" palette="0" src="MouthJump.png"/>
+        <Raster id="20" palette="0" src="EyesJump.png"/>
+        <Raster id="21" palette="0" src="BodyLand.png"/>
+        <Raster id="22" palette="0" src="BodyHurt.png"/>
+        <Raster id="23" palette="0" src="MouthWide.png"/>
+        <Raster id="24" palette="0" src="ToungeOut1.png"/>
+        <Raster id="25" palette="0" src="ToungeOut2.png"/>
+        <Raster id="26" palette="0" src="ToungeOut3.png"/>
+        <Raster id="27" palette="0" src="Tounge.png"/>
+        <Raster id="28" palette="0" src="LArmRaised1.png"/>
+        <Raster id="29" palette="0" src="LArmRaised2.png"/>
+        <Raster id="2A" palette="0" src="ToungeIn1.png"/>
+        <Raster id="2B" palette="0" src="ToungeIn2.png"/>
+        <Raster id="2C" palette="0" src="ToungeIn3.png"/>
+        <Raster id="2D" palette="0" src="BodyRearUp.png"/>
+        <Raster id="2E" palette="0" src="MouthChew1.png"/>
+        <Raster id="2F" palette="0" src="MouthTense.png"/>
+        <Raster id="30" palette="0" src="MouthHalfOpen.png"/>
+        <Raster id="31" palette="0" src="MouthChew2.png"/>
+        <Raster id="32" palette="0" src="EyesAngry.png"/>
+        <Raster id="33" palette="0" src="BodyTalk.png"/>
+        <Raster id="34" palette="0" src="EyesAngryTalk.png"/>
+        <Raster id="35" palette="0" src="EyesTalk.png"/>
+        <Raster id="36" palette="1" src="LTear.png"/>
+        <Raster id="37" palette="1" src="RTear.png"/>
+        <Raster id="38" palette="1" src="LCry1.png"/>
+        <Raster id="39" palette="1" src="LCry2.png"/>
+        <Raster id="3A" palette="1" src="RCry1.png"/>
+        <Raster id="3B" palette="1" src="RCry2.png"/>
+        <Raster id="3C" palette="0" src="EyesCry.png"/>
+        <Raster id="3D" palette="0" src="EyesTalkSad.png"/>
+        <Raster id="3E" palette="0" src="LFootStretch.png"/>
+        <Raster id="3F" palette="0" src="RFootStretch.png"/>
+        <Raster id="40" palette="0" src="BodySleep.png"/>
+        <Raster id="41" palette="0" src="MouthSleep.png"/>
+        <Raster id="42" palette="0" src="RFootRaised.png"/>
+        <Raster id="43" palette="0" src="LFootRaised.png"/>
+        <Raster id="44" palette="0" src="RArmChest.png"/>
+        <Raster id="45" palette="0" src="LArmChest.png"/>
+        <Raster id="46" palette="0" src="EyesSleepy.png"/>
+        <Raster id="47" palette="0" src="MouthOpen.png"/>
+        <Raster id="48" palette="0" src="HairHeadBack.png"/>
+        <Raster id="49" palette="0" src="EyesAngryJump.png"/>
+        <Raster id="4A" palette="0" src="HairRearUp.png"/>
+        <Raster id="4B" palette="0" src="EyesRearUp.png"/>
+        <Raster id="4C" palette="0" src="MouthRoar.png"/>
+        <Raster id="4D" palette="0" src="EyesUpward.png"/>
+        <Raster id="4E" palette="0" src="HairFullBack.png"/>
+        <Raster id="4F" palette="0" src="HairSleep.png"/>
     </RasterList>
     <AnimationList>
-        <Animation name="Anim00">
+        <Animation name="Still">
             <Component name="Comp_0" xyz="-37,5,-4">
                 <Label name="Start"/>
                 <SetRaster index="3"/>
@@ -148,7 +148,7 @@ Fixed via find+replace.
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim01">
+        <Animation name="StillDaze">
             <Component name="Comp_0" xyz="-37,5,-4">
                 <Label name="Start"/>
                 <SetPos flag="0" xyz="3,2,0"/>
@@ -205,7 +205,7 @@ Fixed via find+replace.
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim02">
+        <Animation name="StillSleep">
             <Component name="Comp_0" xyz="-33,54,-2">
                 <Label name="Start"/>
                 <SetRaster index="43"/>
@@ -249,7 +249,7 @@ Fixed via find+replace.
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim03">
+        <Animation name="CenteredStand">
             <Component name="Comp_0" xyz="-37,-40,-4">
                 <Label name="Start"/>
                 <SetRaster index="3"/>
@@ -301,7 +301,7 @@ Fixed via find+replace.
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim04">
+        <Animation name="CenteredSleep">
             <Component name="Comp_0" xyz="-33,11,-2">
                 <Label name="Start"/>
                 <SetRaster index="43"/>
@@ -345,7 +345,7 @@ Fixed via find+replace.
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim05">
+        <Animation name="StillWake">
             <Component name="Comp_0" xyz="-33,54,-2">
                 <Label name="Start"/>
                 <SetPos flag="1" xyz="9,-35,0"/>
@@ -407,7 +407,7 @@ Fixed via find+replace.
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim06">
+        <Animation name="Idle">
             <Component name="Comp_0" xyz="-37,5,-4">
                 <Label name="Start"/>
                 <SetParent index="9"/>
@@ -490,6 +490,7 @@ Fixed via find+replace.
                 <Wait duration="6"/>
                 <SetRaster index="2"/>
                 <Wait duration="136"/>
+                <Label name="Pos_23"/>
                 <SetPos flag="0" xyz="-9,-2,0"/>
                 <SetRaster index="30"/>
                 <Wait duration="6"/>
@@ -501,7 +502,7 @@ Fixed via find+replace.
                 <Wait duration="6"/>
                 <SetRaster index="2"/>
                 <Wait duration="6"/>
-                <Loop count="23" dest="Pos_1"/>
+                <Loop count="1" dest="Pos_23"/>
                 <SetRaster index="2"/>
                 <Wait duration="180"/>
                 <SetPos flag="0" xyz="-9,-2,0"/>
@@ -563,7 +564,7 @@ Fixed via find+replace.
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim07">
+        <Animation name="IdleAngry">
             <Component name="Comp_0" xyz="-37,5,-4">
                 <Label name="Start"/>
                 <SetParent index="9"/>
@@ -622,6 +623,7 @@ Fixed via find+replace.
                 <Wait duration="6"/>
                 <SetRaster index="2"/>
                 <Wait duration="136"/>
+                <Label name="Pos_23"/>
                 <SetPos flag="0" xyz="-9,-2,0"/>
                 <SetRaster index="30"/>
                 <Wait duration="6"/>
@@ -633,7 +635,7 @@ Fixed via find+replace.
                 <Wait duration="6"/>
                 <SetRaster index="2"/>
                 <Wait duration="6"/>
-                <Loop count="23" dest="Pos_1"/>
+                <Loop count="1" dest="Pos_23"/>
                 <SetRaster index="2"/>
                 <Wait duration="180"/>
                 <SetPos flag="0" xyz="-9,-2,0"/>
@@ -691,7 +693,7 @@ Fixed via find+replace.
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim08">
+        <Animation name="IdleSad">
             <Component name="Comp_0" xyz="-37,5,-4">
                 <Label name="Start"/>
                 <SetParent index="B"/>
@@ -919,7 +921,7 @@ Fixed via find+replace.
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim09">
+        <Animation name="Walk">
             <Component name="Comp_0" xyz="0,0,0">
                 <Label name="Start"/>
                 <SetPos flag="0" xyz="11,6,0"/>
@@ -1078,7 +1080,7 @@ Fixed via find+replace.
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim0A">
+        <Animation name="WalkAngry">
             <Component name="Comp_0" xyz="0,0,0">
                 <Label name="Start"/>
                 <SetPos flag="0" xyz="11,6,0"/>
@@ -1213,7 +1215,7 @@ Fixed via find+replace.
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim0B">
+        <Animation name="WalkCry">
             <Component name="Comp_0" xyz="0,0,0">
                 <Label name="Start"/>
                 <SetPos flag="0" xyz="11,6,0"/>
@@ -1381,7 +1383,7 @@ Fixed via find+replace.
                 <Goto dest="Pos_1"/>
             </Component>
         </Animation>
-        <Animation name="Anim0C">
+        <Animation name="Run">
             <Component name="Comp_0" xyz="0,0,0">
                 <Label name="Start"/>
                 <SetPos flag="0" xyz="11,6,0"/>
@@ -1538,7 +1540,7 @@ Fixed via find+replace.
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim0D">
+        <Animation name="RunAngry">
             <Component name="Comp_0" xyz="0,0,0">
                 <Label name="Start"/>
                 <SetPos flag="0" xyz="11,6,0"/>
@@ -1671,7 +1673,7 @@ Fixed via find+replace.
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim0E">
+        <Animation name="RunCry">
             <Component name="Comp_0" xyz="0,0,0">
                 <Label name="Start"/>
                 <SetPos flag="0" xyz="11,6,0"/>
@@ -1837,7 +1839,7 @@ Fixed via find+replace.
                 <Goto dest="Pos_1"/>
             </Component>
         </Animation>
-        <Animation name="Anim0F">
+        <Animation name="SprintCry">
             <Component name="Comp_0" xyz="0,0,0">
                 <Label name="Start"/>
                 <SetPos flag="0" xyz="11,6,0"/>
@@ -1999,7 +2001,7 @@ Fixed via find+replace.
                 <Goto dest="Pos_1"/>
             </Component>
         </Animation>
-        <Animation name="Anim10">
+        <Animation name="Talk">
             <Component name="Comp_0" xyz="-37,5,-4">
                 <Label name="Start"/>
                 <SetRaster index="3"/>
@@ -2074,7 +2076,7 @@ Fixed via find+replace.
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim11">
+        <Animation name="TalkAngry">
             <Component name="Comp_0" xyz="-37,5,-4">
                 <Label name="Start"/>
                 <SetRaster index="3"/>
@@ -2151,7 +2153,7 @@ Fixed via find+replace.
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim12">
+        <Animation name="TalkSad">
             <Component name="Comp_0" xyz="-37,5,-4">
                 <Label name="Start"/>
                 <SetRaster index="3"/>
@@ -2243,7 +2245,7 @@ Fixed via find+replace.
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim13">
+        <Animation name="HalfAwake">
             <Component name="Comp_0" xyz="-33,54,-2">
                 <Label name="Start"/>
                 <SetPos flag="1" xyz="9,-35,0"/>
@@ -2308,7 +2310,7 @@ Fixed via find+replace.
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim14">
+        <Animation name="Lean">
             <Component name="Comp_0" xyz="-37,2,-4">
                 <Label name="Start"/>
                 <SetRaster index="3"/>
@@ -2360,7 +2362,7 @@ Fixed via find+replace.
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim15">
+        <Animation name="Jump">
             <Component name="Comp_0" xyz="-68,50,-4">
                 <Label name="Start"/>
                 <SetRot xyz="0,0,10"/>
@@ -2445,7 +2447,7 @@ Fixed via find+replace.
                 <Goto dest="Pos_8"/>
             </Component>
         </Animation>
-        <Animation name="Anim16">
+        <Animation name="Fall">
             <Component name="Comp_0" xyz="-68,50,-4">
                 <Label name="Start"/>
                 <SetRot xyz="0,0,0"/>
@@ -2502,7 +2504,7 @@ Fixed via find+replace.
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim17">
+        <Animation name="Land">
             <Component name="Comp_0" xyz="-68,50,-4">
                 <Label name="Start"/>
                 <SetParent index="8"/>
@@ -2621,7 +2623,7 @@ Fixed via find+replace.
                 <Goto pos="18"/>
             </Component>
         </Animation>
-        <Animation name="Anim18">
+        <Animation name="GetUp">
             <Component name="Comp_0" xyz="-37,5,-4">
                 <Label name="Start"/>
                 <SetParent index="8"/>
@@ -2692,7 +2694,7 @@ Fixed via find+replace.
                 <Goto dest="Pos_15"/>
             </Component>
         </Animation>
-        <Animation name="Anim19">
+        <Animation name="LeanAngry">
             <Component name="Comp_0" xyz="-37,4,-4">
                 <Label name="Start"/>
                 <SetRaster index="3"/>
@@ -2744,7 +2746,7 @@ Fixed via find+replace.
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim1A">
+        <Animation name="JumpAngry">
             <Component name="Comp_0" xyz="-68,50,-4">
                 <Label name="Start"/>
                 <SetRot xyz="0,0,10"/>
@@ -2829,7 +2831,7 @@ Fixed via find+replace.
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim1B">
+        <Animation name="FallAngry">
             <Component name="Comp_0" xyz="-68,50,-4">
                 <Label name="Start"/>
                 <SetRot xyz="0,0,0"/>
@@ -2886,7 +2888,7 @@ Fixed via find+replace.
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim1C">
+        <Animation name="LandAngry">
             <Component name="Comp_0" xyz="-68,50,-4">
                 <Label name="Start"/>
                 <SetParent index="7"/>
@@ -3006,7 +3008,7 @@ Fixed via find+replace.
                 <Goto dest="Pos_7"/>
             </Component>
         </Animation>
-        <Animation name="Anim1D">
+        <Animation name="GetUpAngry">
             <Component name="Comp_0" xyz="0,0,0">
                 <Label name="Start"/>
                 <SetPos flag="0" xyz="0,0,0"/>
@@ -3078,7 +3080,7 @@ Fixed via find+replace.
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim1E">
+        <Animation name="Reach">
             <Component name="Comp_0" xyz="-37,7,-4">
                 <Label name="Start"/>
                 <SetRot xyz="0,0,-35"/>
@@ -3142,7 +3144,7 @@ Fixed via find+replace.
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim1F">
+        <Animation name="OpenMouth">
             <Component name="Comp_0" xyz="-37,7,-4">
                 <Label name="Start"/>
                 <SetPos flag="0" xyz="-32,49,0"/>
@@ -3242,7 +3244,7 @@ Fixed via find+replace.
                 <Goto dest="Pos_16"/>
             </Component>
         </Animation>
-        <Animation name="Anim20">
+        <Animation name="Devour">
             <Component name="Comp_0" xyz="-37,7,-4">
                 <Label name="Start"/>
                 <SetPos flag="0" xyz="-3,75,0"/>
@@ -3364,7 +3366,7 @@ Fixed via find+replace.
                 <Goto dest="Pos_24"/>
             </Component>
         </Animation>
-        <Animation name="Anim21">
+        <Animation name="Burp">
             <Component name="Comp_0" xyz="-37,5,-4">
                 <Label name="Start"/>
                 <SetParent index="8"/>
@@ -3444,7 +3446,7 @@ Fixed via find+replace.
                 <Goto dest="Pos_15"/>
             </Component>
         </Animation>
-        <Animation name="Anim22">
+        <Animation name="OpenWide">
             <Component name="Comp_0" xyz="-37,5,-4">
                 <Label name="Start"/>
                 <SetPos flag="0" xyz="3,2,0"/>
@@ -3535,7 +3537,7 @@ Fixed via find+replace.
                 <Goto dest="Pos_2"/>
             </Component>
         </Animation>
-        <Animation name="Anim23">
+        <Animation name="Chew">
             <Component name="Comp_0" xyz="-37,5,-4">
                 <Label name="Start"/>
                 <SetPos flag="0" xyz="7,3,0"/>
@@ -3649,7 +3651,7 @@ Fixed via find+replace.
                 <Goto dest="Pos_6"/>
             </Component>
         </Animation>
-        <Animation name="Anim24">
+        <Animation name="Sleep">
             <Component name="Comp_0" xyz="-33,54,-2">
                 <Label name="Start"/>
                 <SetParent index="7"/>
@@ -3768,7 +3770,7 @@ Fixed via find+replace.
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim25">
+        <Animation name="WakeUp">
             <Component name="Comp_0" xyz="-33,54,-2">
                 <Label name="Start"/>
                 <SetRaster index="43"/>

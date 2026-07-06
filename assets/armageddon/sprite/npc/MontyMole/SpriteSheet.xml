@@ -11,46 +11,46 @@
         <Palette id="8" src="Burnt.png"/>
     </PaletteList>
     <RasterList>
-        <Raster id="0" palette="0" src="Raster00.png"/>
-        <Raster id="1" palette="0" src="Raster01.png"/>
-        <Raster id="2" palette="0" src="Raster02.png"/>
-        <Raster id="3" palette="0" src="Raster03.png"/>
-        <Raster id="4" palette="0" src="Raster04.png"/>
-        <Raster id="5" palette="0" src="Raster05.png"/>
-        <Raster id="6" palette="0" src="Raster06.png"/>
-        <Raster id="7" palette="0" src="Raster07.png"/>
-        <Raster id="8" palette="0" src="Raster08.png"/>
-        <Raster id="9" palette="0" src="Raster09.png"/>
-        <Raster id="A" palette="0" src="Raster0A.png"/>
-        <Raster id="B" palette="0" src="Raster0B.png"/>
-        <Raster id="C" palette="0" src="Raster0C.png"/>
-        <Raster id="D" palette="0" src="Raster0D.png"/>
-        <Raster id="E" palette="0" src="Raster0E.png"/>
-        <Raster id="F" palette="0" src="Raster0F.png"/>
-        <Raster id="10" palette="0" src="Raster10.png"/>
-        <Raster id="11" palette="0" src="Raster11.png"/>
-        <Raster id="12" palette="0" src="Raster12.png"/>
-        <Raster id="13" palette="8" src="Raster13.png"/>
-        <Raster id="14" palette="8" src="Raster14.png"/>
-        <Raster id="15" palette="8" src="Raster15.png"/>
-        <Raster id="16" palette="8" src="Raster16.png"/>
-        <Raster id="17" palette="8" src="Raster17.png"/>
-        <Raster id="18" palette="8" src="Raster18.png"/>
-        <Raster id="19" palette="0" src="Raster19.png"/>
-        <Raster id="1A" palette="0" src="Raster1A.png"/>
-        <Raster id="1B" palette="0" src="Raster1B.png"/>
-        <Raster id="1C" palette="0" src="Raster1C.png"/>
-        <Raster id="1D" palette="8" src="Raster1D.png"/>
-        <Raster id="1E" palette="8" src="Raster1E.png"/>
-        <Raster id="1F" palette="8" src="Raster1F.png"/>
-        <Raster id="20" palette="8" src="Raster20.png"/>
-        <Raster id="21" palette="8" src="Raster21.png"/>
-        <Raster id="22" palette="8" src="Raster22.png"/>
-        <Raster id="23" palette="8" src="Raster23.png"/>
-        <Raster id="24" palette="8" src="Raster24.png"/>
+        <Raster id="0" palette="0" src="Idle1.png"/>
+        <Raster id="1" palette="0" src="Idle2.png"/>
+        <Raster id="2" palette="0" src="Hurt1.png"/>
+        <Raster id="3" palette="0" src="Burrow1.png"/>
+        <Raster id="4" palette="0" src="Burrow2.png"/>
+        <Raster id="5" palette="0" src="Throw1.png"/>
+        <Raster id="6" palette="0" src="Throw2.png"/>
+        <Raster id="7" palette="0" src="Throw3.png"/>
+        <Raster id="8" palette="0" src="Throw4.png"/>
+        <Raster id="9" palette="0" src="Step1.png"/>
+        <Raster id="A" palette="0" src="Step2.png"/>
+        <Raster id="B" palette="0" src="Step3.png"/>
+        <Raster id="C" palette="0" src="Jump.png"/>
+        <Raster id="D" palette="0" src="WallHole.png"/>
+        <Raster id="E" palette="0" src="Rock.png"/>
+        <Raster id="F" palette="0" src="HurtJump2.png"/>
+        <Raster id="10" palette="0" src="HurtJump3.png"/>
+        <Raster id="11" palette="0" src="HurtJump1.png"/>
+        <Raster id="12" palette="0" src="Hurt2.png"/>
+        <Raster id="13" palette="8" src="BurnHurt1.png"/>
+        <Raster id="14" palette="8" src="BurnHurt2.png"/>
+        <Raster id="15" palette="8" src="BurnStill.png"/>
+        <Raster id="16" palette="8" src="HoleDig1.png"/>
+        <Raster id="17" palette="8" src="HoleDig2.png"/>
+        <Raster id="18" palette="8" src="HoleDig3.png"/>
+        <Raster id="19" palette="0" src="Dizzy.png"/>
+        <Raster id="1A" palette="0" src="Stand.png"/>
+        <Raster id="1B" palette="0" src="Clap1.png"/>
+        <Raster id="1C" palette="0" src="Clap2.png"/>
+        <Raster id="1D" palette="8" src="BurnHurtJump1.png"/>
+        <Raster id="1E" palette="8" src="BurnHurtJump2.png"/>
+        <Raster id="1F" palette="8" src="Smoke1.png"/>
+        <Raster id="20" palette="8" src="Smoke2.png"/>
+        <Raster id="21" palette="8" src="Smoke3.png"/>
+        <Raster id="22" palette="8" src="Smoke4.png"/>
+        <Raster id="23" palette="8" src="Smoke5.png"/>
+        <Raster id="24" palette="8" src="Smoke6.png"/>
     </RasterList>
     <AnimationList>
-        <Animation name="Anim00">
+        <Animation name="Still">
             <Component name="Comp_0" xyz="0,0,0">
                 <Label name="Start"/>
                 <SetRaster index="0"/>
@@ -58,7 +58,7 @@
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim01">
+        <Animation name="Idle">
             <Component name="Comp_0" xyz="0,0,0">
                 <Label name="Start"/>
                 <SetRaster index="0"/>
@@ -68,7 +68,7 @@
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim02">
+        <Animation name="Walk">
             <Component name="Comp_0" xyz="0,0,0">
                 <Label name="Start"/>
                 <SetRaster index="9"/>
@@ -82,7 +82,7 @@
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim03">
+        <Animation name="Run">
             <Component name="Comp_0" xyz="0,0,0">
                 <Label name="Start"/>
                 <SetRaster index="9"/>
@@ -96,7 +96,7 @@
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim04">
+        <Animation name="ThrowAttack">
             <Component name="Comp_0" xyz="0,0,0">
                 <Label name="Start"/>
                 <SetRaster index="3"/>
@@ -117,7 +117,7 @@
                 <Goto dest="Pos_12"/>
             </Component>
         </Animation>
-        <Animation name="Anim05">
+        <Animation name="Hurt">
             <Component name="Comp_0" xyz="0,0,0">
                 <Label name="Start"/>
                 <SetRaster index="2"/>
@@ -127,7 +127,7 @@
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim06">
+        <Animation name="HurtJump">
             <Component name="Comp_0" xyz="0,0,0">
                 <Label name="Start"/>
                 <SetRaster index="0"/>
@@ -155,7 +155,7 @@
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim07">
+        <Animation name="HurtMidair">
             <Component name="Comp_0" xyz="0,24,0">
                 <Label name="Start"/>
                 <SetRaster index="F"/>
@@ -172,7 +172,7 @@
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim08">
+        <Animation name="HurtDropDown">
             <Component name="Comp_0" xyz="0,0,0">
                 <Label name="Start"/>
                 <SetPos flag="1" xyz="0,24,0"/>
@@ -200,7 +200,7 @@
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim09">
+        <Animation name="Panic">
             <Component name="Comp_0" xyz="0,24,0">
                 <Label name="Start"/>
                 <SetRaster index="F"/>
@@ -211,7 +211,7 @@
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim0A">
+        <Animation name="BurnHurt">
             <Component name="Comp_0" xyz="0,0,0">
                 <Label name="Start"/>
                 <SetRaster index="13"/>
@@ -221,7 +221,7 @@
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim0B">
+        <Animation name="BurnStill">
             <Component name="Comp_0" xyz="0,0,0">
                 <Label name="Start"/>
                 <SetRaster index="15"/>
@@ -229,7 +229,7 @@
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim0C">
+        <Animation name="BurnHurtJump">
             <Component name="Comp_0" xyz="0,24,0">
                 <Label name="Start"/>
                 <SetRaster index="1D"/>
@@ -240,7 +240,7 @@
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim0D">
+        <Animation name="Smoke">
             <Component name="Comp_0" xyz="0,0,0">
                 <Label name="Start"/>
                 <SetRaster index="1F"/>
@@ -265,7 +265,7 @@
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim0E">
+        <Animation name="PopOutStill">
             <Component name="Comp_0" xyz="0,0,0">
                 <Label name="Start"/>
                 <SetRaster index="C"/>
@@ -273,7 +273,7 @@
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim0F">
+        <Animation name="Rock">
             <Component name="Comp_0" xyz="0,0,0">
                 <Label name="Start"/>
                 <SetRaster index="E"/>
@@ -281,7 +281,7 @@
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim10">
+        <Animation name="Emerge">
             <Component name="Comp_0" xyz="0,0,0">
                 <Label name="Start"/>
                 <SetScale mode="uniform" percent="75"/>
@@ -325,7 +325,7 @@
                 <Goto dest="Pos_52"/>
             </Component>
         </Animation>
-        <Animation name="Anim11">
+        <Animation name="Burrow">
             <Component name="Comp_0" xyz="0,0,0">
                 <Label name="Start"/>
                 <SetRaster index="0"/>
@@ -365,7 +365,7 @@
                 <Goto dest="Pos_48"/>
             </Component>
         </Animation>
-        <Animation name="Anim12">
+        <Animation name="Hole">
             <Component name="Comp_0" xyz="0,0,0">
                 <Label name="Start"/>
                 <SetRaster index="4"/>
@@ -373,7 +373,7 @@
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim13">
+        <Animation name="WallHole">
             <Component name="Comp_0" xyz="0,0,0">
                 <Label name="Start"/>
                 <SetRaster index="D"/>
@@ -381,7 +381,7 @@
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim14">
+        <Animation name="Sleep">
             <Component name="Comp_0" xyz="0,0,0">
                 <Label name="Start"/>
                 <SetRaster index="19"/>
@@ -389,7 +389,7 @@
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim15">
+        <Animation name="Clap">
             <Component name="Comp_0" xyz="0,0,0">
                 <Label name="Start"/>
                 <SetRaster index="1B"/>
@@ -399,7 +399,7 @@
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim16">
+        <Animation name="WorldEmerge">
             <Component name="Comp_0" xyz="0,0,0">
                 <Label name="Start"/>
                 <SetRaster index="4"/>
@@ -418,7 +418,7 @@
                 <Goto dest="Pos_10"/>
             </Component>
         </Animation>
-        <Animation name="Anim17">
+        <Animation name="WorldBurrow">
             <Component name="Comp_0" xyz="0,0,0">
                 <Label name="Start"/>
                 <SetRaster index="0"/>
@@ -437,7 +437,7 @@
                 <Goto dest="Pos_10"/>
             </Component>
         </Animation>
-        <Animation name="Anim18">
+        <Animation name="WorldThrowAttack">
             <Component name="Comp_0" xyz="0,0,0">
                 <Label name="Start"/>
                 <SetRaster index="4"/>
@@ -456,7 +456,7 @@
                 <Goto dest="Pos_10"/>
             </Component>
         </Animation>
-        <Animation name="Anim19">
+        <Animation name="Stand">
             <Component name="Comp_0" xyz="0,0,0">
                 <Label name="Start"/>
                 <SetRaster index="B"/>
@@ -466,7 +466,7 @@
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim1A">
+        <Animation name="WorldGetRock">
             <Component name="Comp_0" xyz="0,0,0">
                 <Label name="Start"/>
                 <SetRaster index="3"/>
@@ -483,7 +483,7 @@
                 <Goto dest="Pos_8"/>
             </Component>
         </Animation>
-        <Animation name="Anim1B">
+        <Animation name="WorldThrowRock">
             <Component name="Comp_0" xyz="0,0,0">
                 <Label name="Start"/>
                 <SetRaster index="6"/>

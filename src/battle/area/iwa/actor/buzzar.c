@@ -202,12 +202,12 @@ ActorBlueprint NAMESPACE = {
     Call(MoveBattleCamOver, 20) \
     Thread \
         Wait(20) \
-        Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Buzzar_Anim01) \
+        Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Buzzar_Idle) \
     EndThread \
-    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Buzzar_Anim10) \
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Buzzar_ThrowFeathers) \
     Call(SetPartRotation, ACTOR_SELF, partId, 0, 0, -45) \
     Wait(10) \
-    Call(SetAnimation, ACTOR_SELF, partId, ANIM_Buzzar_Anim14) \
+    Call(SetAnimation, ACTOR_SELF, partId, ANIM_Buzzar_FeatherStill) \
     Call(SetPartFlagBits, ACTOR_SELF, partId, ACTOR_PART_FLAG_INVISIBLE, false) \
     Call(SetPartMoveSpeed, ACTOR_SELF, partId, Float(6.0)) \
     Call(SetPartJumpGravity, ACTOR_SELF, partId, Float(0.1)) \
@@ -221,10 +221,10 @@ ActorBlueprint NAMESPACE = {
             Call(GetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2) \
             Sub(LVar0, 30) \
             Call(FlyPartTo, ACTOR_SELF, partId, LVar0, 5, LVar2, 9, 0, EASING_LINEAR) \
-            Call(SetAnimation, ACTOR_SELF, partId, ANIM_Buzzar_Anim15) \
+            Call(SetAnimation, ACTOR_SELF, partId, ANIM_Buzzar_FeatherFly) \
             Thread \
                 Wait(10) \
-                Call(SetAnimation, ACTOR_SELF, partId, ANIM_Buzzar_Anim14) \
+                Call(SetAnimation, ACTOR_SELF, partId, ANIM_Buzzar_FeatherStill) \
                 Wait(20) \
                 Call(SetPartFlagBits, ACTOR_SELF, partId, ACTOR_PART_FLAG_INVISIBLE, true) \
             EndThread \
@@ -504,11 +504,11 @@ EvtScript N(EVS_Attack_ClawSwipeIntoFling) = {
     Call(AddGoalPos, ACTOR_SELF, 60, 15, 0)
     Call(GetAnimation, ACTOR_SELF, PRT_MAIN, LVar0)
     Switch(LVar0)
-        CaseOrEq(ANIM_Buzzar_Anim01)
-        CaseOrEq(ANIM_Buzzar_Anim02)
-        CaseOrEq(ANIM_Buzzar_Anim0D)
-        CaseOrEq(ANIM_Buzzar_Anim16)
-        CaseOrEq(ANIM_Buzzar_Anim17)
+        CaseOrEq(ANIM_Buzzar_Idle)
+        CaseOrEq(ANIM_Buzzar_Fly)
+        CaseOrEq(ANIM_Buzzar_Angry)
+        CaseOrEq(ANIM_Buzzar_Grab)
+        CaseOrEq(ANIM_Buzzar_Lift)
             Loop(0)
                 Call(GetPartAnimNotify, ACTOR_SELF, PRT_MAIN, LVar0)
                 IfEq(LVar0, 1)
@@ -518,7 +518,7 @@ EvtScript N(EVS_Attack_ClawSwipeIntoFling) = {
             EndLoop
         EndCaseGroup
     EndSwitch
-    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Buzzar_Anim02)
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Buzzar_Fly)
     Call(FlyToGoal, ACTOR_SELF, 0, -15, EASING_COS_IN_OUT)
     Call(EnemyTestTarget, ACTOR_SELF, LVar0, 0, 0, 3, BS_FLAGS1_INCLUDE_POWER_UPS)
     Switch(LVar0)
@@ -537,9 +537,9 @@ EvtScript N(EVS_Attack_ClawSwipeIntoFling) = {
             Call(SetGoalToTarget, ACTOR_SELF)
             Call(AddGoalPos, ACTOR_SELF, -45, -20, 0)
             Call(SetActorSpeed, ACTOR_SELF, Float(6.0))
-            Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Buzzar_Anim18)
+            Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Buzzar_Dive)
             Call(FlyToGoal, ACTOR_SELF, 12, -12, EASING_LINEAR)
-            Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Buzzar_Anim01)
+            Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Buzzar_Idle)
             Wait(10)
             Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
             IfEq(LVarA, HIT_RESULT_LUCKY)
@@ -563,7 +563,7 @@ EvtScript N(EVS_Attack_ClawSwipeIntoFling) = {
     Call(SetGoalToTarget, ACTOR_SELF)
     Call(AddGoalPos, ACTOR_SELF, -5, -10, 0)
     Call(SetActorSpeed, ACTOR_SELF, Float(6.0))
-    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Buzzar_Anim18)
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Buzzar_Dive)
     Call(FlyToGoal, ACTOR_SELF, 8, 0, EASING_LINEAR)
     Wait(2)
     Call(EnemyDamageTarget, ACTOR_SELF, LVar0, 0, 0, 0, DMG_SWIPE, BS_FLAGS1_TRIGGER_EVENTS)
@@ -573,11 +573,11 @@ EvtScript N(EVS_Attack_ClawSwipeIntoFling) = {
         CaseOrEq(HIT_RESULT_NO_DAMAGE)
             Call(GetAnimation, ACTOR_SELF, PRT_MAIN, LVar0)
             Switch(LVar0)
-                CaseOrEq(ANIM_Buzzar_Anim01)
-                CaseOrEq(ANIM_Buzzar_Anim02)
-                CaseOrEq(ANIM_Buzzar_Anim0D)
-                CaseOrEq(ANIM_Buzzar_Anim16)
-                CaseOrEq(ANIM_Buzzar_Anim17)
+                CaseOrEq(ANIM_Buzzar_Idle)
+                CaseOrEq(ANIM_Buzzar_Fly)
+                CaseOrEq(ANIM_Buzzar_Angry)
+                CaseOrEq(ANIM_Buzzar_Grab)
+                CaseOrEq(ANIM_Buzzar_Lift)
                     Loop(0)
                         Call(GetPartAnimNotify, ACTOR_SELF, PRT_MAIN, LVar0)
                         IfEq(LVar0, 1)
@@ -592,7 +592,7 @@ EvtScript N(EVS_Attack_ClawSwipeIntoFling) = {
             Call(SetGoalToTarget, ACTOR_SELF)
             Call(AddGoalPos, ACTOR_SELF, 50, 10, 0)
             Call(SetActorSpeed, ACTOR_SELF, Float(6.0))
-            Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Buzzar_Anim02)
+            Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Buzzar_Fly)
             Call(FlyToGoal, ACTOR_SELF, 0, 0, EASING_LINEAR)
             Wait(10)
 

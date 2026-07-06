@@ -8,6 +8,8 @@
 
 #define NAMESPACE A(red_goomba)
 
+#include "common/CalculateArcsinDeg.inc.c"
+
 extern EvtScript N(EVS_Idle);
 extern EvtScript N(EVS_TakeTurn);
 extern EvtScript N(EVS_HandleEvent);

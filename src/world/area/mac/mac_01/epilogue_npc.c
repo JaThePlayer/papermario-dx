@@ -1,5 +1,23 @@
 #include "mac_01.h"
 
+#include "sprite/npc/Kolorado.h"
+#include "sprite/npc/Rowf.h"
+#include "sprite/npc/KoloradoWife.h"
+#include "sprite/npc/KoopaKoot.h"
+#include "sprite/npc/WorldBobomb.h"
+#include "sprite/npc/Koopa.h"
+#include "sprite/npc/Dryite.h"
+#include "world/common/npc/MusicianComposer/idle.inc.c"
+#include "world/common/npc/MusicianPoet/idle.inc.c"
+#include "world/common/npc/Chanterelle/idle.inc.c"
+#include "world/common/npc/Dryite/idle.inc.c"
+#include "world/common/npc/Kolorado/idle.inc.c"
+#include "world/common/npc/KoloradoWife/idle.inc.c"
+#include "world/common/npc/Bobomb/idle.inc.c"
+#include "world/common/npc/Koopa/idle.inc.c"
+#include "world/common/npc/KoopaKoot/idle.inc.c"
+#include "world/common/npc/Dummy/idle.inc.c"
+
 EvtScript N(EVS_NpcInteract_Kolorado_Epilogue) = {
     Call(SpeakToPlayer, NPC_SELF, ANIM_Kolorado_Talk, ANIM_Kolorado_Idle, 0, MSG_Outro_003C)
     Return

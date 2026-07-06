@@ -3783,7 +3783,7 @@ API_CALLABLE(HealActorNoPopupsOrEvents) {
     if (script->functionTemp[0] == 0) {
         actorID = evt_get_variable(script, *args++);
         if (actorID == ACTOR_SELF) {
-            actorID = script->owner1.enemyID;
+            actorID = script->owner1.actorID;
         }
         hpBoost = evt_get_variable(script, *args++);
         IsGroupHeal = evt_get_variable(script, *args++);
@@ -3801,7 +3801,7 @@ API_CALLABLE(HealActorNoPopupsOrEvents) {
         script->functionTemp[3] = 5;
         script->functionTemp[0] = 1;
     }
-    get_actor(script->owner1.enemyID);
+    get_actor(script->owner1.actorID);
     actor = script->functionTempPtr[1];
     hpBoost = script->functionTemp[2];
 

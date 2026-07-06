@@ -32,15 +32,15 @@ enum N(ActorParams) {
 };
 
 s32 N(DefaultAnims)[] = {
-    STATUS_KEY_NORMAL,    ANIM_Lakitu_Rokitu_Anim01,
-    STATUS_KEY_STONE,     ANIM_Lakitu_Rokitu_Anim00,
-    STATUS_KEY_SLEEP,     ANIM_Lakitu_Rokitu_Anim08,
-    STATUS_KEY_POISON,    ANIM_Lakitu_Rokitu_Anim01,
-    STATUS_KEY_STOP,      ANIM_Lakitu_Rokitu_Anim00,
-    STATUS_KEY_STATIC,    ANIM_Lakitu_Rokitu_Anim01,
-    STATUS_KEY_PARALYZE,  ANIM_Lakitu_Rokitu_Anim00,
-    STATUS_KEY_DIZZY,     ANIM_Lakitu_Rokitu_Anim09,
-    STATUS_KEY_UNUSED,      ANIM_Lakitu_Rokitu_Anim09,
+    STATUS_KEY_NORMAL,    ANIM_Lakitu_Rokitu_Idle,
+    STATUS_KEY_STONE,     ANIM_Lakitu_Rokitu_Still,
+    STATUS_KEY_SLEEP,     ANIM_Lakitu_Rokitu_Sleep,
+    STATUS_KEY_POISON,    ANIM_Lakitu_Rokitu_Idle,
+    STATUS_KEY_STOP,      ANIM_Lakitu_Rokitu_Still,
+    STATUS_KEY_STATIC,    ANIM_Lakitu_Rokitu_Idle,
+    STATUS_KEY_PARALYZE,  ANIM_Lakitu_Rokitu_Still,
+    STATUS_KEY_DIZZY,     ANIM_Lakitu_Rokitu_Dizzy,
+    STATUS_KEY_UNUSED,      ANIM_Lakitu_Rokitu_Dizzy,
     STATUS_END,
 };
 
@@ -164,11 +164,11 @@ EvtScript N(EVS_Idle) = {
 };
 
 EvtScript N(EVS_ReturnHome) = {
-    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Lakitu_Rokitu_Anim03)
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Lakitu_Rokitu_FlyFast)
     Call(SetGoalToHome, ACTOR_SELF)
     Call(SetActorSpeed, ACTOR_SELF, Float(7.0))
     Call(FlyToGoal, ACTOR_SELF, 0, 0, EASING_SIN_OUT)
-    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Lakitu_Rokitu_Anim01)
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Lakitu_Rokitu_Idle)
     Return
     End
 };
@@ -181,65 +181,65 @@ EvtScript N(EVS_HandleEvent) = {
         CaseOrEq(EVENT_HIT_COMBO)
         CaseOrEq(EVENT_HIT)
             SetConst(LVar0, PRT_MAIN)
-            SetConst(LVar1, ANIM_Lakitu_Rokitu_Anim04)
+            SetConst(LVar1, ANIM_Lakitu_Rokitu_Horror)
             ExecWait(EVS_Enemy_Hit)
         EndCaseGroup
         CaseEq(EVENT_BURN_HIT)
             SetConst(LVar0, PRT_MAIN)
-            SetConst(LVar1, ANIM_Lakitu_Rokitu_Anim05)
-            SetConst(LVar2, ANIM_Lakitu_Rokitu_Anim06)
+            SetConst(LVar1, ANIM_Lakitu_Rokitu_BurnHurt)
+            SetConst(LVar2, ANIM_Lakitu_Rokitu_BurnStill)
             ExecWait(EVS_Enemy_BurnHit)
         CaseEq(EVENT_BURN_DEATH)
             SetConst(LVar0, PRT_MAIN)
-            SetConst(LVar1, ANIM_Lakitu_Rokitu_Anim05)
-            SetConst(LVar2, ANIM_Lakitu_Rokitu_Anim06)
+            SetConst(LVar1, ANIM_Lakitu_Rokitu_BurnHurt)
+            SetConst(LVar2, ANIM_Lakitu_Rokitu_BurnStill)
             ExecWait(EVS_Enemy_BurnHit)
             SetConst(LVar0, PRT_MAIN)
-            SetConst(LVar1, ANIM_Lakitu_Rokitu_Anim06)
+            SetConst(LVar1, ANIM_Lakitu_Rokitu_BurnStill)
             ExecWait(EVS_Enemy_Death)
             Return
         CaseEq(EVENT_SPIN_SMASH_HIT)
             SetConst(LVar0, PRT_MAIN)
-            SetConst(LVar1, ANIM_Lakitu_Rokitu_Anim04)
+            SetConst(LVar1, ANIM_Lakitu_Rokitu_Horror)
             ExecWait(EVS_Enemy_SpinSmashHit)
         CaseEq(EVENT_SPIN_SMASH_DEATH)
             SetConst(LVar0, PRT_MAIN)
-            SetConst(LVar1, ANIM_Lakitu_Rokitu_Anim04)
+            SetConst(LVar1, ANIM_Lakitu_Rokitu_Horror)
             ExecWait(EVS_Enemy_SpinSmashHit)
             SetConst(LVar0, PRT_MAIN)
-            SetConst(LVar1, ANIM_Lakitu_Rokitu_Anim04)
+            SetConst(LVar1, ANIM_Lakitu_Rokitu_Horror)
             ExecWait(EVS_Enemy_Death)
             Return
         CaseEq(EVENT_SHOCK_HIT)
             SetConst(LVar0, PRT_MAIN)
-            SetConst(LVar1, ANIM_Lakitu_Rokitu_Anim04)
+            SetConst(LVar1, ANIM_Lakitu_Rokitu_Horror)
             ExecWait(EVS_Enemy_ShockHit)
             SetConst(LVar0, PRT_MAIN)
-            SetConst(LVar1, ANIM_Lakitu_Rokitu_Anim04)
+            SetConst(LVar1, ANIM_Lakitu_Rokitu_Horror)
             ExecWait(EVS_Enemy_Knockback)
             ExecWait(N(EVS_ReturnHome))
         CaseEq(EVENT_SHOCK_DEATH)
             SetConst(LVar0, PRT_MAIN)
-            SetConst(LVar1, ANIM_Lakitu_Rokitu_Anim04)
+            SetConst(LVar1, ANIM_Lakitu_Rokitu_Horror)
             ExecWait(EVS_Enemy_ShockHit)
             SetConst(LVar0, PRT_MAIN)
-            SetConst(LVar1, ANIM_Lakitu_Rokitu_Anim04)
+            SetConst(LVar1, ANIM_Lakitu_Rokitu_Horror)
             ExecWait(EVS_Enemy_Death)
             Return
         CaseOrEq(EVENT_ZERO_DAMAGE)
         CaseOrEq(EVENT_IMMUNE)
         CaseOrEq(EVENT_AIR_LIFT_FAILED)
             SetConst(LVar0, PRT_MAIN)
-            SetConst(LVar1, ANIM_Lakitu_Rokitu_Anim01)
+            SetConst(LVar1, ANIM_Lakitu_Rokitu_Idle)
             ExecWait(EVS_Enemy_NoDamageHit)
         EndCaseGroup
         CaseEq(EVENT_DEATH)
             SetConst(LVar0, PRT_MAIN)
-            SetConst(LVar1, ANIM_Lakitu_Rokitu_Anim04)
+            SetConst(LVar1, ANIM_Lakitu_Rokitu_Horror)
             ExecWait(EVS_Enemy_Hit)
             Wait(10)
             SetConst(LVar0, PRT_MAIN)
-            SetConst(LVar1, ANIM_Lakitu_Rokitu_Anim04)
+            SetConst(LVar1, ANIM_Lakitu_Rokitu_Horror)
             ExecWait(EVS_Enemy_Death)
             Return
         CaseEq(EVENT_BEGIN_FIRST_STRIKE)
@@ -250,21 +250,21 @@ EvtScript N(EVS_HandleEvent) = {
             Call(HPBarToHome, ACTOR_SELF)
         CaseEq(EVENT_RECOVER_STATUS)
             SetConst(LVar0, PRT_MAIN)
-            SetConst(LVar1, ANIM_Lakitu_Rokitu_Anim01)
+            SetConst(LVar1, ANIM_Lakitu_Rokitu_Idle)
             ExecWait(EVS_Enemy_Recover)
         CaseEq(EVENT_SCARE_AWAY)
             SetConst(LVar0, PRT_MAIN)
-            SetConst(LVar1, ANIM_Lakitu_Rokitu_Anim03)
-            SetConst(LVar2, ANIM_Lakitu_Rokitu_Anim04)
+            SetConst(LVar1, ANIM_Lakitu_Rokitu_FlyFast)
+            SetConst(LVar2, ANIM_Lakitu_Rokitu_Horror)
             ExecWait(EVS_Enemy_ScareAway)
             Return
         CaseEq(EVENT_BEGIN_AIR_LIFT)
             SetConst(LVar0, PRT_MAIN)
-            SetConst(LVar1, ANIM_Lakitu_Rokitu_Anim04)
+            SetConst(LVar1, ANIM_Lakitu_Rokitu_Horror)
             ExecWait(EVS_Enemy_AirLift)
         CaseEq(EVENT_BLOW_AWAY)
             SetConst(LVar0, PRT_MAIN)
-            SetConst(LVar1, ANIM_Lakitu_Rokitu_Anim04)
+            SetConst(LVar1, ANIM_Lakitu_Rokitu_Horror)
             ExecWait(EVS_Enemy_BlowAway)
             Return
         CaseDefault
@@ -283,15 +283,15 @@ EvtScript N(EVS_Attack_SpinyToss) = {
     Call(BattleCamTargetActor, ACTOR_SELF)
     Call(SetBattleCamTargetingModes, BTL_CAM_YADJ_TARGET, BTL_CAM_XADJ_AVG, false)
     Call(SetActorSpeed, ACTOR_SELF, Float(6.0))
-    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Lakitu_Rokitu_Anim03)
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Lakitu_Rokitu_FlyFast)
     Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
     Call(SetGoalPos, ACTOR_SELF, -20, LVar1, LVar2)
     Call(RunToGoal, ACTOR_SELF, 0, false)
-    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Lakitu_Rokitu_Anim01)
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Lakitu_Rokitu_Idle)
     Call(SetAnimation, ACTOR_SELF, PRT_SPINY_BALL, ANIM_Lakitu_Cleft_AnimCleft)
-    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Lakitu_Rokitu_Anim12)
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Lakitu_Rokitu_FindSpiny)
     Wait(20)
-    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Lakitu_Rokitu_Anim13)
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Lakitu_Rokitu_LiftSpiny)
     Call(GetStatusFlags, ACTOR_SELF, LVarA)
     IfFlag(LVarA, STATUS_FLAG_SHRINK)
         Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
@@ -319,11 +319,11 @@ EvtScript N(EVS_Attack_SpinyToss) = {
     Call(SetPartFlagBits, ACTOR_SELF, PRT_SPINY_BALL, ACTOR_PART_FLAG_INVISIBLE, false)
     Wait(10)
     Thread
-        Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Lakitu_Rokitu_Anim15)
+        Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Lakitu_Rokitu_ThrowSpiny)
         Wait(20)
-        Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Lakitu_Rokitu_Anim01)
+        Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Lakitu_Rokitu_Idle)
     EndThread
-    Call(SetAnimation, ACTOR_SELF, PRT_SPINY_BALL, ANIM_Lakitu_Cleft_AnimCleft) //ANIM_Lakitu_Rokitu_Anim0C)
+    Call(SetAnimation, ACTOR_SELF, PRT_SPINY_BALL, ANIM_Lakitu_Cleft_AnimCleft)
     Call(PlaySoundAtPart, ACTOR_SELF, PRT_SPINY_BALL, SOUND_LAKITU_THROW_SPINY)
     Call(SetPartSounds, ACTOR_SELF, PRT_SPINY_BALL, ACTOR_SOUND_JUMP, SOUND_NONE, SOUND_NONE)
     Call(EnemyTestTarget, ACTOR_SELF, LVar0, 0, 0, 1, BS_FLAGS1_INCLUDE_POWER_UPS)
@@ -419,9 +419,9 @@ EvtScript N(EVS_Move_SummonSpiny) = {
     Call(OverrideActorLevel, LVarB, 1)
 
     Call(SetAnimation, ACTOR_SELF, PRT_SPINY_BALL, ANIM_Lakitu_Cleft_AnimCleft)
-    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Lakitu_Rokitu_Anim12)
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Lakitu_Rokitu_FindSpiny)
     Wait(20)
-    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Lakitu_Rokitu_Anim13)
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Lakitu_Rokitu_LiftSpiny)
     Call(GetStatusFlags, ACTOR_SELF, LVar0)
     IfFlag(LVar0, STATUS_FLAG_SHRINK)
         Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
@@ -451,14 +451,14 @@ EvtScript N(EVS_Move_SummonSpiny) = {
     Call(SetPartFlagBits, ACTOR_SELF, PRT_SPINY_BALL, ACTOR_PART_FLAG_INVISIBLE, false)
     Wait(10)
     Thread
-        Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Lakitu_Rokitu_Anim15)
+        Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Lakitu_Rokitu_ThrowSpiny)
         Wait(20)
-        Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Lakitu_Rokitu_Anim01)
+        Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Lakitu_Rokitu_Idle)
     EndThread
     Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
     Call(PlaySoundAtPart, ACTOR_SELF, PRT_SPINY_BALL, SOUND_LAKITU_THROW_SPINY)
     Call(SetPartSounds, ACTOR_SELF, PRT_SPINY_BALL, ACTOR_SOUND_JUMP, SOUND_NONE, SOUND_NONE)
-    Call(SetAnimation, ACTOR_SELF, PRT_SPINY_BALL, ANIM_Lakitu_Cleft_AnimCleft)//ANIM_Lakitu_Rokitu_Anim0C)
+    Call(SetAnimation, ACTOR_SELF, PRT_SPINY_BALL, ANIM_Lakitu_Cleft_AnimCleft)
     Call(SetPartJumpGravity, ACTOR_SELF, PRT_SPINY_BALL, Float(1.6))
     Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
     Sub(LVar0, 40)
@@ -501,9 +501,9 @@ EvtScript N(EVS_Move_SummonSpiny) = {
     Call(SetActorPos, LVarB, LVar0, LVar1, LVar2)
     Call(SetPartFlagBits, ACTOR_SELF, PRT_SPINY_BALL, ACTOR_PART_FLAG_INVISIBLE, true)
     Call(SetPartFlagBits, ACTOR_SELF, PRT_SPINY, ACTOR_PART_FLAG_INVISIBLE, true)
-    Call(SetAnimation, LVarB, 1, ANIM_Cleft_Anim02)
+    Call(SetAnimation, LVarB, 1, ANIM_Cleft_Idle)
     Wait(20)
-    Call(SetAnimation, LVarB, 1, ANIM_Cleft_Anim06)
+    Call(SetAnimation, LVarB, 1, ANIM_Cleft_Walk)
     Call(SetGoalToIndex, LVarB, LVarA)
     Call(GetGoalPos, LVarB, LVar0, LVar1, LVar2)
     Call(GetActorPos, LVarB, LVar3, LVar4, LVar5)
@@ -514,7 +514,7 @@ EvtScript N(EVS_Move_SummonSpiny) = {
     EndIf
     Call(SetActorSpeed, LVarB, Float(4.0))
     Call(RunToGoal, LVarB, 0, false)
-    Call(SetAnimation, LVarB, 1, ANIM_Cleft_Anim02)
+    Call(SetAnimation, LVarB, 1, ANIM_Cleft_Idle)
     Call(SetActorYaw, LVarB, 0)
     Call(GetActorPos, LVarB, LVar0, LVar1, LVar2)
     Call(ForceHomePos, LVarB, LVar0, LVar1, LVar2)

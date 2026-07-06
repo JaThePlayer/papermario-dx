@@ -256,7 +256,7 @@ MenuWindowBP gPauseTattleLogWindowBPs[] = {
         .extraFlags = 0,
         .style = { .customStyle = &gPauseWS_19 }*/
         .windowID = WIN_PAUSE_MAP,
-        .unk_01 = 0,
+        //.unk_01 = 0,
         .pos = { .x = 3, .y = 16 },
         .width = 289,
         .height = 154,

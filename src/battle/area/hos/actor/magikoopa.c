@@ -696,9 +696,9 @@ EvtScript N(EVS_Attack_MagicBlast_One) = {
     Call(PlaySoundAtActor, ACTOR_SELF, SOUND_SPELL_CAST2)
 
     IfEq(hasClone, true)
-        Call(SetAnimation, cloneId, 1, ANIM_FlyingMagikoopa_Anim03)
+        Call(SetAnimation, cloneId, 1, ANIM_FlyingMagikoopa_CastSpell)
     EndIf
-    Call(SetAnimation, ACTOR_SELF, PRT_FLYING, ANIM_FlyingMagikoopa_Anim03)
+    Call(SetAnimation, ACTOR_SELF, PRT_FLYING, ANIM_FlyingMagikoopa_CastSpell)
 
     Wait(5)
 
@@ -754,13 +754,13 @@ EvtScript N(EVS_Attack_MagicBlast) = {
 
     // gather magic effect
     IfEq(hasClone, true)
-        Call(SetAnimation, cloneId, 1, ANIM_FlyingMagikoopa_Anim02)
+        Call(SetAnimation, cloneId, 1, ANIM_Magikoopa_Shout)
         Call(GetActorPos, cloneId, LVar0, LVar1, LVar2)
         Sub(LVar0, 30)
         Add(LVar1, 36)
         PlayEffect(EFFECT_GATHER_MAGIC, 0, LVar0, LVar1, LVar2, Float(0.5), 30, 0)
     EndIf
-    Call(SetAnimation, ACTOR_SELF, PRT_FLYING, ANIM_FlyingMagikoopa_Anim02)
+    Call(SetAnimation, ACTOR_SELF, PRT_FLYING, ANIM_Magikoopa_Shout)
     Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
     Call(GetStatusFlags, ACTOR_SELF, LVar3)
     IfFlag(LVar3, STATUS_FLAG_SHRINK)
@@ -784,12 +784,12 @@ EvtScript N(EVS_Attack_MagicBlast) = {
             Call(PlaySoundAtActor, ACTOR_SELF, SOUND_SPELL_CAST2)
             IfEq(isFlying, false)
                 IfEq(hasClone, true)
-                    Call(SetAnimation, cloneId, 1, ANIM_Magikoopa_Anim03)
+                    Call(SetAnimation, cloneId, 1, ANIM_Magikoopa_CastSpell)
                 EndIf
                 Call(SetAnimation, ACTOR_SELF, PRT_GROUND, ANIM_Magikoopa_CastSpell)
             Else
                 IfEq(hasClone, true)
-                    Call(SetAnimation, cloneId, 1, ANIM_FlyingMagikoopa_Anim03)
+                    Call(SetAnimation, cloneId, 1, ANIM_FlyingMagikoopa_CastSpell)
                 EndIf
                 Call(SetAnimation, ACTOR_SELF, PRT_FLYING, ANIM_FlyingMagikoopa_CastSpell)
             EndIf

@@ -30,25 +30,25 @@
         <Raster id="0" palette="0" src="Neutral.png"/>
         <Raster id="1" palette="0" src="Step1.png"/>
         <Raster id="2" palette="0" src="Step2.png"/>
-        <Raster id="3" palette="0" src="Raster03.png"/>
-        <Raster id="4" palette="0" src="Raster04.png"/>
-        <Raster id="5" palette="0" src="Raster05.png"/>
+        <Raster id="3" palette="0" src="Hop1.png"/>
+        <Raster id="4" palette="0" src="Hop2.png"/>
+        <Raster id="5" palette="0" src="Hurt3.png"/>
         <Raster id="6" palette="0" src="Hurt1.png"/>
         <Raster id="7" palette="0" src="Hurt2.png"/>
         <Raster id="8" palette="0" src="Stunned1.png"/>
         <Raster id="9" palette="0" src="Stunned2.png"/>
         <Raster id="A" palette="0" src="Stunned3.png"/>
         <Raster id="B" palette="0" src="Stunned4.png"/>
-        <Raster id="C" palette="0" src="Raster0C.png"/>
+        <Raster id="C" palette="0" src="OpenMouth.png"/>
         <Raster id="D" palette="0" src="Bite1.png"/>
         <Raster id="E" palette="0" src="Bite2.png"/>
-        <Raster id="F" palette="0" src="Raster0F.png"/>
-        <Raster id="10" palette="0" src="Raster10.png"/>
-        <Raster id="11" palette="0" src="Raster11.png"/>
-        <Raster id="12" palette="14" src="Raster12.png"/>
-        <Raster id="13" palette="14" src="Raster13.png"/>
-        <Raster id="14" palette="14" src="Raster14.png"/>
-        <Raster id="15" palette="14" src="Raster15.png"/>
+        <Raster id="F" palette="0" src="Pause1.png"/>
+        <Raster id="10" palette="0" src="Pause2.png"/>
+        <Raster id="11" palette="0" src="Sleep.png"/>
+        <Raster id="12" palette="10" src="BurnHurt1.png"/>
+        <Raster id="13" palette="10" src="BurnHurt2.png"/>
+        <Raster id="14" palette="10" src="BurnHurt3.png"/>
+        <Raster id="15" palette="10" src="BurnHurt4.png"/>
         <Raster id="16" palette="0" src="Cry1.png"/>
         <Raster id="17" palette="0" src="Cry2.png"/>
     </RasterList>
@@ -177,7 +177,7 @@
                 <Goto dest="Pos_10"/>
             </Component>
         </Animation>
-        <Animation name="Anim06">
+        <Animation name="Ambush">
             <Component name="Comp_0" xyz="0,-13,0">
                 <Label name="Start"/>
                 <SetScale mode="y" percent="50"/>
@@ -287,7 +287,7 @@
                 <Goto dest="Pos_14"/>
             </Component>
         </Animation>
-        <Animation name="Anim09">
+        <Animation name="Confused">
             <Component name="Comp_0" xyz="0,-1,0">
                 <Label name="Start"/>
                 <SetRaster index="8"/>
@@ -301,7 +301,7 @@
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim0A">
+        <Animation name="HurtLoop">
             <Component name="Comp_0" xyz="0,-1,0">
                 <Label name="Start"/>
                 <SetPos flag="0" xyz="0,4,0"/>
@@ -338,7 +338,7 @@
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim0B">
+        <Animation name="Talk">
             <Component name="Comp_0" xyz="0,-1,0">
                 <Label name="Start"/>
                 <SetRaster index="0"/>
@@ -349,26 +349,26 @@
                 <SetPos flag="0" xyz="0,-2,0"/>
                 <SetRaster index="4"/>
                 <Wait duration="8"/>
-                <Loop count="0" pos="3"/>
+                <Loop count="3" dest="Start"/>
                 <SetRaster index="0"/>
                 <Wait duration="10"/>
+                <Label name="Pos_18"/>
                 <SetRaster index="0"/>
                 <Wait duration="6"/>
                 <SetRaster index="F"/>
                 <Wait duration="6"/>
                 <SetRaster index="10"/>
                 <Wait duration="6"/>
-                <Loop count="18" pos="4"/>
+                <Loop count="4" dest="Pos_18"/>
                 <SetRaster index="0"/>
                 <Wait duration="10"/>
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim0C">
+        <Animation name="Shout">
             <Component name="Comp_0" xyz="0,-1,0">
                 <Label name="Start"/>
                 <SetRaster index="0"/>
-                <Label name="Pos_1"/>
                 <Wait duration="48"/>
                 <SetPos flag="0" xyz="0,0,0"/>
                 <SetScale mode="y" percent="70"/>
@@ -388,6 +388,7 @@
                 <SetPos flag="0" xyz="0,14,0"/>
                 <SetRaster index="4"/>
                 <Wait duration="2"/>
+                <Label name="Pos_34"/>
                 <SetPos flag="0" xyz="0,16,0"/>
                 <SetRaster index="0"/>
                 <Wait duration="6"/>
@@ -409,7 +410,7 @@
                 <SetPos flag="0" xyz="0,16,0"/>
                 <SetRaster index="D"/>
                 <Wait duration="6"/>
-                <Loop count="34" dest="Pos_1"/>
+                <Loop count="1" dest="Pos_34"/>
                 <SetPos flag="0" xyz="0,14,0"/>
                 <SetRaster index="C"/>
                 <Wait duration="2"/>
@@ -428,18 +429,16 @@
                 <Goto dest="Start"/>
             </Component>
         </Animation>
-        <Animation name="Anim0D">
+        <Animation name="Divide">
             <Component name="Comp_0" xyz="0,-1,0">
                 <Label name="Start"/>
                 <SetRaster index="0"/>
                 <Wait duration="4"/>
                 <SetRaster index="1"/>
-                <Label name="Pos_3"/>
                 <Wait duration="4"/>
-                <Label name="Pos_4"/>
                 <SetRaster index="2"/>
                 <Wait duration="4"/>
-                <Loop count="0" dest="Pos_4"/>
+                <Loop count="4" dest="Start"/>
                 <SetScale mode="y" percent="70"/>
                 <SetRaster index="C"/>
                 <Wait duration="6"/>
@@ -500,6 +499,7 @@
                 <SetRaster index="A"/>
                 <Wait duration="2"/>
                 <SetPos flag="0" xyz="2,1,0"/>
+                <Label name="Pos_137"/>
                 <SetRot xyz="0,0,10"/>
                 <SetRaster index="B"/>
                 <Wait duration="2"/>
@@ -547,7 +547,7 @@
                 <SetRot xyz="0,0,40"/>
                 <SetRaster index="A"/>
                 <Wait duration="2"/>
-                <Loop count="137" dest="Pos_3"/>
+                <Loop count="3" dest="Pos_137"/>
                 <SetNotify value="1"/>
                 <SetScale mode="x" percent="90"/>
                 <SetScale mode="y" percent="120"/>

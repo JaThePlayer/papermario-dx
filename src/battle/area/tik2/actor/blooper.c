@@ -231,7 +231,7 @@ EvtScript N(EVS_Init) = {
     Call(BindTakeTurn, ACTOR_SELF, Ref(N(EVS_TakeTurn)))
     Call(BindIdle, ACTOR_SELF, Ref(N(EVS_Idle)))
     Call(BindHandleEvent, ACTOR_SELF, Ref(N(EVS_HandleEvent)))
-    Call(BindHandlePhase, ACTOR_SELF, N(EVS_HandlePhase))
+    Call(BindHandlePhase, ACTOR_SELF, Ref(N(EVS_HandlePhase)))
     SET_ACTOR_VAR(AVAR_TurnCount, 0)
     SET_ACTOR_VAR(AVAR_PhaseTwo, false)
     Return
@@ -534,7 +534,7 @@ EvtScript N(EVS_Attack_SpinDrop) = {
                     EndLoop
                     Call(SetActorYaw, ACTOR_SELF, 0)
                 EndThread
-                Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Blooper_Anim0D)
+                Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Blooper_Fall)
                 Call(GetActorPos, ACTOR_PLAYER, LVar0, LVar1, LVar2)
                 Call(SetActorJumpGravity, ACTOR_SELF, Float(1.5))
                 Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
@@ -565,7 +565,7 @@ EvtScript N(EVS_Attack_SpinDrop) = {
             EndLoop
             Call(SetActorYaw, ACTOR_SELF, 0)
         EndThread
-        Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Blooper_Anim0D)
+        Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Blooper_Fall)
         Call(SetActorJumpGravity, ACTOR_SELF, Float(1.5))
         Call(GetActorPos, ACTOR_PLAYER, LVar0, LVar1, LVar2)
         Add(LVar1, 30)
@@ -579,9 +579,9 @@ EvtScript N(EVS_Attack_SpinDrop) = {
         EndIf
         Call(GetStatusFlags, ACTOR_PLAYER, LVar0)
         IfFlag(LVar0, STATUS_FLAG_STONE)
-            Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Blooper_Anim04)
+            Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Blooper_Hurt)
         Else
-            Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Blooper_Anim00)
+            Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Blooper_Idle)
         EndIf
         Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
         Add(LVar0, 30)
@@ -744,7 +744,7 @@ EvtScript N(ZoomInOnBlooper) = {
     Call(SetBattleCamOffsetY, 30) // was 65
     Call(SetBattleCamDist, 240)
     Call(MoveBattleCamOver, 15)
-    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Blooper_Anim09)
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Blooper_Strain)
     Wait(15)
     Call(N(StartRumbleWithParams), 100, 20)
     Thread
@@ -755,7 +755,7 @@ EvtScript N(ZoomInOnBlooper) = {
     Call(SetBattleCamOffsetY, 40) // was 80
     Call(SetBattleCamDist, 150)
     Call(MoveBattleCamOver, 15)
-    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Blooper_Anim0A)
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Blooper_StrainMore)
     Wait(15)
     Call(N(StartRumbleWithParams), 150, 20)
     Thread
@@ -766,7 +766,7 @@ EvtScript N(ZoomInOnBlooper) = {
     Call(SetBattleCamOffsetY, 45) // was 95
     Call(SetBattleCamDist, 60)
     Call(MoveBattleCamOver, 15)
-    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Blooper_Anim0B)
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Blooper_StrainMax)
     Wait(30)
     Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
     Call(MoveBattleCamOver, 20)
@@ -776,7 +776,7 @@ EvtScript N(ZoomInOnBlooper) = {
 };
 
 EvtScript N(EVS_Move_MakeBabies) = {
-    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Blooper_Anim03)
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Blooper_Squirt)
     Wait(10)
     Call(ActorExists, ACTOR_ENEMY1, LVar1)
     IfFalse(LVar1)
@@ -789,7 +789,7 @@ EvtScript N(EVS_Move_MakeBabies) = {
         Call(SummonEnemy, Ref(N(BabyFormation2)), false)
     EndIf
     Wait(2)
-    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Blooper_Anim0C)
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Blooper_Jump)
     Call(N(FadeBackgroundLighten))
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_RESTART)
     Call(UseIdleAnimation, ACTOR_SELF, true)

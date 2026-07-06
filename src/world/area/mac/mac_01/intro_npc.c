@@ -1,5 +1,8 @@
 #include "mac_01.h"
 
+#include "world/common/npc/Toad/idle.inc.c"
+#include "world/common/npc/Luigi/idle.inc.c"
+
 NpcData N(NpcData_IntroNPCs)[] = {
     {
         .id = NPC_Luigi,

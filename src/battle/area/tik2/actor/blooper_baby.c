@@ -419,11 +419,11 @@ EvtScript N(EVS_TakeTurn) = {
         Call(BattleCamTargetActor, ACTOR_SELF)
 
         Call(GetActorPos, ACTOR_SELF, LVar1, LVar2, LVar3)
-        Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_BabyBlooper_Anim08)
+        Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_BabyBlooper_Leech)
         Add(LVar2, 50)
         PlayEffect(EFFECT_SPARKLES, 1, LVar1, LVar2, LVar3, 10, 0)
         Wait(30)
-        Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_BabyBlooper_Anim01)
+        Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_BabyBlooper_Idle)
         Wait(10)
 
         Call(UseBattleCamPreset, BTL_CAM_ACTOR_GOAL_SIMPLE)
@@ -507,7 +507,7 @@ EvtScript N(EVS_Attack) = {
     Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
     Call(JumpToGoal, ACTOR_SELF, 16, false, true, false)
     Call(SetGoalToTarget, ACTOR_SELF)
-    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_BabyBlooper_Anim08)
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_BabyBlooper_Leech)
     Call(EnemyDamageTarget, ACTOR_SELF, LVar0, 0, 0, 0, LVarD, BS_FLAGS1_TRIGGER_EVENTS)
 
     Call(UseIdleAnimation, ACTOR_PLAYER, true)

@@ -466,11 +466,11 @@ EvtScript N(EVS_TakeTurn) = {
         Call(PlaySoundAtActor, ACTOR_SELF, SOUND_BURROW_SURFACE)
     EndChildThread
 
-    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_MontyMole_Anim04)
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_MontyMole_ThrowAttack)
     Wait(37 - 16)
     Set(LVar9, PRT_ROCK)
     Exec(N(ThrowRock))
-    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_MontyMole_Anim01)
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_MontyMole_Idle)
     Wait(2)
 
     // Check for team-attack
@@ -482,7 +482,7 @@ EvtScript N(EVS_TakeTurn) = {
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_MontyMole_AnimSecondThrow)
     Wait(7)
     Set(LVar9, PRT_ROCK_2)
-    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_MontyMole_Anim01)
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_MontyMole_Idle)
     ExecWait(N(ThrowRock))
 
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)

@@ -91,9 +91,9 @@ NpcSettings N(PINBooNpcSettings) = {
     .defaultAnim = ANIM_Boo_Idle,
     .height = 35,
     .radius = 28,
-    .otherAI = &N(EVS_PINBoo_OtherAI),
+    .onCreate = &N(EVS_PINBoo_OtherAI),
     .onInteract = &N(EVS_PINBoo_Interact),
-    .aux = &N(EVS_PINBoo_Empty),
+    .doAux = &N(EVS_PINBoo_Empty),
     .flags = ENEMY_FLAG_PASSIVE | ENEMY_FLAG_IGNORE_WORLD_COLLISION | ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING,
     .level = ACTOR_LEVEL_NONE,
 };

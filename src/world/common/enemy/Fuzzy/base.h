@@ -37,8 +37,8 @@
     .walk   = ANIM_Fuzzy_Flower_Walk, \
     .run    = ANIM_Fuzzy_Flower_Run, \
     .chase  = ANIM_Fuzzy_Flower_Run, \
-    .anim_4 = ANIM_Fuzzy_Flower_Idle, \
-    .anim_5 = ANIM_Fuzzy_Flower_Idle, \
+    .alert = ANIM_Fuzzy_Flower_Idle, \
+    .unused = ANIM_Fuzzy_Flower_Idle, \
     .death  = ANIM_Fuzzy_Flower_Hurt, \
     .hit    = ANIM_Fuzzy_Flower_Hurt, \
     .anim_8 = ANIM_Fuzzy_Flower_Run, \
