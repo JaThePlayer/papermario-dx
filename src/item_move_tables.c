@@ -5,13 +5,9 @@
 #define MSG_ItemFullDesc_AutoJump 0
 #define MSG_ItemFullDesc_AutoMultibounce 0
 #define MSG_ItemFullDesc_AutoSmash 0
-#define MSG_ItemFullDesc_Berserker 0
-#define MSG_ItemFullDesc_CrazyHeart 0
 #define MSG_ItemFullDesc_EarthquakeJump 0
-#define MSG_ItemFullDesc_FlowerFanatic 0
 #define MSG_ItemFullDesc_ForestPass 0
 #define MSG_ItemFullDesc_HealthyHealthy 0
-#define MSG_ItemFullDesc_HustleDrink 0
 #define MSG_ItemFullDesc_InsecticideHerb 0
 #define MSG_ItemFullDesc_JumpCharge0 0
 #define MSG_ItemFullDesc_Kaiden 0
@@ -45,13 +41,9 @@
 #define MSG_ItemName_AutoJump 0
 #define MSG_ItemName_AutoMultibounce 0
 #define MSG_ItemName_AutoSmash 0
-#define MSG_ItemName_Berserker 0
-#define MSG_ItemName_CrazyHeart 0
 #define MSG_ItemName_EarthquakeJump 0
-#define MSG_ItemName_FlowerFanatic 0
 #define MSG_ItemName_ForestPass 0
 #define MSG_ItemName_HealthyHealthy 0
-#define MSG_ItemName_HustleDrink 0
 #define MSG_ItemName_InsecticideHerb 0
 #define MSG_ItemName_JumpCharge0 0
 #define MSG_ItemName_Kaiden 0

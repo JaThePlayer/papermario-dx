@@ -3048,7 +3048,12 @@
 	[Pause 5]You've never seen anything like[BR]
 	it before, have you? [BR]
 	[Wait][Next]
-	Your attacks are useless now!![Wait][End]
+	Your attacks are useless now!![BR]
+	[Wait][Next]
+	Have fun dealing with my backup,[BR]
+	loser![BR]
+	I'll just sit back and relax.[BR]
+	[Wait][End]
 }
 
 #message:0C:(CH1_012A) {
@@ -3056,6 +3061,9 @@
 	Yeeowch!![BR]
 	[Pause 5]Who knew that Mario had such[BR]
 	battle skills?[BR]
+	[Wait][Next]
+	[Pause 5]And that my backup troops[BR]
+	were such losers?![BR]
 	[Wait][Next]
 	[Yield]Grrr...it's not over yet, though![BR]
 	[Pause 10][PrintRising]Yaaaaaaaahhh!!!!![Wait][End]

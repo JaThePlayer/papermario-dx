@@ -1,4 +1,5 @@
 #include "../area.h"
+#include "script_api/battle.h"
 #include "sprite/npc/JrTroopa.h"
 
 #define NAMESPACE A(egg_jr_troopa)
@@ -379,26 +380,6 @@ EvtScript N(EVS_SetupHitReaction) = {
 };
 
 EvtScript N(EVS_TryHitReaction) = {
-    /*
-    Call(GetActorVar, ACTOR_SELF, AVAR_HitReact_State, LVar0)
-    IfEq(LVar0, AVAL_HitReact_Ready)
-        Call(GetStatusFlags, ACTOR_SELF, LVar0)
-        IfNotFlag(LVar0, STATUS_FLAGS_DOJO)
-            Call(SetActorVar, ACTOR_SELF, AVAR_HitReact_State, AVAL_HitReact_Done)
-            ExecWait(N(EVS_Cam_FocusOnJrTroopa))
-            Call(MoveBattleCamOver, 30)
-            Wait(30)
-            Call(ActorSpeak, MSG_CH1_012A, ACTOR_SELF, PRT_MAIN, ANIM_JrTroopa_Dizzy, ANIM_JrTroopa_Dizzy)
-            Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_JrTroopa_PointTalk)
-            Call(EndActorSpeech, ACTOR_SELF, PRT_MAIN, -1, -1)
-            ExecWait(N(EVS_ReenterEgg))
-            ExecWait(N(EVS_Cam_ResetFocus))
-        Else
-            Call(SetActorVar, ACTOR_SELF, AVAR_HitReact_State, AVAL_HitReact_None)
-        EndIf
-    EndIf
-    Call(FreezeBattleCam, false)
-    */
     Return
     End
 };
@@ -597,7 +578,13 @@ EvtScript N(EVS_HandlePhase) = {
     End
 };
 
+EvtScript N(notify_final_wave_empty) = {
+    Return
+    End
+};
+
 EvtScript N(notify_final_wave) = {
+    Call(BindTakeTurn, ACTOR_SELF, Ref(N(notify_final_wave_empty)))
     Call(SetActorVar, ACTOR_ENEMY2, AVAR_JrTroopaPhase, 1)
     Call(SetActorFlagBits, ACTOR_ENEMY2, ACTOR_FLAG_NO_DMG_APPLY, false)
     Call(SetPartFlagBits, ACTOR_ENEMY2, PRT_MAIN, ACTOR_PART_FLAG_NO_TARGET, false)
