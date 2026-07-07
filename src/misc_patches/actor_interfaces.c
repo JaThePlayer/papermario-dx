@@ -6,21 +6,21 @@ API_CALLABLE(_ExecWaitInterface) {
     Bytecode* args = script->ptrReadPos;
     s32 actorID = evt_get_variable(script, *args++);
     if (actorID == ACTOR_SELF) actorID = script->owner1.actorID;
-    const char* scriptName = (const char*)evt_get_variable(script, *args++);
+    const char* interfaceImplName = (const char*)evt_get_variable(script, *args++);
     s32 offset = evt_get_variable(script, *args++);
 
     Actor* actor = get_actor(actorID);
     if (actor == nullptr) {
-        PANIC_MSG("ExecWaitOnActor: no such actor %ld\n", actorID);
+        PANIC_MSG("ExecWaitInterface: no such actor %ld\n", actorID);
         return ApiStatus_DONE2;
     }
     if (actor->overlay == nullptr) {
-        PANIC_MSG("ExecWaitOnActor: actor %ld has no overlay\n", actorID);
+        PANIC_MSG("ExecWaitInterface: actor %ld has no overlay\n", actorID);
         return ApiStatus_DONE2;
     }
-    u8* data = (u8*)ovl_import(actor->overlay, scriptName);
+    u8* data = (u8*)ovl_import(actor->overlay, interfaceImplName);
     if (data == nullptr) {
-        PANIC_MSG("ExecWaitOnActor: overlay does not export '%s'\n", scriptName);
+        PANIC_MSG("ExecWaitInterface: overlay does not export '%s'\n", interfaceImplName);
         return ApiStatus_DONE2;
     }
     EvtScript* scriptSource = *(EvtScript**)&data[offset];
