@@ -2147,6 +2147,12 @@ API_CALLABLE(SetItemAlpha);
 /// @evtout LVar0 numCoins
 API_CALLABLE(AddCoin);
 
+/// Same as AddCoin, but shows the coin counter, and awaits for it to finish counting up your coins.
+/// @evtapi
+/// @param deltaCoins
+/// @evtout LVar0 numCoins
+API_CALLABLE(AddCoinAwaitTally);
+
 /// @evtapi
 /// @param deltaStarPoints
 /// @evtout LVar0 numStarPoints

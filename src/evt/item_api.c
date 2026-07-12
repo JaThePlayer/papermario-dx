@@ -1,7 +1,11 @@
 #include "common.h"
+#include "evt.h"
+#include "functions.h"
 #include "inventory.h"
 #include "pause/pause_common.h"
 #include "hud_element.h"
+#include "script_api/common.h"
+#include "variables.h"
 #include "world/partners.h"
 
 extern PopupMenu gItemChoicePopupMenu;
@@ -410,6 +414,22 @@ API_CALLABLE(SetItemAlpha) {
 
 API_CALLABLE(AddCoin) {
     script->varTable[0] = add_coins(evt_get_variable(script, *script->ptrReadPos));
+    return ApiStatus_DONE2;
+}
+
+API_CALLABLE(AddCoinAwaitTally) {
+    StatusBar* statusBar = &gStatusBar;
+
+    if (isInitialCall) {
+        show_coin_counter();
+        script->varTable[0] = add_coins(evt_get_variable(script, *script->ptrReadPos));
+    }
+
+    if (statusBar->displayCoins < gPlayerData.coins) {
+        return ApiStatus_BLOCK;
+    }
+
+    hide_coin_counter();
     return ApiStatus_DONE2;
 }
 

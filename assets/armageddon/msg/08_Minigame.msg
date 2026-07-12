@@ -862,7 +862,14 @@
 #message:08:(BooTrial_Intoduction_SwappingFormation) {
 	[Style right]
 	Well done! However, there's[BR]
-	still more fights to go![BR]
+	still [Var 0] fights to go![BR]
+	[Wait][End]
+}
+
+#message:08:(BooTrial_Intoduction_SwappingFormation_Final) {
+	[Style right]
+	Well done! However, there's[BR]
+	still one fight to go![BR]
 	[Wait][End]
 }
 
@@ -880,6 +887,14 @@
 	[Style right]
 	Congratulations! That was some[BR]
 	wonderful fighting.[BR]
+	[Wait][End]
+}
+
+#message:08:(BooTrial_Intoduction_TrialCoins) {
+	[Style right]
+	After taking my cut,[BR]
+	you've gained [Var 0] coins[BR]
+	from this trial.[BR]
 	[Wait][End]
 }
 

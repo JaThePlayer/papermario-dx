@@ -36,7 +36,7 @@ EvtScript N(EVS_NpcInteract_Merluvlee_Passthrough) = {
     End
 };
 
-// Star Pieces: =vanilla-5+16+12-25
+// Star Pieces: =vanilla-5+8+12-25
 // Obtainable: =vanilla + 1(Boo Trial)
 ShopItemData N(MerlowBadgeInventory)[MERLOW_BADGE_COUNT] = {
     { .itemID = ITEM_ATTACK_FX_A,    .price =  1 },
@@ -47,7 +47,7 @@ ShopItemData N(MerlowBadgeInventory)[MERLOW_BADGE_COUNT] = {
 
     { .itemID = ITEM_HAPPY_HEART_A,  .price =  8 },
     { .itemID = ITEM_HAPPY_FLOWER_A, .price =  8 },
-    { .itemID = ITEM_MUSH_POWER,     .price =  8 }, // new 8 -> +8
+    //{ .itemID = ITEM_MUSH_POWER,     .price =  8 }, // new 8 -> +8
     { .itemID = ITEM_ZAP_TAP,        .price = 10 },
     { .itemID = ITEM_HEART_FINDER,   .price = 12 },
     { .itemID = ITEM_FLOWER_FINDER,  .price = 12 },

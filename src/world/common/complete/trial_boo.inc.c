@@ -1,7 +1,10 @@
 #include "common.h"
+#include "macros.h"
 #include "message_ids.h"
 #include "effects.h"
 #include "model.h"
+#include "script_api/common.h"
+#include "script_api/macros.h"
 #include "sprite/npc/Boo.h"
 #include "sprite/player.h"
 #include "hud_element.h"
@@ -26,10 +29,17 @@ typedef struct Trial {
     u8 rewardStarPieces;
     u8 rewardSp;
     s16* formations;
+    s16 formationAmt;
 } Trial;
+
+s32 coinsGainedThisTrial = 0;
 
 extern void* gCurrentTrial;
 extern s32 gCurrentTrialFormationId;
+
+#define TRIAL_FORMATION(name) \
+        .formations = name, \
+        .formationAmt = ARRAY_COUNT(name) - 1
 
 s16 N(Ch1Formations)[] = {
     BTL_NOK_FORMATION_00, BTL_NOK_FORMATION_15, BTL_NOK_FORMATION_13,
@@ -38,14 +48,14 @@ s16 N(Ch1Formations)[] = {
 
 Trial N(BooTrials)[] = {
     {
+        TRIAL_FORMATION(N(Ch1Formations)),
         .gameFlag = GF_BooTrial_Ch1,
-        .formations = &N(Ch1Formations),
         .nameMsg = MSG_BooTrial_Ch1_Name,
         .descMsg = MSG_BooTrial_Ch1_Desc,
         .previewItemId = ITEM_MUSHROOM,
         .storyProgress = STORY_CH1_STAR_SPRIT_DEPARTED,
         .coinCost = 10,
-        .rewardItemId = ITEM_BLAND_MEAL,
+        .rewardItemId = ITEM_MUSH_POWER,
         .rewardStarPieces = 1,
         .rewardSp = 25,
     }
@@ -90,7 +100,7 @@ API_CALLABLE(N(BooTrials_TrialSelectorPopup)) {
 
                 menu->descMsg[menuPos] = trial->descMsg;
                 menu->value[menuPos] = cost;
-                menu->userData[menuPos] = is_trial_completed(trial) ? MSG_PAL_YELLOW : MSG_PAL_STANDARD;
+                menu->userData[menuPos] = (void*)(s32)(is_trial_completed(trial) ? MSG_PAL_YELLOW : MSG_PAL_STANDARD);
                 menuPos++;
             }
         }
@@ -121,7 +131,7 @@ API_CALLABLE(N(BooTrials_TrialSelectorPopup)) {
         i = menu->userIndex[selected - 1];
         Trial* selectedItem = &N(BooTrials)[i];
 
-        script->varTable[0xE] = selectedItem;
+        script->varTablePtr[0xE] = selectedItem;
 
         gCurrentTrialFormationId = 0;
         gCurrentEncounter.encounterList[enemy->encounterIndex]->battle = selectedItem->formations[0];
@@ -132,7 +142,8 @@ API_CALLABLE(N(BooTrials_TrialSelectorPopup)) {
         script->varTable[0xE] = nullptr;
     }
 
-    gCurrentTrial = script->varTable[0xE];
+    gCurrentTrial = script->varTablePtr[0xE];
+    coinsGainedThisTrial = 0;
 
     heap_free(script->functionTempPtr[2]);
     return ApiStatus_DONE2;
@@ -195,9 +206,13 @@ NpcSettings N(NpcSettings_TrialBoo) = {
     .level = ACTOR_LEVEL_NONE,
 };
 
+extern s32 get_coin_drop_amount(Enemy* enemy);
+
 API_CALLABLE(N(CheckForNextBattle)) {
     Trial* trial = gCurrentTrial;
     Enemy* enemy = script->owner1.enemy;
+
+    coinsGainedThisTrial += get_coin_drop_amount(enemy);
 
     gCurrentTrialFormationId++;
     if (trial->formations[gCurrentTrialFormationId] == nullptr) {
@@ -207,6 +222,7 @@ API_CALLABLE(N(CheckForNextBattle)) {
     }
 
     script->varTable[0x9] = true;
+    script->varTable[0xA] = trial->formationAmt - gCurrentTrialFormationId;
     gCurrentEncounter.encounterList[enemy->encounterIndex]->battle = trial->formations[gCurrentTrialFormationId];
 
     return ApiStatus_DONE2;
@@ -224,6 +240,9 @@ API_CALLABLE(N(GetTrialRewardInfoAndMarkAsCompleted)) {
         script->varTable[0xB] = trial->rewardItemId;
     }
 
+    script->varTable[0x8] = coinsGainedThisTrial / 2;
+    coinsGainedThisTrial = 0;
+
     return ApiStatus_DONE2;
 }
 
@@ -233,7 +252,13 @@ EvtScript N(EVS_NpcDefeat_TrialBoo) = {
 
     Call(N(CheckForNextBattle))
     IfTrue(LVar9)
-        Call(SpeakToPlayer, NPC_SELF, ANIM_Boo_Talk, ANIM_Boo_Idle, 0, MSG_BooTrial_Intoduction_SwappingFormation)
+        IfEq(LVarA, 1)
+            Call(SpeakToPlayer, NPC_SELF, ANIM_Boo_Talk, ANIM_Boo_Idle, 0, MSG_BooTrial_Intoduction_SwappingFormation_Final)
+        Else
+            Call(SetMessageValue, LVarA, 0)
+            Call(SpeakToPlayer, NPC_SELF, ANIM_Boo_Talk, ANIM_Boo_Idle, 0, MSG_BooTrial_Intoduction_SwappingFormation)
+        EndIf
+
         Call(DisablePlayerInput, false)
         Call(StartBossBattle)
         Return
@@ -253,6 +278,10 @@ EvtScript N(EVS_NpcDefeat_TrialBoo) = {
         // not first time
         Call(SpeakToPlayer, NPC_SELF, ANIM_Boo_Talk, ANIM_Boo_Idle, 0, MSG_BooTrial_Intoduction_TrialSuccess)
     EndIf
+
+    Call(SetMessageValue, LVar8, 0)
+    Call(SpeakToPlayer, NPC_SELF, ANIM_Boo_Talk, ANIM_Boo_Idle, 0, MSG_BooTrial_Intoduction_TrialCoins)
+    Call(AddCoinAwaitTally, LVar8)
 
     Call(DisablePlayerInput, false)
     Return
