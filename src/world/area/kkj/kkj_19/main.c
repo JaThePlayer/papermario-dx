@@ -83,7 +83,7 @@ void N(draw_content_ingredient_desc)(
     if (ingredient->overrideDescMsg != MSG_NONE) {
         draw_scrollable_desc(ingredient->overrideDescMsg, baseX + 8, baseY, width, height, 255, MSG_PAL_STANDARD, 0);
     } else {
-        draw_scrollable_desc(item->fullDescMsg, baseX + 8, baseY, width, height, 255, MSG_PAL_STANDARD, 0);
+        draw_scrollable_item_id_desc(ingredient->itemID, baseX + 8, baseY, width, height, 255, MSG_PAL_STANDARD, 0);
     }
 }
 

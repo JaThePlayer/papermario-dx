@@ -749,6 +749,7 @@ void pause_partners_handle_input(MenuPanel* panel) {
     } else {
         gPauseCurrentDescMsg = gMoveTable[gPausePartnersMoveBase[gPausePartnersPartnerIdx[gPausePartnersCurrentPartnerIdx]] + 2 + gPausePartnersSelectedMove].fullDescMsg;
     }
+    gPauseCurrentDescItemId = ITEM_NONE;
 }
 
 void pause_partners_update(MenuPanel* panel) {

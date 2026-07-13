@@ -369,6 +369,7 @@ void pause_spirits_handle_input(MenuPanel* panel) {
     } else {
         gPauseCurrentDescMsg = MSG_Menus_SpiritDesc_Eldstar + gPauseSpiritsIndexes[panel->selected];
     }
+    gPauseCurrentDescItemId = ITEM_NONE;
 }
 
 void pause_spirits_update(MenuPanel* panel) {

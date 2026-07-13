@@ -1,3 +1,4 @@
+#include "item_enum.h"
 #include "pause/pause_common.h"
 #include "message_ids.h"
 
@@ -537,9 +538,11 @@ void pause_items_handle_input(MenuPanel* panel) {
     if (gPauseItemsLevel == 1) {
         if (gPauseItemsSelectedItem != ITEM_NONE_STANDIN && gPauseItemsSelectedItem != ITEM_INVALID && gPauseItemsSelectedItem != 0) {
             gPauseCurrentDescMsg = gItemTable[gPauseItemsSelectedItem].fullDescMsg;
+            gPauseCurrentDescItemId = gPauseItemsSelectedItem;
         } else {
             gPauseCurrentDescMsg = MSG_NONE;
             gPauseCurrentDescIconScript = nullptr;
+            gPauseCurrentDescItemId = ITEM_NONE;
         }
     } else {
         if (gPauseItemsCurrentTab == 1) {
@@ -549,6 +552,7 @@ void pause_items_handle_input(MenuPanel* panel) {
         }
 
         gPauseCurrentDescIconScript = nullptr;
+        gPauseCurrentDescItemId = ITEM_NONE;
     }
 
     if (gPausePressedButtons & BUTTON_B) {

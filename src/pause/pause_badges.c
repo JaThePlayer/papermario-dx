@@ -1,3 +1,4 @@
+#include "item_enum.h"
 #include "pause/pause_common.h"
 #include "message_ids.h"
 #include "misc_patches/misc_patches.h"
@@ -1079,13 +1080,16 @@ void pause_badges_handle_input(MenuPanel* panel) {
 
         if (((itemID != BADGE_NONE_STANDIN) && (itemID != BADGE_INVALID) && (itemID != 0))) {
             gPauseCurrentDescMsg = gItemTable[itemID].fullDescMsg;
+            gPauseCurrentDescItemId = itemID;
         } else {
             gPauseCurrentDescMsg = MSG_NONE;
             gPauseCurrentDescIconScript = nullptr;
+            gPauseCurrentDescItemId = ITEM_NONE;
         }
     } else {
         gPauseCurrentDescMsg = pause_get_menu_msg(gPauseBadgesCurrentTab == 0 ? PAUSE_MSG_BAGDE_DESC_ALL : PAUSE_MSG_BAGDE_DESC_ACTIVE);
         gPauseCurrentDescIconScript = nullptr;
+        gPauseCurrentDescItemId = ITEM_NONE;
     }
 
     if (gPausePressedButtons & BUTTON_B) {

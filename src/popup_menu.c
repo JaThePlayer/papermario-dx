@@ -1,7 +1,10 @@
 #include "common.h"
 #include "hud_element.h"
+#include "item_enum.h"
+#include "macros.h"
 #include "message_ids.h"
 #include "misc_patches/scrollable_desc_draw.h"
+#include "variables.h"
 
 #define LINE_HEIGHT 13
 
@@ -680,6 +683,7 @@ s32 popup_menu_update(void) {
                 case POPUP_MENU_CHECK_ITEM:
                 case POPUP_MENU_CLAIM_ITEM:
                 case POPUP_MENU_USEKEY:
+                    posY -= 6; // New in armageddon, to accomodate tags.
                     set_window_properties(WIN_POPUP_CONTENT, posX, posY, 145, (PopupMenu_DisplayedEntryCount * LINE_HEIGHT) + 26, WINDOW_PRIORITY_20, popup_draw_menu_content, nullptr, -1);
                     if (gPopupMenu->dipMode == 0) {
                         set_window_properties(WIN_POPUP_TITLE_A, 25, -6, 95, 16, WINDOW_PRIORITY_21, popup_draw_title_content, nullptr, WIN_POPUP_CONTENT);
@@ -780,7 +784,7 @@ s32 popup_menu_update(void) {
 
             if (gPopupMenu->popupType == POPUP_MENU_TRADE_FOR_BADGE) {
                 posX = PopupMenu_StarPieceCounterPosX;
-                posY = PopupMenu_StarPieceCounterPosY;
+                posY = PopupMenu_StarPieceCounterPosY - 16; // Armageddon: -16 to make space for tags
                 set_window_properties(WIN_CURRENCY_COUNTER, posX, posY, 64, 20, WINDOW_PRIORITY_21, popup_draw_star_pieces_content, nullptr, -1);
             }
 
@@ -1986,7 +1990,18 @@ void popup_draw_title_content(
 #endif
 
 void popup_draw_desc_content(s32* userData, s32 baseX, s32 baseY, s32 width, s32 height, s32 opacity, s32 darkening) {
-    draw_scrollable_desc(gPopupMenu->descMsg[PopupMenu_SelectedIndex], baseX + 8, baseY, width, height, PopupMenu_Alpha, D_8010D690, 0);
+    s32 descMsg = gPopupMenu->descMsg[PopupMenu_SelectedIndex];
+    
+    for (s32 i = 0; i < NUM_ITEMS; i++) {
+        ItemData* itemPtr = &gItemTable[i];
+        if (itemPtr->fullDescMsg == descMsg) {
+            draw_scrollable_item_id_desc(i, baseX + 4, baseY, width, height, PopupMenu_Alpha, D_8010D690, 0);
+            return;
+        }
+    }
+
+
+    draw_scrollable_desc(descMsg, baseX + 4, baseY, width, height, PopupMenu_Alpha, D_8010D690, 0);
 }
 
 #if VERSION_PAL

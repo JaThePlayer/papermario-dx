@@ -450,6 +450,7 @@ void pause_map_handle_input(MenuPanel* tab) {
         return;
     }
 
+    gPauseCurrentDescItemId = ITEM_NONE;
     gPauseCurrentDescIconScript = 0;
     if (PauseMapCursorCurrentOption == -1) {
         gPauseCurrentDescMsg = MSG_NONE;

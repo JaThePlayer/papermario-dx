@@ -426,6 +426,7 @@ void pause_stats_handle_input(MenuPanel* panel) {
 
     gPauseCurrentDescMsg = pause_get_menu_msg(gStatsMenuEntries[panel->selected].baseMsgID + msgOffset);
     gPauseCurrentDescIconScript = nullptr;
+    gPauseCurrentDescItemId = ITEM_NONE;
 
     if (gPausePressedButtons & BUTTON_B) {
         sfx_play_sound(SOUND_MENU_BACK);

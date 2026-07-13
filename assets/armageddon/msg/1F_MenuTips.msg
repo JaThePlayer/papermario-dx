@@ -274,3 +274,11 @@
 #message:1F:(MenuTip_BooTrial) {
 	Trial[End]
 }
+
+#message:1F:(MenuTip_FpCost) {
+	[Var 0] [End]
+}
+
+#message:1F:(MenuTip_BpCost) {
+	[Var 0] [End]
+}

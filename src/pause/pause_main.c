@@ -1,5 +1,10 @@
+#include "common_structs.h"
+#include "enums.h"
+#include "functions.h"
+#include "item_enum.h"
 #include "ld_addrs.h"
 #include "message_ids.h"
+#include "misc_patches/scrollable_desc_draw.h"
 #include "sprite.h"
 #include "pause/pause_common.h"
 #include "game_modes.h"
@@ -24,6 +29,7 @@ MenuPanelDrawContentFunc pause_draw_cursor;
 BSS s32 gPauseHeldButtons;
 BSS s32 gPausePressedButtons;
 BSS s32 gPauseCurrentDescMsg;
+BSS s32 gPauseCurrentDescItemId;
 BSS HudScript* gPauseCurrentDescIconScript;
 BSS HudElemID gPauseCursorHID;
 BSS s8 gPauseMenuCurrentTab;
@@ -485,19 +491,13 @@ void pause_textbox_draw_contents(MenuPanel* menu, s32 baseX, s32 baseY, s32 widt
         return;
     }
 
-    if (gPauseDescTextPos != 0) {
-        hud_element_set_render_pos(gPauseCommonHIDs[1], baseX + width - 4, baseY + 4);
-        hud_element_draw_without_clipping(gPauseCommonHIDs[1]);
-    }
-
-    if (gPauseDescTextPos < gPauseDescTextMaxPos) {
-        hud_element_set_render_pos(gPauseCommonHIDs[2], baseX + width - 4, baseY + height - 4);
-        hud_element_draw_without_clipping(gPauseCommonHIDs[2]);
-    }
-
-    gDPPipeSync(gMainGfxPos++);
     gDPSetScissor(gMainGfxPos++, G_SC_NON_INTERLACE, baseX + 1, baseY + 1, baseX + width - 1, baseY + height - 1);
-    draw_msg(msgID, baseX + 10, baseY - gPauseDescTextOffset, 255, MSG_PAL_STANDARD, 0);
+    if (gPauseCurrentDescItemId != ITEM_NONE) {
+        draw_scrollable_item_id_desc(gPauseCurrentDescItemId, baseX + 10, baseY, width, height, 255, MSG_PAL_STANDARD, 0);
+    } else {
+        draw_scrollable_desc(msgID, baseX + 10, baseY, width, height, 255, MSG_PAL_STANDARD, 0);
+    }
+
     if (gPauseShownDescIconScript != 0) {
         gDPSetScissor(gMainGfxPos++, G_SC_NON_INTERLACE, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
         hud_element_set_render_pos(gPauseCommonHIDs[3], baseX - 4, baseY + 16);

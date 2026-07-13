@@ -102,6 +102,7 @@ extern WindowStyleCustom gPauseWS_28;
 extern s32 gPauseHeldButtons;
 extern s32 gPausePressedButtons;
 extern s32 gPauseCurrentDescMsg;
+extern s32 gPauseCurrentDescItemId;
 extern HudScript* gPauseCurrentDescIconScript;
 extern HudElemID gPauseCursorHID;
 extern s8 gPauseMenuCurrentTab;

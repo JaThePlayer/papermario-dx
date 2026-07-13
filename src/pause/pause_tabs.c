@@ -369,6 +369,7 @@ void pause_tabs_handle_input(MenuPanel* tab) {
 
     gPauseCurrentDescMsg = pause_get_menu_msg(gPauseTabsMessages[tab->col]);
     gPauseCurrentDescIconScript = nullptr;
+    gPauseCurrentDescItemId = ITEM_NONE;
 }
 
 void pause_tabs_update(MenuPanel* tab) {

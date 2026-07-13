@@ -944,7 +944,7 @@ void shop_draw_item_desc(s32 arg0, s32 posX, s32 posY) {
     s32 width = window->width;
     s32 height = window->height;
 
-    draw_scrollable_desc(shopItem->descMsg, posX, posY, width, height, 255, MSG_PAL_STANDARD, 0);
+    draw_scrollable_item_id_desc(shopItem->itemID, posX, posY, width, height, 255, MSG_PAL_STANDARD, 0);
 }
 
 void draw_shop_items(void) {
