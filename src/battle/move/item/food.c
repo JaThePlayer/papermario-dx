@@ -1,4 +1,5 @@
 #include "common.h"
+#include "misc_patches/item_effects.h"
 #include "script_api/battle.h"
 #include "effects.h"
 #include "entity.h"
@@ -240,7 +241,8 @@ EvtScript N(EVS_UseItem) = {
     EndIf
 
     Call(GetMenuSelection, LVar0, LV_ItemID, LVar2)
-    Call(ApplyCustomItemEffects, ACTOR_SELF, LV_ItemID)
+    Set(LVar9, ACTOR_SELF)
+    ExecWait(ApplyItemEffects)
 
     IfEq(LV_IsHarmful, false)
         Wait(10)
@@ -257,3 +259,5 @@ EvtScript N(EVS_UseItem) = {
     Return
     End
 };
+
+#undef NAMESPACE

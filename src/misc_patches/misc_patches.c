@@ -11,6 +11,7 @@
 
 #include "misc_events.c"
 #include "actor_interfaces.c"
+#include "item_effects.c"
 
 // returns how much fp costs are changed by
 s32 getFpCostChange(Actor* player) {

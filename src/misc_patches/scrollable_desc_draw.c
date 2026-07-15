@@ -2,6 +2,7 @@
 #include "PR/ultratypes.h"
 #include "common_structs.h"
 #include "enums.h"
+#include "functions.h"
 #include "include_asset.h"
 #include "hud_element.h"
 #include "message_ids.h"
@@ -96,7 +97,7 @@ static void draw_item_setup(void) {
 
     descTextPos = 0;
     descTextOffset = 0;
-    
+
     hud_element_set_flags(tagIconElementId, HUD_ELEMENT_FLAG_DISABLED);
     hud_element_set_flags(tagIconElementId, HUD_ELEMENT_FLAG_MANUAL_RENDER);
 }
@@ -250,17 +251,19 @@ void draw_icon_tag(s32 value, s32* posX, s32 posY, s32 msgId, WindowStyleCustom*
     s32 tabWidth, tabHeight;
     if (value != 0) {
         gDPSetScissor(gMainGfxPos++, G_SC_NON_INTERLACE, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-        set_message_int_var(value, 0);
-        get_msg_properties(msgId, &tabHeight, &tabWidth, nullptr, nullptr, nullptr, nullptr, 0);
-        tabWidth += 16;
+        //set_message_int_var(value, 0);
+        //get_msg_properties(msgId, &tabHeight, &tabWidth, nullptr, nullptr, nullptr, nullptr, 0);
+        tabWidth = (value > 9 ? 2 : 1) * 9;
+        tabHeight = 16;
+        tabWidth += 16 + padding;
         draw_box(DRAW_FLAG_NO_CLIP, windowStyle, *posX, posY - 1, 1, tabWidth, tabHeight + 2, 255,
                      0, 0, 0, 0, 0, 0, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
 
-        draw_msg(msgId, *posX + 2, posY + 1, 255,
-                     MSG_PAL_WHITE, DRAW_MSG_STYLE_MENU);
+        draw_number(value, *posX + 2, posY + 1, 1, MSG_PAL_WHITE, 255, DRAW_NUMBER_STYLE_MONOSPACE);
+        //draw_msg(msgId, *posX + 2, posY + 1, 255, MSG_PAL_WHITE, DRAW_MSG_STYLE_MENU);
 
         hud_element_clear_flags(tagIconElementId, HUD_ELEMENT_FLAG_DISABLED);
-        hud_element_set_render_pos(tagIconElementId, *posX + tabWidth - 16 + 8, posY + 8);
+        hud_element_set_render_pos(tagIconElementId, *posX + tabWidth - 8, posY + 8);
         hud_element_set_script(tagIconElementId, hudScript);
         hud_element_set_flags(tagIconElementId, HUD_ELEMENT_FLAG_DROP_SHADOW);
         hud_element_clear_flags(tagIconElementId, HUD_ELEMENT_FLAG_FILTER_TEX);

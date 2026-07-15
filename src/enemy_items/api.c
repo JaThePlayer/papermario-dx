@@ -1,5 +1,10 @@
+#include "PR/ultratypes.h"
 #include "common.h"
 #include "enemy_items/api.h"
+#include "common_structs.h"
+#include "evt.h"
+#include "functions.h"
+#include "misc_patches/item_effects.h"
 #include "script_api/battle.h"
 #include "misc_patches/custom_status.h"
 #include "misc_patches/misc_patches.h"
@@ -235,47 +240,6 @@ API_CALLABLE(_GetTargetActorId) {
     return ApiStatus_DONE2;
 }
 
-static s32 ItemClearStatus(Actor* actor) {
-    s32 amt = 0;
-
-    if (actor->debuff != 0) {
-        actor->debuffDuration = 0;
-        actor->debuff = 0;
-        remove_status_debuff(actor->hudElementDataIndex);
-        amt += 1;
-    }
-
-    if (actor->koStatus != 0) {
-        actor->koDuration = 0;
-        actor->koStatus = 0;
-        actor->disableEffect->data.disableX->koDuration = 0;
-        //amt += 1; Handled already by actor->debuff check above
-    }
-
-    amt += custom_status_clear_debuffs(actor);
-
-    btl_update_ko_status();
-
-    return amt;
-}
-
-static void RecoverFpFromCustomItemEffect(Actor* actor, s32 amt) {
-    PlayerData* playerData = &gPlayerData;
-
-    fx_recover(1, actor->curPos.x + 20, get_actor_head_y_pos(actor), actor->curPos.z, amt);
-
-    if (actor == gBattleStatus.playerActor) {
-        s32 newFP = playerData->curFP + amt;
-
-        if (newFP > playerData->curMaxFP) {
-            newFP = playerData->curMaxFP;
-        }
-
-        playerData->curFP = newFP;
-    }
-
-}
-
 s32 enemy_items_count_items_with_move_id_in_all(s32 moveId) {
     s32 sum = 0;
 
@@ -310,105 +274,6 @@ s32 badge_count_by_move_id(Actor* actor, s32 moveId) {
     return enemy_items_count_items_with_move_id(actor, moveId);
 }
 
-// Applies custom effects from items
-API_CALLABLE(ApplyCustomItemEffects) {
-    Bytecode* args = script->ptrReadPos;
-    Actor* actor;
-    s32 actorID = evt_get_variable(script, *args++);
-    s32 itemIdx = evt_get_variable(script, *args++);
-    ItemData* item = &gItemTable[itemIdx];
-    s32 isPlayer;
-
-    if (actorID == ACTOR_SELF) {
-        actorID = script->owner1.actorID;
-    }
-    actor = get_actor(actorID);
-    isPlayer = actor == gBattleStatus.playerActor;
-
-    #define INFLICT(status, turns, enemyTurns, potency) try_inflict_custom_status(actor, actor->curPos, status, isPlayer ? turns : enemyTurns, potency, 100);
-    // increase turn count for enemies, as the first turn is wasted
-    #define DEF_UP(turns, potency) INFLICT(DEF_UP_TEMP_STATUS, turns, turns + 1, potency)
-    // increase turn count for both mario and enemies, as the first turn is wasted
-    #define ATK_UP(turns, potency) INFLICT(ATK_UP_TEMP_STATUS, turns + 1, turns + 1, potency)
-
-    #define FP_COST(turns, potency) INFLICT(FP_COST_STATUS, turns, turns + 1, potency)
-
-    #define ELECTRIFY(turns) inflict_status(actor, STATUS_KEY_STATIC, turns)
-
-    #define POISON(turns, potency) INFLICT(POISON_STATUS, turns, turns, potency)
-
-    #define CHARGE(amt) INFLICT(CHARGE_STATUS, 99, 99, amt)
-
-    #define RECOVER_FP(amt) RecoverFpFromCustomItemEffect(actor, amt)
-
-    switch (itemIdx) {
-        case ITEM_GOOMNUT:
-            DEF_UP(1, 2);
-            break;
-        case ITEM_NUTTY_CAKE:
-            DEF_UP(2, 1);
-            break;
-        case ITEM_KOOPA_LEAF:
-            FP_COST(2, -2);
-            break;
-        case ITEM_KOOPA_TEA:
-            FP_COST(4, -1);
-            break;
-        case ITEM_SPICY_SOUP:
-            ATK_UP(1, 2);
-            break;
-        case ITEM_VOLT_SHROOM:
-            ELECTRIFY(3);
-            break;
-        case ITEM_HOT_SHROOM:
-            ELECTRIFY(2);
-            CHARGE(1);
-            break;
-        case ITEM_SUPER_SODA:
-            ItemClearStatus(actor);
-            break;
-        case ITEM_TASTY_TONIC: {
-            s32 amt = ItemClearStatus(actor);
-            RECOVER_FP(amt * 5);
-            break;
-        }
-        case ITEM_DRIED_FRUIT:
-            FP_COST(2, +2)
-            break;
-        case ITEM_POISON_SHROOM:
-            POISON(4, 1);
-            break;
-        case ITEM_MISTAKE:
-            POISON(3, 1);
-            break;
-        case ITEM_MAPLE_CREAM:
-            FP_COST(2, +1)
-            break;
-    }
-
-    {
-        s32 mushPowerCount = badge_count_by_move_id(actor, MOVE_MUSH_POWER);
-        if (mushPowerCount > 0) {
-            switch (itemIdx)
-            {
-                case ITEM_DRIED_SHROOM:
-                case ITEM_MUSHROOM:
-                case ITEM_SUPER_SHROOM:
-                case ITEM_ULTRA_SHROOM:
-                case ITEM_LIFE_SHROOM:
-                case ITEM_VOLT_SHROOM:
-                    CHARGE(mushPowerCount);
-                    break;
-            }
-        }
-    }
-
-    #undef DEF_UP
-    #undef INFLICT
-
-    return ApiStatus_DONE2;
-}
-
 EvtScript EnemyItems_UseHealingItem = {
     // load up stats
     Call(_LoadItemStats, LVarA)
@@ -430,7 +295,7 @@ EvtScript EnemyItems_UseHealingItem = {
     EndIf
 
     Call(WaitForBuffDone)
-    Call(ApplyCustomItemEffects, LVar9, LVarA)
+    ExecWait(ApplyItemEffects)
 
     Return
     End

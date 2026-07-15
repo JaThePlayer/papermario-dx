@@ -1685,7 +1685,7 @@ s32 evt_execute_next_command(Evt* script) {
             case EVT_OP_END:
                 break;
             default:
-                PANIC();
+                PANIC_MSG("End of script");
         }
 
         if (status == ApiStatus_REPEAT) {
