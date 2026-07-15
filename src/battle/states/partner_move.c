@@ -1,3 +1,4 @@
+#include "misc_patches/misc_patches.h"
 #include "states.h"
 
 enum {
@@ -158,6 +159,11 @@ void btl_state_update_partner_move(void) {
             }
 
             btl_update_ko_status();
+
+            if (partner->attackedThisTurn) {
+                partner->attackedThisTurn = false;
+                clearChargesFrom(partner);
+            }
 
             if (partner->statusAfflicted == STATUS_KEY_KO && !btl_are_all_enemies_defeated()) {
                 btl_cam_use_preset(BTL_CAM_PARTNER_INJURED);

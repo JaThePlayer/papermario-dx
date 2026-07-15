@@ -1,4 +1,5 @@
 
+#include "misc_patches/misc_patches.h"
 #include "states.h"
 #include "script_api/battle.h"
 
@@ -228,6 +229,11 @@ void btl_state_update_player_move(void) {
             }
             if (!(gBattleStatus.flags1 & BS_FLAGS1_HAMMER_CHARGED)) {
                 battleStatus->hammerCharge = 0;
+            }
+
+            if (player->attackedThisTurn) {
+                player->attackedThisTurn = false;
+                clearChargesFrom(player);
             }
 
             for (i = 0; i < ARRAY_COUNT(battleStatus->enemyActors); i++) {

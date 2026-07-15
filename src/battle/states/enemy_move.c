@@ -1,3 +1,4 @@
+#include "misc_patches/misc_patches.h"
 #include "states.h"
 
 enum {
@@ -128,6 +129,12 @@ void btl_state_update_enemy_move(void) {
 
             gBattleStatus.flags1 &= ~BS_FLAGS1_EXECUTING_MOVE;
             gBattleStatus.flags2 &= ~BS_FLAGS2_IGNORE_DARKNESS;
+
+            if (battleStatus->curTurnEnemy->attackedThisTurn) {
+                battleStatus->curTurnEnemy->attackedThisTurn = false;
+                clearChargesFrom(battleStatus->curTurnEnemy);
+            }
+
             if (btl_check_enemies_defeated()) {
                 return;
             }
