@@ -279,8 +279,8 @@ s8 getMaxStarEnergy() {
     return max;
 }
 
-extern HudScript* SPIncrementHudScripts[];
-extern HudScript* SPStarHudScripts[];
+extern HudScriptList SPIncrementHudScripts;
+extern HudScriptList SPStarHudScripts;
 extern HudScript HES_StatusSPEmptyIncrement;
 extern HudScript HES_StatusStarEmpty;
 extern s32 StatusBarSPIncrementOffsets[];
@@ -366,13 +366,13 @@ void render_se_bar(s32 id, s32 x, s32 y, s32 startSegment, s32 limit) {
         if (!isActive && currentSpUnitToRender > 7)
             break;
 
-        HudScript* script;
+        HudScriptPtr script;
         if (!isActive) {
-            script = isStar ? &HES_StatusStarEmpty : &HES_StatusSPEmptyIncrement;
+            script = isStar ? HES_StatusStarEmpty : HES_StatusSPEmptyIncrement;
         } else if (isRainbow) {
-            script = isStar ? &HES_StatusStarRainbow : &HES_StatusSPIncrementRainbow;
+            script = isStar ? HES_StatusStarRainbow : HES_StatusSPIncrementRainbow;
         } else if (currentSpUnitToRender + 7 <= maxStarPower - 1) {
-            script = isStar ? &HES_StatusStarWhite : &HES_StatusSPIncrementWhite;
+            script = isStar ? HES_StatusStarWhite : HES_StatusSPIncrementWhite;
         } else {
             script = isStar ? SPStarHudScripts[MIN(currentSpUnitToRender, MAX_SE_ICONS - 1)] : SPIncrementHudScripts[MIN(currentSpUnitToRender, MAX_SE_ICONS - 1)];
         }

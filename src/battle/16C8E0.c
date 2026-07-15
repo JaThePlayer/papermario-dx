@@ -808,7 +808,7 @@ void draw_health_bar_number(s32 number, s32 screenX, s32 screenY, s32 r, s32 g, 
         s32 digit = number % 10;
 
         hud_element_set_render_depth(id, 10);
-        hud_element_set_script(id, bHPDigitHudScripts[digit]);
+        hud_element_set_script(id, HPDigitHudScripts[digit]);
         btl_draw_prim_quad(0, 0, 0, 0, screenX + nextDigitXOffset, screenY + 2, 8, 8);
         hud_element_set_render_pos(id, screenX + nextDigitXOffset + 4, screenY + 6);
         hud_element_set_tint(id, r, g, b);
