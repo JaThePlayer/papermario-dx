@@ -8,8 +8,8 @@
 #include "misc_patches/misc_patches.h"
 
 #if !VERSION_JP
-extern u8 MessagePlural[];
-extern u8 MessageSingular[];
+extern MSG_BIN MessagePlural[];
+extern MSG_BIN MessageSingular[];
 #endif
 
 extern HudScript HES_ItemCoin;
@@ -1096,7 +1096,7 @@ API_CALLABLE(MakeShop) {
         numShopItems++;
     }
 
-    shop->costHID = hud_element_create(&HES_ItemCoin);
+    shop->costHID = hud_element_create(HES_ItemCoin);
     hud_element_set_flags(shop->costHID, HUD_ELEMENT_FLAG_MANUAL_RENDER);
     hud_element_clear_flags(shop->costHID, HUD_ELEMENT_FLAG_FILTER_TEX);
     get_worker(create_worker_frontUI(nullptr, draw_shop_items));

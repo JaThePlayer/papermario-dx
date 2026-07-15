@@ -34,9 +34,9 @@ static s32 gPauseStatsIconIDs[12];
 
 // Probably only used here, but could theoretically be used in the main menu too
 typedef struct {
-    s32 cursorX;
-    s32 cursorY;
-    s32 baseMsgID;
+    /* 0x00 */ s32 cursorX;
+    /* 0x04 */ s32 cursorY;
+    /* 0x08 */ s32 baseMsgID;
 } StatsEntryData; // size = 0xC
 
 enum {
@@ -54,19 +54,19 @@ enum {
     STAT_ICON_TIMES         = 11,
 };
 
-HudScript* gStatsMenuElements[] = {
-    [STAT_ICON_MARIO]       &HES_MarioHeadSmall,
-    [STAT_ICON_BOOTS]       &HES_StatBoots0,
-    [STAT_ICON_HAMMER]      &HES_StatHammer0,
-    [STAT_ICON_COIN]        &HES_StatusCoin,
-    [STAT_ICON_STAR_POINT]  &HES_StatusStarPoint,
-    [STAT_ICON_STAR_PIECE]  &HES_StatStarPiece_1,
-    [STAT_ICON_CLOCK]       &HES_Clock,
-    [STAT_ICON_HP]          &HES_StatusHeart,
-    [STAT_ICON_FP]          &HES_StatFp_1,
-    [STAT_ICON_BP]          &HES_StatBp,
-    [STAT_ICON_STAR]        &HES_StatusStar1,
-    [STAT_ICON_TIMES]       &HES_StatTimes,
+HudScriptList gStatsMenuElements = {
+    [STAT_ICON_MARIO]       HES_MarioHeadSmall,
+    [STAT_ICON_BOOTS]       HES_StatBoots0,
+    [STAT_ICON_HAMMER]      HES_StatHammer0,
+    [STAT_ICON_COIN]        HES_StatusCoin,
+    [STAT_ICON_STAR_POINT]  HES_StatusStarPoint,
+    [STAT_ICON_STAR_PIECE]  HES_StatStarPiece_1,
+    [STAT_ICON_CLOCK]       HES_Clock,
+    [STAT_ICON_HP]          HES_StatusHeart,
+    [STAT_ICON_FP]          HES_StatFp_1,
+    [STAT_ICON_BP]          HES_StatBp,
+    [STAT_ICON_STAR]        HES_StatusStar1,
+    [STAT_ICON_TIMES]       HES_StatTimes,
 };
 
 #if VERSION_PAL
@@ -74,11 +74,11 @@ HudScript* gStatsMenuElements[] = {
 #define PAUSE_MSG_3F PAUSE_MSG_NO_BADGE
 #endif
 
-HudScript* gStatsBootsElements[] = { &HES_StatBoots0, &HES_StatBoots1, &HES_StatBoots2, &HES_StatBoots3 };
-HudScript* gStatsHammerElements[] = { &HES_StatHammer0, &HES_StatHammer1, &HES_StatHammer2, &HES_StatHammer3 };
+HudScriptList gStatsBootsElements = { HES_StatBoots0, HES_StatBoots1, HES_StatBoots2, HES_StatBoots3 };
+HudScriptList gStatsHammerElements = { HES_StatHammer0, HES_StatHammer1, HES_StatHammer2, HES_StatHammer3 };
 s32 gPauseStatsBootsMessages[] = { PAUSE_MSG_3B, PAUSE_MSG_3C, PAUSE_MSG_3D, PAUSE_MSG_3E };
 s32 gPauseStatsHammerMessages[] = { PAUSE_MSG_3F, PAUSE_MSG_40, PAUSE_MSG_41, PAUSE_MSG_42 };
-s8 gPauseStatsGridData[] = {
+u8 gPauseStatsGridData[] = {
     0, 4,
     1, 5,
     1, 6,
@@ -114,13 +114,13 @@ StatsEntryData gStatsMenuEntries[] = {
 s32 D_pause_80253814[] = { 0, -16, -7, -19 };
 #endif
 
-HudScript* gPauseStatsSPIncElements[] = { &HES_StatusSPIncrement1, &HES_StatusSPIncrement3,
-                                          &HES_StatusSPIncrement2, &HES_StatusSPIncrement4,
-                                          &HES_StatusSPIncrement5, &HES_StatusSPIncrement6,
-                                          &HES_StatusSPIncrement7 };
-HudScript* gPauseStatsStarElements[] = { &HES_StatusStar1, &HES_StatusStar3, &HES_StatusStar2,
-                                         &HES_StatusStar4, &HES_StatusStar5, &HES_StatusStar6,
-                                         &HES_StatusStar7 };
+HudScriptList gPauseStatsSPIncElements = { HES_StatusSPIncrement1, HES_StatusSPIncrement3,
+                                          HES_StatusSPIncrement2, HES_StatusSPIncrement4,
+                                          HES_StatusSPIncrement5, HES_StatusSPIncrement6,
+                                          HES_StatusSPIncrement7 };
+HudScriptList gPauseStatsStarElements = { HES_StatusStar1, HES_StatusStar3, HES_StatusStar2,
+                                         HES_StatusStar4, HES_StatusStar5, HES_StatusStar6,
+                                         HES_StatusStar7 };
 s32 D_8024F46C[] = { -1, 1, 2, 4, 5, 7, 8 };
 
 MenuWindowBP gStatsMenuWindowBPs[] = {
