@@ -1,6 +1,8 @@
 #ifndef _H_ITEM_DESC_DRAW
 #define _H_ITEM_DESC_DRAW
 
+extern s32 tagIconElementId;
+
 #include "common.h"
 #include "item_enum.h"
 

@@ -834,6 +834,10 @@ segments:
       - [auto, palette, ui/status/pow_unit_white]
       - [auto, ci4,     ui/status/pow_star_white, 8, 8]
       - [auto, palette, ui/status/pow_star_white]
+      - [auto, ci4,     ui/tags/electric, 8, 8]
+      - [auto, palette, ui/tags/electric]
+      - [auto, ci4,     ui/tags/charge, 8, 8]
+      - [auto, palette, ui/tags/charge]
     - start: 0xA2960
       type: .data
       name: status_star_shimmer

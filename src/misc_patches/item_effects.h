@@ -1,6 +1,10 @@
 #pragma once
 
+struct ItemEffect;
+
 #include "item_enum.h"
+#include "misc_patches/item_tags.h"
+
 #define NAMESPACE item_effects
 
 #include "common_structs.h"
@@ -11,6 +15,7 @@ typedef struct ItemEffectType {
     /// LVar9 actorId
     /// LVarC userdata
     EvtScript* apply;
+    ItemTag* tag;
 } ItemEffectType;
 
 typedef struct ItemEffect {

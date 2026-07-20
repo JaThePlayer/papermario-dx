@@ -43,7 +43,7 @@ static API_CALLABLE(apply_charge) {
 #define LVar9_Actor LVar9
 #define LVarC_Userdata LVarC
 
-#define CREATE_STANDARD_CUSTOM_EFFECT_APPLY(name, statusId) \
+#define CREATE_STANDARD_CUSTOM_EFFECT_APPLY(name, statusId, extra...) \
     EvtScript N(name##_apply) = { \
         Call(apply_status, LVar9_Actor, LVarC_Userdata, statusId) \
         Return \
@@ -51,6 +51,7 @@ static API_CALLABLE(apply_charge) {
     }; \
     ItemEffectType N(name) = { \
         .apply = &N(name##_apply), \
+        extra \
     }
 
 CREATE_STANDARD_CUSTOM_EFFECT_APPLY(def_up, DEF_UP_TEMP_STATUS);
@@ -59,7 +60,7 @@ CREATE_STANDARD_CUSTOM_EFFECT_APPLY(def_down, DEF_DOWN_TEMP_STATUS);
 CREATE_STANDARD_CUSTOM_EFFECT_APPLY(atk_down, ATK_DOWN_TEMP_STATUS);
 CREATE_STANDARD_CUSTOM_EFFECT_APPLY(fp_cost, FP_COST_STATUS);
 CREATE_STANDARD_CUSTOM_EFFECT_APPLY(poison, POISON_STATUS);
-CREATE_STANDARD_CUSTOM_EFFECT_APPLY(charge, CHARGE_STATUS);
+CREATE_STANDARD_CUSTOM_EFFECT_APPLY(charge, CHARGE_STATUS, .tag = &item_tag_charge);
 
 EvtScript N(heal_apply) = {
     IfNe(LVarC, 0)
@@ -110,6 +111,7 @@ EvtScript N(electrify_apply) = {
 
 ItemEffectType N(electrify) = {
     .apply = &N(electrify_apply),
+    .tag = &item_tag_electrify,
 };
 
 static API_CALLABLE(ItemClearStatus) {
