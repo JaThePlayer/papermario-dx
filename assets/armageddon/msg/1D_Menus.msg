@@ -2798,3 +2798,7 @@
 	The air is getting heavier...[BR]
 	Perma-poison potency increased![End]
 }
+
+#message:1D:(Menus_CustomStatusBar_XOutOfY) {
+	[Var 0]/[Var 1][End]
+}

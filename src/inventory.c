@@ -4,6 +4,7 @@
 #include "dx/config.h"
 #include "dx/debug_menu.h"
 #include "macros.h"
+#include "misc_patches/custom_status_bar.h"
 #include "misc_patches/misc_patches.h"
 
 #define FULLY_EXTENDED_Y  18
@@ -668,7 +669,7 @@ void status_bar_draw_stat(s32 id, s32 startX, s32 startY, s32 currentValue, s32 
     s8 digits[4];
     b32 keepDrawing;
     s32 digit;
-    s32 numDigits = 2;
+    s32 numDigits = 3;
     s32 drawX;
     s32 drawY;
     s32 i = 0;
@@ -676,7 +677,7 @@ void status_bar_draw_stat(s32 id, s32 startX, s32 startY, s32 currentValue, s32 
     s32 baseY = startY + 8;
 
     hud_element_set_script(id, HES_StatusSlash);
-    hud_element_set_render_pos(id, baseX + 14, baseY + 1);
+    hud_element_set_render_pos(id, baseX + (numDigits * 7), baseY + 1);
     hud_element_clear_flags(id, HUD_ELEMENT_FLAG_DISABLED);
     hud_element_draw_next(id);
 
@@ -705,7 +706,7 @@ void status_bar_draw_stat(s32 id, s32 startX, s32 startY, s32 currentValue, s32 
         maxValue /= 10;
     }
 
-    drawX = baseX + 26;
+    drawX = baseX + (numDigits * 7) + (26 - 14);
     drawY = baseY;
     keepDrawing = false;
     for (i = 0; i < numDigits; i++, drawX += 8) {
@@ -901,218 +902,7 @@ void update_status_bar(void) {
     gDPSetScissor(gMainGfxPos++, G_SC_NON_INTERLACE, SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX);
     x = statusBar->drawPosX;
     y = statusBar->drawPosY;
-    draw_box(0, WINDOW_STYLE_5, x,       y, 0, 174, 35, 255, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, nullptr, nullptr, nullptr, SCREEN_WIDTH, SCREEN_HEIGHT, nullptr);
-    draw_box(0, WINDOW_STYLE_6, x + 174, y, 0, 122, 25, 255, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, nullptr, nullptr, nullptr, SCREEN_WIDTH, SCREEN_HEIGHT, nullptr);
-
-    if (statusBar->hpBlinkTimeLeft > 0) {
-        statusBar->hpBlinkTimeLeft--;
-        if (statusBar->hpBlinkTimeLeft == 0) {
-            status_bar_stop_blinking_hp();
-        }
-    }
-
-    showStat = true;
-    if (statusBar->hpBlinking != BLINK_OFF) {
-        if (statusBar->hpBlinkAnimTime > 8) {
-            showStat = false;
-            if (statusBar->hpBlinkAnimTime > 12) {
-                statusBar->hpBlinkAnimTime = 0;
-                showStat = true;
-            }
-        }
-        statusBar->hpBlinkAnimTime++;
-    }
-
-    if (showStat) {
-        id = statusBar->hpIconHIDs[0];
-        x = statusBar->drawPosX + 22;
-        y = statusBar->drawPosY + 13;
-        hud_element_set_render_pos(id, x, y);
-        hud_element_draw_next(id);
-
-        id = statusBar->hpIconHIDs[1];
-        x = statusBar->drawPosX + 37;
-        y = statusBar->drawPosY + 13;
-        hud_element_set_render_pos(id, x, y);
-        hud_element_draw_next(id);
-
-        x = statusBar->drawPosX + 48;
-        y = statusBar->drawPosY + 8;
-        status_bar_draw_stat(statusBar->hpTimesHID, x, y, statusBar->displayHP, playerData->curMaxHP);
-    }
-
-    if (statusBar->fpBlinkTimeLeft > 0) {
-        statusBar->fpBlinkTimeLeft--;
-        if (statusBar->fpBlinkTimeLeft == 0) {
-            status_bar_stop_blinking_fp();
-        }
-    }
-
-    showStat = true;
-    if (statusBar->fpBlinking != BLINK_OFF) {
-        if (statusBar->fpBlinkAnimTime > 8) {
-            showStat = false;
-            if (statusBar->fpBlinkAnimTime > 12) {
-                statusBar->fpBlinkAnimTime = 0;
-                showStat = true;
-            }
-        }
-        statusBar->fpBlinkAnimTime++;
-    }
-
-    if (showStat) {
-        id = statusBar->fpIconHIDs[0];
-        x = statusBar->drawPosX + 110;
-        y = statusBar->drawPosY + 13;
-        hud_element_set_render_pos(id, x, y);
-        hud_element_draw_next(id);
-
-        id = statusBar->fpIconHIDs[1];
-        x = statusBar->drawPosX + 125;
-        y = statusBar->drawPosY + 13;
-        hud_element_set_render_pos(id, x, y);
-        hud_element_draw_next(id);
-
-        x = statusBar->drawPosX + 136;
-        y = statusBar->drawPosY + 8;
-        status_bar_draw_stat(statusBar->fpTimesHID, x, y, statusBar->displayFP, playerData->curMaxFP);
-    }
-
-    if (playerData->level >= 27) {
-        playerData->starPoints = 0;
-    }
-
-    showStat = true;
-    if (statusBar->starpointsBlinking != BLINK_OFF) {
-        if (statusBar->starpointsBlinkAnimTime > 8) {
-            if (statusBar->starpointsBlinkAnimTime <= 12) {
-                showStat = false;
-            } else {
-                statusBar->starpointsBlinkAnimTime = 0;
-            }
-        }
-        statusBar->starpointsBlinkAnimTime++;
-    }
-
-    if (showStat) {
-        id = statusBar->spIconHID;
-        x = statusBar->drawPosX + 195;
-        y = statusBar->drawPosY + 14;
-        hud_element_set_render_pos(id, x, y);
-        hud_element_draw_next(id);
-
-        id = statusBar->spShineHID;
-        x = statusBar->drawPosX + 195;
-        y = statusBar->drawPosY + 9;
-        hud_element_set_render_pos(id, x, y);
-        hud_element_draw_next(id);
-
-        x = statusBar->drawPosX + 200;
-        y = statusBar->drawPosY + 8;
-        status_bar_draw_number(statusBar->spTimesHID, x, y, playerData->starPoints, 2);
-    }
-
-    if (statusBar->coinsBlinkTimeLeft > 0) {
-        statusBar->coinsBlinkTimeLeft--;
-        if (statusBar->coinsBlinkTimeLeft == 0) {
-            status_bar_stop_blinking_coins();
-        }
-    }
-
-    showStat = true;
-    if (statusBar->coinsBlinking != BLINK_OFF) {
-        if (statusBar->coinsBlinkAnimTime > 8) {
-            showStat = false;
-            if (statusBar->coinsBlinkAnimTime > 12) {
-                statusBar->coinsBlinkAnimTime = 0;
-                showStat = true;
-            }
-        }
-        statusBar->coinsBlinkAnimTime++;
-    }
-
-    if (showStat) {
-        id = statusBar->coinIconHID;
-        x = statusBar->drawPosX + 244;
-        y = statusBar->drawPosY + 14;
-        hud_element_set_render_pos(id, x, y);
-        hud_element_draw_next(id);
-
-        id = statusBar->coinSparkleHID;
-        x = statusBar->drawPosX + 244;
-        y = statusBar->drawPosY + 14;
-        hud_element_set_render_pos(id, x, y);
-        hud_element_draw_next(id);
-
-        x = statusBar->drawPosX + 247;
-        y = statusBar->drawPosY + 8;
-        status_bar_draw_number(statusBar->coinTimesHID, x, y, statusBar->displayCoins, 3);
-    }
-
-    id = statusBar->starIconHID;
-    showStat = true;
-    if (statusBar->starPowerBlinking != BLINK_OFF) {
-        if (statusBar->starPowerBlinkCounter > 5) {
-            if (statusBar->starPowerBlinkCounter <= 8) {
-                showStat = false;
-            } else {
-                statusBar->starPowerBlinkCounter = 0;
-                showStat = true;
-            }
-        }
-        statusBar->starPowerBlinkCounter++;
-    }
-
-    x = statusBar->drawPosX + 20;
-    y = statusBar->drawPosY + 28;
-
-    spBars = statusBar->displayStarPower / SP_PER_BAR;
-    limit = statusBar->displayStarPower % SP_PER_BAR;
-    limit /= 32;
-    limit += spBars * 8;
-    if (statusBar->shimmerState == STATUS_SHIMMER_BEGIN) {
-        spBars = playerData->starPower / SP_PER_BAR;
-        limit = playerData->starPower % SP_PER_BAR;
-        limit = limit / 32;
-        limit += spBars * 8;
-        star_power_shimmer_start(0, x + limit * 25 / 10, y, 1.0f);
-        statusBar->shimmerState = STATUS_SHIMMER_ON;
-    }
-
-    showAddedBar = false;
-    if (statusBar->shimmerState != STATUS_SHIMMER_OFF) {
-        if (statusBar->shimmerTime != 0) {
-            statusBar->shimmerTime--;
-        } else {
-            statusBar->shimmerState = STATUS_SHIMMER_OFF;
-        }
-        // creates a stipple pattern repeating 5x zero, 5x one, ...
-        if ((statusBar->shimmerTime / 5) & 1) {
-            showAddedBar = true;
-        }
-        s7 = statusBar->shimmerLimit % 8;
-        s7 += statusBar->shimmerLimit / 8 * 8;
-    } else {
-        s7 = limit;
-    }
-
-    i = 0;
-
-    if (statusBar->starPowerBlinking != BLINK_OFF) {
-        if (!showStat) {
-            // start rendering after the blinking SP bars
-            i = statusBar->powBarsToBlink * (SP_PER_BAR / SP_PER_SEG);
-        }
-    }
-
-    if (!showAddedBar) {
-        limit = MIN(limit, s7);
-    }
-
-    render_se_bar(id, x, y, i, limit);
-
-    star_power_shimmer_update();
-    star_power_shimmer_draw();
+    draw_custom_status_bar(statusBar);
 }
 
 void coin_counter_draw_content(void* data, s32 posX, s32 posY) {
