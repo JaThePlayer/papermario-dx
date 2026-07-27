@@ -3,6 +3,7 @@
 #include "common_structs.h"
 #include "enums.h"
 #include "hud_element.h"
+#include "inventory.h"
 #include "misc_patches/misc_patches.h"
 
 enum BlinkModes {
@@ -203,6 +204,23 @@ static void draw_se_display(StatusBar* statusBar, s32 x, s32 y) {
     star_power_shimmer_draw();
 }
 
+extern HudScript HES_Item_BattleFireflower;
+
+static void draw_item_display(StatusBar* statusBar, s32 x, s32 y) {
+    s32 showStat = true;
+
+    if (showStat) {
+        s32 id = statusBar->hpIconHIDs[0];
+        hud_element_set_script(id, HES_Item_BattleFireflower);
+        hud_element_set_scale(id, 0.5f);
+        hud_element_set_render_pos(id, x + 4, y+8 + ICON_Y_OFFSET + 1);
+        hud_element_draw_next(id);
+        hud_element_set_scale(id, 1.f);
+
+        status_bar_draw_number(statusBar->spTimesHID, x + 8 + TEXT_X_OFFSET - 4, y + TEXT_Y_OFFSET, get_consumables_count(), 2);
+    }
+}
+
 extern u8 ui_box_bg_flat_png[];
 extern u8 ui_box_corners9_png[];
 
@@ -235,6 +253,7 @@ WindowStyleCustom WindowStyle_HpBar = CREATE_BAR_WINDOW_STYLE(RGBA(0xed, 0x87, 0
 WindowStyleCustom WindowStyle_FpBar = CREATE_BAR_WINDOW_STYLE(RGBA(0xe8, 0xe7, 0xa2, 255), RGBA(0x61, 0x60, 0x38, 255));
 WindowStyleCustom WindowStyle_SpBar = CREATE_BAR_WINDOW_STYLE(RGBA(0xef, 0xc4, 0xa8, 255), RGBA(0x4d, 0x89, 0x8d, 255));
 WindowStyleCustom WindowStyle_CoinBar = CREATE_BAR_WINDOW_STYLE(RGBA(0x98, 0xc8, 0xa6, 255), RGBA(0x42, 0x4d, 0x3f, 255));
+WindowStyleCustom WindowStyle_ItemBar = CREATE_BAR_WINDOW_STYLE(RGBA(0xef, 0xc4, 0xa8, 255), RGBA(0x4d, 0x89, 0x8d, 255));
 
 #define DISPLAY_PAD 4
 #define STAT_DISPLAY_HEIGHT 27
@@ -249,7 +268,11 @@ WindowStyleCustom WindowStyle_CoinBar = CREATE_BAR_WINDOW_STYLE(RGBA(0x98, 0xc8,
 
 #define SP_DISPLAY_X FP_DISPLAY_RIGHT
 #define SP_DISPLAY_WIDTH 50
-#define FP_DISPLAY_RIGHT FP_DISPLAY_X + FP_DISPLAY_WIDTH + DISPLAY_PAD
+#define SP_DISPLAY_RIGHT FP_DISPLAY_X + FP_DISPLAY_WIDTH + DISPLAY_PAD
+
+#define ITEM_DISPLAY_X FP_DISPLAY_RIGHT
+#define ITEM_DISPLAY_WIDTH 50
+#define ITEM_DISPLAY_RIGHT FP_DISPLAY_X + FP_DISPLAY_WIDTH + DISPLAY_PAD
 
 #define COIN_DISPLAY_X (SP_DISPLAY_X + SP_DISPLAY_WIDTH + DISPLAY_PAD)
 #define COIN_DISPLAY_WIDTH 62
@@ -302,12 +325,22 @@ StatusBarElement se_display = {
     .draw = draw_se_display,
 };
 
+StatusBarElement item_display = {
+    .x = ITEM_DISPLAY_X,
+    .y = 1 + STAT_DISPLAY_HEIGHT - 6,
+    .width = ITEM_DISPLAY_WIDTH,
+    .height = STAT_DISPLAY_HEIGHT,
+    .windowStyle = { .customStyle = &WindowStyle_ItemBar },
+    .draw = draw_item_display,
+};
+
 StatusBarElement* status_bar_elements[] = {
     &hp_display,
     &fp_display,
     &sp_display,
     &coin_display,
     &se_display,
+    &item_display,
     nullptr,
 };
 
