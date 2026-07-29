@@ -198,7 +198,7 @@ static void draw_se_display(StatusBar* statusBar, s32 x, s32 y) {
         limit = MIN(limit, s7);
     }
 
-    render_se_bar(id, x, y, i, limit + 6);
+    render_se_bar(id, x, y, i, limit);
 
     star_power_shimmer_update();
     star_power_shimmer_draw();
