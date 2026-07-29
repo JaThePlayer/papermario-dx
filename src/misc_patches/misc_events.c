@@ -5,12 +5,16 @@
 #include "variables.h"
 #include "misc_patches/misc_patches.h"
 
+// How many times SE was passively regenerated this battle.
+static s32 passive_se_regen_counter;
+
 void _on_battle_start() {
     BattleStatus* battleStatus = &gBattleStatus;
 
     battleStatus->turnCounter = 0;
     battleStatus->focusUses = 0;
     battleStatus->extraBurnDamage = 0;
+    passive_se_regen_counter = 0;
 }
 
 void _on_turn_start() {
@@ -22,13 +26,17 @@ void _on_turn_start() {
 void _on_handle_passive_se_regen() {
     PlayerData* playerData = &gPlayerData;
 
-    // New in armageddon: Passive SP regen 3 times per battle.
+    // Passive SE regen 4 times per battle.
+    // If SE is full, the counter does not increase.
     s32 starCharms = player_count_badges_with_move_id(MOVE_PRETTY_LUCKY);
     s32 starTuners = player_count_badges_with_move_id(MOVE_LUCKY_DAY);
-    if (starTuners > 0 || gBattleStatus.turnCounter <= (starCharms + 3)) {
+    s32 maxSe = getMaxStarEnergy() * SP_PER_BAR;
+
+    if (playerData->starPower < maxSe && (starTuners > 0 || passive_se_regen_counter < (starCharms + 4))) {
+        passive_se_regen_counter++;
         playerData->starPower += SP_PER_SEG * (starCharms + (starTuners * 2) + 1);
-        if (playerData->starPower > getMaxStarEnergy() * SP_PER_BAR) {
-            playerData->starPower = getMaxStarEnergy() * SP_PER_BAR;
+        if (playerData->starPower > maxSe) {
+            playerData->starPower = maxSe;
         }
     }
 }

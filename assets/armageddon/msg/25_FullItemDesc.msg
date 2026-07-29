@@ -736,8 +736,8 @@
 #message:25:(ItemFullDesc_PrettyLucky) {
 	Increase passive SE recovery[BR]
 	by 1/8 SE per turn.[BR]
-	Passive SE recovery lasts[BR]
-	for an additional turn.[END]
+	Passive SE recovery can[BR]
+	trigger an additional time.[END]
 }
 
 #message:25:(ItemFullDesc_LuckyDay) {
