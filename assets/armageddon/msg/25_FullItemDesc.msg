@@ -1623,3 +1623,10 @@
 	but increases FP costs by 1[BR]
 	for 2 turns.[End]
 }
+
+#message:26:(ItemFullDesc_FriedDanger) {
+	Frying amplified the danger...[BR]
+	Why would you eat this?[BR]
+	Gives 1 turn of Poison III,[BR]
+	but recovers 9 FP.[End]
+}

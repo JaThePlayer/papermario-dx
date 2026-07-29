@@ -395,4 +395,5 @@
     <Icon type="pair" name="badge/ThreatFocus"/>
     <Icon type="pair" name="badge/PainFocus"/>
     <Icon type="pair" name="badge/SPPlus"/>
+    <Icon type="pair" name="item/FriedDanger"/>
 </Icons>

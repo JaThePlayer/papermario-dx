@@ -1127,7 +1127,7 @@
 }
 
 #message:26:(ItemName_PoisonShroom) {
-	Poison Shroom[End]
+	Danger Shroom[End]
 }
 
 #message:26:(ItemName_ThreatFocus) {
@@ -1144,4 +1144,8 @@
 
 #message:26:(ItemName_MapleCream) {
 	Maple Cream[End]
+}
+
+#message:26:(ItemName_FriedDanger) {
+	Fried Danger[End]
 }

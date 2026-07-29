@@ -52,6 +52,7 @@ Products:
   - [ ITEM_FIRE_FLOWER,   QUALITY_ODD ]
   - [ ITEM_STRANGE_CAKE,  QUALITY_GOOD ]
   - [ ITEM_MAPLE_CREAM,  QUALITY_OK ]
+  - [ ITEM_FRIED_DANGER,  QUALITY_OK ]
 # Cooking a Mystery has 50% to make MISTAKE and 50% change to create any of these with equal probability
 MysteryProducts:
   - ITEM_FIRE_FLOWER
@@ -107,6 +108,7 @@ SingleRecipes:
   - [ ITEM_DRIED_SHROOM,  ITEM_MISTAKE, ITEM_FRIED_SHROOM ]
   - [ ITEM_BUBBLE_BERRY,  ITEM_MISTAKE, ITEM_TASTY_TONIC ]
   - [ ITEM_WHACKAS_BUMP,  ITEM_MISTAKE, ITEM_YUMMY_MEAL ]
+  - [ ITEM_POISON_SHROOM, ITEM_FRIED_DANGER ] # New in Armageddon
 # [ Input1, Input2, Product ]
 # Recipes with both inputs found as ingredients in SingleRecipes will be added to the DoubleRecipesMatrix,
 # all others will generate as ExtraDoubleRecipes
