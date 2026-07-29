@@ -1850,7 +1850,7 @@
     targetFlags: [ TARGET_FLAG_2, TARGET_FLAG_PRIMARY_ONLY ]
     typeFlags: [ ITEM_TYPE_FLAG_BATTLE_USABLE, ITEM_TYPE_FLAG_CONSUMABLE, ITEM_TYPE_FLAG_ENTITY_FULLSIZE ]
     moveID: MOVE_NONE
-    potencyA: 6
+    potencyA: 7
     potencyB: 0
 - ThunderBolt:
     nameMsg: MSG_ItemName_ThunderBolt
@@ -1864,7 +1864,7 @@
     targetFlags: [ TARGET_FLAG_SELECT_ONE, TARGET_FLAG_2, TARGET_FLAG_PRIMARY_ONLY ]
     typeFlags: [ ITEM_TYPE_FLAG_BATTLE_USABLE, ITEM_TYPE_FLAG_CONSUMABLE, ITEM_TYPE_FLAG_ENTITY_FULLSIZE ]
     moveID: MOVE_NONE
-    potencyA: 5
+    potencyA: 7
     potencyB: 0
 - Pebble:
     nameMsg: MSG_ItemName_Pebble
@@ -1878,7 +1878,7 @@
     targetFlags: [ TARGET_FLAG_SELECT_ONE, TARGET_FLAG_2, TARGET_FLAG_PRIMARY_ONLY ]
     typeFlags: [ ITEM_TYPE_FLAG_BATTLE_USABLE, ITEM_TYPE_FLAG_CONSUMABLE, ITEM_TYPE_FLAG_ENTITY_FULLSIZE ]
     moveID: MOVE_NONE
-    potencyA: 1
+    potencyA: 2
     potencyB: 0
 - DustyHammer:
     nameMsg: MSG_ItemName_DustyHammer
@@ -1892,7 +1892,7 @@
     targetFlags: [ TARGET_FLAG_SELECT_ONE, TARGET_FLAG_2, TARGET_FLAG_PRIMARY_ONLY ]
     typeFlags: [ ITEM_TYPE_FLAG_BATTLE_USABLE, ITEM_TYPE_FLAG_CONSUMABLE, ITEM_TYPE_FLAG_ENTITY_FULLSIZE ]
     moveID: MOVE_NONE
-    potencyA: 1
+    potencyA: 3
     potencyB: 0
 - InsecticideHerb:
     nameMsg: MSG_ItemName_InsecticideHerb

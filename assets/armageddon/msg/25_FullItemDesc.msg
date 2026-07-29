@@ -1,36 +1,37 @@
 #message:25:(ItemFullDesc_FireFlower) {
-	A flower that burns all enemies[BR]
-	for 4 turns, and deals 1 damage.[End]
+	A flower that [Color 0x7]burns[Color 0xA] all enemies[BR]
+	for 4 turns.[BR]
+	Attack Power: [Color 0x4]1 Fire[End]
 }
 
 #message:25:(ItemFullDesc_SnowmanDoll) {
 	A snowman that crushes all[BR]
-	enemies. Attack Power: 4[End]
+	enemies. Attack Power: [Color 0x1]4 Ice[End]
 }
 
 #message:25:(ItemFullDesc_ThunderRage) {
 	Lightning that strikes all[BR]
-	enemies. Attack Power: 5[End]
+	enemies. Attack Power: [Color 0x4]5 Shock[End]
 }
 
 #message:25:(ItemFullDesc_ThunderBolt) {
 	Lightning that strikes an enemy.[BR]
-	Attack Power: 5[End]
+	Attack Power: [Color 0x4]7 Shock[End]
 }
 
 #message:25:(ItemFullDesc_ShootingStar) {
 	Shooting stars that hit all[BR]
-	enemies. Attack Power: 6[End]
+	enemies. Attack Power: [Color 0x8]7 Cosmic[End]
 }
 
 #message:25:(ItemFullDesc_DustyHammer) {
 	A dusty old Hammer. Throw it to[BR]
-	damage an enemy.[End]
+	deal 3 piercing damage.[End]
 }
 
 #message:25:(ItemFullDesc_Pebble) {
 	A common pebble. Throw it to[BR]
-	damage an enemy.[End]
+	deal 2 piercing damage.[End]
 }
 
 #message:25:(ItemFullDesc_StoneCap) {
@@ -43,7 +44,7 @@
 #message:25:(ItemFullDesc_VoltShroom) {
 	Electrifies Mario for 3 turns.[BR]
 	Any enemies who touch him will[BR]
-	take damage.  [End]
+	take [Color 0x4]Shock[Color 0xA] damage.  [End]
 }
 
 #message:25:(ItemFullDesc_Mushroom) {
@@ -1499,8 +1500,8 @@
 #message:25:(ItemFullDesc_MushPower) {
 	Eating any raw mushroom charges[BR]
 	next attack by 1 ATK.[BR]
-	Food poisoning no longer[BR]
-	affects raw mushrooms.[End]
+	Food poisoning no longer affects[BR]
+	raw mushrooms.[End]
 }
 
 #message:25:(ItemFullDesc_PoisonThrow) {
@@ -1546,11 +1547,10 @@
 }
 
 #message:25:(ItemFullDesc_MidasStone) {
-	Coins are infinite, though[BR]
-	all field items turn into[BR]
-	solid gold. Items received[BR]
-	from NPCs, shops, etc.[BR]
-	are safe from this effect.[End]
+	Coins are infinite, though all[BR]
+	field items turn into solid gold.[BR]
+	Items received from NPCs, shops,[BR]
+	etc. are safe from this effect.[End]
 }
 
 #message:25:(ItemFullDesc_LoneIdol) {
