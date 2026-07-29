@@ -27,6 +27,7 @@ typedef struct ItemEffect {
 } ItemEffect;
 
 extern ItemEffectType N(heal);
+extern ItemEffectType N(mush_power);
 
 extern ItemEffect* gItemEffectTable[NUM_ITEMS];
 

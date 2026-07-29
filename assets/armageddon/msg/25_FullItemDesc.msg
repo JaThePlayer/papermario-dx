@@ -363,8 +363,8 @@
 
 #message:25:(ItemFullDesc_KoopaTea) {
 	Tea brewed by Tayce T.[BR]
-	Restores 5 FP, reduces FP[BR]
-	costs by 1 for 4 turns.[End]
+	Restores 5 FP, reduces FP costs[BR]
+	by 1 for 4 turns.[End]
 }
 
 #message:25:(ItemFullDesc_Spaghetti) {
@@ -1493,14 +1493,14 @@
 
 #message:25:(ItemFullDesc_ChillJump) {
 	Lets you do a Chill Stomp. Drops[BR]
-	enemy ATK by 1 for 3 turns. 3 FP.[End]
+	enemy ATK by 1 for 3 turns.[End]
 }
 
 #message:25:(ItemFullDesc_MushPower) {
-	Eating a raw mushroom charges next[BR]
-	attack by 1 ATK.[BR]
-	Only triggers if food poisoning[BR]
-	doesn't come into play.[End]
+	Eating any raw mushroom charges[BR]
+	next attack by 1 ATK.[BR]
+	Food poisoning no longer[BR]
+	affects raw mushrooms.[End]
 }
 
 #message:25:(ItemFullDesc_PoisonThrow) {
