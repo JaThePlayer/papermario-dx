@@ -20,15 +20,27 @@
 #define IMPLEMENT(interfaceName, args...) export struct interfaceName interfaceName##Impl = { args }
 
 API_CALLABLE(_ExecWaitInterface);
+API_CALLABLE(_GetRefFromInterface);
+API_CALLABLE(_GetFromInterface_s32);
 
-#define ExecWaitInterface(actorId, interfaceName, field) Call(_ExecWaitInterface, actorId, (Bytecode)_STR(interfaceName##Impl), (u8*)&field - (u8*)&interfaceName)
+#define ExecWaitInterface(actorId, interfaceName, field) Call(_ExecWaitInterface, actorId, (Bytecode)_STR(interfaceName##Impl), __builtin_offsetof(interfaceName, field))
 
-struct IYieldable {
+#define GetRefFromInterface(actorId, interfaceName, field, outLVar) Call(_GetRefFromInterface, actorId, (Bytecode)_STR(interfaceName##Impl), __builtin_offsetof(interfaceName, field), outLVar)
+
+#define _INTERFACE_FIELD_TYPE(interfaceName, field) _Generic(((interfaceName){{0}}.field), \
+    s32:  _GetFromInterface_s32 \
+)
+
+// Reads a value from the given field of the interface.
+#define GetFromInterface(actorId, interfaceName, field, outLVar) Call((_INTERFACE_FIELD_TYPE(interfaceName, field)), actorId, (Bytecode)_STR(interfaceName##Impl), __builtin_offsetof(interfaceName, field), outLVar)
+
+
+typedef struct IYieldable {
     /// Script which checks if the actor can be yielded to. Returns a boolean on LVarF.
     EvtScript* isYieldable;
 } IYieldable;
 
-struct IGoomba {
+typedef struct IGoomba {
     enum {
         GOOMBA_TYPE_Normal,
         GOOMBA_TYPE_Spiked,

@@ -2156,6 +2156,7 @@ enum Elements {
     ELEMENT_SHOCK            = 0x0000000C,
     ELEMENT_QUAKE            = 0x0000000D,
     ELEMENT_THROW            = 0x0000000F,
+    ELEMENT_POISON           = 0x00000010,
 };
 
 enum Events {

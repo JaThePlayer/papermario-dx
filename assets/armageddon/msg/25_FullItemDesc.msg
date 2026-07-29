@@ -1,7 +1,7 @@
 #message:25:(ItemFullDesc_FireFlower) {
 	A flower that [Color 0x7]burns[Color 0xA] all enemies[BR]
 	for 4 turns.[BR]
-	Attack Power: [Color 0x4]1 Fire[End]
+	Attack Power: [Color 0x7]1 Fire[End]
 }
 
 #message:25:(ItemFullDesc_SnowmanDoll) {

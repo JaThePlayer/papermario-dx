@@ -44,3 +44,22 @@
     IfNe(enemy, ITER_NO_MORE) \
         Goto(label) \
     EndIf
+
+#define FIND_BEST_ENEMY(bestEnemyVar, bestScoreVar, nextEnemyVar, nextScoreVar, label, endScoreCalcLabel, flags, scoreCallback) \
+    Set(bestEnemyVar, 0) \
+    Set(bestScoreVar, -9000) \
+    Call(CreateCurrentPosTargetList, flags) \
+    Call(InitTargetIterator) \
+    Label(label) \
+    Call(GetOwnerTarget, nextEnemyVar, 0) \
+    Set(nextScoreVar, -9000) \
+    scoreCallback \
+    Label(endScoreCalcLabel) \
+    IfGt(nextScoreVar, bestScoreVar) \
+        Set(bestScoreVar, nextScoreVar) \
+        Set(bestEnemyVar, nextEnemyVar) \
+    EndIf \
+    Call(ChooseNextTarget, ITER_NEXT, nextEnemyVar) \
+    IfNe(nextEnemyVar, ITER_NO_MORE) \
+        Goto(label) \
+    EndIf

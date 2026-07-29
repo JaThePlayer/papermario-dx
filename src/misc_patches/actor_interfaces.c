@@ -1,6 +1,8 @@
 #include "actor_interfaces.h"
 #include "common_structs.h"
 #include "dx/overlay.h"
+#include "evt.h"
+#include "functions.h"
 
 API_CALLABLE(_ExecWaitInterface) {
     Bytecode* args = script->ptrReadPos;
@@ -30,6 +32,47 @@ API_CALLABLE(_ExecWaitInterface) {
 
     script->curOpcode = EVT_OP_INTERNAL_FETCH;
     return ApiStatus_FINISH;
+}
+
+u8* get_from_interface_ptr(Evt* script, Bytecode* outVar) {
+    Bytecode* args = script->ptrReadPos;
+    s32 actorID = evt_get_variable(script, *args++);
+    if (actorID == ACTOR_SELF) actorID = script->owner1.actorID;
+    const char* interfaceImplName = (const char*)evt_get_variable(script, *args++);
+    s32 offset = evt_get_variable(script, *args++);
+    *outVar = *args++;
+
+    Actor* actor = get_actor(actorID);
+    if (actor == nullptr) {
+        PANIC_MSG("GetFromInterface: no such actor %ld\n", actorID);
+    }
+    if (actor->overlay == nullptr) {
+        PANIC_MSG("GetFromInterface: actor %ld has no overlay\n", actorID);
+    }
+    u8* data = (u8*)ovl_import(actor->overlay, interfaceImplName);
+    if (data == nullptr) {
+        PANIC_MSG("GetFromInterface: overlay does not export '%s'\n", interfaceImplName);
+    }
+
+    return &data[offset];
+}
+
+API_CALLABLE(_GetRefFromInterface) {
+    Bytecode outVar;
+    s32 offset;
+    u8* data = get_from_interface_ptr(script, &outVar);
+
+    evt_set_variable(script, outVar, (Bytecode)data);
+    return ApiStatus_DONE2;
+}
+
+API_CALLABLE(_GetFromInterface_s32) {
+    Bytecode outVar;
+    s32 offset;
+    s32* data = (s32*)get_from_interface_ptr(script, &outVar);
+
+    evt_set_variable(script, outVar, (Bytecode)*data);
+    return ApiStatus_DONE2;
 }
 
 EvtScript IYieldable_DontYieldIfWillUseItem = {
@@ -67,7 +110,7 @@ EvtScript YieldIfNextActorImplements = {
 
     DoesActorImplement(LVar_Actor, IYieldable, LVarF)
     IfTrue(LVarF)
-        ExecWaitInterface(LVar_Actor, IYieldable, IYieldable.isYieldable)
+        ExecWaitInterface(LVar_Actor, IYieldable, isYieldable)
         IfFalse(LVarF)
             Set(LVarA, 0)
             Return
