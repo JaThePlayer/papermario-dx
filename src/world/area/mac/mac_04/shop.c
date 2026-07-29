@@ -32,7 +32,7 @@ ShopItemData N(Inventory)[] = {
     { .itemID = ITEM_MAPLE_SYRUP,   .price = 15, .descMsg = MSG_ItemFullDesc_MapleSyrup },
     { .itemID = ITEM_DIZZY_DIAL,    .price = 15, .descMsg = MSG_ItemFullDesc_DizzyDial },
     { .itemID = ITEM_THUNDER_BOLT,  .price = 15, .descMsg = MSG_ItemFullDesc_ThunderBolt },
-    { .itemID = ITEM_TASTY_TONIC,   .price =  9, .descMsg = MSG_ItemFullDesc_TastyTonic },
+    { .itemID = ITEM_CAKE_MIX,      .price =  9, .descMsg = MSG_ItemFullDesc_CakeMix },
     { .itemID = ITEM_VOLT_SHROOM,   .price = 10, .descMsg = MSG_ItemFullDesc_VoltShroom },
     { .itemID = ITEM_SUPER_SHROOM,  .price = 15, .descMsg = MSG_ItemFullDesc_SuperShroom },
     {}

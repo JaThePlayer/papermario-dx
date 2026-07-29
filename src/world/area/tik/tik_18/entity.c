@@ -17,7 +17,7 @@ EvtScript N(EVS_OnBreakBlock) = {
 };
 
 EvtScript N(EVS_MakeEntities) = {
-    Call(MakeEntity, Ref(Entity_HiddenYellowBlock), 200, 50, -75, 0, ITEM_SUPER_SHROOM, MAKE_ENTITY_END)
+    Call(MakeEntity, Ref(Entity_HiddenYellowBlock), 200, 50, -75, 0, ITEM_POISON_SHROOM, MAKE_ENTITY_END)
     Call(AssignBlockFlag, GF_TIK18_HiddenItem_SuperShroom)
     Call(MakeEntity, Ref(Entity_MulticoinBlock), 0, 50, -75, 0, MAKE_ENTITY_END)
     Call(AssignBlockFlag, GF_TIK18_MultiCoinBrick)
