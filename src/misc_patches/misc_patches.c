@@ -15,6 +15,7 @@
 #include "custom_status_bar.c"
 #include "item_tags.c"
 #include "anim_bank.c"
+#include "battle_api_ext.c"
 
 // returns how much fp costs are changed by
 s32 getFpCostChange(Actor* player) {

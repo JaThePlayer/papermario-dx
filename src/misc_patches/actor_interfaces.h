@@ -40,6 +40,12 @@ typedef struct IYieldable {
     EvtScript* isYieldable;
 } IYieldable;
 
+/// Marker interface that specifies that the actor has set up an enemy damaged event via BindOnEnemyDamaged that has beneficial effects.
+/// Other actors can decide to hit other actors to proc this effect.
+typedef struct IHasBeneficialOnEnemyDamagedEvent {
+
+} IHasBeneficialOnEnemyHitEvent;
+
 typedef struct IGoomba {
     enum {
         GOOMBA_TYPE_Normal,

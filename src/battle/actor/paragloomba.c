@@ -1,4 +1,5 @@
 #include "battle/battle.h"
+#include "enums.h"
 #include "script_api/battle.h"
 #include "sprite/npc/Paragoomba.h"
 #include "sprite/npc/Goomba.h"
@@ -40,6 +41,7 @@ s32 N(DownedDefense)[] = {
 
 s32 N(FlyingDefense)[] = {
     ELEMENT_NORMAL,   0,
+    ELEMENT_POISON,  -1, // heal
     ELEMENT_END,
 };
 

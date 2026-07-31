@@ -52,6 +52,11 @@
     Call(InitTargetIterator) \
     Label(label) \
     Call(GetOwnerTarget, nextEnemyVar, 0) \
+    Call(GetOwnerID, nextScoreVar) \
+    IfEq(nextScoreVar, nextEnemyVar) \
+        Set(nextScoreVar, -9000) \
+        Goto(endScoreCalcLabel) \
+    EndIf \
     Set(nextScoreVar, -9000) \
     scoreCallback \
     Label(endScoreCalcLabel) \

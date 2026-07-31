@@ -95,6 +95,7 @@ export ActorBlueprint blueprint = {
 
 IMPLEMENT(IGoomba, GOOMBA_TYPE_Para);
 IMPLEMENT(IYieldable, &IYieldable_DontYieldIfWillUseItem);
+IMPLEMENT(IHasBeneficialOnEnemyDamagedEvent);
 
 s32 N(DefaultAnims)[] = {
     STATUS_KEY_NORMAL,    ANIM_Paragoomba_Red_Idle,

@@ -1,5 +1,10 @@
 #include "battle/battle.h"
+#include "enums.h"
+#include "macros.h"
+#include "misc_patches/actor_interfaces.h"
+#include "misc_patches/battle_api_ext.h"
 #include "script_api/battle.h"
+#include "script_api/macros.h"
 #include "sprite/npc/MontyMole.h"
 
 #define NAMESPACE A(monty_mole)
@@ -25,7 +30,8 @@ enum N(ActorVars) {
 };
 
 enum N(ActorParams) {
-    DMG_TOSS        = 2,
+    DMG_FRIENDLY_TOSS  = 1,
+    DMG_TOSS           = 2,
 };
 
 s32 N(DefenseTable)[] = {
@@ -378,6 +384,49 @@ EvtScript N(EVS_HandleEvent) = {
 
 // in: LVar9 - part
 EvtScript N(ThrowRock) = {
+    // Try to throw rocks at enemies to proc on-enemy-hit events.
+    #define LVarF_Enemy LVarF
+    #define LVarD_NextEnemy LVarD
+    #define LVarC_BestScore LVarC
+    #define LVar6_NextScore LVar6
+    #define LABEL_END_SCORE_CALC 2
+    #define LVarB_FoundOnEnemyHitEvent LVarB
+    #define LVarA_Damage LVarA
+    Set(LVarB_FoundOnEnemyHitEvent, 0)
+    FIND_BEST_ENEMY(LVarF_Enemy, LVarC_BestScore, LVarD_NextEnemy, LVar6_NextScore, 1, LABEL_END_SCORE_CALC, TARGET_FLAG_PRIMARY_ONLY,
+        DoesActorImplement(LVarD_NextEnemy, IHasBeneficialOnEnemyDamagedEvent, LVarE)
+        IfTrue(LVarE)
+            Add(LVarB_FoundOnEnemyHitEvent, 1)
+        EndIf
+
+        // score = hp (deprioritize almost dead enemies, we don't want to kill them!)
+        Call(GetActorHP, LVarD_NextEnemy, LVarE)
+        IfLe(LVarE, DMG_FRIENDLY_TOSS)
+            Goto(LABEL_END_SCORE_CALC)
+        EndIf
+        Set(LVar6_NextScore, LVarE)
+
+        // Prioritize enemies with defense that can tank the hit.
+        Call(GetActorDefense, LVarD_NextEnemy, ELEMENT_NORMAL, LVarE)
+        Mul(LVarE, 10)
+        Add(LVar6_NextScore, LVarE)
+    )
+
+    Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
+    Set(LVarA_Damage, DMG_TOSS)
+    IfGt(LVarB_FoundOnEnemyHitEvent, 0)
+        IfNe(LVarF_Enemy, 0)
+            Call(SetTargetActor, ACTOR_SELF, LVarF_Enemy)
+            Set(LVarA_Damage, DMG_FRIENDLY_TOSS)
+
+            Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
+            Call(GetActorPos, LVarF_Enemy, LVar3, LVar4, LVar5)
+            IfLe(LVar0, LVar3)
+                Call(SetActorYaw, ACTOR_SELF, 180)
+            EndIf
+        EndIf
+    EndIf
+    Call(SetGoalToTarget, ACTOR_SELF)
     Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
     Add(LVar1, 20)
     Call(SetPartPos, ACTOR_SELF, LVar9, LVar0, LVar1, LVar2)
@@ -391,12 +440,11 @@ EvtScript N(ThrowRock) = {
     EndIf
     Call(PlaySoundAtPart, ACTOR_SELF, LVar9, SOUND_MOLE_THROW)
     Call(SetPartSounds, ACTOR_SELF, LVar9, ACTOR_SOUND_FLY, SOUND_NONE, SOUND_NONE)
-    Call(EnemyTestTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_NO_CONTACT, 0, 2, BS_FLAGS1_TRIGGER_EVENTS)
+    Call(EnemyTestTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_NO_CONTACT, 0, LVarA_Damage, BS_FLAGS1_TRIGGER_EVENTS)
     Switch(LVar0)
         CaseOrEq(HIT_RESULT_MISS)
         CaseOrEq(HIT_RESULT_LUCKY)
             Set(LVarA, LVar0)
-            Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
             Call(SetGoalToTarget, ACTOR_SELF)
             Call(GetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
             Sub(LVar0, 100)
@@ -414,7 +462,6 @@ EvtScript N(ThrowRock) = {
             Return
         EndCaseGroup
     EndSwitch
-    Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
     Call(SetGoalToTarget, ACTOR_SELF)
     Call(GetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
     Call(SetPartMoveSpeed, ACTOR_SELF, LVar9, Float(12.0))
@@ -422,11 +469,12 @@ EvtScript N(ThrowRock) = {
     Call(SetAnimation, ACTOR_SELF, LVar9, ANIM_MontyMole_Rock)
     Call(FlyPartTo, ACTOR_SELF, LVar9, LVar0, LVar1, LVar2, 0, 20, EASING_LINEAR)
     Wait(2)
-    Call(EnemyDamageTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_NO_CONTACT, 0, 0, DMG_TOSS, BS_FLAGS1_TRIGGER_EVENTS)
+    Call(EnemyDamageTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_NO_CONTACT, 0, 0, LVarA_Damage, BS_FLAGS1_TRIGGER_EVENTS)
     Switch(LVar0)
         CaseOrEq(HIT_RESULT_HIT)
         CaseOrEq(HIT_RESULT_NO_DAMAGE)
-            Call(GetActorPos, ACTOR_PLAYER, LVar0, LVar1, LVar2)
+            Call(SetGoalToTarget, ACTOR_SELF)
+            Call(GetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
             Sub(LVar0, 55)
             Set(LVar1, 0)
             Call(SetPartMoveSpeed, ACTOR_SELF, LVar9, Float(6.0))
@@ -440,6 +488,13 @@ EvtScript N(ThrowRock) = {
     EndSwitch
     Return
     End
+
+    #undef LVarF_Enemy
+    #undef LVarD_NextEnemy
+    #undef LVarC_BestScore
+    #undef LVar6_NextScore
+    #undef LABEL_END_SCORE_CALC
+    #undef LVarB_FoundOnEnemyHitEvent
 };
 
 s32 N(MoleTypes)[] = {
@@ -471,12 +526,14 @@ EvtScript N(EVS_TakeTurn) = {
     Set(LVar9, PRT_ROCK)
     Exec(N(ThrowRock))
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_MontyMole_Idle)
+    Call(SetActorYaw, ACTOR_SELF, 0)
     Wait(2)
 
     // Check for team-attack
     Call(N(NextEnemyIfTypeIsOneOf), Ref(N(MoleTypes)), LVarF)
     IfNe(LVarF, nullptr)
-        Call(YieldTurn)
+    // TODO: breaks if the enemy we're team-attacking with just got hit by friendly fire... (The enemy skips their turn)
+    //    Call(YieldTurn)
     EndIf
 
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_MontyMole_AnimSecondThrow)
@@ -484,6 +541,7 @@ EvtScript N(EVS_TakeTurn) = {
     Set(LVar9, PRT_ROCK_2)
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_MontyMole_Idle)
     ExecWait(N(ThrowRock))
+    Call(SetActorYaw, ACTOR_SELF, 0)
 
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
     Call(UseIdleAnimation, ACTOR_SELF, true)

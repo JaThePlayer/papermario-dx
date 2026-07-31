@@ -5,7 +5,7 @@
 API_CALLABLE(N(NextEnemyIfTypeIsOneOf)) {
     Bytecode* args = script->ptrReadPos;
 
-    s32* types = evt_get_variable(script, *args++);
+    s32* types = (s32*)evt_get_variable(script, *args++);
 
     s32 ownerId = script->owner1.actorID;
     s32 nextActorId = ownerId + 1;
@@ -22,7 +22,7 @@ API_CALLABLE(N(NextEnemyIfTypeIsOneOf)) {
         }
     }
 
-    evt_set_variable(script, *args++, ret ? nextActor : nullptr);
+    evt_set_variable(script, *args++, ret ? (s32)nextActor : nullptr);
 
     return ApiStatus_DONE2;
 }
