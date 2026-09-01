@@ -5,6 +5,7 @@
 #include "battle/battle.h"
 #include "enums.h"
 #include "misc_patches/actor_interfaces.h"
+#include "misc_patches/custom_status.h"
 #include "script_api/battle.h"
 #include "script_api/macros.h"
 #include "sprite/npc/Cleft.h"
@@ -65,6 +66,7 @@ s32 N(StatusTable)[] = {
     STATUS_TURN_MOD_PARALYZE,       0,
     STATUS_TURN_MOD_SHRINK,         0,
     STATUS_TURN_MOD_STOP,           0,
+    STATUS_TABLE_CUSTOM_ENTRY(BURN_STATUS, 0, 0),
     STATUS_END,
 };
 
