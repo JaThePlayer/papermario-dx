@@ -119,6 +119,9 @@ void btl_state_update_enemy_move(void) {
                         waitingForEnemyScript = true;
                     } else {
                         enemy->takeTurnScript = nullptr;
+                        // An enemy might've yielded their turn BEFORE dealing damage,
+                        // in which case their charge hasn't been cleared at the end of their turn.
+                        clearChargesFromIfAttackedThisTurn(enemy);
                     }
                 }
             }
@@ -130,10 +133,7 @@ void btl_state_update_enemy_move(void) {
             gBattleStatus.flags1 &= ~BS_FLAGS1_EXECUTING_MOVE;
             gBattleStatus.flags2 &= ~BS_FLAGS2_IGNORE_DARKNESS;
 
-            if (battleStatus->curTurnEnemy->attackedThisTurn) {
-                battleStatus->curTurnEnemy->attackedThisTurn = false;
-                clearChargesFrom(battleStatus->curTurnEnemy);
-            }
+            clearChargesFromIfAttackedThisTurn(battleStatus->curTurnEnemy);
 
             if (btl_check_enemies_defeated()) {
                 return;

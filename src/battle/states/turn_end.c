@@ -1,5 +1,6 @@
 #include "PR/ultratypes.h"
 #include "misc_patches/misc_events.h"
+#include "misc_patches/misc_patches.h"
 #include "states.h"
 
 enum {
@@ -43,6 +44,9 @@ void btl_state_update_end_turn(void) {
                         cond = true;
                     } else {
                         actor->takeTurnScript = nullptr;
+                        // An enemy might've yielded their turn BEFORE dealing damage,
+                        // in which case their charge hasn't been cleared at the end of their turn.
+                        clearChargesFromIfAttackedThisTurn(actor);
                     }
                 }
             }
