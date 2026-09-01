@@ -122,6 +122,15 @@ extern API_CALLABLE(ApplyCustomItemEffects);
         EndIf \
     EndIf
 
+#define STANDARD_ITEM_USE_AI_CODE_IF_USED(code...) \
+    Call(GetBattlePhase, LVar0) \
+    IfNe(LVar0, PHASE_FIRST_STRIKE) \
+        ExecWait(EnemyItems_TryUseHeldItem_WithAI) \
+        IfNe(LVar0, 0) \
+            code \
+        EndIf \
+    EndIf
+
 /// Handles calling the default item use AI, and goto's to the given label
 #define STANDARD_ITEM_USE_AI_GOTO(labelId) \
     Call(GetBattlePhase, LVar0) \

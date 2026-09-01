@@ -1,7 +1,12 @@
+#include "battle/interfaces/ICanBeUnflipped.h"
 #include "common.h"
+#include "common_structs.h"
 #include "effects.h"
 #include "battle/battle.h"
+#include "enums.h"
+#include "misc_patches/actor_interfaces.h"
 #include "script_api/battle.h"
+#include "script_api/macros.h"
 #include "sprite/npc/Cleft.h"
 
 #define NAMESPACE A(cleft)
@@ -101,6 +106,14 @@ export ActorBlueprint blueprint = {
     .statusTextOffset = { 10, 20 },
     .spPool = CURRENT_SP_POOL,
 };
+
+extern EvtScript N(EVS_CanBeUnflipped);
+extern EvtScript N(EVS_GetUpImmediately);
+
+IMPLEMENT(ICanBeUnflipped,
+    .canBeUnflippedScript = &N(EVS_CanBeUnflipped),
+    .getUpImmediatelyScript = &N(EVS_GetUpImmediately),
+);
 
 s32 N(UprightAnims)[] = {
     STATUS_KEY_NORMAL,    ANIM_Cleft_Idle,
@@ -388,6 +401,59 @@ EvtScript N(EVS_HandleEvent) = {
     End
 };
 
+EvtScript N(EVS_CanBeUnflipped) = {
+    Call(GetActorVar, ACTOR_SELF, AVAR_ToppleTurns, LVarE)
+    IfNe(LVarE, 0)
+        Set(LVarE, true)
+    EndIf
+    Return
+    End
+};
+
+EvtScript N(EVS_GetUpImmediately) = {
+    Call(UseIdleAnimation, ACTOR_SELF, false)
+    Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
+
+    Call(SetActorVar, ACTOR_SELF, AVAR_ToppleTurns, 0)
+    Call(SetActorRotationOffset, ACTOR_SELF, 0, 16, 0)
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Cleft_ToppleKick)
+    Thread
+        Wait(3)
+        Loop(5)
+            Add(LVar0, 36)
+            Call(SetActorRotation, ACTOR_SELF, 0, 0, LVar0)
+            Wait(1)
+        EndLoop
+    EndThread
+    Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
+    Sub(LVar1, 6)
+    Call(SetActorJumpGravity, ACTOR_SELF, Float(1.3))
+    Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
+    Call(JumpToGoal, ACTOR_SELF, 10, false, true, false)
+    Call(N(StartRumbleWithParams), 200, 10)
+    Thread
+        Call(ShakeCam, CAM_BATTLE, 0, 5, Float(1.0))
+    EndThread
+    Call(SetActorRotationOffset, ACTOR_SELF, 0, 0, 0)
+    Call(SetActorRotation, ACTOR_SELF, 0, 0, 0)
+    Call(SetActorPos, ACTOR_SELF, LVar0, 0, LVar2)
+    Call(SetActorVar, ACTOR_SELF, AVAR_Toppled, 0)
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Cleft_Idle)
+    Call(SetIdleAnimations, ACTOR_SELF, PRT_MAIN, Ref(N(UprightAnims)))
+    Call(SetDefenseTable, ACTOR_SELF, PRT_MAIN, Ref(N(UprightDefenseTable)))
+    Call(SetTargetOffset, ACTOR_SELF, PRT_MAIN, 0, 22)
+    Call(SetProjectileTargetOffset, ACTOR_SELF, PRT_MAIN, 0, -10)
+    Call(SetPartEventBits, ACTOR_SELF, PRT_MAIN, ACTOR_EVENT_FLAG_SPIKY_TOP, true)
+    Wait(1)
+    Call(N(SetSpinSmashable), true)
+    Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_FLIPPED, false)
+
+    Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
+    Call(UseIdleAnimation, ACTOR_SELF, true)
+    Return
+    End
+};
+
 EvtScript N(EVS_TryGettingUp) = {
     Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
@@ -403,38 +469,7 @@ EvtScript N(EVS_TryGettingUp) = {
         Sub(LVar0, 1)
         Call(SetActorVar, ACTOR_SELF, AVAR_ToppleTurns, LVar0)
     Else
-        Call(SetActorRotationOffset, ACTOR_SELF, 0, 16, 0)
-        Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Cleft_ToppleKick)
-        Thread
-            Wait(3)
-            Loop(5)
-                Add(LVar0, 36)
-                Call(SetActorRotation, ACTOR_SELF, 0, 0, LVar0)
-                Wait(1)
-            EndLoop
-        EndThread
-        Call(GetActorPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-        Sub(LVar1, 6)
-        Call(SetActorJumpGravity, ACTOR_SELF, Float(1.3))
-        Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
-        Call(JumpToGoal, ACTOR_SELF, 10, false, true, false)
-        Call(N(StartRumbleWithParams), 200, 10)
-        Thread
-            Call(ShakeCam, CAM_BATTLE, 0, 5, Float(1.0))
-        EndThread
-        Call(SetActorRotationOffset, ACTOR_SELF, 0, 0, 0)
-        Call(SetActorRotation, ACTOR_SELF, 0, 0, 0)
-        Call(SetActorPos, ACTOR_SELF, LVar0, 0, LVar2)
-        Call(SetActorVar, ACTOR_SELF, AVAR_Toppled, 0)
-        Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_Cleft_Idle)
-        Call(SetIdleAnimations, ACTOR_SELF, PRT_MAIN, Ref(N(UprightAnims)))
-        Call(SetDefenseTable, ACTOR_SELF, PRT_MAIN, Ref(N(UprightDefenseTable)))
-        Call(SetTargetOffset, ACTOR_SELF, PRT_MAIN, 0, 22)
-        Call(SetProjectileTargetOffset, ACTOR_SELF, PRT_MAIN, 0, -10)
-        Call(SetPartEventBits, ACTOR_SELF, PRT_MAIN, ACTOR_EVENT_FLAG_SPIKY_TOP, true)
-        Wait(1)
-        Call(N(SetSpinSmashable), true)
-        Call(SetActorFlagBits, ACTOR_SELF, ACTOR_FLAG_FLIPPED, false)
+        ExecWait(N(EVS_GetUpImmediately))
     EndIf
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
     Call(UseIdleAnimation, ACTOR_SELF, true)

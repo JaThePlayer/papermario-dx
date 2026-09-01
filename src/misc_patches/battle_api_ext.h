@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.h"
+#include "macros.h"
 
 extern ActorPart* get_actor_part_for_def(Actor* actor);
 
@@ -10,3 +11,8 @@ extern ActorPart* get_actor_part_for_def(Actor* actor);
 /// @param element
 /// @param outVarDefense
 API_CALLABLE(GetActorDefense);
+
+/// @evtapi
+/// @param actorId
+/// @param outVarMaxHp
+API_CALLABLE(GetActorMaxHP);

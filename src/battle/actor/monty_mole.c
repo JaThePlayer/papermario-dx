@@ -1,4 +1,7 @@
+#include "PR/ultratypes.h"
 #include "battle/battle.h"
+#include "battle/interfaces/ICanBeUnflipped.h"
+#include "common_structs.h"
 #include "enums.h"
 #include "macros.h"
 #include "misc_patches/actor_interfaces.h"
@@ -31,7 +34,7 @@ enum N(ActorVars) {
 
 enum N(ActorParams) {
     DMG_FRIENDLY_TOSS  = 1,
-    DMG_TOSS           = 2,
+    DMG_TOSS           = 1,
 };
 
 s32 N(DefenseTable)[] = {
@@ -382,6 +385,73 @@ EvtScript N(EVS_HandleEvent) = {
     End
 };
 
+#define LFlag1_UsedExtraAction LFlag1
+
+EvtScript N(TryUnflipCleft) = {
+    #define LVarF_Enemy LVarF
+    #define LVarD_NextEnemy LVarD
+    #define LVarC_BestScore LVarC
+    #define LVar6_NextScore LVar6
+    #define LABEL_END_SCORE_CALC 2
+    #define LVarB_FoundOnEnemyHitEvent LVarB
+    #define LVarA_Damage LVarA
+    Set(LVarB_FoundOnEnemyHitEvent, 0)
+    FIND_BEST_ENEMY(LVarF_Enemy, LVarC_BestScore, LVarD_NextEnemy, LVar6_NextScore, 1, LABEL_END_SCORE_CALC, TARGET_FLAG_PRIMARY_ONLY,
+        DoesActorImplement(LVarD_NextEnemy, ICanBeUnflipped, LVarE)
+        IfFalse(LVarE)
+            Goto(LABEL_END_SCORE_CALC)
+        EndIf
+
+        ExecWaitInterface(LVarD_NextEnemy, ICanBeUnflipped, canBeUnflippedScript)
+        IfEq(LVarE, 0)
+            Goto(LABEL_END_SCORE_CALC)
+        EndIf
+
+        // score = maxHp - hp + 1 (prioritize almost dead enemies, we want to resque them!)
+        Call(GetActorMaxHP, LVarD_NextEnemy, LVar6_NextScore)
+        Call(GetActorHP, LVarD_NextEnemy, LVarE)
+        Sub(LVar6_NextScore, LVarE)
+        Add(LVar6_NextScore, 1)
+    )
+
+    IfEq(LVarF_Enemy, 0)
+        Return
+    EndIf
+
+    Call(PlaySoundAtActor, ACTOR_SELF, SOUND_BURROW_DIG)
+    Call(SetAnimationRate, ACTOR_SELF, PRT_MAIN, Float(2.0))
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_MontyMole_Burrow)
+    Wait(20)
+
+    Call(GetActorPos, LVarF_Enemy, LVar0, LVar1, LVar2)
+    Add(LVar2, 10)
+    Call(SetGoalPos, ACTOR_SELF, LVar0, LVar1, LVar2)
+    Call(SetActorSpeed, ACTOR_SELF, Float(18.0))
+    Call(RunToGoal, ACTOR_SELF, 0, false)
+
+    Call(PlaySoundAtActor, ACTOR_SELF, SOUND_BURROW_SURFACE)
+    Call(SetAnimationRate, ACTOR_SELF, PRT_MAIN, Float(1.0))
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_MontyMole_Emerge)
+    Wait(2)
+
+    Thread
+        ExecWaitInterface(LVarF_Enemy, ICanBeUnflipped, getUpImmediatelyScript)
+    EndThread
+    Wait(10)
+
+    Call(PlaySoundAtActor, ACTOR_SELF, SOUND_BURROW_DIG)
+    Call(SetAnimationRate, ACTOR_SELF, PRT_MAIN, Float(2.0))
+    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_MontyMole_Burrow)
+    Wait(20)
+
+    Call(SetGoalToHome, ACTOR_SELF)
+    Call(SetActorSpeed, ACTOR_SELF, Float(18.0))
+    Call(RunToGoal, ACTOR_SELF, 0, false)
+
+    Return
+    End
+};
+
 // in: LVar9 - part
 EvtScript N(ThrowRock) = {
     // Try to throw rocks at enemies to proc on-enemy-hit events.
@@ -504,7 +574,12 @@ s32 N(MoleTypes)[] = {
 };
 
 EvtScript N(EVS_TakeTurn) = {
-    STANDARD_ITEM_USE_AI()
+    #define LABEL_END 0
+
+    Set(LFlag1_UsedExtraAction, false)
+    STANDARD_ITEM_USE_AI_CODE_IF_USED(
+        Set(LFlag1_UsedExtraAction, true)
+    )
     Call(UseIdleAnimation, ACTOR_SELF, false)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_DISABLE)
     Call(SetTargetActor, ACTOR_SELF, ACTOR_PLAYER)
@@ -515,14 +590,33 @@ EvtScript N(EVS_TakeTurn) = {
         Call(UseBattleCamPreset, BTL_CAM_DEFAULT)
         Call(MoveBattleCamOver, 1)
     EndIf
+
+    ExecWait(N(TryUnflipCleft))
+
     ChildThread
         Call(PlaySoundAtActor, ACTOR_SELF, SOUND_BURROW_DIG)
         Wait(20)
         Call(PlaySoundAtActor, ACTOR_SELF, SOUND_BURROW_SURFACE)
     EndChildThread
+    IfNe(LVarF, 0)
+        Call(PlaySoundAtActor, ACTOR_SELF, SOUND_BURROW_SURFACE)
+        Call(SetAnimationRate, ACTOR_SELF, PRT_MAIN, Float(1.0))
+        // If we've flipped a cleft, that uses up one of our actions this turn.
+        IfTrue(LFlag1_UsedExtraAction)
+            Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_MontyMole_Emerge)
+            Wait(20)
+            Goto(LABEL_END)
+        EndIf
 
-    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_MontyMole_ThrowAttack)
-    Wait(37 - 16)
+        // We're currently burrowed, new animation to unborrow directly into throwing.
+        Set(LFlag1_UsedExtraAction, true)
+        Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_MontyMole_EmergeThrow)
+        Wait(25)
+    Else
+        Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_MontyMole_ThrowAttack)
+        Wait(37 - 16)
+    EndIf
+
     Set(LVar9, PRT_ROCK)
     Exec(N(ThrowRock))
     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_MontyMole_Idle)
@@ -530,21 +624,30 @@ EvtScript N(EVS_TakeTurn) = {
     Wait(2)
 
     // Check for team-attack
-    Call(N(NextEnemyIfTypeIsOneOf), Ref(N(MoleTypes)), LVarF)
-    IfNe(LVarF, nullptr)
+    //Call(N(NextEnemyIfTypeIsOneOf), Ref(N(MoleTypes)), LVarF)
+    //IfNe(LVarF, nullptr)
     // TODO: breaks if the enemy we're team-attacking with just got hit by friendly fire... (The enemy skips their turn)
     //    Call(YieldTurn)
+    //EndIf
+
+    IfEq(LFlag1_UsedExtraAction, false)
+        Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_MontyMole_AnimSecondThrow)
+        Wait(7)
+        Set(LVar9, PRT_ROCK_2)
+        Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_MontyMole_Idle)
+        ExecWait(N(ThrowRock))
+        Call(SetActorYaw, ACTOR_SELF, 0)
     EndIf
 
-    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_MontyMole_AnimSecondThrow)
+    // Let the damage animation run a bit before ending turn, otherwise Mario's turn animation will get stuck and it looks weird.
     Wait(7)
-    Set(LVar9, PRT_ROCK_2)
-    Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_MontyMole_Idle)
-    ExecWait(N(ThrowRock))
-    Call(SetActorYaw, ACTOR_SELF, 0)
 
+    Label(LABEL_END)
     Call(EnableIdleScript, ACTOR_SELF, IDLE_SCRIPT_ENABLE)
     Call(UseIdleAnimation, ACTOR_SELF, true)
     Return
     End
+    #undef LABEL_END
 };
+
+#undef LFlag1_UsedExtraAction

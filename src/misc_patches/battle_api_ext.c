@@ -19,3 +19,17 @@ API_CALLABLE(GetActorDefense) {
     return ApiStatus_DONE2;
 }
 
+API_CALLABLE(GetActorMaxHP) {
+    Bytecode* args = script->ptrReadPos;
+    s32 actorID = evt_get_variable(script, *args++);
+    Bytecode outVar = *args++;
+
+    if (actorID == ACTOR_SELF) {
+        actorID = script->owner1.actorID;
+    }
+    Actor* actor = get_actor(actorID);
+
+    evt_set_variable(script, outVar, actor->maxHP);
+
+    return ApiStatus_DONE2;
+}

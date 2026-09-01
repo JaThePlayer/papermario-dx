@@ -513,5 +513,49 @@
                 <Goto dest="Pos_12"/>
             </Component>
         </Animation>
+        <Animation name="EmergeThrow">
+            <Component name="Comp_0" xyz="0,0,0">
+                <Label name="Start"/>
+                <SetScale mode="uniform" percent="75"/>
+                <SetPos flag="1" xyz="0,2,0"/>
+                <SetRaster index="18"/>
+                <Wait duration="2"/>
+                <SetScale mode="uniform" percent="100"/>
+                <SetRaster index="18"/>
+                <Wait duration="2"/>
+                <SetScale mode="uniform" percent="94"/>
+                <SetPos flag="1" xyz="0,1,0"/>
+                <SetRaster index="17"/>
+                <Wait duration="2"/>
+                <SetScale mode="uniform" percent="100"/>
+                <SetRaster index="17"/>
+                <Wait duration="2"/>
+                <SetScale mode="uniform" percent="94"/>
+                <SetRaster index="16"/>
+                <Wait duration="2"/>
+                <SetScale mode="uniform" percent="100"/>
+                <SetRaster index="16"/>
+                <Wait duration="2"/>
+                <SetScale mode="uniform" percent="92"/>
+                <SetPos flag="1" xyz="0,1,0"/>
+                <SetRaster index="4"/>
+                <Wait duration="2"/>
+                <SetScale mode="uniform" percent="100"/>
+                <SetRaster index="4"/>
+                <Wait duration="4"/>
+                <SetRaster index="3"/>
+                <Wait duration="4"/>
+                <SetRaster index="5"/>
+                <Wait duration="3"/>
+                <SetRaster index="6"/>
+                <Wait duration="32"/>
+                <SetRaster index="7"/>
+                <Wait duration="2"/>
+                <Label name="Pos_12"/>
+                <SetRaster index="8"/>
+                <Wait duration="32"/>
+                <Goto dest="Pos_12"/>
+            </Component>
+        </Animation>
     </AnimationList>
 </SpriteSheet>
