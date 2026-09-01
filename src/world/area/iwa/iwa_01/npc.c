@@ -1,5 +1,9 @@
+#include "common_structs.h"
+#include "evt.h"
+#include "item_enum.h"
 #include "iwa_01.h"
 
+#include "macros.h"
 #include "world/common/enemy/MontyMole/stone_thrower.inc.c"
 #include "world/common/enemy/MontyMole/ground_ambush.inc.c"
 #include "world/common/enemy/MontyMole/wall_ambush.inc.c"
@@ -153,6 +157,37 @@ NpcData N(NpcData_Cleft) = {
     .aiDetectFlags = AI_DETECT_SIGHT,
 };
 
+extern ItemEntity** gCurrentItemEntities;
+
+API_CALLABLE(N(prevent_quake_pickup)) {
+    for (s32 i = 0; i < MAX_ITEM_ENTITIES; i++) {
+        ItemEntity* item = gCurrentItemEntities[i];
+        if (item != nullptr && item->flags != 0 && item->itemID == ITEM_QUAKE_HAMMER)
+            item->pickupDelay = 2;
+    }
+
+    return ApiStatus_DONE2;
+}
+
+EvtScript N(EVS_NpcAux_QuakeAmbush) = {
+    Label(0)
+    Call(N(prevent_quake_pickup))
+    Wait(1)
+    Goto(0)
+    Return
+    End
+};
+
+NpcSettings N(NpcSettings_Cleft_Wander_QuakeAmbush) = {
+    .height = 26 + 4,
+    .radius = 24 + 4,
+    .level = ACTOR_LEVEL_CLEFT,
+    .doAI = &N(EVS_NpcAI_Cleft_Wander),
+    .onHit = &EnemyNpcHit,
+    .onDefeat = &EnemyNpcDefeat,
+    .doAux = &N(EVS_NpcAux_QuakeAmbush),
+};
+
 NpcData N(NpcData_Cleft_QuakeAmbush) = {
     .id = NPC_Cleft_2,
     .pos = { 160, 125, 125 },
@@ -169,7 +204,7 @@ NpcData N(NpcData_Cleft_QuakeAmbush) = {
             .detectSize = { 32 },
         }
     },
-    .settings = &N(NpcSettings_Cleft_Wander),
+    .settings = &N(NpcSettings_Cleft_Wander_QuakeAmbush),
     .flags = ENEMY_FLAG_IGNORE_ENTITY_COLLISION | ENEMY_FLAG_FLYING,
     .drops = CLEFT_DROPS,
     .animations = CLEFT_ANIMS,

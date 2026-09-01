@@ -60,6 +60,13 @@ void clearChargesFrom(Actor* actor) {
     custom_status_clear(actor, CHARGE_STATUS);
 }
 
+void clearChargesFromIfAttackedThisTurn(Actor* actor) {
+    if (actor->attackedThisTurn) {
+        actor->attackedThisTurn = false;
+        clearChargesFrom(actor);
+    }
+}
+
 API_CALLABLE(GetPartnerKoDuration) {
     evt_set_variable(script, *script->ptrReadPos, gBattleStatus.partnerActor->koDuration);
     return ApiStatus_DONE2;

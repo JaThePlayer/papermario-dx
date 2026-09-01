@@ -1496,6 +1496,11 @@ s32 test_item_entity_position(f32 x, f32 y, f32 z, f32 dist) {
             continue;
         }
 
+        // New in armageddon, used for quake hammer ambush.
+        if (item->pickupDelay > 0) {
+            continue;
+        }
+
         if (item->spawnType == ITEM_SPAWN_MODE_DECORATION) {
             continue;
         }
