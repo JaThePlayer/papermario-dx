@@ -180,6 +180,15 @@ void btl_state_update_transfer_turn(void) {
                     actor->handleEventScript = nullptr;
                 }
             }
+
+            // Armageddon: also wait for HandlePhase scripts, those are started by custom status.
+            if (actor != nullptr && actor->handlePhaseScript != nullptr) {
+                if (does_script_exist(actor->handlePhaseScriptID)) {
+                    waitingForScript = true;
+                } else {
+                    actor->handlePhaseScript = nullptr;
+                }
+            }
         }
         if (waitingForScript) {
             return;

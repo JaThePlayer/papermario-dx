@@ -1,4 +1,5 @@
 #include "custom_status.h"
+#include "script_api/battle.h"
 
 #include "status_rework_helpers.c"
 
@@ -13,7 +14,7 @@
 #include "statuses/poison.c"
 #include "statuses/pain_focus.c"
 
-#define STATUS_ENTRY(namespace, _isDebuff, _hasTurnCount, _stacking) { \
+#define STATUS_ENTRY(namespace, _isDebuff, _hasTurnCount, _stacking, other...) { \
         .onApply = &namespace##_on_apply, \
         .drawIcon = &namespace##_create_icon, \
         .onRemoveIcon = &namespace##_remove_icon, \
@@ -22,6 +23,7 @@
         .isDebuff = _isDebuff, \
         .hasTurnCount = _hasTurnCount, \
         .stackingBehaviour = _stacking, \
+        other \
     }
 
 StatusType gCustomStatusTypes[CUSTOM_STATUS_AMT] = {
@@ -31,10 +33,10 @@ StatusType gCustomStatusTypes[CUSTOM_STATUS_AMT] = {
     [ATK_UP_TEMP_STATUS] = STATUS_ENTRY(temp_atk_up, false, true, STATUS_STACKING_USE_STRONGER),
     [DEF_UP_TEMP_STATUS] = STATUS_ENTRY(temp_def_up, false, true, STATUS_STACKING_USE_STRONGER),
     [CLOSE_CALL_STATUS] = STATUS_ENTRY(close_call, false, true, STATUS_STACKING_OVERRIDE),
-    [BURN_STATUS] = STATUS_ENTRY(burn_status, true, true, STATUS_STACKING_BURN),
+    [BURN_STATUS] = STATUS_ENTRY(burn_status, true, true, STATUS_STACKING_BURN, .onDecremetEvtSource = &burn_status_EVS_OnDecrement),
     [FP_COST_STATUS] = STATUS_ENTRY(fp_cost_status, false, true, STATUS_STACKING_USE_STRONGER),
     [CHARGE_STATUS] = STATUS_ENTRY(charge_status, false, false, STATUS_STACKING_ADD_POTENCY),
-    [POISON_STATUS] = STATUS_ENTRY(poison_status, true, true, STATUS_STACKING_USE_STRONGER),
+    [POISON_STATUS] = STATUS_ENTRY(poison_status, true, true, STATUS_STACKING_USE_STRONGER, .onDecremetEvtSource = &poison_status_EVS_OnDecrement),
     [PAIN_FOCUS_STATUS] = STATUS_ENTRY(pain_focus_status, false, true, STATUS_STACKING_ADD_POTENCY),
 };
 
@@ -68,34 +70,111 @@ static void custom_status_decrease_turn_count_impl(Actor* actor, u8 newTurns, St
     }
 }
 
-static void custom_status_decrement_impl(Actor* actor, s8 isLate) {
-    for (s32 i = 0; i < ARRAY_COUNT(actor->customStatuses); i++)
-    {
-        StatusInfo* status = &actor->customStatuses[i];
-        StatusType* statusType = &gCustomStatusTypes[i];
+static s32 next_custom_status_id = 0;
 
-        if (statusType->hasTurnCount && statusType->decrementLate == isLate && status->turns > 0) {
-            s32 decrement = 1;
-
-            if (i == BURN_STATUS && badge_count_by_move_id_in_opposing_team(actor, MOVE_EMBER_EMBLEM) > 0) {
-                decrement = 2;
-            }
-
-            if (status->turns < decrement)
-                decrement = status->turns;
-
-            custom_status_decrease_turn_count_impl(actor, status->turns - decrement, status, statusType, true);
-        }
-    }
+static API_CALLABLE(ResetNextCustomStatusIdCounter) {
+    next_custom_status_id = 0;
+    return ApiStatus_DONE2;
 }
+
+static API_CALLABLE(IncrementNextCustomStatusIdCounter) {
+    next_custom_status_id++;
+    next_custom_status_id = next_custom_status_id < ARRAY_COUNT(gBattleStatus.playerActor->customStatuses) ? next_custom_status_id : -1;
+    script->varTable[0] = next_custom_status_id;
+    return ApiStatus_DONE2;
+}
+
+static API_CALLABLE(CustomStatusDecrementImpl) {
+    Bytecode* args = script->ptrReadPos;
+    Actor* actor;
+
+    s32 actorID = script->owner1.actorID;
+    actor = get_actor(actorID);
+
+    s32 isLate = evt_get_variable(script, *args++);
+    s32 i = next_custom_status_id;
+
+    StatusInfo* status = &actor->customStatuses[i];
+    StatusType* statusType = &gCustomStatusTypes[i];
+
+    script->varTablePtr[0] = nullptr;
+    if (statusType->hasTurnCount && statusType->decrementLate == isLate && status->turns > 0) {
+        s32 decrement = 1;
+
+        if (i == BURN_STATUS && badge_count_by_move_id_in_opposing_team(actor, MOVE_EMBER_EMBLEM) > 0) {
+            decrement = 2;
+        }
+
+        if (status->turns < decrement)
+            decrement = status->turns;
+
+        custom_status_decrease_turn_count_impl(actor, status->turns - decrement, status, statusType, true);
+
+        script->varTablePtr[0] = statusType->onDecremetEvtSource;
+    }
+
+    return ApiStatus_DONE2;
+}
+
+EvtScript CustomStatusDecrement = {
+    Call(ResetNextCustomStatusIdCounter)
+    Label(0)
+        // Actor might've died during the status decrementation.
+        Call(ActorExists, ACTOR_SELF, LVar0)
+        IfFalse(LVar0)
+            Return
+        EndIf
+
+        Call(CustomStatusDecrementImpl, false)
+        IfNe(LVar0, nullptr)
+            ExecWait(LVar0)
+        EndIf
+
+        Call(IncrementNextCustomStatusIdCounter)
+        IfNe(LVar0, -1)
+            Goto(0)
+        EndIf
+    Return
+    End
+};
+
+EvtScript CustomStatusDecrementLate = {
+    Call(ResetNextCustomStatusIdCounter)
+    Label(0)
+        // Actor might've died during the status decrementation.
+        Call(ActorExists, ACTOR_SELF, LVar0)
+        IfFalse(LVar0)
+            Return
+        EndIf
+
+        Call(CustomStatusDecrementImpl, true)
+        IfNe(LVar0, nullptr)
+            ExecWait(LVar0)
+        EndIf
+
+        Call(IncrementNextCustomStatusIdCounter)
+        IfNe(LVar0, -1)
+            Goto(0)
+        EndIf
+    Return
+    End
+};
 
 // Decrements all custom statuses for the given actor
 void custom_status_decrement(Actor* actor) {
-    custom_status_decrement_impl(actor, false);
+    Evt* inner = start_script(&CustomStatusDecrement, EVT_PRIORITY_A, 0);
+    inner->owner1.actorID = actor->actorID;
+
+    actor->handlePhaseScript = inner;
+    actor->handlePhaseScriptID = inner->id;
 }
 
 void custom_status_decrement_late(Actor* actor) {
-    custom_status_decrement_impl(actor, true);
+    Evt* inner = start_script(&CustomStatusDecrementLate, EVT_PRIORITY_A, 0);
+    inner->owner1.actorID = actor->actorID;
+
+    actor->handlePhaseScript = inner;
+    actor->handlePhaseScriptID = inner->id;
 }
 
 void custom_status_zero_initialize(Actor* actor) {
@@ -384,11 +463,10 @@ s32 custom_status_clear_all(Actor* actor) {
     for (s32 i = 0; i < ARRAY_COUNT(actor->customStatuses); i++)
     {
         StatusInfo* status = &actor->customStatuses[i];
-        StatusType* statusType = &gCustomStatusTypes[i];
 
         if (status->turns > 0) {
             amt += 1;
-            custom_status_decrease_turn_count_impl(actor, 0, status, statusType, false);
+            custom_status_clear(actor, i);
         }
     }
 
@@ -405,7 +483,7 @@ s32 custom_status_clear_debuffs(Actor* actor) {
 
         if (status->turns > 0 && statusType->isDebuff) {
             amt += 1;
-            custom_status_decrease_turn_count_impl(actor, 0, status, statusType, false);
+            custom_status_clear(actor, i);
         }
     }
 
@@ -439,5 +517,39 @@ API_CALLABLE(ClearAllActorCustomDebuffs) {
     actor = get_actor(actorID);
 
     evt_set_variable(script, *args++, custom_status_clear_debuffs(actor));
+    return ApiStatus_DONE2;
+}
+
+API_CALLABLE(DispatchDamageEventAnyActorBlocking) {
+    Bytecode* args = script->ptrReadPos;
+    Actor* actor;
+
+    s32 actorID = evt_get_variable(script, *args++);
+
+    if (actorID == ACTOR_SELF) {
+        actorID = script->owner1.actorID;
+    }
+    actor = get_actor(actorID);
+
+    s32 dmg = evt_get_variable(script, *args++);
+    s32 event = evt_get_variable(script, *args++);
+
+    if (isInitialCall) {
+        actor->state.goalPos = actor->curPos;
+        if (actor == gBattleStatus.playerActor) {
+            dispatch_damage_event_player(dmg, event, false);
+        } else {
+            dispatch_damage_event_actor_1(actor, dmg, event);
+        }
+    } else {
+        if (actor == nullptr)
+            return ApiStatus_DONE2;
+    }
+
+    if ((actor->handleEventScript != nullptr) && does_script_exist(actor->handleEventScriptID)) {
+        return ApiStatus_BLOCK;
+    }
+
+    actor->handleEventScript = nullptr;
     return ApiStatus_DONE2;
 }

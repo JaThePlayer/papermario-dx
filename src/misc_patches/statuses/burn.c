@@ -37,6 +37,10 @@ s32 lookup_fire_defense(s32* defenseTable) {
 }
 
 void N(on_decrement)(Actor* target) {
+}
+
+static API_CALLABLE(N(EVS_CalculateBurnDamage)) {
+    Actor* target = get_actor(script->owner1.actorID);
     StatusInfo* info = custom_status_get_info(target, BURN_STATUS);
     s32 dmg = info->potency;
 
@@ -51,13 +55,18 @@ void N(on_decrement)(Actor* target) {
     if (dmg < 0)
         dmg = 0;
 
-    target->state.goalPos = target->curPos;
+    script->varTable[0] = dmg;
 
-    if (target == gBattleStatus.playerActor) {
-        dispatch_damage_event_player(dmg, EVENT_BURN_HIT, false);
-    } else {
-        dispatch_damage_event_actor_1(target, dmg, EVENT_BURN_HIT);
-    }
+    gBattleStatus.curAttackElement = DAMAGE_TYPE_FIRE;
+
+    return ApiStatus_DONE2;
 }
+
+EvtScript N(EVS_OnDecrement) = {
+    Call(N(EVS_CalculateBurnDamage))
+    Call(DispatchDamageEventAnyActorBlocking, ACTOR_SELF, LVar0, EVENT_BURN_HIT)
+    Return
+    End
+};
 
 #undef NAMESPACE

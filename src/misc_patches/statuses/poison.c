@@ -47,9 +47,13 @@ static s32 lookup_poison_defense(s32* defenseTable) {
 }
 
 void N(on_decrement)(Actor* target) {
+}
+
+static API_CALLABLE(N(EVS_CalculatePoisonDamage)) {
+    Actor* target = get_actor(script->owner1.actorID);
+
     s32 dmg = custom_status_get_potency(target, POISON_STATUS);
     dmg += badge_count_by_move_id_in_both_teams(MOVE_SLOW_GO);
-    target->state.goalPos = target->curPos;
 
     s32 def = lookup_poison_defense(get_actor_part_for_def(target)->defenseTable);
     if (def < 0) {
@@ -83,18 +87,30 @@ void N(on_decrement)(Actor* target) {
         if (target->maxHP < target->curHP) {
             target->curHP = target->maxHP;
         }
-        return;
+
+        script->varTable[0] = -1;
+        return ApiStatus_DONE2;
     }
 
     dmg -= def;
     if (dmg < 0)
         dmg = 0;
 
-    if (target == gBattleStatus.playerActor) {
-        dispatch_damage_event_player(dmg, EVENT_HIT, false);
-    } else {
-        dispatch_damage_event_actor_1(target, dmg, EVENT_HIT);
-    }
+    gBattleStatus.curAttackElement = 0;
+
+    script->varTable[0] = dmg;
+    return ApiStatus_DONE2;
 }
+
+EvtScript N(EVS_OnDecrement) = {
+    Call(N(EVS_CalculatePoisonDamage))
+    IfNe(LVar0, -1)
+        Call(DispatchDamageEventAnyActorBlocking, ACTOR_SELF, LVar0, EVENT_HIT)
+    EndIf
+
+    Return
+    End
+};
+
 
 #undef NAMESPACE

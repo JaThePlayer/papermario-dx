@@ -49,10 +49,16 @@ typedef struct StatusType {
     StatusFxDrawIconFunc drawIcon;
     StatusFxRemoveIconFunc onRemoveIcon;
     StatusFxOnDecrementFunc onDecrement;
-    s8 decrementLate; // whether the status should be decremented after enemies attack, like Chill Out
-    s8 isDebuff; /// Whether the status is treated as a debuff, for debuff clearing items/moves
-    s8 hasTurnCount; /// Whether this status has a turn counter.
-    s8 stackingBehaviour; /// How stacking the status works. Defaults to STATUS_STACKING_OVERRIDE
+    /// nullable, script to execute when decrementing. The script will be awaited before any other statuses get decremented.
+    EvtScript* onDecremetEvtSource;
+    /// whether the status should be decremented after enemies attack, like Chill Out
+    s8 decrementLate;
+    /// Whether the status is treated as a debuff, for debuff clearing items/moves
+    s8 isDebuff;
+    /// Whether this status has a turn counter.
+    s8 hasTurnCount;
+    /// How stacking the status works. Defaults to STATUS_STACKING_OVERRIDE
+    s8 stackingBehaviour;
 } StatusType;
 
 /// Used by SetNextAttackCustomStatus
@@ -127,5 +133,12 @@ s32 custom_status_clear_debuffs(Actor* actor);
 /// @param actorId
 /// @param clearedCountOutVar
 API_CALLABLE(ClearAllActorCustomDebuffs);
+
+/// Calls the correct dispatch_damage_event function, and blocks until the handleEvent script caused by that call finishes.
+/// @evtapi
+/// @param actorId
+/// @param dmg
+/// @param event
+API_CALLABLE(DispatchDamageEventAnyActorBlocking);
 
 #endif

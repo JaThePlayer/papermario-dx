@@ -1,6 +1,8 @@
+#include "PR/ultratypes.h"
 #include "misc_patches/custom_status.h"
 #include "states.h"
 #include "script_api/battle.h"
+#include "variables.h"
 
 b32 dispatch_damage_tick_event_player(s32 damageAmount, s32 event);
 
@@ -18,6 +20,10 @@ enum {
     BTL_SUBSTATE_TRY_STATUS_RECOVER       = 22,
     BTL_SUBSTATE_END_DELAY                = 30,
     BTL_SUBSTATE_RESET_STATE              = 100,
+
+    // New in Armageddon
+    BTL_SUBSTATE_CUSTOM_STATUS_RECOVER    = 40,
+    BTL_SUBSTATE_CUSTOM_STATUS_RECOVER_LATE    = 41,
 };
 
 void update_water_block(void) {
@@ -253,9 +259,6 @@ void update_status_damage(void) {
                     }
                 }
 
-                custom_status_decrement(player);
-                custom_status_decrement_late(player);
-
                 debuffDuration = player->debuffDuration;
                 prevDuration = player->koDuration;
                 player->koDuration = debuffDuration;
@@ -286,6 +289,35 @@ void update_status_damage(void) {
                     custom_status_decrement_late(enemy);
                 }
             }
+            //gBattleSubState = BTL_SUBSTATE_TRY_COMMAND_RECOVER;
+            custom_status_decrement(player);
+            gBattleSubState = BTL_SUBSTATE_CUSTOM_STATUS_RECOVER;
+        }
+    }
+
+    if (gBattleSubState == BTL_SUBSTATE_CUSTOM_STATUS_RECOVER) {
+        if (player->handlePhaseScript == nullptr || !does_script_exist(player->handlePhaseScriptID)) {
+            player->handlePhaseScript = nullptr;
+            for (i = 0; i < ARRAY_COUNT(battleStatus->enemyActors); i++) {
+                Actor* enemy = battleStatus->enemyActors[i];
+                if (enemy == nullptr)
+                    continue;
+
+                if (enemy->handlePhaseScript != nullptr && does_script_exist(enemy->handlePhaseScriptID)) {
+                    return;
+                } else {
+                    enemy->handleEventScript = nullptr;
+                }
+            }
+
+            custom_status_decrement_late(player);
+            gBattleSubState = BTL_SUBSTATE_CUSTOM_STATUS_RECOVER_LATE;
+        }
+    }
+
+    if (gBattleSubState == BTL_SUBSTATE_CUSTOM_STATUS_RECOVER_LATE) {
+        if (player->handlePhaseScript == nullptr || !does_script_exist(player->handlePhaseScriptID)) {
+            player->handlePhaseScript = nullptr;
             gBattleSubState = BTL_SUBSTATE_TRY_COMMAND_RECOVER;
         }
     }
