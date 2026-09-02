@@ -58,6 +58,8 @@ EvtScript N(EVS_MakeEntities) = {
     Call(MakeEntity, Ref(Entity_ArrowSign), 600, 0, 200, 0, 270, MAKE_ENTITY_END)
     Call(MakeEntity, Ref(Entity_ArrowSign), 336, -140, 203, 0, 70, MAKE_ENTITY_END)
     Call(MakeEntity, Ref(Entity_ArrowSign), 730, -250, -95, 0, 90, MAKE_ENTITY_END)
+    Call(MakeEntity, Ref(Entity_SavePoint), -296, 60, -53, 0, MAKE_ENTITY_END)
+    Call(MakeEntity, Ref(Entity_HeartBlock), -249, 60, -53, 0, MAKE_ENTITY_END)
     Call(MakeItemEntity, ITEM_LETTER_CHAIN_GOOMPAPA_1, -275, -250, 150, ITEM_SPAWN_MODE_FIXED_NEVER_VANISH, GF_IWA04_Item_Letter10)
     Return
     End

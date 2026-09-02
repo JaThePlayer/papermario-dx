@@ -233,7 +233,7 @@ EvtScript N(EVS_NpcHit_Whacka_02) = {
     EndIf
     Add(GB_IWA00_Whacka_HitCount, 1)
     IfEq(LVarA, 3)
-        Add(GB_IWA00_Whacka_HitCount, 1)
+        //Add(GB_IWA00_Whacka_HitCount, 1)
     EndIf
     Switch(LVarA)
         CaseOrEq(2)

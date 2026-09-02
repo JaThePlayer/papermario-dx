@@ -43,8 +43,15 @@ EvtScript N(EVS_Main) = {
         EndIf
     EndIf
 
-    Set(LVar0, Ref(N(EVS_BindExitTriggers)))
-    Exec(EnterWalk)
+    Call(GetLoadType, LVar1)
+    IfEq(LVar1, LOAD_FROM_FILE_SELECT)
+        Exec(EnterSavePoint)
+        Exec(N(EVS_BindExitTriggers))
+    Else
+        Set(LVar0, Ref(N(EVS_BindExitTriggers)))
+        Exec(EnterWalk)
+    EndIf
+
     Wait(1)
     Return
     End

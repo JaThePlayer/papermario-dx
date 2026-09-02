@@ -57,7 +57,7 @@ EvtScript N(EVS_MakeEntities) = {
     EndThread
     Call(MakeEntity, Ref(Entity_ScriptSpring), -1580, 23, 20, 0, MAKE_ENTITY_END)
     Call(AssignScript, Ref(N(EVS_UseSpring)))
-    Call(MakeEntity, Ref(Entity_YellowBlock), -1775, 408, -120, 0, ITEM_MISTAKE, MAKE_ENTITY_END)
+    Call(MakeEntity, Ref(Entity_YellowBlock), -1775, 408, -120, 0, ITEM_DRIED_FRUIT, MAKE_ENTITY_END)
     Call(AssignBlockFlag, GF_IWA03_ItemBlock_Coin)
     Call(MakeEntity, Ref(Entity_YellowBlock), -620, -15, -69, 0, ITEM_FRIED_EGG, MAKE_ENTITY_END)
     Call(AssignBlockFlag, GF_IWA03_ItemBlock_Mushroom)
@@ -68,7 +68,7 @@ EvtScript N(EVS_MakeEntities) = {
     Call(MakeItemEntity, ITEM_COIN, -1815, 23, 20, ITEM_SPAWN_MODE_FIXED_NEVER_VANISH, GF_IWA03_Item_CoinC)
     Call(MakeItemEntity, ITEM_COIN, -1915, 23, 20, ITEM_SPAWN_MODE_FIXED_NEVER_VANISH, GF_IWA03_Item_CoinD)
     Call(MakeItemEntity, ITEM_COIN, -1840, 23, 63, ITEM_SPAWN_MODE_FIXED_NEVER_VANISH, GF_IWA03_Item_CoinE)
-    Call(MakeItemEntity, ITEM_EGG, -1890, 23, 63, ITEM_SPAWN_MODE_FIXED_NEVER_VANISH, GF_IWA03_Item_CoinF)
+    Call(MakeItemEntity, ITEM_COIN, -1890, 23, 63, ITEM_SPAWN_MODE_FIXED_NEVER_VANISH, GF_IWA03_Item_CoinF)
     Call(MakeItemEntity, ITEM_COIN, -1840, 23, -23, ITEM_SPAWN_MODE_FIXED_NEVER_VANISH, GF_IWA03_Item_CoinG)
     Call(MakeItemEntity, ITEM_COIN, -1890, 23, -23, ITEM_SPAWN_MODE_FIXED_NEVER_VANISH, GF_IWA03_Item_CoinH)
     Call(MakeItemEntity, ITEM_COIN, -1707, -60, 0, ITEM_SPAWN_MODE_FIXED_NEVER_VANISH, GF_IWA03_Item_CoinA)
