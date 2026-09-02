@@ -1,6 +1,7 @@
 #include "common.h"
 #include "vars_access.h"
 #include "npc.h"
+#include "misc_patches/larger_coin_drops.h"
 
 extern s32 gLastRenderTaskCount;
 
@@ -274,33 +275,50 @@ void spawn_drops(Enemy* enemy) {
     if (is_ability_active(ABILITY_MONEY_MONEY)) {
         dropCount *= 2;
     }
+    /*
     if (dropCount > 20) {
         dropCount = 20;
     }
+    */
     if (enemy->flags & ENEMY_FLAG_NO_DROPS) {
         dropCount = 0;
     }
-    if (dropCount * 2 > availableRenderTasks) {
-        dropCount = availableRenderTasks / 2;
-    }
 
-    // spawn as many of the coin drops as possible
+    s32 coinCount = dropCount;
+    dropCount = 0;
+    for (s32 dropTypeId = 0; dropTypeId < ARRAY_COUNT(gCoinDropTypes); dropTypeId++) {
+        itemToDrop = gCoinDropTypes[dropTypeId];
+        s32 typeValue = gItemTable[itemToDrop].sellValue;
 
-    availableRenderTasks -= 2 * dropCount;
+        dropCount = coinCount / typeValue;
+        if (dropCount <= 0)
+            continue;
 
-    if (dropCount > availableShadows) {
-        dropCount = availableShadows;
-    }
+        coinCount -= dropCount * typeValue;
 
-    for (i = 0; i < dropCount; i++) {
-        make_item_entity(itemToDrop, x, y, z, ITEM_SPAWN_MODE_BATTLE_REWARD, pickupDelay, angle + (angleMult * 360), 0);
-        spawnCounter++;
-        pickupDelay += 2;
-        angle = angle + 30.0;
-        if (spawnCounter >= 12) {
-            spawnCounter = 0;
-            angleMult++;
-            angle = angleMult * 8;
+        if (dropCount * 2 > availableRenderTasks) {
+            dropCount = availableRenderTasks / 2;
+        }
+
+        // spawn as many of the coin drops as possible
+
+        availableRenderTasks -= 2 * dropCount;
+
+        if (dropCount > availableShadows) {
+            dropCount = availableShadows;
+        }
+        availableShadows -= dropCount;
+
+        for (i = 0; i < dropCount; i++) {
+            make_item_entity(itemToDrop, x, y, z, ITEM_SPAWN_MODE_BATTLE_REWARD, pickupDelay, angle + (angleMult * 360), 0);
+            spawnCounter++;
+            pickupDelay += 2;
+            angle = angle + 30.0;
+            if (spawnCounter >= 12) {
+                spawnCounter = 0;
+                angleMult++;
+                angle = angleMult * 8;
+            }
         }
     }
 }

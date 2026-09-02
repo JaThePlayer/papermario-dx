@@ -1,5 +1,7 @@
 #include "common.h"
 #include "inventory.h"
+#include "misc_patches/larger_coin_drops.h"
+#include "variables.h"
 #include "vars_access.h"
 #include "effects.h"
 #include "hud_element.h"
@@ -662,7 +664,7 @@ s32 make_item_entity(s32 itemID, f32 x, f32 y, f32 z, s32 itemSpawnMode, s32 pic
 
     item_entity_load(item);
 
-    if (item->itemID == ITEM_COIN) {
+    if (is_coin_item(item->itemID)) {
         sparkle_script_init(item, SparkleScript_Coin);
         sparkle_script_update(item);
     }
@@ -761,7 +763,7 @@ s32 make_item_entity_at_player(s32 itemID, s32 category, s32 pickupMsgFlags) {
     set_standard_shadow_scale(shadow, depth * 0.5f);
 
     item_entity_load(item);
-    if (item->itemID == ITEM_COIN) {
+    if (is_coin_item(item->itemID)) {
         sparkle_script_init(item, SparkleScript_Coin);
         sparkle_script_update(item);
     }
@@ -829,7 +831,7 @@ void update_item_entities(void) {
         item = gCurrentItemEntities[i];
 
         if (item != nullptr && item->flags != 0) {
-            if (item->itemID == ITEM_COIN) {
+            if (is_coin_item(item->itemID)) {
                 if (rand_int(100) > 90) {
                     sparkle_script_init(item, SparkleScript_Coin);
                     CoinSparkleCenterX = rand_int(16) - 8;
@@ -929,7 +931,7 @@ void appendGfx_item_entity(void* data) {
         yOffset = -3;
     }
 
-    if (item->itemID == ITEM_COIN || item->itemID == ITEM_STAR_POINT || item->itemID == ITEM_HEART) {
+    if (is_coin_item(item->itemID) || item->itemID == ITEM_STAR_POINT || item->itemID == ITEM_HEART) {
         item->scale = 1.0f;
     }
 
@@ -1044,7 +1046,7 @@ void appendGfx_item_entity(void* data) {
     gSPPopMatrix(gMainGfxPos++, G_MTX_MODELVIEW);
     gDPPipeSync(gMainGfxPos++);
 
-    if (item->itemID == ITEM_COIN) {
+    if (is_coin_item(item->itemID)) {
         draw_coin_sparkles(item);
     }
 }
@@ -1134,7 +1136,7 @@ void render_item_entities(void) {
                             offsetY = 0;
                         }
 
-                        if (item->itemID == ITEM_COIN || item->itemID == ITEM_STAR_POINT || item->itemID == ITEM_HEART) {
+                        if (is_coin_item(item->itemID) || item->itemID == ITEM_STAR_POINT || item->itemID == ITEM_HEART) {
                             offsetY = 0;
                             item->scale = 1.0f;
                         }
@@ -1383,7 +1385,7 @@ b32 test_item_player_collision(ItemEntity* item) {
         (actionState == ACTION_STATE_USE_SPINNING_FLOWER
          || actionState == ACTION_STATE_USE_MUNCHLESIA
          || actionState == ACTION_STATE_USE_TWEESTER)
-        && item->itemID != ITEM_COIN)
+        && !is_coin_item(item->itemID))
     {
         return false;
     }
@@ -1630,13 +1632,6 @@ void update_item_entity_collectable(ItemEntity* item) {
                         case ITEM_FLOWER_POINT:
                             physData->moveAngle = clamp_angle(gCameras[camID].curYaw - 90.0f + rand_int(120) + 60.0f);
                             break;
-                        case ITEM_COIN:
-                            if (rand_int(10000) < 5000) {
-                                physData->moveAngle = clamp_angle(gCameras[camID].curYaw + 90.0f + rand_int(120) - 60.0f);
-                            } else {
-                                physData->moveAngle = clamp_angle(gCameras[camID].curYaw - 90.0f + rand_int(120) - 60.0f);
-                            }
-                            break;
                         case ITEM_KOOPA_FORTRESS_KEY:
                             if (rand_int(10000) >= 5000) {
                                 physData->moveAngle = clamp_angle(gCameras[camID].curYaw - 90.0f + rand_int(120) - 60.0f);
@@ -1669,6 +1664,15 @@ void update_item_entity_collectable(ItemEntity* item) {
                             physData->moveAngle = clamp_angle(gCameras[camID].curYaw + 90.0f + rand_int(120) - 60.0f);
                             break;
                         default:
+                            if (is_coin_item(item->itemID)) {
+                                if (rand_int(10000) < 5000) {
+                                    physData->moveAngle = clamp_angle(gCameras[camID].curYaw + 90.0f + rand_int(120) - 60.0f);
+                                } else {
+                                    physData->moveAngle = clamp_angle(gCameras[camID].curYaw - 90.0f + rand_int(120) - 60.0f);
+                                }
+                                break;
+                            }
+
                             physData->moveAngle = 0.0f;
                             break;
                     }
@@ -1894,9 +1898,6 @@ void update_item_entity_collectable(ItemEntity* item) {
                                 case ITEM_HEART:
                                     sfx_play_sound_at_position(SOUND_HEART_BOUNCE, SOUND_SPACE_DEFAULT, item->pos.x, item->pos.y, item->pos.z);
                                     break;
-                                case ITEM_COIN:
-                                    sfx_play_sound_at_position(SOUND_COIN_BOUNCE, SOUND_SPACE_DEFAULT, item->pos.x, item->pos.y, item->pos.z);
-                                    break;
                                 case ITEM_KOOPA_FORTRESS_KEY:
                                     sfx_play_sound_at_position(SOUND_COIN_BOUNCE, SOUND_SPACE_DEFAULT, item->pos.x, item->pos.y, item->pos.z);
                                     break;
@@ -1914,6 +1915,11 @@ void update_item_entity_collectable(ItemEntity* item) {
                                     break;
                                 case ITEM_FLOWER_POINT:
                                     sfx_play_sound_at_position(SOUND_FLOWER_BOUNCE, SOUND_SPACE_DEFAULT, item->pos.x, item->pos.y, item->pos.z);
+                                    break;
+                                default:
+                                    if (is_coin_item(item->itemID)) {
+                                        sfx_play_sound_at_position(SOUND_COIN_BOUNCE, SOUND_SPACE_DEFAULT, item->pos.x, item->pos.y, item->pos.z);
+                                    }
                                     break;
                             }
                         }
@@ -1973,17 +1979,6 @@ void update_item_entity_collectable(ItemEntity* item) {
                     sfx_play_sound_at_position(SOUND_FLOWER_PICKUP, SOUND_SPACE_DEFAULT, item->pos.x, item->pos.y, item->pos.z);
                     fx_sparkles(4, playerStatus->pos.x, playerStatus->pos.y + playerStatus->colliderHeight, playerStatus->pos.z, 30.0f);
                     break;
-                case ITEM_COIN:
-                    playerData->coins++;
-                    if (playerData->coins > 999) {
-                        playerData->coins = 999;
-                    }
-                    sfx_play_sound_at_position(SOUND_COIN_PICKUP, SOUND_SPACE_DEFAULT, item->pos.x, item->pos.y, item->pos.z);
-                    playerData->totalCoinsEarned++;
-                    if (playerData->totalCoinsEarned > 99999) {
-                        playerData->totalCoinsEarned = 99999;
-                    }
-                    break;
                 case ITEM_KOOPA_FORTRESS_KEY:
                     sfx_play_sound_at_position(SOUND_COIN_PICKUP, SOUND_SPACE_DEFAULT, item->pos.x, item->pos.y, item->pos.z);
                     break;
@@ -1998,6 +1993,20 @@ void update_item_entity_collectable(ItemEntity* item) {
                     playerData->curHP = playerData->curMaxHP;
                     playerData->curFP = playerData->curMaxFP;
                     sfx_play_sound_at_position(SOUND_HEART_PICKUP, SOUND_SPACE_DEFAULT, item->pos.x, item->pos.y, item->pos.z);
+                    break;
+                default:
+                    if (is_coin_item(item->itemID)) {
+                        s32 coinValue = gItemTable[item->itemID].sellValue;
+                        playerData->coins += coinValue;
+                        if (playerData->coins > 999) {
+                            playerData->coins = 999;
+                        }
+                        sfx_play_sound_at_position(SOUND_COIN_PICKUP, SOUND_SPACE_DEFAULT, item->pos.x, item->pos.y, item->pos.z);
+                        playerData->totalCoinsEarned += coinValue;
+                        if (playerData->totalCoinsEarned > 99999) {
+                            playerData->totalCoinsEarned = 99999;
+                        }
+                    }
                     break;
             }
             isPartnerPickingUpItem = false;
@@ -2117,7 +2126,7 @@ void update_item_entity_pickup(ItemEntity* item) {
                     sfx_play_sound(SOUND_JINGLE_GOT_BADGE);
                 } else if (gItemTable[item->itemID].typeFlags & ITEM_TYPE_FLAG_KEY) {
                     sfx_play_sound(SOUND_JINGLE_GOT_KEY);
-                } else if (item->itemID == ITEM_COIN) {
+                } else if (is_coin_item(item->itemID)) {
                     sfx_play_sound_at_position(SOUND_COIN_PICKUP, 0, item->pos.x, item->pos.y, item->pos.z);
                 } else {
                     sfx_play_sound(SOUND_JINGLE_GOT_ITEM);
@@ -2227,7 +2236,7 @@ block_47: // TODO required to match
             if (ItemPickupStateDelay == 6) {
                 func_801363A0(item);
                 set_window_update(WIN_PICKUP_HEADER, (s32) basic_window_update);
-                if (item->itemID != ITEM_STAR_PIECE && item->itemID != ITEM_COIN) {
+                if (item->itemID != ITEM_STAR_PIECE && !is_coin_item(item->itemID)) {
                     set_window_update(WIN_POPUP_DESC, (s32) basic_window_update);
                 }
             }
@@ -2523,7 +2532,7 @@ void func_801363A0(ItemEntity* item) {
                 set_window_properties(WIN_PICKUP_HEADER, posX, posY - 24 + offsetY, width,
                                     HT_VAR1, WINDOW_PRIORITY_0, draw_content_pickup_item_header, item, -1);
             }
-            if (item->itemID != ITEM_STAR_PIECE && item->itemID != ITEM_COIN) {
+            if (item->itemID != ITEM_STAR_PIECE && !is_coin_item(item->itemID)) {
                 posX = X_VAR1;
                 set_window_properties(WIN_POPUP_DESC, posX, 186, WD_VAR4, 32, WINDOW_PRIORITY_0, draw_content_pickup_item_desc, item, -1);
             }

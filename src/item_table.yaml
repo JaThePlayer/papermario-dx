@@ -5295,3 +5295,31 @@
     moveID: MOVE_NONE
     potencyA: 0
     potencyB: 9
+- BlueCoin:
+    nameMsg: MSG_ItemName_Coin
+    fullDescMsg: MSG_NONE
+    shortDescMsg: MSG_NONE
+    icon: anim/bluecoin
+    itemEntityTemplate: COIN_CUSTOM
+    hudElementTemplate: ITEM_COIN_CUSTOM
+    sellValue: 5
+    sortValue: 0
+    targetFlags: [ TARGET_FLAG_PLAYER ]
+    typeFlags: [ ITEM_TYPE_FLAG_ENTITY_COLLECTABLE ]
+    moveID: MOVE_NONE
+    potencyA: 0
+    potencyB: 0
+- RedCoin:
+    nameMsg: MSG_ItemName_Coin
+    fullDescMsg: MSG_NONE
+    shortDescMsg: MSG_NONE
+    icon: anim/redcoin
+    itemEntityTemplate: COIN_CUSTOM
+    hudElementTemplate: ITEM_COIN_CUSTOM
+    sellValue: 25
+    sortValue: 0
+    targetFlags: [ TARGET_FLAG_PLAYER ]
+    typeFlags: [ ITEM_TYPE_FLAG_ENTITY_COLLECTABLE ]
+    moveID: MOVE_NONE
+    potencyA: 0
+    potencyB: 0

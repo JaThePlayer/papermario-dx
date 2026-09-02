@@ -401,6 +401,36 @@ extern IconHudScriptPair wPartnerHudScripts[];
         hs_End \
     }
 
+#define HES_TEMPLATE_ITEM_COIN_CUSTOM(icon) \
+    { \
+        hs_SetVisible \
+        hs_SetTileSize(HUD_ELEMENT_SIZE_24x24) \
+        hs_Loop \
+            hs_SetVariable(0) \
+            hs_SetIcon(3, icon) \
+            hs_SetIcon(3, icon##_1) \
+            hs_SetIcon(3, icon##_4) \
+            hs_SetIcon(3, icon##_5) \
+            hs_SetIcon(3, icon##_6) \
+            hs_SetIcon(3, icon##_7) \
+            hs_SetIcon(3, icon##_8) \
+            hs_SetIcon(3, icon##_9) \
+            hs_RandomRestart(100, 70) \
+            hs_SetVariable(1) \
+            hs_SetIcon(3, icon) \
+            hs_SetIcon(2, icon##_1) \
+            hs_SetIcon(1, icon##_2) \
+            hs_SetIcon(1, icon##_3) \
+            hs_SetIcon(2, icon##_4) \
+            hs_SetIcon(3, icon##_5) \
+            hs_SetIcon(3, icon##_6) \
+            hs_SetIcon(3, icon##_7) \
+            hs_SetIcon(3, icon##_8) \
+            hs_SetIcon(3, icon##_9) \
+        hs_Restart \
+        hs_End \
+    }
+
 #define HES_COIN_SPARKLE(dx, dy) \
     { \
         hs_SetTexelOffset(dx, dy) \

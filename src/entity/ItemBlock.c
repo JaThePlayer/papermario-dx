@@ -1,5 +1,6 @@
 #include "common.h"
 #include "effects.h"
+#include "misc_patches/larger_coin_drops.h"
 #include "vars_access.h"
 #include "ld_addrs.h"
 #include "animation_script.h"
@@ -87,8 +88,8 @@ void entity_ItemBlock_spawn_item(Entity* entity) {
     angle = player_get_camera_facing_angle();
     entity->flags |= ENTITY_FLAG_USED;
 
-    if (data->item == ITEM_COIN) {
-        make_item_entity(ITEM_COIN, entity->pos.x, entity->pos.y + 28.0, entity->pos.z,
+    if (is_coin_item(data->item)) {
+        make_item_entity(data->item, entity->pos.x, entity->pos.y + 28.0, entity->pos.z,
             ITEM_SPAWN_MODE_ITEM_BLOCK_COIN, 0, angle, data->gameFlagIndex);
     } else {
         angle += 360;

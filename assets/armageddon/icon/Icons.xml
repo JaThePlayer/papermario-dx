@@ -396,4 +396,26 @@
     <Icon type="pair" name="badge/PainFocus"/>
     <Icon type="pair" name="badge/SPPlus"/>
     <Icon type="pair" name="item/FriedDanger"/>
+
+    <Icon type="solo" name="anim/bluecoin"/>
+    <Icon type="solo" name="anim/bluecoin_1"/>
+    <Icon type="solo" name="anim/bluecoin_2"/>
+    <Icon type="solo" name="anim/bluecoin_3"/>
+    <Icon type="solo" name="anim/bluecoin_4"/>
+    <Icon type="solo" name="anim/bluecoin_5"/>
+    <Icon type="solo" name="anim/bluecoin_6"/>
+    <Icon type="solo" name="anim/bluecoin_7"/>
+    <Icon type="solo" name="anim/bluecoin_8"/>
+    <Icon type="solo" name="anim/bluecoin_9"/>
+
+    <Icon type="solo" name="anim/redcoin"/>
+    <Icon type="solo" name="anim/redcoin_1"/>
+    <Icon type="solo" name="anim/redcoin_2"/>
+    <Icon type="solo" name="anim/redcoin_3"/>
+    <Icon type="solo" name="anim/redcoin_4"/>
+    <Icon type="solo" name="anim/redcoin_5"/>
+    <Icon type="solo" name="anim/redcoin_6"/>
+    <Icon type="solo" name="anim/redcoin_7"/>
+    <Icon type="solo" name="anim/redcoin_8"/>
+    <Icon type="solo" name="anim/redcoin_9"/>
 </Icons>

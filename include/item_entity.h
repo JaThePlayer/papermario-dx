@@ -67,6 +67,32 @@ enum {
         is_End \
     }
 
+#define IES_TEMPLATE_COIN_CUSTOM(icon) \
+    { \
+        is_Loop \
+            is_SetIcon(3, icon) \
+            is_SetIcon(3, icon##_1) \
+            is_SetIcon(3, icon##_4) \
+            is_SetIcon(3, icon##_5) \
+            is_SetIcon(3, icon##_6) \
+            is_SetIcon(3, icon##_7) \
+            is_SetIcon(3, icon##_8) \
+            is_SetIcon(3, icon##_9) \
+        is_RandomRestart(100, 50) \
+            is_SetIcon(3, icon) \
+            is_SetIcon(2, icon##_1) \
+            is_SetIcon(1, icon##_2) \
+            is_SetIcon(1, icon##_3) \
+            is_SetIcon(2, icon##_4) \
+            is_SetIcon(3, icon##_5) \
+            is_SetIcon(3, icon##_6) \
+            is_SetIcon(3, icon##_7) \
+            is_SetIcon(3, icon##_8) \
+            is_SetIcon(3, icon##_9) \
+        is_Restart \
+        is_End \
+    }
+
 #define IES_TEMPLATE_STAR_POINT() \
     { \
         is_SetIcon(2, anim_sp_0) \
