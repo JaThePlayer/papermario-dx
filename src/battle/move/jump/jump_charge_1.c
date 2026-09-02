@@ -11,6 +11,8 @@
 #include "battle/common/IsJumpMaxCharged.inc.c"
 
 BSS b32 N(HasCharged);
+// new in armageddon
+static BSS s32 LastJumpChargeIncrease;
 
 API_CALLABLE(N(func_802A1108_74D678)) {
     Bytecode* args = script->ptrReadPos;
@@ -19,17 +21,18 @@ API_CALLABLE(N(func_802A1108_74D678)) {
     s32 var2 = evt_get_variable(script, *args++);
     s32 var3 = evt_get_variable(script, *args++);
 
-    fx_stat_change(ARROW_TYPE_ATK_UP, 2, var1, var2, var3, 1.0f, 60);
+    s32 newCharge = (battleStatus->jumpCharge + 1) * 2;
+    if (newCharge > 6) {
+        newCharge = MAX(battleStatus->jumpCharge, 6);
+    }
+    LastJumpChargeIncrease = newCharge - battleStatus->jumpCharge;
+    fx_stat_change(ARROW_TYPE_ATK_UP, LastJumpChargeIncrease, var1, var2, var3, 1.0f, 60);
     N(HasCharged) = false;
     if (battleStatus->jumpCharge > 0) {
         N(HasCharged) = true;
     }
 
-    battleStatus->jumpCharge += 2;
-
-    if (battleStatus->jumpCharge > 99) {
-        battleStatus->jumpCharge = 99;
-    }
+    battleStatus->jumpCharge = newCharge;
 
     battleStatus->hammerCharge = 0;
     battleStatus->flags1 |= BS_FLAGS1_JUMP_CHARGED;
@@ -46,6 +49,7 @@ API_CALLABLE(N(GetChargeMessage)) {
     } else {
         script->varTable[0] = BTL_MSG_CHARGE_JUMP_MORE;
     }
+    script->varTable[1] = LastJumpChargeIncrease;
 
     return ApiStatus_DONE2;
 }
@@ -93,7 +97,7 @@ EvtScript N(EVS_UseMove) = {
         Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_Mario1_Idle)
         Call(UseIdleAnimation, ACTOR_PLAYER, true)
         Call(N(GetChargeMessage))
-        Call(ShowVariableMessageBox, LVar0, 60, 2)
+        Call(ShowVariableMessageBox, LVar0, 60, LVar1)
     Else
         Call(ShowMessageBox, BTL_MSG_CANT_CHARGE, 60)
     EndIf

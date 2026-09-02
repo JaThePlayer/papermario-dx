@@ -4,7 +4,7 @@
 API_CALLABLE(N(IsJumpMaxCharged)) {
     script->varTable[0] = false;
 
-    if (gBattleStatus.jumpCharge >= 99) {
+    if (gBattleStatus.jumpCharge >= 6) {
         script->varTable[0] = true;
     }
 

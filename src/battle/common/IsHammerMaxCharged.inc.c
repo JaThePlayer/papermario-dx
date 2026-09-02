@@ -4,7 +4,7 @@
 API_CALLABLE(N(IsHammerMaxCharged)) {
     script->varTable[0] = false;
 
-    if (gBattleStatus.hammerCharge >= 99) {
+    if (gBattleStatus.hammerCharge >= 6) {
         script->varTable[0] = true;
     }
 

@@ -9,6 +9,8 @@
 #include "battle/common/IsHammerMaxCharged.inc.c"
 
 BSS s32 D_802A43D0;
+// new in armageddon
+static BSS s32 LastHammerChargeIncrease;
 
 API_CALLABLE(func_802A10C8_759678) {
     Bytecode* args = script->ptrReadPos;
@@ -18,18 +20,20 @@ API_CALLABLE(func_802A10C8_759678) {
     s32 var3 = evt_get_variable(script, *args++);
     s32* var4;
 
-    fx_stat_change(ARROW_TYPE_ATK_UP, 2, var1, var2, var3, 1.0f, 60);
+    s32 newCharge = (battleStatus->hammerCharge + 1) * 2;
+    if (newCharge > 6) {
+        newCharge = MAX(battleStatus->hammerCharge, 6);
+    }
+    LastHammerChargeIncrease = newCharge - battleStatus->hammerCharge;
+    fx_stat_change(ARROW_TYPE_ATK_UP, LastHammerChargeIncrease, var1, var2, var3, 1.0f, 60);
+
     var4 = &D_802A43D0;
     *var4 = 0;
     if (battleStatus->hammerCharge > 0) {
         *var4 = 1;
     }
 
-    battleStatus->hammerCharge += 2;
-
-    if (battleStatus->hammerCharge > 99) {
-        battleStatus->hammerCharge = 99;
-    }
+    battleStatus->hammerCharge = newCharge;
 
     battleStatus->jumpCharge = 0;
     battleStatus->flags1 |= BS_FLAGS1_HAMMER_CHARGED;
@@ -46,6 +50,8 @@ API_CALLABLE(func_802A12FC_7598AC) {
     } else {
         script->varTable[0] = 5;
     }
+
+    script->varTable[1] = LastHammerChargeIncrease;
 
     return ApiStatus_DONE2;
 }
@@ -230,7 +236,7 @@ EvtScript N(EVS_802A39C8) = {
         Call(SetAnimation, ACTOR_PLAYER, 0, ANIM_Mario1_Idle)
         Call(UseIdleAnimation, ACTOR_PLAYER, true)
         Call(func_802A12FC_7598AC)
-        Call(ShowVariableMessageBox, LVar0, 60, 2)
+        Call(ShowVariableMessageBox, LVar0, 60, LVar1)
     Else
         Call(ShowMessageBox, BTL_MSG_CANT_CHARGE, 60)
     EndIf

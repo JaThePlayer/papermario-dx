@@ -476,10 +476,10 @@
 #message:25:(ItemFullDesc_JumpCharge) {
 	Lets you charge up Jump power.[BR]
 	Uses 1 FP.[BR]
-	When charged, Mario's Jump[BR]
-	power goes up by 2. Lets you[BR]
-	charge unlimited times, but[BR]
-	power fades after attack.[End]
+	Jump charge goes up by 1,[BR]
+	then gets doubled. Lets you[BR]
+	charge up to +6, but power[BR]
+	fades after attack.[End]
 }
 
 #message:25:(ItemFullDesc_SJumpChg) {
@@ -541,8 +541,8 @@
 #message:25:(ItemFullDesc_PowerSmash) {
 	Lets you do a Power Smash.[BR]
 	Uses 2 FP.[BR]
-	Hammers an enemy using lots of[BR]
-	attack power.[End]
+	Hammers an enemy dealing[BR]
+	2 additional damage.[End]
 }
 
 #message:25:(ItemFullDesc_MegaSmash) {
@@ -555,10 +555,10 @@
 #message:25:(ItemFullDesc_SmashCharge) {
 	Lets you charge up your Hammer.[BR]
 	Uses 1 FP.[BR]
-	When charged, Mario's Hammer[BR]
-	power goes up by 2.[BR]
-	Lets you charge unlimited times,[BR]
-	but power fades after attack.[End]
+	Hammer charge goes up by 1,[BR]
+	then gets doubled. Lets you[BR]
+	charge up to +6, but power[BR]
+	fades after attack.[End]
 }
 
 #message:25:(ItemFullDesc_SSmashChg) {
