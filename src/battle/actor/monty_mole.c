@@ -469,16 +469,23 @@ EvtScript N(ThrowRock) = {
             Add(LVarB_FoundOnEnemyHitEvent, 1)
         EndIf
 
+        // Skip enemies with defense that makes the attack do nothing.
+        Set(LVar1, DMG_FRIENDLY_TOSS)
+        Call(GetActorDefense, LVarD_NextEnemy, ELEMENT_NORMAL, LVar0)
+        IfGe(LVar0, LVar1)
+            Goto(LABEL_END_SCORE_CALC)
+        EndIf
+        Sub(LVar1, LVar0)
+
         // score = hp (deprioritize almost dead enemies, we don't want to kill them!)
         Call(GetActorHP, LVarD_NextEnemy, LVarE)
-        IfLe(LVarE, DMG_FRIENDLY_TOSS)
+        IfLe(LVarE, LVar1)
             Goto(LABEL_END_SCORE_CALC)
         EndIf
         Set(LVar6_NextScore, LVarE)
 
         // Prioritize enemies with defense that can tank the hit.
-        Call(GetActorDefense, LVarD_NextEnemy, ELEMENT_NORMAL, LVarE)
-        Mul(LVarE, 10)
+        Mul(LVar0, 10)
         Add(LVar6_NextScore, LVarE)
     )
 
