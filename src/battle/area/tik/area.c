@@ -1,4 +1,5 @@
 #include "area.h"
+#include "battle/battle.h"
 
 extern Stage A(tik_01);
 extern Stage A(tik_02);
@@ -66,11 +67,10 @@ Formation A(Formation_09) = {
     OVL_ACTOR_BY_IDX("dark_paratroopa", BTL_POS_AIR_C, 8),
 };
 
-Formation A(Formation_0A) = {
+Formation A(Formation_0A) = { // post-ch1
     OVL_ACTOR_BY_IDX("gloomba", BTL_POS_GROUND_A, 10),
     OVL_ACTOR_BY_IDX("spiked_gloomba", BTL_POS_GROUND_B, 9),
-    OVL_ACTOR_BY_IDX("gloomba", BTL_POS_GROUND_C, 8),
-    OVL_ACTOR_BY_IDX("gloomba", BTL_POS_GROUND_D, 7),
+    OVL_ACTOR_BY_IDX("paragloomba", BTL_POS_AIR_C, 8),
 };
 
 Formation A(Formation_0B) = {
@@ -91,9 +91,10 @@ Formation A(Formation_0D) = {
     OVL_ACTOR_BY_IDX("spiked_gloomba", BTL_POS_GROUND_C, 9),
 };
 
-Formation A(Formation_0E) = {
+Formation A(Formation_0E) = { // post-ch1, ambush spiked gloomba
     OVL_ACTOR_BY_IDX("spiked_gloomba", BTL_POS_GROUND_B, 10),
-    OVL_ACTOR_BY_IDX("spiked_gloomba", BTL_POS_GROUND_C, 9),
+    OVL_ACTOR_BY_IDX("gloomba", BTL_POS_GROUND_C, 9),
+    OVL_ACTOR_BY_IDX("paragloomba", BTL_POS_AIR_C, 8),
 };
 
 Formation A(Formation_0F) = {
@@ -158,6 +159,8 @@ Formation A(Formation_18) = {
     OVL_ACTOR_BY_IDX("spiny", BTL_POS_GROUND_D, 7),
 };
 
+// TODO: as more areas become reachable, update these formations with appropriate SP pools.
+#define AREA_SP_POOL SP_POOL_DISCARD
 BattleList A(Formations) = {
     BATTLE(A(Formation_00), A(tik_01), "ヤミノコノコx２"),
     BATTLE(A(Formation_01), A(tik_01), "ヤミノコノコx３"),
@@ -169,11 +172,11 @@ BattleList A(Formations) = {
     BATTLE(A(Formation_07), A(tik_01), "ヤミノコノコ,トゲゾー,ヤミノコノコ,トゲゾー"),
     BATTLE(A(Formation_08), A(tik_01), "ヤミパタパタx２"),
     BATTLE(A(Formation_09), A(tik_01), "ヤミパタパタx３"),
-    BATTLE(A(Formation_0A), A(tik_01), "ヤミクリボーx２"),
+    BATTLE_WITH_SP_POOL(A(Formation_0A), A(tik_01), "ヤミクリボーx２", SP_POOL_SEWERS_CH1),
     BATTLE(A(Formation_0B), A(tik_01), "ヤミクリボーx４"),
     BATTLE(A(Formation_0C), A(tik_01), "ヤミパタクリx３"),
     BATTLE(A(Formation_0D), A(tik_01), "ヤミパタクリ,ヤミトゲクリ"),
-    BATTLE(A(Formation_0E), A(tik_01), "ヤミトゲクリx２"),
+    BATTLE_WITH_SP_POOL(A(Formation_0E), A(tik_01), "ヤミトゲクリx２", SP_POOL_SEWERS_CH1),
     BATTLE(A(Formation_0F), A(tik_01), "ヤミトゲクリ,ヤミクリボーx２"),
     BATTLE(A(Formation_10), A(tik_01), "ヤミトゲクリ,メットx２"),
     BATTLE(A(Formation_11), A(tik_01), "ヤミトゲクリ,メット,ヤミトゲクリ,メット"),

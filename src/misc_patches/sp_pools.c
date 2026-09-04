@@ -3,11 +3,12 @@
 #include "common_structs.h"
 #include "battle/battle.h"
 
-u8 sp_pool_caps[SP_POOL_COUNT] = {
+u8 sp_pool_caps[SP_POOL_COUNT + 1] = {
     [SP_POOL_PROLOGUE] = 60,
     [SP_POOL_PLEASANT_PATH] = 125,
     [SP_POOL_KOOPA_BROS_FORT] = 125,
 
+    [SP_POOL_SEWERS_CH1] = 10, // only 1 room with 2 formations
     [SP_POOL_MT_RUGGED] = 100,
     [SP_POOL_DESERT] = 75, // no need to force grinding the desert...
     [SP_POOL_DRY_DRY_RUINS] = 90,
@@ -26,7 +27,7 @@ b8 fake_pool_ends_at_battle_end = false;
 u8 sp_pool_used_up_this_battle[SP_POOL_COUNT] = { };
 
 #define CONVERT_DEFUALT(id) (id == CURRENT_SP_POOL ? current_pool : id)
-// converts a pool id into an index into sp_pool_caps (since 0 is used for SP_POOL_NONE, and we don't want to waste that byte)
+// converts a pool id into an index into gPlayerData.spAreaPools (since 0 is used for SP_POOL_NONE, and we don't want to waste that byte)
 #define INDEX_POOL(id) (id - 1)
 
 // Whether the given pool id actually corresponds to a pool

@@ -224,6 +224,7 @@ EXTERN_C BattleArea gBattleAreas[0x30];
 
 #define BATTLE(formation, stage, name) { name, ARRAY_COUNT(formation), (Formation*) formation, &stage, nullptr, .spPool = AREA_SP_POOL }
 #define BATTLE_WITH_SCRIPT(formation, stage, script, name) { name, ARRAY_COUNT(formation), (Formation*) formation, &stage, &script, .spPool = AREA_SP_POOL }
+#define BATTLE_WITH_SP_POOL(formation, stage, name, pool) { name, ARRAY_COUNT(formation), (Formation*) formation, &stage, nullptr, .spPool = pool }
 
 #define ACTOR_BY_IDX(_name, _idx, _priority, args...) { .actor = &_name, .home = { .index = _idx }, .priority = _priority, args }
 #define ACTOR_BY_POS(_name, _pos, _priority, args...) { .actor = &_name, .home = { .vec = &_pos }, .priority = _priority, args }

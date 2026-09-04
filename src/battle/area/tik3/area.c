@@ -1,4 +1,5 @@
 #include "area.h"
+#include "misc_patches/sp_pools.h"
 
 extern Stage A(tik_01);
 extern Stage A(tik_02);
@@ -28,6 +29,8 @@ Formation A(Formation_03) = {
     OVL_ACTOR_BY_IDX("swoopula", BTL_POS_TOP_C, 8),
 };
 
+// TODO: Update with appriopriate pool.
+#define AREA_SP_POOL SP_POOL_DISCARD
 BattleList A(Formations) = {
     BATTLE(A(Formation_00), A(tik_01), "バサバサx２"),
     BATTLE(A(Formation_01), A(tik_01), "バサバサx３"),

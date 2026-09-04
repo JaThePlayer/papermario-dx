@@ -48,12 +48,17 @@ ch8 - star road, castle                  - 2
 #define SP_POOL_PEACH_CASTLE 22
 // OPTIONAL
 #define SP_POOL_DISCARD 23 // set to 0 to disable SP gain - for bosses summoning normal enemies
-#define SP_POOL_SEWERS 24
+#define SP_POOL_SEWERS_CH1 24 // tik_18 - area before Blooper to the right, available right after ch1.
+#define SP_POOL_SEWERS_CH2 25 // todo: area accessible with Super Hammer
+#define SP_POOL_SEWERS_CH3 26 // todo: area accessible with Super Boots
+#define SP_POOL_SEWERS_CH5 27 // todo: area accessible with Sushie
+#define SP_POOL_SEWERS_CH6 28 // todo: area accessible with Lakilester
 
 // should be equal to the highest SP_POOL_ index
-#define SP_POOL_COUNT 24
+// Maximum stored in savedata currently is 12 * 4 = 48.
+#define SP_POOL_COUNT 28
 
-extern u8 sp_pool_caps[SP_POOL_COUNT];
+extern u8 sp_pool_caps[SP_POOL_COUNT + 1];
 
 // Whether the given pool id actually corresponds to a pool
 u8 sp_pool_is_pooled(u8 id);

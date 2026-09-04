@@ -47,6 +47,7 @@ EvtScript N(EVS_OnSmash_Block2) = {
 
 EvtScript N(EVS_MakeEntities) = {
     Call(MakeEntity, Ref(Entity_SavePoint), 120, 50, -75, 0, MAKE_ENTITY_END)
+    Call(MakeEntity, Ref(Entity_HeartBlock), 167, 50, -75, 0, MAKE_ENTITY_END)
     Call(EnableModel, MODEL_o49, false)
     Call(ModifyColliderFlags, MODIFY_COLLIDER_FLAGS_SET_BITS, COLLIDER_o49, COLLIDER_FLAGS_UPPER_MASK)
     IfEq(GF_TIK02_BoardedFloor, false)
