@@ -1,6 +1,7 @@
 #include "common.h"
 #include "effects.h"
 #include "inventory.h"
+#include "misc_patches/misc_patches.h"
 #include "vars_access.h"
 #include "message_ids.h"
 #include "ld_addrs.h"
@@ -222,6 +223,7 @@ void entity_HeartBlockContent__anim_heal(Entity* entity, s32 arg1) {
                 data->sparkleTrailTimer = 0;
                 recover_hp(-1);
                 recover_fp(-1);
+                add_star_power(getMaxStarEnergy() * SP_PER_BAR);
                 sfx_play_sound(SOUND_HEART_BLOCK);
             }
             data->yawBuffer[data->yawBufferPos] = entity->rot.y;
