@@ -28,9 +28,9 @@ EvtScript N(EVS_MakeEntities) = {
     Call(AssignScript, Ref(N(EVS_GotoMap_sbk_05_4)))
     Call(MakeEntity, Ref(Entity_MulticoinBlock), 0, 60, -100, 0, MAKE_ENTITY_END)
     Call(AssignBlockFlag, GF_SBK14_MultiCoinBrick)
-    Call(MakeEntity, Ref(Entity_YellowBlock), -240, 0, 215, 0, ITEM_COIN, MAKE_ENTITY_END)
+    Call(MakeEntity, Ref(Entity_YellowBlock), -240, 0, 215, 0, ITEM_BLUE_COIN, MAKE_ENTITY_END)
     Call(AssignBlockFlag, GF_SBK14_ItemBlock_Coin)
-    Call(MakeEntity, Ref(Entity_YellowBlock), 220, 0, 150, 0, ITEM_HONEY_SYRUP, MAKE_ENTITY_END)
+    Call(MakeEntity, Ref(Entity_YellowBlock), 220, 0, 150, 0, ITEM_MAPLE_SYRUP, MAKE_ENTITY_END)
     Call(AssignBlockFlag, GF_SBK14_ItemBlock_HoneySyrup)
     Return
     End

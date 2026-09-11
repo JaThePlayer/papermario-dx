@@ -38,7 +38,7 @@ EvtScript N(EVS_MakeEntities) = {
     Call(MakeEntity, Ref(Entity_InertYellowBlock), -130, 0, -200, 0, MAKE_ENTITY_END)
     Call(AssignScript, Ref(N(EVS_OnHitInertBlock)))
     IfEq(GF_SBK20_ItemBlock_Mushroom, true)
-        Call(MakeEntity, Ref(Entity_YellowBlock), -80, 60, -200, 0, ITEM_MUSHROOM, MAKE_ENTITY_END)
+        Call(MakeEntity, Ref(Entity_YellowBlock), -80, 60, -200, 0, ITEM_VOLT_SHROOM, MAKE_ENTITY_END)
         Call(AssignBlockFlag, GF_SBK20_ItemBlock_Mushroom)
     EndIf
     IfEq(GF_SBK20_ItemBlock_SuperShroom, true)

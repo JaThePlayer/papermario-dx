@@ -9,7 +9,7 @@ FoliageDropList N(Tree1_Drops) = {
     .count = 1,
     .drops = {
         {
-            .itemID = ITEM_COIN,
+            .itemID = ITEM_BLUE_COIN,
             .pos = { 105, 100, -89 },
             .spawnMode = ITEM_SPAWN_MODE_FALL_SPAWN_ONCE,
             .pickupFlag = GF_SBK34_Tree1_Coin,
