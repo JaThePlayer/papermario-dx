@@ -1,4 +1,5 @@
 #include "common.h"
+#include "misc_patches/misc_patches.h"
 #include "script_api/battle.h"
 #include "sprite/npc/WorldBombette.h"
 #include "battle/action_cmd/hammer.h"
@@ -132,6 +133,30 @@ EvtScript N(EVS_UseMove_Impl) = {
 };
 
 EvtScript N(EVS_FirstStrike) = {
+    Call(PlayerCountBadgesWithMoveId, MOVE_FIRST_ATTACK, LVar0)
+    IfGt(LVar0, 0)
+        Call(ShowActionHud, true)
+        Call(GetMenuSelection, LVar0, LVar1, LVar2)
+        Switch(LVar1)
+            CaseEq(0)
+                Set(LVarD, 45)// action command duration
+                Set(LVarE, 1) // bad input dmg
+                Set(LVarF, 2 + 1) // good input dmg
+                ExecWait(N(EVS_UseMove_Impl))
+            CaseEq(1)
+                Set(LVarD, 45)// action command duration
+                Set(LVarE, 2) // bad input dmg
+                Set(LVarF, 4 + 1) // good input dmg
+                ExecWait(N(EVS_UseMove_Impl))
+            CaseEq(2)
+                Set(LVarD, 45)// action command duration
+                Set(LVarE, 3) // bad input dmg
+                Set(LVarF, 6 + 1) // good input dmg
+                ExecWait(N(EVS_UseMove_Impl))
+        EndSwitch
+        Return
+    EndIf
+
     Call(GetMenuSelection, LVar0, LVar1, LVar2)
     Switch(LVar1)
         CaseEq(0)

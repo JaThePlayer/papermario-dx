@@ -58,6 +58,8 @@ s32 get_focus_cap();
 
 s32 player_count_badges_with_move_id(s32 moveId);
 
+API_CALLABLE(PlayerCountBadgesWithMoveId);
+
 s8 getMaxStarEnergy();
 
 void render_se_bar(s32 id, s32 x, s32 y, s32 startSegment, s32 limit);

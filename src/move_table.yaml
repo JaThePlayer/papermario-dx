@@ -717,7 +717,7 @@
     category: MOVE_TYPE_9
     actionTip: NONE
     costFP: 0
-    costBP: 1
+    costBP: 2
 - SlowGo:
     nameMsg: MSG_ItemName_SlowGo
     fullDescMsg: MSG_ItemFullDesc_SlowGo

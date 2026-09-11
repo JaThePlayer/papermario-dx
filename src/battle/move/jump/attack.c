@@ -1,8 +1,10 @@
 #include "common.h"
+#include "move_enum.h"
 #include "script_api/battle.h"
 #include "battle/action_cmd/jump.h"
 #include "sprite/player.h"
 #include "misc_patches/custom_status.h"
+#include "misc_patches/misc_patches.h"
 
 #define NAMESPACE battle_move_jump_attack
 
@@ -235,6 +237,13 @@ extern EvtScript N(EVS_FirstStrike_Ultra);
 
 EvtScript N(EVS_FirstStrike) = {
     Call(ShowActionHud, true)
+
+    Call(PlayerCountBadgesWithMoveId, MOVE_FIRST_ATTACK, LVar0)
+    IfGt(LVar0, 0)
+        ExecWait(N(EVS_UseMove))
+        Return
+    EndIf
+
     Call(GetMenuSelection, LVar0, LVar1, LVar2)
     Switch(LVar1)
         CaseEq(0)

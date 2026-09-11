@@ -775,8 +775,12 @@
 }
 
 #message:25:(ItemFullDesc_FirstAttack) {
-	Lets Mario destroy a weaker[BR]
-	enemy with a First Strike.  [End]
+	Lets Mario's First Strikes[BR]
+	use action commands.[BR]
+	Hammer First Strikes retain[BR]
+	their +1 ATK buff.[BR]
+	Makes the All or Nothing badge[BR]
+	impact first strikes as well.[End]
 }
 
 #message:25:(ItemFullDesc_BumpAttack) {

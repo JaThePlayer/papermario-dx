@@ -274,6 +274,15 @@ s32 player_count_badges_with_move_id(s32 moveId) {
     return sum;
 }
 
+API_CALLABLE(PlayerCountBadgesWithMoveId) {
+    Bytecode* args = script->ptrReadPos;
+    s32 moveId = evt_get_variable(script, *args++);
+
+    evt_set_variable(script, *args++, player_count_badges_with_move_id(moveId));
+
+    return ApiStatus_DONE2;
+}
+
 s32 get_focus_move_id() {
     if (player_count_badges_with_move_id(MOVE_THREAT_FOCUS))
         return MOVE_THREAT_FOCUS;

@@ -1291,6 +1291,8 @@ void update_encounters_pre_battle(void) {
             }
 
             // try first attack kill
+            // Disabled in Armageddon
+            /*
             enemy = currentEncounter->curEnemy;
             if (currentEncounter->hitType != ENCOUNTER_TRIGGER_NONE
                 && currentEncounter->hitType != ENCOUNTER_TRIGGER_SPIN
@@ -1305,6 +1307,7 @@ void update_encounters_pre_battle(void) {
                 gEncounterSubState = ENCOUNTER_SUBSTATE_PRE_BATTLE_AUTO_WIN;
                 return;
             }
+            */
 
             // try bump attack kill
             enemy = currentEncounter->curEnemy;

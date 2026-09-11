@@ -254,7 +254,7 @@ s32 enemy_items_count_items_with_move_id_in_all(s32 moveId) {
 
 
 s32 badge_count_by_move_id_in_opposing_team(Actor* actor, s32 moveId) {
-    if (actor == gBattleStatus.playerActor) {
+    if (actor == gBattleStatus.playerActor || actor == gBattleStatus.partnerActor) {
         return enemy_items_count_items_with_move_id_in_all(moveId);
     }
 
@@ -269,6 +269,10 @@ s32 badge_count_by_move_id_in_both_teams(s32 moveId) {
 s32 badge_count_by_move_id(Actor* actor, s32 moveId) {
     if (actor == gBattleStatus.playerActor) {
         return player_count_badges_with_move_id(moveId);
+    }
+
+    if (actor == gBattleStatus.partnerActor) {
+        return 0;
     }
 
     return enemy_items_count_items_with_move_id(actor, moveId);

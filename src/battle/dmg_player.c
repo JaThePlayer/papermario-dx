@@ -572,7 +572,7 @@ HitResult calc_player_damage_enemy(void) {
             fx_radial_shimmer(9, state->goalPos.x, state->goalPos.y, state->goalPos.z, 0.5f, 20);
         }
 
-        if (!(gBattleStatus.flags2 & BS_FLAGS2_IS_FIRST_STRIKE)
+        if ((!(gBattleStatus.flags2 & BS_FLAGS2_IS_FIRST_STRIKE) || player_team_is_ability_active(player, ABILITY_FIRST_ATTACK))
             && player_team_is_ability_active(player, ABILITY_ALL_OR_NOTHING)
         ) {
             currentAttackDamage++;
