@@ -31,7 +31,7 @@ API_CALLABLE(_ExecWaitInterface) {
     newScript->owner1.actorID = actorID;
 
     script->curOpcode = EVT_OP_INTERNAL_FETCH;
-    return ApiStatus_FINISH;
+    return VmStatus_FINISH;
 }
 
 u8* get_from_interface_ptr(Evt* script, Bytecode* outVar) {

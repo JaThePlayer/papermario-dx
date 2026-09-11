@@ -107,7 +107,18 @@ API_CALLABLE(RandInt) {
     return ApiStatus_DONE2;
 }
 
-// Armageddon reverts MakeLerp/UpdateLerp to use ints, dx breaks vanilla cutscenes, like the one in kmr_00 revival.c
+API_CALLABLE(RandRange) {
+    Bytecode* args = script->ptrReadPos;
+
+    s32 min = evt_get_variable(script, *args++);
+    s32 max = evt_get_variable(script, *args++);
+    Bytecode outVar = *args++;
+
+    ASSERT_MSG(max >= min, "RandRange min %ld > max %ld", min, max);
+    evt_set_variable(script, outVar, min + rand_int(max - min));
+
+    return ApiStatus_DONE2;
+}
 
 enum {
     LERP_VAR_0 = 0x0, // (out float) cur

@@ -165,16 +165,14 @@ void custom_status_decrement(Actor* actor) {
     Evt* inner = start_script(&CustomStatusDecrement, EVT_PRIORITY_A, 0);
     inner->owner1.actorID = actor->actorID;
 
-    actor->handlePhaseScript = inner;
-    actor->handlePhaseScriptID = inner->id;
+    assign_bound_script(&actor->scripts.handlePhase, inner);
 }
 
 void custom_status_decrement_late(Actor* actor) {
     Evt* inner = start_script(&CustomStatusDecrementLate, EVT_PRIORITY_A, 0);
     inner->owner1.actorID = actor->actorID;
 
-    actor->handlePhaseScript = inner;
-    actor->handlePhaseScriptID = inner->id;
+    assign_bound_script(&actor->scripts.handlePhase, inner);
 }
 
 void custom_status_zero_initialize(Actor* actor) {
@@ -539,17 +537,16 @@ API_CALLABLE(DispatchDamageEventAnyActorBlocking) {
         if (actor == gBattleStatus.playerActor) {
             dispatch_damage_event_player(dmg, event, false);
         } else {
-            dispatch_damage_event_actor_1(actor, dmg, event);
+            dispatch_contact_damage_event_actor(actor, dmg, event);
         }
     } else {
         if (actor == nullptr)
             return ApiStatus_DONE2;
     }
 
-    if ((actor->handleEventScript != nullptr) && does_script_exist(actor->handleEventScriptID)) {
+    if (is_bound_script_running(&actor->scripts.handleEvent)) {
         return ApiStatus_BLOCK;
     }
 
-    actor->handleEventScript = nullptr;
     return ApiStatus_DONE2;
 }

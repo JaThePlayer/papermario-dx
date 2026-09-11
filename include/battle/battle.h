@@ -2,6 +2,7 @@
 #define _BATTLE_BATTLE_H_
 
 #include "common.h"
+#include "bound_script.h"
 #include "message_ids.h"
 #include "misc_patches/sp_pools.h"
 #include "misc_patches/easy_formation.h"

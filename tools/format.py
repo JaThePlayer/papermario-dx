@@ -21,8 +21,10 @@ Three kinds of code are formatted differently:
       Switch/SwitchConst          indent body, Case dedents to switch level
       If*/Else/EndIf              indent body
       Loop/EndLoop                indent body
+      Lerp/EndLerp                indent body
       Thread/EndThread            indent body
       ChildThread/EndChildThread  indent body
+      Finally/End                 indent cleanup tail
       Preprocessor directives     stay at column 0
       Everything else             indented at current level
 
@@ -50,8 +52,10 @@ class BlockKind(Enum):
     IF = auto()
     ELSE = auto()
     LOOP = auto()
+    LERP = auto()
     THREAD = auto()
     CHILD_THREAD = auto()
+    FINALLY = auto()
 
 
 INDENT = "    "
@@ -72,7 +76,22 @@ CASE_MACROS = {
     "CaseRange",
 }
 
-IF_MACROS = {"IfEq", "IfNe", "IfLt", "IfGt", "IfLe", "IfGe", "IfFlag", "IfNotFlag"}
+IF_MACROS = {
+    "IfEq",
+    "IfNe",
+    "IfLt",
+    "IfGt",
+    "IfLe",
+    "IfGe",
+    "IfRange",
+    "IfNotRange",
+    "IfFlag",
+    "IfNotFlag",
+    "IfEval",
+    "IfNotEval",
+    "IfEvalF",
+    "IfNotEvalF",
+}
 
 MACRO_RE = re.compile(r"^\s*(\w+)")
 
@@ -262,11 +281,22 @@ def reformat_evtscript_block(lines: list[str]) -> list[str]:
                 stack.pop()
             indent = INDENT * len(stack)
             result.append(INDENT + indent + stripped)
+        elif macro == "Lerp":
+            indent = INDENT * len(stack)
+            result.append(INDENT + indent + stripped)
+            stack.append(BlockKind.LERP)
+        elif macro == "EndLerp":
+            if stack and stack[-1] == BlockKind.LERP:
+                stack.pop()
+            indent = INDENT * len(stack)
+            result.append(INDENT + indent + stripped)
         elif macro == "Thread":
             indent = INDENT * len(stack)
             result.append(INDENT + indent + stripped)
             stack.append(BlockKind.THREAD)
         elif macro == "EndThread":
+            if stack and stack[-1] == BlockKind.FINALLY:
+                stack.pop()
             if stack and stack[-1] == BlockKind.THREAD:
                 stack.pop()
             indent = INDENT * len(stack)
@@ -276,7 +306,18 @@ def reformat_evtscript_block(lines: list[str]) -> list[str]:
             result.append(INDENT + indent + stripped)
             stack.append(BlockKind.CHILD_THREAD)
         elif macro == "EndChildThread":
+            if stack and stack[-1] == BlockKind.FINALLY:
+                stack.pop()
             if stack and stack[-1] == BlockKind.CHILD_THREAD:
+                stack.pop()
+            indent = INDENT * len(stack)
+            result.append(INDENT + indent + stripped)
+        elif macro == "Finally":
+            indent = INDENT * len(stack)
+            result.append(INDENT + indent + stripped)
+            stack.append(BlockKind.FINALLY)
+        elif macro == "End":
+            if stack and stack[-1] == BlockKind.FINALLY:
                 stack.pop()
             indent = INDENT * len(stack)
             result.append(INDENT + indent + stripped)
@@ -498,7 +539,7 @@ def main():
 
     any_changed = False
     for path in args.files:
-        with open(path, "r") as f:
+        with open(path, "r", encoding="utf-8") as f:
             source = f.read()
         result = format_source(source, path)
         if result != source:
@@ -506,7 +547,7 @@ def main():
             if args.check:
                 print(f"::warning file={path},title=File not formatted::This file was changed, but it isn't formatted correctly. Run treefmt to format this file.")
             else:
-                with open(path, "w") as f:
+                with open(path, "w", encoding="utf-8") as f:
                     f.write(result)
                 print(f"reformatted {path}", file=sys.stderr)
 

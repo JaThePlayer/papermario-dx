@@ -105,7 +105,8 @@ API_CALLABLE(A(EnableWeatherByType)) {
     if (!isInitialCall) {
         if (script->userData == nullptr)
             return ApiStatus_DONE2;
-        if (does_script_exist_by_ref((Evt*)script->userData))
+        Evt* evt = (Evt*)script->userData;
+        if (evt != nullptr && does_script_exist(evt->id))
             return ApiStatus_BLOCK;
         script->userData = nullptr;
         return ApiStatus_DONE2;

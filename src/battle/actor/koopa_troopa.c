@@ -823,6 +823,7 @@ EvtScript N(EVS_ChargedShellShot) = {
                     SetConst(LVar1, ANIM_KoopaTroopa_Run)
                     ExecWait(EVS_Enemy_ReturnHome)
                     Call(SetAnimation, ACTOR_SELF, PRT_MAIN, ANIM_KoopaTroopa_Idle)
+                EndCaseGroup
             EndSwitch
         EndCaseGroup
     EndSwitch

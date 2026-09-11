@@ -24,7 +24,7 @@ class Effect:
 
 
 def effects_from_yaml(yaml_path: Path) -> List[Effect]:
-    with open(yaml_path) as f:
+    with open(yaml_path, "r", encoding="utf-8") as f:
         effects_yaml = yaml_loader.load(f.read(), Loader=yaml_loader.SafeLoader)
 
     effects: List[Effect] = []
@@ -91,6 +91,7 @@ glabel fx_{name}
         type,
         name,
         vram_start,
+        bss_size,
         args,
         yaml,
     ):
@@ -102,6 +103,7 @@ glabel fx_{name}
             vram_start,
             args=args,
             yaml=yaml,
+            bss_size=bss_size,
         )
 
         self.effects = effects_from_yaml(options.opts.src_path / "effects.yaml")
@@ -116,7 +118,7 @@ glabel fx_{name}
 
             self.effect_s_path("").parent.mkdir(parents=True, exist_ok=True)
 
-            with open(self.effect_s_path(effect.name), "w") as f:
+            with open(self.effect_s_path(effect.name), "w", encoding="utf-8") as f:
                 f.write(effect_asm)
 
     def get_linker_entries(self):

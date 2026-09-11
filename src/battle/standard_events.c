@@ -1905,11 +1905,11 @@ EvtScript EVS_Enemy_SpinSmash_HitNext = {
             CaseOrEq(ACTOR_TYPE_POKEY_MUMMY)
             CaseOrEq(ACTOR_TYPE_UNUSED_69)
                 Call(DispatchDamageEvent, LVar0, 1, EVENT_SPIN_SMASH_LAUNCH_HIT)
-                Goto(1)
             EndCaseGroup
+            CaseDefault
+                Call(EnemyDamageTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_IGNORE_DEFENSE | DAMAGE_TYPE_MULTIPLE_POPUPS, SUPPRESS_EVENT_ALL, 0, 2, BS_FLAGS1_TRIGGER_EVENTS)
+                Call(ClearChargesOn, ACTOR_SELF)
         EndSwitch
-        Call(EnemyDamageTarget, ACTOR_SELF, LVar0, DAMAGE_TYPE_IGNORE_DEFENSE | DAMAGE_TYPE_MULTIPLE_POPUPS, SUPPRESS_EVENT_ALL, 0, 2, BS_FLAGS1_TRIGGER_EVENTS)
-        Call(ClearChargesOn, ACTOR_SELF)
         Goto(1)
     // done
     Label(10)

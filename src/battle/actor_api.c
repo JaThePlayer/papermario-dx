@@ -2060,7 +2060,7 @@ API_CALLABLE(SummonEnemy) {
             break;
         case 1:
             actor2 = script->functionTempPtr[1];
-            if (does_script_exist(actor2->takeTurnScriptID)) {
+            if (is_bound_script_running(&actor2->scripts.takeTurn)) {
                 break;
             }
 
@@ -3297,7 +3297,7 @@ API_CALLABLE(BoostAttack) {
                 script->functionTemp[3]--;
                 break;
             }
-            if ((actor->handleEventScript != nullptr) && does_script_exist(actor->handleEventScriptID)) {
+            if (is_bound_script_running(&actor->scripts.handleEvent)) {
                 break;
             }
             ApplyingBuff = false;
@@ -3421,7 +3421,7 @@ API_CALLABLE(BoostDefense) {
                 script->functionTemp[3]--;
                 break;
             }
-            if ((actor->handleEventScript != nullptr) && does_script_exist(actor->handleEventScriptID)) {
+            if (is_bound_script_running(&actor->scripts.handleEvent)) {
                 break;
             }
             ApplyingBuff = false;
@@ -3527,7 +3527,7 @@ API_CALLABLE(VanishActor) {
                 script->functionTemp[3]--;
                 break;
             }
-            if ((actor->handleEventScript != nullptr) && does_script_exist(actor->handleEventScriptID)) {
+            if (is_bound_script_running(&actor->scripts.handleEvent)) {
                 break;
             }
             ApplyingBuff = false;
@@ -3633,7 +3633,7 @@ API_CALLABLE(ElectrifyActor) {
                 script->functionTemp[3]--;
                 break;
             }
-            if ((actor->handleEventScript != nullptr) && does_script_exist(actor->handleEventScriptID)) {
+            if (is_bound_script_running(&actor->scripts.handleEvent)) {
                 break;
             }
             ApplyingBuff = false;
@@ -3757,7 +3757,7 @@ API_CALLABLE(HealActor) {
                 script->functionTemp[3]--;
                 break;
             }
-            if ((actor->handleEventScript != nullptr) && does_script_exist(actor->handleEventScriptID)) {
+            if (is_bound_script_running(&actor->scripts.handleEvent)) {
                 break;
             }
             ApplyingBuff = false;
@@ -3879,7 +3879,7 @@ API_CALLABLE(HealActorNoPopupsOrEvents) {
                 script->functionTemp[3]--;
                 break;
             }
-            if ((actor->handleEventScript != nullptr) && does_script_exist(actor->handleEventScriptID)) {
+            if (is_bound_script_running(&actor->scripts.handleEvent)) {
                 break;
             }
             ApplyingBuff = false;
@@ -3987,7 +3987,7 @@ API_CALLABLE(ExecWaitOnActor_impl) {
     newScript->owner1.actorID = actorID;
 
     script->curOpcode = EVT_OP_INTERNAL_FETCH;
-    return ApiStatus_FINISH;
+    return VmStatus_FINISH;
 }
 
 API_CALLABLE(DoesActorExport) {
