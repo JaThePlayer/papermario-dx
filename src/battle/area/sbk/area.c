@@ -1,7 +1,5 @@
 #include "area.h"
 
-#include "battle/common/actor/dry_bubble.inc.c"
-
 #include "actor/bandit_leader.c"
 
 extern Stage A(sbk_02);
